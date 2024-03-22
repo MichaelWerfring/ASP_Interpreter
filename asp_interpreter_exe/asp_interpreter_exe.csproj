@@ -11,4 +11,8 @@
     <ProjectReference Include="..\asp_interpreter_lib\asp_interpreter_lib\asp_interpreter_lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+  </ItemGroup>
+
 </Project>
