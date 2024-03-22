@@ -13,7 +13,21 @@ public static class FileReader
             var text = File.ReadAllText(path);
             result = new FileReadResult(text, true, "Success");
         }
-        catch (Exception e)
+        catch (FileNotFoundException)
+        {
+            result = new FileReadResult(
+                string.Empty,
+                false, 
+                "File not found: " + path);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            result = new FileReadResult(
+                string.Empty,
+                false, 
+                "Access denied: " + path);
+        }
+        catch (IOException e)
         {
             result = new FileReadResult(
                 string.Empty,
