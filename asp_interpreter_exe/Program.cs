@@ -1,6 +1,6 @@
 ﻿using Antlr4.Runtime;
-using asp_interpreter_lib.ANTLR;
 using asp_interpreter_lib.FileIO;
+using asp_interpreter_lib.Visitors;
 
 if(args.Length != 1)
 {
@@ -20,5 +20,5 @@ var commonTokenStream = new CommonTokenStream(lexer);
 var parser = new ASPParser(commonTokenStream);
 //for handling errors: parser.AddErrorListener();
 var context = parser.program();
-var visitor = new BasicAspVisitor();
-visitor.Visit(context);
+var visitor = new ProgramVisitor();
+visitor.VisitProgram(context);
