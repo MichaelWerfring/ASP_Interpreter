@@ -2,6 +2,8 @@
 
 public class Body
 {
+    
+    //Does not support body consisting of bodies yet eg. grammar
     public Body(List<NafLiteral> literals)
     {
         Literals = literals;
@@ -9,6 +11,4 @@ public class Body
 
     //A body consists of any literals 
     public List<NafLiteral> Literals { get; private set; }
-    
-    
 }

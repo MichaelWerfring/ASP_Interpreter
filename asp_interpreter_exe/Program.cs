@@ -21,4 +21,5 @@ var parser = new ASPParser(commonTokenStream);
 //for handling errors: parser.AddErrorListener();
 var context = parser.program();
 var visitor = new ProgramVisitor();
-visitor.VisitProgram(context);
+var program = visitor.VisitProgram(context);
+Console.ReadLine();

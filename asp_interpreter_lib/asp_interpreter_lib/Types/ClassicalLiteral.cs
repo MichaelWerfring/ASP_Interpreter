@@ -1,4 +1,6 @@
-﻿namespace asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.Types.Terms;
+
+namespace asp_interpreter_lib.Types;
 
 public class ClassicalLiteral
 {

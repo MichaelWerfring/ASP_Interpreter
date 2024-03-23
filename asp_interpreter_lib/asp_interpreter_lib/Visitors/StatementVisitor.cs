@@ -6,6 +6,22 @@ public class StatementVisitor : ASPBaseVisitor<Statement>
 {
     public override Statement VisitStatement(ASPParser.StatementContext context)
     {
-        return new Statement(null, null);
+        Head head = null;
+        var headContext = context.head();
+        
+        if (headContext != null)
+        {
+            head = headContext.Accept(new HeadVisitor());
+        }
+        
+        Body body = null;
+        var bodyContext = context.body();
+
+        if (bodyContext != null)
+        {
+            body = bodyContext.Accept(new BodyVisitor());
+        }
+        
+        return new Statement(head, body);
     }
 }
