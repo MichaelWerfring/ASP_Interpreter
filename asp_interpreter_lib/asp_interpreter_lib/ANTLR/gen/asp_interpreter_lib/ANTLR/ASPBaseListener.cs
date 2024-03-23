@@ -205,17 +205,103 @@ public partial class ASPBaseListener : IASPListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBuiltin_atom([NotNull] ASPParser.Builtin_atomContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.binop"/>.
+	/// Enter a parse tree produced by the <c>equalityOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterBinop([NotNull] ASPParser.BinopContext context) { }
+	public virtual void EnterEqualityOperation([NotNull] ASPParser.EqualityOperationContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.binop"/>.
+	/// Exit a parse tree produced by the <c>equalityOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitBinop([NotNull] ASPParser.BinopContext context) { }
+	public virtual void ExitEqualityOperation([NotNull] ASPParser.EqualityOperationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>unequalityOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterUnequalityOperation([NotNull] ASPParser.UnequalityOperationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>unequalityOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitUnequalityOperation([NotNull] ASPParser.UnequalityOperationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>lessOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLessOperation([NotNull] ASPParser.LessOperationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>lessOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLessOperation([NotNull] ASPParser.LessOperationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>greaterOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterGreaterOperation([NotNull] ASPParser.GreaterOperationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>greaterOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitGreaterOperation([NotNull] ASPParser.GreaterOperationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>lessOrEqOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLessOrEqOperation([NotNull] ASPParser.LessOrEqOperationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>lessOrEqOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLessOrEqOperation([NotNull] ASPParser.LessOrEqOperationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>greaterOrEqOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterGreaterOrEqOperation([NotNull] ASPParser.GreaterOrEqOperationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>greaterOrEqOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitGreaterOrEqOperation([NotNull] ASPParser.GreaterOrEqOperationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>disunificationOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>disunificationOperation</c>
+	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ASPParser.terms"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -229,17 +315,117 @@ public partial class ASPBaseListener : IASPListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTerms([NotNull] ASPParser.TermsContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.term"/>.
+	/// Enter a parse tree produced by the <c>negatedTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterTerm([NotNull] ASPParser.TermContext context) { }
+	public virtual void EnterNegatedTerm([NotNull] ASPParser.NegatedTermContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.term"/>.
+	/// Exit a parse tree produced by the <c>negatedTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitTerm([NotNull] ASPParser.TermContext context) { }
+	public virtual void ExitNegatedTerm([NotNull] ASPParser.NegatedTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>stringTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterStringTerm([NotNull] ASPParser.StringTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>stringTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitStringTerm([NotNull] ASPParser.StringTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>basicTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterBasicTerm([NotNull] ASPParser.BasicTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>basicTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitBasicTerm([NotNull] ASPParser.BasicTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>arithmeticOperationTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArithmeticOperationTerm([NotNull] ASPParser.ArithmeticOperationTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>arithmeticOperationTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArithmeticOperationTerm([NotNull] ASPParser.ArithmeticOperationTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>parenthesizedTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterParenthesizedTerm([NotNull] ASPParser.ParenthesizedTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>parenthesizedTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitParenthesizedTerm([NotNull] ASPParser.ParenthesizedTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>anonymousVariableTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAnonymousVariableTerm([NotNull] ASPParser.AnonymousVariableTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>anonymousVariableTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAnonymousVariableTerm([NotNull] ASPParser.AnonymousVariableTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>numberTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterNumberTerm([NotNull] ASPParser.NumberTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>numberTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitNumberTerm([NotNull] ASPParser.NumberTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>variableTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterVariableTerm([NotNull] ASPParser.VariableTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>variableTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitVariableTerm([NotNull] ASPParser.VariableTermContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ASPParser.arithop"/>.
 	/// <para>The default implementation does nothing.</para>
