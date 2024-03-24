@@ -40,7 +40,19 @@ public class VisitorTests
             firstTerm.Name == "X" && secondTerm.Name == "Y");
     }
 
-    
+    [Test]
+    public void HandlesLiteralInQueryCorrectly()
+    {
+        AspProgram program = GetProgram(_graphCode);
+
+        var queryLiteral = program.Query?.ClassicalLiteral;
+        var firstTerm = queryLiteral.Terms[0] as VariableTerm;
+        var secondTerm = queryLiteral.Terms[1] as BasicTerm;
+
+        Assert.That(
+            queryLiteral is { Identifier: "edge", Negated: false, Terms.Count: 2 } &&
+            firstTerm.Name == "X" && secondTerm.Identifier == "b");
+    }
     
     // Helper method to get a program from a given code
     private AspProgram GetProgram(string code)
