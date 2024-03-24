@@ -54,6 +54,54 @@ public class VisitorTests
             firstTerm.Name == "X" && secondTerm.Identifier == "b");
     }
     
+    [Test]
+    public void HandlesBodyLiteralsCorrectly()
+    {
+        AspProgram program = GetProgram(_graphCode);
+
+        var body = program.Statements[6].Body;
+        var firstLiteral = body.Literals[0];
+        var secondLiteral = body.Literals[1];
+        var thirdLiteral = body.Literals[2];
+
+        Assert.That(
+            body.Literals.Count == 3 &&
+            firstLiteral.Literal.Identifier == "node" && !firstLiteral.Literal.Negated &&
+            secondLiteral.Literal.Identifier == "node" && !secondLiteral.Literal.Negated &&
+            thirdLiteral.Negated && thirdLiteral.Literal.Identifier == "edge");
+    }
+
+    [Test]
+    public void HandlesBodyTermsCorrectly()
+    {
+        var program = GetProgram(_graphCode);
+        
+        var body = program.Statements[6].Body;
+        var firstLiteral = body.Literals[0];
+        var secondLiteral = body.Literals[1];
+        var thirdLiteral = body.Literals[2];
+
+        if (firstLiteral.Literal.Terms[0] is VariableTerm firstVarTerm)
+        {
+            Assert.That(firstVarTerm.Name == "X");
+        }
+        
+        if (secondLiteral.Literal.Terms[0] is VariableTerm secondVarTerm)
+        {
+            Assert.That(secondVarTerm.Name == "Y");
+        }
+        
+        if (thirdLiteral.Literal.Terms[0] is VariableTerm thirdVarTerm)
+        {
+            Assert.That(thirdVarTerm.Name == "X");
+        }
+        
+        if (thirdLiteral.Literal.Terms[1] is VariableTerm fourthVarTerm)
+        {
+            Assert.That(fourthVarTerm.Name == "Y");
+        }
+    }
+    
     // Helper method to get a program from a given code
     private AspProgram GetProgram(string code)
     {
