@@ -9,6 +9,7 @@ statement
     : CONS body? DOT 
     | head (CONS body?)? DOT;
 
+//head: classical_literal | nix
 head : disjunction | choice;
 //body : naf_literal (COMMA body)?;
 body : naf_literal (COMMA naf_literal)*;
@@ -27,13 +28,12 @@ builtin_atom : term binop term;
 
 binop 
     : EQUAL             #equalityOperation
-    | UNEQUAL           #unequalityOperation
+    //| UNEQUAL           #unequalityOperation
+    | DISUNIFICATION    #disunificationOperation
     | LESS              #lessOperation
     | GREATER           #greaterOperation
     | LESS_OR_EQ        #lessOrEqOperation
-    | GREATER_OR_EQ     #greaterOrEqOperation
-    // Find proper place for disunification
-    | DISUNIFICATION    #disunificationOperation;
+    | GREATER_OR_EQ     #greaterOrEqOperation;
 
 //terms : (terms COMMA)? term;
 terms : term (COMMA terms)?;
@@ -79,7 +79,7 @@ CURLY_OPEN : '{';
 CURLY_CLOSE : '}';
 EQUAL : '=';
 //Might be obsolete due to DISUNIFICATION
-UNEQUAL : '!='|'<>';
+//UNEQUAL : '!='|'<>';
 LESS : '<';
 GREATER : '>';
 LESS_OR_EQ : '<=';
