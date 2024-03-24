@@ -16,7 +16,7 @@ public class ClassicalLiteralVisitor : ASPBaseVisitor<ClassicalLiteral>
         List<Term> terms = [];
         var termVisitor = new TermVisitor();
         
-        var childTerms = context.terms().children;
+        var childTerms = context.terms()?.children;
 
         if (childTerms == null)
         {

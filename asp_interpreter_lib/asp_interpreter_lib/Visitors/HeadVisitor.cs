@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
 using Antlr4.Runtime.Tree;
 using asp_interpreter_lib.Types;
 
@@ -15,7 +16,11 @@ public class HeadVisitor : ASPBaseVisitor<Head>
         {
             //In a disjunction we only expect classical literals 
             //due to the grammar definition
-            literals.Add(literal.Accept(literalVisitor));
+            var c = literal.Accept(literalVisitor);
+            if (c != null)
+            {
+                literals.Add(c);   
+            }
         }
 
         return new Head(literals);

@@ -26,6 +26,178 @@ public class VisitorTests
                      """;
     }
     
+    //Disjunction in Rule Head
+    //STMT without Rule Head
+    //STMT without Rule Body (fact)
+    //STMT with Rule Body and Head (rule)
+    // -a
+    // not a
+    // not -a 
+    // - not a => must be wrong
+
+    [Test]
+    public void HandlesClassicalNegationCorrectly()
+    {
+        var code = """
+                   a(X) :- - b(X).
+                   a?
+                   """;
+        
+        var program = GetProgram(code);
+        var nafLiteral = program.Statements[0].Body?.Literals[0]; 
+        
+        //First check inner part for classical negation
+        //Then outer part for NAF
+        Assert.That(nafLiteral?.Literal is { Identifier: "b", Negated: true } && 
+            !nafLiteral.Negated);
+    }
+    
+    [Test]
+    public void HandlesNegationAsFailureCorrectly()
+    {
+        var code = """
+                   a(X) :- not b(X).
+                   a?
+                   """;
+        
+        var program = GetProgram(code);
+        var nafLiteral = program.Statements[0].Body?.Literals[0]; 
+        
+        //First check inner part for classical negation
+        //Then outer part for NAF
+        Assert.That(nafLiteral?.Literal is { Identifier: "b", Negated: false } && 
+                    nafLiteral.Negated);
+    }
+    
+    [Test]
+    public void HandlesNafAndClassicalNegationCorrectly()
+    {
+        var code = """
+                   a(X) :- not -b(X).
+                   a?
+                   """;
+        
+        var program = GetProgram(code);
+        var nafLiteral = program.Statements[0].Body?.Literals[0]; 
+        
+        //First check inner part for classical negation
+        //Then outer part for NAF
+        Assert.That(nafLiteral?.Literal is { Identifier: "b", Negated: true } && 
+                    nafLiteral.Negated);
+    }
+    
+    [Test]
+    public void ThrowsExceptionOnClassicalNegationAndNafCorrectly()
+    {
+        //This code cannot exist due to grammar specification
+        var code = """
+                   a(X) :- - not b(X).
+                   a?
+                   """;
+        
+        Assert.Throws<NullReferenceException>(() => GetProgram(code));
+    }
+
+    [Test]
+    public void HandlesDisjunctionInRuleHeadCorrectly()
+    {
+        var code = """
+                   a(X) | b(X) | c(X):- d(X).
+                   a?
+                   """;
+        
+        var program = GetProgram(code);
+        
+        var head = program.Statements[0].Head;
+        var firstLiteral = head?.Literals[0];
+        var secondLiteral = head?.Literals[1];
+        var thirdLiteral = head?.Literals[2];
+        
+        Assert.That(
+            head?.Literals.Count == 3 &&
+            firstLiteral is {Negated:false, Identifier: "a"} &&
+            secondLiteral is {Negated:false, Identifier: "b"} &&
+            thirdLiteral is {Negated:false, Identifier: "c"});
+    }
+    
+    [Test]
+    public void HandlesStatementWithoutRuleHeadCorrectly()
+    {
+        var code = """
+                   :- b.
+                   b?
+                   """;
+        
+        var program = GetProgram(code);
+        var statement = program.Statements[0];
+        
+        Assert.That(
+            statement.HasBody && 
+            !statement.HasHead &&
+            statement.Head == null &&
+            statement.Body != null && 
+            statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
+    }
+    
+    [Test]
+    public void HandlesStatementWithoutRuleBodyCorrectly()
+    {
+        var code = """
+                   a :- .
+                   a?
+                   """;
+        
+        var program = GetProgram(code);
+        var statement = program.Statements[0];
+        
+        Assert.That(
+            !statement.HasBody && 
+            statement.HasHead &&
+            statement.Head != null &&
+            statement.Body == null && 
+            statement.Head.Literals[0] is {Negated: false, Identifier: "a"});
+    }
+    
+    [Test]
+    public void HandlesStatementWithRuleBodyAndHeadCorrectly()
+    {
+        var code = """
+                   a :- b.
+                   a?
+                   """;
+        
+        var program = GetProgram(code);
+        var statement = program.Statements[0];
+        
+        Assert.That(
+            statement.HasBody && 
+            statement.HasHead &&
+            statement.Head != null &&
+            statement.Body != null && 
+            statement.Head.Literals[0] is {Negated: false, Identifier: "a"} &&
+            statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
+    }
+    
+    [Test]
+    public void HandlesStatementWithRuleBodyAndNegatedHeadCorrectly()
+    {
+        var code = """
+                   -a :- b.
+                   a?
+                   """;
+        
+        var program = GetProgram(code);
+        var statement = program.Statements[0];
+        
+        Assert.That(
+            statement.HasBody && 
+            statement.HasHead &&
+            statement.Head != null &&
+            statement.Body != null && 
+            statement.Head.Literals[0] is {Negated: true, Identifier: "a"} &&
+            statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
+    }
+    
     [Test]
     public void HandlesTermsInHeadCorrectly()
     {
