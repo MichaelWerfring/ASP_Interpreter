@@ -68,30 +68,6 @@ public interface IASPVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitBody([NotNull] ASPParser.BodyContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.disjunction"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDisjunction([NotNull] ASPParser.DisjunctionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.choice"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitChoice([NotNull] ASPParser.ChoiceContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.choice_elements"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitChoice_elements([NotNull] ASPParser.Choice_elementsContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.choice_element"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitChoice_element([NotNull] ASPParser.Choice_elementContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.naf_literals"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -123,12 +99,12 @@ public interface IASPVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitEqualityOperation([NotNull] ASPParser.EqualityOperationContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>unequalityOperation</c>
+	/// Visit a parse tree produced by the <c>disunificationOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitUnequalityOperation([NotNull] ASPParser.UnequalityOperationContext context);
+	Result VisitDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>lessOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binop"/>.
@@ -157,13 +133,6 @@ public interface IASPVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitGreaterOrEqOperation([NotNull] ASPParser.GreaterOrEqOperationContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>disunificationOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.terms"/>.
 	/// </summary>

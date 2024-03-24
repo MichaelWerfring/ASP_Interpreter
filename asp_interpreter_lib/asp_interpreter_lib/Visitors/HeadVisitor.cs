@@ -9,20 +9,8 @@ public class HeadVisitor : ASPBaseVisitor<Head>
 {
     public override Head VisitHead(ASPParser.HeadContext context)
     {
-        var literalVisitor = new ClassicalLiteralVisitor();
-        List<ClassicalLiteral> literals = [];
+        var headLiteral = context.classical_literal().Accept(new ClassicalLiteralVisitor());
         
-        foreach (var literal in context.disjunction().children)
-        {
-            //In a disjunction we only expect classical literals 
-            //due to the grammar definition
-            var c = literal.Accept(literalVisitor);
-            if (c != null)
-            {
-                literals.Add(c);   
-            }
-        }
-
-        return new Head(literals);
+        return new Head(headLiteral);
     }
 }

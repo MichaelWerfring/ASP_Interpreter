@@ -5,17 +5,10 @@ namespace asp_interpreter_lib.Types;
 public class Head
 {
     //Choice rules are not supported yet
-    public Head(List<ClassicalLiteral> literals)
+    public Head(ClassicalLiteral literal)
     {
-        if (literals.Count < 1)
-        {
-            throw new ArgumentException("Head must contain at least one literal");
-        }
-        
-        Literals = literals;
+        Literal = literal;
     }
     
-    public ClassicalLiteral Literal => Literals[0];
-
-    public List<ClassicalLiteral> Literals { get; private set; }
+    public ClassicalLiteral Literal { get; private set; }
 }

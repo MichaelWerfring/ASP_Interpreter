@@ -97,28 +97,6 @@ public class VisitorTests
         
         Assert.Throws<NullReferenceException>(() => GetProgram(code));
     }
-
-    [Test]
-    public void HandlesDisjunctionInRuleHeadCorrectly()
-    {
-        var code = """
-                   a(X) | b(X) | c(X):- d(X).
-                   a?
-                   """;
-        
-        var program = GetProgram(code);
-        
-        var head = program.Statements[0].Head;
-        var firstLiteral = head?.Literals[0];
-        var secondLiteral = head?.Literals[1];
-        var thirdLiteral = head?.Literals[2];
-        
-        Assert.That(
-            head?.Literals.Count == 3 &&
-            firstLiteral is {Negated:false, Identifier: "a"} &&
-            secondLiteral is {Negated:false, Identifier: "b"} &&
-            thirdLiteral is {Negated:false, Identifier: "c"});
-    }
     
     [Test]
     public void HandlesStatementWithoutRuleHeadCorrectly()
@@ -155,7 +133,7 @@ public class VisitorTests
             statement.HasHead &&
             statement.Head != null &&
             statement.Body == null && 
-            statement.Head.Literals[0] is {Negated: false, Identifier: "a"});
+            statement.Head.Literal is {Negated: false, Identifier: "a"});
     }
     
     [Test]
@@ -174,7 +152,7 @@ public class VisitorTests
             statement.HasHead &&
             statement.Head != null &&
             statement.Body != null && 
-            statement.Head.Literals[0] is {Negated: false, Identifier: "a"} &&
+            statement.Head.Literal is {Negated: false, Identifier: "a"} &&
             statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
     }
     
@@ -194,7 +172,7 @@ public class VisitorTests
             statement.HasHead &&
             statement.Head != null &&
             statement.Body != null && 
-            statement.Head.Literals[0] is {Negated: true, Identifier: "a"} &&
+            statement.Head.Literal is {Negated: true, Identifier: "a"} &&
             statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
     }
     

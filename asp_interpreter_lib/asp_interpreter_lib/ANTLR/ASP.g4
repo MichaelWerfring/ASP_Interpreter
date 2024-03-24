@@ -10,15 +10,11 @@ statement
     | head (CONS body?)? DOT;
 
 //head: classical_literal | nix
-head : disjunction | choice;
+//head : disjunction | choice;
+head: classical_literal;
 //body : naf_literal (COMMA body)?;
 body : naf_literal (COMMA naf_literal)*;
 
-disjunction : classical_literal (OR classical_literal)*;
-choice: (term binop)? CURLY_OPEN choice_elements? CURLY_CLOSE (binop term)?;
-
-choice_elements : choice_element (SEMICOLON choice_elements)?;
-choice_element : classical_literal (COLON naf_literals?)?;
 
 naf_literals :  naf_literal (COMMA naf_literals)?;
 naf_literal : NAF? classical_literal | builtin_atom;
