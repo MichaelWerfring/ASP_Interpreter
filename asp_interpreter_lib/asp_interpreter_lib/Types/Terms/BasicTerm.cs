@@ -1,4 +1,6 @@
-﻿namespace asp_interpreter_lib.Types.Terms;
+﻿using asp_interpreter_lib.Types.Terms.TermConversion;
+
+namespace asp_interpreter_lib.Types.Terms;
 
 public class BasicTerm: Term
 {
@@ -30,5 +32,10 @@ public class BasicTerm: Term
     {
         get => _terms;
         set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
+    }
+    
+    public override T Accept<T>(ITermVisitor<T> visitor)
+    {
+        return visitor.Visit(this);
     }
 }

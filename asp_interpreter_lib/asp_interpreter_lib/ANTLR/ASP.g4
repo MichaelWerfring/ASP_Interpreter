@@ -12,7 +12,6 @@ statement
 head: classical_literal;
 body : naf_literal (COMMA naf_literal)*;
 
-
 naf_literals :  naf_literal (COMMA naf_literals)?;
 naf_literal : NAF? classical_literal | builtin_atom;
 

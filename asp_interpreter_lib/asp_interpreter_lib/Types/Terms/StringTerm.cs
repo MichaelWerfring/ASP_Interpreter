@@ -1,4 +1,6 @@
-﻿namespace asp_interpreter_lib.Types.Terms;
+﻿using asp_interpreter_lib.Types.Terms.TermConversion;
+
+namespace asp_interpreter_lib.Types.Terms;
 
 public class StringTerm: Term
 {
@@ -14,5 +16,10 @@ public class StringTerm: Term
     {
         get => _value;
         private set => _value = value ?? throw new ArgumentNullException(nameof(Value),"Value cannot be null!");
+    }
+    
+    public override T Accept<T>(ITermVisitor<T> visitor)
+    {
+        return visitor.Visit(this);
     }
 }

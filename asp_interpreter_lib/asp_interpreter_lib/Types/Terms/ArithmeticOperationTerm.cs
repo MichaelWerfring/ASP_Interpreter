@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.Types.ArithmeticOperations;
+using asp_interpreter_lib.Types.Terms.TermConversion;
 
 namespace asp_interpreter_lib.Types.Terms;
 
@@ -31,5 +32,10 @@ public class ArithmeticOperationTerm : Term
     {
         get => _right;
         private set => _right = value ?? throw new ArgumentNullException(nameof(Right));
+    }
+    
+    public override T Accept<T>(ITermVisitor<T> visitor)
+    {
+        return visitor.Visit(this);
     }
 }

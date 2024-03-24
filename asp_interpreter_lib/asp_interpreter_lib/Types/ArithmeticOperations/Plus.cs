@@ -1,9 +1,14 @@
-﻿namespace asp_interpreter_lib.Types.ArithmeticOperations;
+﻿using asp_interpreter_lib.Types.Terms;
 
-public class Plus(int left, int right) : ArithmeticOperation(left, right)
+namespace asp_interpreter_lib.Types.ArithmeticOperations;
+
+public class Plus(Term left, Term right) : ArithmeticOperation(left, right)
 {
-    public override int Evaluate()
+    public override Term Evaluate()
     {
-        return Left + Right;
+        var visitor = new TermToNumberConverter();
+        var leftValue = Left.Accept(visitor);
+        var rightValue = Right.Accept(visitor);
+        return new NumberTerm(leftValue + rightValue);
     }
 }
