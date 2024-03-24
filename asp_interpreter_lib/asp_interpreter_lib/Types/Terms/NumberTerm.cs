@@ -9,5 +9,5 @@ public class NumberTerm: Term
     
     //according to the grammar, the value
     //of a number term allows only integer
-    public int Value { get; set; }
+    public int Value { get; private set; }
 }

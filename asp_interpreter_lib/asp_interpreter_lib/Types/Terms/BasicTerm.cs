@@ -2,13 +2,33 @@
 
 public class BasicTerm: Term
 {
+    private string _identifier;
+    private List<Term> _terms;
+
     public BasicTerm(string identifier, List<Term> terms)
     {
         Identifier = identifier;
         Terms = terms;
     }
 
-    public string Identifier { get; set; }
+    public string Identifier
+    {
+        get => _identifier;
+        private set
+        {
+            if (string.IsNullOrWhiteSpace(value) || value == string.Empty )
+            {
+                throw new ArgumentException("The given Identifier must not be null, whitespace or empty!",
+                    nameof(Identifier));
+            }
 
-    public List<Term> Terms { get; set; }
+            _identifier = value;
+        }
+    }
+
+    public List<Term> Terms
+    {
+        get => _terms;
+        set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
+    }
 }

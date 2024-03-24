@@ -2,5 +2,15 @@
 
 public abstract class ArithmeticOperation
 {
-    public abstract int Evaluate(int left, int right);
+    protected ArithmeticOperation(int left ,int right)
+    {
+        Left = left;
+        Right = right;
+    }
+    
+    public abstract int Evaluate();
+    
+    public int Left { get; private set; }
+    
+    public int Right { get; private set; }
 }

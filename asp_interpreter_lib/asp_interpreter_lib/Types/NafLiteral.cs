@@ -2,6 +2,8 @@
 
 public class NafLiteral
 {
+    private ClassicalLiteral _literal;
+
     public NafLiteral(ClassicalLiteral literal, bool negated)
     {
         Literal = literal;
@@ -9,7 +11,11 @@ public class NafLiteral
     }
 
     //Negated in this context means negation as failure (NAF)
-    public bool Negated { get; set; }
-    
-    public ClassicalLiteral Literal { get; set; }
+    public bool Negated { get; private set; }
+
+    public ClassicalLiteral Literal
+    {
+        get => _literal;
+        private set => _literal = value ?? throw new ArgumentNullException(nameof(Literal));
+    }
 }

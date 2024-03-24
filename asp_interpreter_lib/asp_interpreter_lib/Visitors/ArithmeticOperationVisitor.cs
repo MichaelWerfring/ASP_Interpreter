@@ -6,14 +6,6 @@ public class ArithmeticOperationVisitor : ASPBaseVisitor<ArithmeticOperation>
 {
     public override ArithmeticOperation VisitArithop(ASPParser.ArithopContext context)
     {
-        var op = context.GetText() ?? string.Empty;
-        return op switch
-        {
-            "+" => new Plus(),
-            "-" => new Minus(),
-            "*" => new Multiply(),
-            "/" => new Dividie(),
-            _ => throw new ArgumentException($"The given operation {op} is not supported!")
-        };
+        throw new NotImplementedException();
     }
 }

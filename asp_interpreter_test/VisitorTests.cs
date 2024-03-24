@@ -187,7 +187,7 @@ public class VisitorTests
 
         Assert.That(
             headLiteral is { Identifier: "separate", Negated: false, Terms.Count: 2 } &&
-            firstTerm.Name == "X" && secondTerm.Name == "Y");
+            firstTerm.Identifier == "X" && secondTerm.Identifier == "Y");
     }
 
     [Test]
@@ -201,7 +201,7 @@ public class VisitorTests
 
         Assert.That(
             queryLiteral is { Identifier: "edge", Negated: false, Terms.Count: 2 } &&
-            firstTerm.Name == "X" && secondTerm.Identifier == "b");
+            firstTerm.Identifier == "X" && secondTerm.Identifier == "b");
     }
     
     [Test]
@@ -233,22 +233,22 @@ public class VisitorTests
 
         if (firstLiteral.Literal.Terms[0] is VariableTerm firstVarTerm)
         {
-            Assert.That(firstVarTerm.Name == "X");
+            Assert.That(firstVarTerm.Identifier == "X");
         }
         
         if (secondLiteral.Literal.Terms[0] is VariableTerm secondVarTerm)
         {
-            Assert.That(secondVarTerm.Name == "Y");
+            Assert.That(secondVarTerm.Identifier == "Y");
         }
         
         if (thirdLiteral.Literal.Terms[0] is VariableTerm thirdVarTerm)
         {
-            Assert.That(thirdVarTerm.Name == "X");
+            Assert.That(thirdVarTerm.Identifier == "X");
         }
         
         if (thirdLiteral.Literal.Terms[1] is VariableTerm fourthVarTerm)
         {
-            Assert.That(fourthVarTerm.Name == "Y");
+            Assert.That(fourthVarTerm.Identifier == "Y");
         }
     }
     

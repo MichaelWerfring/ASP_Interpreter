@@ -1,9 +1,9 @@
 ﻿namespace asp_interpreter_lib.Types.ArithmeticOperations;
 
-public class Multiply : ArithmeticOperation
+public class Multiply(int left, int right) : ArithmeticOperation(left, right)
 {
-    public override int Evaluate(int left, int right)
+    public override int Evaluate()
     {
-        return left * right;
+        return Left * Right;
     }
 }

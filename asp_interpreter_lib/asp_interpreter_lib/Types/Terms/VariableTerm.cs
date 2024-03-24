@@ -2,10 +2,25 @@
 
 public class VariableTerm: Term
 {
-    public VariableTerm(string name)
+    private string _identifier;
+
+    public VariableTerm(string identifier)
     {
-        Name = name;
+        Identifier = identifier;
     }
 
-    public string Name { get; set; }
+    public string Identifier
+    {
+        get => _identifier;
+        private set
+        {
+            if (string.IsNullOrWhiteSpace(value) || value == string.Empty)
+            {
+                throw new ArgumentException("Identifier cannot be null, empty or whitespace!", 
+                    nameof(Identifier));
+            }
+            
+            _identifier = value;
+        }
+    }
 }

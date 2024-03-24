@@ -2,13 +2,24 @@
 
 public class AspProgram
 {
-    public AspProgram(List<Statement> statments, Query query)
+    private List<Statement> _statements;
+    private Query _query;
+
+    public AspProgram(List<Statement> statements, Query query)
     {
-        Statements = statments;
+        Statements = statements;
         Query = query;
     }
 
-    public List<Statement> Statements { get; private set; }
-    
-    public Query Query { get; private set; }
+    public List<Statement> Statements
+    {
+        get => _statements;
+        private set => _statements = value ?? throw new ArgumentNullException(nameof(Statements));
+    }
+
+    public Query Query
+    {
+        get => _query;
+        private set => _query = value ?? throw new ArgumentNullException(nameof(Query));
+    }
 }

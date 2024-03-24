@@ -2,9 +2,9 @@
 
 namespace asp_interpreter_lib.Types.BinaryOperations;
 
-public class GreaterOrEqualThan : BinaryOperation
+public class GreaterOrEqualThan(Term left, Term right) : BinaryOperation(left, right)
 {
-    public override bool Evaluate(Term left, Term right)
+    public override bool Evaluate()
     {
         throw new NotImplementedException();
     }
