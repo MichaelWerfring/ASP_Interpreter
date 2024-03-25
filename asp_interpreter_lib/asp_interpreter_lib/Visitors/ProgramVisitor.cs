@@ -1,9 +1,12 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class ProgramVisitor : ASPBaseVisitor<AspProgram>
+public class ProgramVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<AspProgram>
 {
+    private readonly IErrorLogger _errorLogger = errorLogger;
+    
     public override AspProgram VisitProgram(ASPParser.ProgramContext context)
     {
         List<Statement> statements = [];
@@ -13,9 +16,8 @@ public class ProgramVisitor : ASPBaseVisitor<AspProgram>
         {
             statements.Add(s.Accept(statementVisitor));
         }
-
-        var queryVisitor = new QueryVisitor();
-        var query = context.query().Accept(queryVisitor);
+        
+        var query = context.query().Accept(new QueryVisitor(_errorLogger));
         
         return new AspProgram(statements, query);
     }

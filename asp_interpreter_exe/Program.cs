@@ -9,10 +9,8 @@ using QuikGraph.Algorithms;
 using QuikGraph.Graphviz;
 using System.IO;
 
-
-
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddTransient<IErrorHandler, ConsoleErrorLogger>();
+builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
 builder.Services.AddTransient<ProgramVisitor>();
 using var host = builder.Build();
 
@@ -33,10 +31,7 @@ var inputStream = new AntlrInputStream(result.Content);
 var lexer = new ASPLexer(inputStream);
 var commonTokenStream = new CommonTokenStream(lexer);
 var parser = new ASPParser(commonTokenStream);
-//for handling errors: parser.AddErrorListener();
 var context = parser.program();
-//var visitor = new ProgramVisitor();
-
-ProgramVisitor visitor = host.Services.GetRequiredService<ProgramVisitor>();
+var visitor = host.Services.GetRequiredService<ProgramVisitor>();
 var program = visitor.VisitProgram(context);
 Console.ReadLine();
