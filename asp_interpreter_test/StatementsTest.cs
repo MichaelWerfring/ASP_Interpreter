@@ -2,7 +2,7 @@
 
 namespace asp_interpreter_test;
 
-public class StatementsTests
+public class StatementsTest
 {
     [Test]
     public void CreatesEmptyStatementPerDefault()

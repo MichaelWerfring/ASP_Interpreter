@@ -10,6 +10,12 @@ public class Divide(Term left, Term right) : ArithmeticOperation(left, right)
         var visitor = new TermToNumberConverter();
         var leftValue = Left.Accept(visitor);
         var rightValue = Right.Accept(visitor);
+
+        if (rightValue == 0)
+        {
+            throw new DivideByZeroException("The right term of a division cannot be zero.");
+        }
+        
         return new NumberTerm(leftValue / rightValue);
     }
 

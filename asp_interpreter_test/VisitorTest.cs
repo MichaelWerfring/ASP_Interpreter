@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace asp_interpreter_test;
 
-public class VisitorTests
+public class VisitorTest
 {
     private string _graphCode;
     
