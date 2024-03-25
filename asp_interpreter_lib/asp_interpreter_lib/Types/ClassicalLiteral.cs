@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types;
 
@@ -7,7 +8,7 @@ public class ClassicalLiteral
     private List<Term> _terms;
     private string _identifier;
 
-    public ClassicalLiteral(string identifier, bool negated, List<Term> terms)
+    public ClassicalLiteral(string identifier, bool negated, List<Term> terms) 
     {
         Identifier = identifier;
         Terms = terms;

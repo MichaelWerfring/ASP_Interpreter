@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types;
 
@@ -32,6 +33,6 @@ public class BuiltinAtom
     public Term Right
     {
         get => _right;
-        set => _right = value;
+        set => _right = value ?? throw new ArgumentNullException(nameof(value));
     }
 }

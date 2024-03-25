@@ -2,20 +2,78 @@
 
 public class NafLiteral
 {
-    private ClassicalLiteral _literal;
+    private ClassicalLiteral _classicalLiteral;
+    private BuiltinAtom _builtinAtom;
 
-    public NafLiteral(ClassicalLiteral literal, bool negated)
+    public NafLiteral(ClassicalLiteral literal, bool isNafNegated)
     {
-        Literal = literal;
-        Negated = negated;
+        ClassicalLiteral = literal;
+        IsClassicalLiteral = true;
+        IsNafNegated = isNafNegated;
     }
 
-    //Negated in this context means negation as failure (NAF)
-    public bool Negated { get; private set; }
-
-    public ClassicalLiteral Literal
+    public NafLiteral(BuiltinAtom atom)
     {
-        get => _literal;
-        private set => _literal = value ?? throw new ArgumentNullException(nameof(Literal));
+        IsBuiltinAtom = true;
+        BuiltinAtom = atom;
+    }
+    
+    public NafLiteral()
+    {
+    }
+
+    public bool IsBuiltinAtom { get; private set; }
+
+    public bool IsClassicalLiteral { get; private set; }
+
+    public bool IsNafNegated { get; private set; }
+
+    public ClassicalLiteral ClassicalLiteral
+    {
+        get => _classicalLiteral;
+        private set => _classicalLiteral = value ?? throw new ArgumentNullException(nameof(ClassicalLiteral));
+    }
+
+    public BuiltinAtom BuiltinAtom
+    {
+        get => _builtinAtom;
+        private set => _builtinAtom = value ?? throw new ArgumentNullException(nameof(BuiltinAtom));
+    }
+    
+    public void AddClassicalLiteral(ClassicalLiteral literal, bool isNafNegated)
+    {
+        ArgumentNullException.ThrowIfNull(literal);
+        
+        if (IsBuiltinAtom)
+        {
+            throw new InvalidOperationException("Cannot add a classical literal to a builtin atom!");
+        }
+        
+        if (IsClassicalLiteral)
+        {
+            throw new InvalidOperationException("The classical literal has already been set!");
+        }
+        
+        ClassicalLiteral = literal;
+        IsNafNegated = isNafNegated;
+        IsClassicalLiteral = true;
+    }
+    
+    public void AddBuiltinAtom(BuiltinAtom atom)
+    {
+        ArgumentNullException.ThrowIfNull(atom);
+        
+        if (IsClassicalLiteral)
+        {
+            throw new InvalidOperationException("Cannot add a builtin atom to a classical literal!");
+        }
+
+        if (IsBuiltinAtom)
+        {
+            throw new InvalidOperationException("The builtin atom has already been set!");
+        }
+        
+        BuiltinAtom = atom;
+        IsBuiltinAtom = true;
     }
 }

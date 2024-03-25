@@ -48,8 +48,8 @@ public class VisitorTests
         
         //First check inner part for classical negation
         //Then outer part for NAF
-        Assert.That(nafLiteral?.Literal is { Identifier: "b", Negated: true } && 
-            !nafLiteral.Negated);
+        Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: true } && 
+            !nafLiteral.IsNafNegated);
     }
     
     [Test]
@@ -65,8 +65,8 @@ public class VisitorTests
         
         //First check inner part for classical negation
         //Then outer part for NAF
-        Assert.That(nafLiteral?.Literal is { Identifier: "b", Negated: false } && 
-                    nafLiteral.Negated);
+        Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: false } && 
+                    nafLiteral.IsNafNegated);
     }
     
     [Test]
@@ -82,8 +82,8 @@ public class VisitorTests
         
         //First check inner part for classical negation
         //Then outer part for NAF
-        Assert.That(nafLiteral?.Literal is { Identifier: "b", Negated: true } && 
-                    nafLiteral.Negated);
+        Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: true } && 
+                    nafLiteral.IsNafNegated);
     }
     
     [Test]
@@ -112,7 +112,7 @@ public class VisitorTests
         Assert.That(
             statement.HasBody && 
             !statement.HasHead &&
-            statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
+            statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
     }
     
     [Test]
@@ -147,7 +147,7 @@ public class VisitorTests
             statement.HasBody && 
             statement.HasHead &&
             statement.Head.Literal is {Negated: false, Identifier: "a"} &&
-            statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
+            statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
     }
     
     [Test]
@@ -167,7 +167,7 @@ public class VisitorTests
             statement.Head != null &&
             statement.Body != null && 
             statement.Head.Literal is {Negated: true, Identifier: "a"} &&
-            statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
+            statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
     }
     
     [Test]
@@ -210,9 +210,9 @@ public class VisitorTests
 
         Assert.That(
             body.Literals.Count == 3 &&
-            firstLiteral.Literal.Identifier == "node" && !firstLiteral.Literal.Negated &&
-            secondLiteral.Literal.Identifier == "node" && !secondLiteral.Literal.Negated &&
-            thirdLiteral.Negated && thirdLiteral.Literal.Identifier == "edge");
+            firstLiteral.ClassicalLiteral.Identifier == "node" && !firstLiteral.ClassicalLiteral.Negated &&
+            secondLiteral.ClassicalLiteral.Identifier == "node" && !secondLiteral.ClassicalLiteral.Negated &&
+            thirdLiteral.IsNafNegated && thirdLiteral.ClassicalLiteral.Identifier == "edge");
     }
 
     [Test]
@@ -225,22 +225,22 @@ public class VisitorTests
         var secondLiteral = body.Literals[1];
         var thirdLiteral = body.Literals[2];
 
-        if (firstLiteral.Literal.Terms[0] is VariableTerm firstVarTerm)
+        if (firstLiteral.ClassicalLiteral.Terms[0] is VariableTerm firstVarTerm)
         {
             Assert.That(firstVarTerm.Identifier == "X");
         }
         
-        if (secondLiteral.Literal.Terms[0] is VariableTerm secondVarTerm)
+        if (secondLiteral.ClassicalLiteral.Terms[0] is VariableTerm secondVarTerm)
         {
             Assert.That(secondVarTerm.Identifier == "Y");
         }
         
-        if (thirdLiteral.Literal.Terms[0] is VariableTerm thirdVarTerm)
+        if (thirdLiteral.ClassicalLiteral.Terms[0] is VariableTerm thirdVarTerm)
         {
             Assert.That(thirdVarTerm.Identifier == "X");
         }
         
-        if (thirdLiteral.Literal.Terms[1] is VariableTerm fourthVarTerm)
+        if (thirdLiteral.ClassicalLiteral.Terms[1] is VariableTerm fourthVarTerm)
         {
             Assert.That(fourthVarTerm.Identifier == "Y");
         }
