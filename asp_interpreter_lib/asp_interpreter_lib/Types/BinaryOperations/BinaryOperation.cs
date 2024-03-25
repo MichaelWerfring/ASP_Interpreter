@@ -26,4 +26,6 @@ public abstract class BinaryOperation
     }
 
     public abstract bool Evaluate();
+
+    public abstract override string ToString();
 }

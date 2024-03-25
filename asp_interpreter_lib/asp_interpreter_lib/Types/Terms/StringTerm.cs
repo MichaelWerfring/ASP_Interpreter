@@ -29,4 +29,9 @@ public class StringTerm: Term
         ArgumentNullException.ThrowIfNull(visitor);
         visitor.Visit(this);
     }
+
+    public override string ToString()
+    {
+        return $"StringTerm({Value})";
+    }
 }

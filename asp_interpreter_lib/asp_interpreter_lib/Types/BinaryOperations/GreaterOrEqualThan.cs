@@ -8,4 +8,9 @@ public class GreaterOrEqualThan(Term left, Term right) : BinaryOperation(left, r
     {
         throw new NotImplementedException();
     }
+
+    public override string ToString()
+    {
+        return $"{Left.ToString()} >= {Right.ToString()}";
+    }
 }

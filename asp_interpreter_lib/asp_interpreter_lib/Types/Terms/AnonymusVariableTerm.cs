@@ -15,4 +15,9 @@ public class AnonymusVariableTerm : Term
         ArgumentNullException.ThrowIfNull(visitor);
         visitor.Visit(this);
     }
+
+    public override string ToString()
+    {
+        return "_";
+    }
 }

@@ -24,4 +24,9 @@ public class NumberTerm: Term
         ArgumentNullException.ThrowIfNull(visitor);
         visitor.Visit(this);
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }

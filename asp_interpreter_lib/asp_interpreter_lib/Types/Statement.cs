@@ -30,4 +30,9 @@ public class Statement
         }
         Body = body;
     }
+
+    public override string ToString()
+    {
+        return "Test";
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.Types.TypeVisitors;
+using System.Text;
 
 namespace asp_interpreter_lib.Types.Terms;
 
@@ -27,5 +28,10 @@ public class NegatedTerm: Term
     {
         ArgumentNullException.ThrowIfNull(visitor);
         visitor.Visit(this);
+    }
+
+    public override string ToString()
+    {
+        return $"NegatedTerm({Term.ToString()})";
     }
 }

@@ -8,4 +8,9 @@ public class Equality(Term left, Term right) : BinaryOperation(left, right)
     {
         throw new NotImplementedException();
     }
+
+    public override string ToString()
+    {
+        return $"{Left.ToString()} = {Right.ToString()}";
+    }
 }
