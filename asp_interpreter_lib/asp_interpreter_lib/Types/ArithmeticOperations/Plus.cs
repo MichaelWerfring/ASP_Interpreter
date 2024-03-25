@@ -12,4 +12,9 @@ public class Plus(Term left, Term right) : ArithmeticOperation(left, right)
         var rightValue = Right.Accept(visitor);
         return new NumberTerm(leftValue + rightValue);
     }
+
+    public override string ToString()
+    {
+        return $"{Left.ToString()} + {Right.ToString()}";
+    }
 }

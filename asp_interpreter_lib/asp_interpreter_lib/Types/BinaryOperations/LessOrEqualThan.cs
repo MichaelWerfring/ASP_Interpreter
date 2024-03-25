@@ -8,4 +8,9 @@ public class LessOrEqualThan : BinaryOperator
     {
         throw new NotImplementedException();
     }
+
+    public override string ToString()
+    {
+        return $"{Left.ToString()} <= {Right.ToString()}";
+    }
 }

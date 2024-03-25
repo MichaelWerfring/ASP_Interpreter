@@ -26,4 +26,6 @@ public abstract class ArithmeticOperation
         get => _right;
         private set => _right = value ?? throw new ArgumentNullException(nameof(Right));
     }
+
+    public abstract override string ToString();
 }
