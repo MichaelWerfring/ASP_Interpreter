@@ -5,13 +5,13 @@ namespace asp_interpreter_lib.Visitors;
 
 public class ProgramVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<AspProgram>
 {
-    private readonly IErrorLogger _errorLogger = errorLogger;
+    private IErrorLogger _errorLogger = errorLogger;
     
     public override AspProgram VisitProgram(ASPParser.ProgramContext context)
     {
         List<Statement> statements = [];
 
-        var statementVisitor = new StatementVisitor();
+        var statementVisitor = new StatementVisitor(_errorLogger);
         foreach (var s in context.statements().children)
         {
             statements.Add(s.Accept(statementVisitor));

@@ -1,15 +1,16 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class BodyVisitor : ASPBaseVisitor<Body>
+public class BodyVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Body>
 {
     public override Body VisitBody(ASPParser.BodyContext context)
     {
         var children = context.children;
         List<NafLiteral> literals = [];
-        var literalVisitor = new NafLiteralVisitor();
+        var literalVisitor = new NafLiteralVisitor(errorLogger);
         
         foreach (var c in children)
         {

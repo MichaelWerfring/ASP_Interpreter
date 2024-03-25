@@ -1,10 +1,12 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types.Terms;
 
-namespace asp_interpreter_lib.Visitors.TermVisitors;
+namespace asp_interpreter_lib.Visitors;
 
-public class TermVisitor : ASPBaseVisitor<Term>
+public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Term>
 {
+    private IErrorLogger _errorLogger = errorLogger;
+    
     public override Term VisitNegatedTerm(ASPParser.NegatedTermContext context)
     {
         return new NegatedTerm(context.term().Accept(this));
@@ -47,7 +49,7 @@ public class TermVisitor : ASPBaseVisitor<Term>
         var right = context.term(1).Accept(this) 
                     ?? throw new ArgumentException("Cannot find right side of arithmetic operation!");
 
-        var operation = context.arithop().Accept(new ArithmeticOperationVisitor()) 
+        var operation = context.arithop().Accept(new ArithmeticOperationVisitor(_errorLogger)) 
                         ?? throw new ArgumentException("The given arithmetic operation is not valid!");
         
         return new ArithmeticOperationTerm(left, operation, right);

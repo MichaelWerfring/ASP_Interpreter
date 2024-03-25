@@ -1,9 +1,12 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class StatementVisitor : ASPBaseVisitor<Statement>
+public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Statement>
 {
+    private IErrorLogger _errorLogger = errorLogger;
+    
     public override Statement VisitStatement(ASPParser.StatementContext context)
     {
         Head head = null;
@@ -14,7 +17,7 @@ public class StatementVisitor : ASPBaseVisitor<Statement>
         
         if (headContext != null)
         {
-            head = headContext.Accept(new HeadVisitor());
+            head = headContext.Accept(new HeadVisitor(_errorLogger));
             statement.AddHead(head);
         }
         
@@ -23,7 +26,7 @@ public class StatementVisitor : ASPBaseVisitor<Statement>
         
         if (bodyContext != null)
         {
-            body = bodyContext.Accept(new BodyVisitor());
+            body = bodyContext.Accept(new BodyVisitor(_errorLogger));
             statement.AddBody(body);
         }
         

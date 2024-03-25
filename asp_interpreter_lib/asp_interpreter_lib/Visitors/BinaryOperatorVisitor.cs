@@ -1,9 +1,12 @@
-﻿using asp_interpreter_lib.Types.BinaryOperations;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.BinaryOperations;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class BinaryOperatorVisitor : ASPBaseVisitor<BinaryOperator>
+public class BinaryOperatorVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<BinaryOperator>
 {
+    private IErrorLogger _errorLogger = errorLogger;
+    
     public override BinaryOperator VisitEqualityOperation(ASPParser.EqualityOperationContext context)
     {
         return new Equality();
