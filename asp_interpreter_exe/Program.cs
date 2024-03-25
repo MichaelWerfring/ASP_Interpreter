@@ -1,6 +1,16 @@
-﻿using Antlr4.Runtime;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Antlr4.Runtime;
+using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.FileIO;
 using asp_interpreter_lib.Visitors;
+
+
+var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddTransient<IErrorHandler, ConsoleErrorLogger>();
+builder.Services.AddTransient<ProgramVisitor>();
+using var host = builder.Build();
+
 
 if(args.Length != 1)
 {
@@ -18,8 +28,9 @@ var inputStream = new AntlrInputStream(result.Content);
 var lexer = new ASPLexer(inputStream);
 var commonTokenStream = new CommonTokenStream(lexer);
 var parser = new ASPParser(commonTokenStream);
-//for handling errors: parser.AddErrorListener();
 var context = parser.program();
-var visitor = new ProgramVisitor();
+//var visitor = new ProgramVisitor();
+
+ProgramVisitor visitor = host.Services.GetRequiredService<ProgramVisitor>();
 var program = visitor.VisitProgram(context);
 Console.ReadLine();

@@ -45,12 +45,12 @@ public partial class ASPParser : Parser {
 	public const int
 		RULE_program = 0, RULE_query = 1, RULE_statements = 2, RULE_statement = 3, 
 		RULE_head = 4, RULE_body = 5, RULE_naf_literals = 6, RULE_naf_literal = 7, 
-		RULE_classical_literal = 8, RULE_builtin_atom = 9, RULE_binop = 10, RULE_terms = 11, 
-		RULE_term = 12, RULE_arithop = 13;
+		RULE_classical_literal = 8, RULE_binary_operation = 9, RULE_binary_operator = 10, 
+		RULE_terms = 11, RULE_term = 12, RULE_arithop = 13;
 	public static readonly string[] ruleNames = {
 		"program", "query", "statements", "statement", "head", "body", "naf_literals", 
-		"naf_literal", "classical_literal", "builtin_atom", "binop", "terms", 
-		"term", "arithop"
+		"naf_literal", "classical_literal", "binary_operation", "binary_operator", 
+		"terms", "term", "arithop"
 	};
 
 	private static readonly string[] _LiteralNames = {
@@ -499,8 +499,8 @@ public partial class ASPParser : Parser {
 			return GetRuleContext<Classical_literalContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NAF() { return GetToken(ASPParser.NAF, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Builtin_atomContext builtin_atom() {
-			return GetRuleContext<Builtin_atomContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Binary_operationContext binary_operation() {
+			return GetRuleContext<Binary_operationContext>(0);
 		}
 		public Naf_literalContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -545,7 +545,7 @@ public partial class ASPParser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 75;
-				builtin_atom();
+				binary_operation();
 				}
 				break;
 			}
@@ -637,40 +637,40 @@ public partial class ASPParser : Parser {
 		return _localctx;
 	}
 
-	public partial class Builtin_atomContext : ParserRuleContext {
+	public partial class Binary_operationContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public TermContext[] term() {
 			return GetRuleContexts<TermContext>();
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public TermContext term(int i) {
 			return GetRuleContext<TermContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public BinopContext binop() {
-			return GetRuleContext<BinopContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Binary_operatorContext binary_operator() {
+			return GetRuleContext<Binary_operatorContext>(0);
 		}
-		public Builtin_atomContext(ParserRuleContext parent, int invokingState)
+		public Binary_operationContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_builtin_atom; } }
+		public override int RuleIndex { get { return RULE_binary_operation; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitBuiltin_atom(this);
+			if (typedVisitor != null) return typedVisitor.VisitBinary_operation(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Builtin_atomContext builtin_atom() {
-		Builtin_atomContext _localctx = new Builtin_atomContext(Context, State);
-		EnterRule(_localctx, 18, RULE_builtin_atom);
+	public Binary_operationContext binary_operation() {
+		Binary_operationContext _localctx = new Binary_operationContext(Context, State);
+		EnterRule(_localctx, 18, RULE_binary_operation);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 89;
 			term(0);
 			State = 90;
-			binop();
+			binary_operator();
 			State = 91;
 			term(0);
 			}
@@ -686,21 +686,21 @@ public partial class ASPParser : Parser {
 		return _localctx;
 	}
 
-	public partial class BinopContext : ParserRuleContext {
-		public BinopContext(ParserRuleContext parent, int invokingState)
+	public partial class Binary_operatorContext : ParserRuleContext {
+		public Binary_operatorContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_binop; } }
+		public override int RuleIndex { get { return RULE_binary_operator; } }
 	 
-		public BinopContext() { }
-		public virtual void CopyFrom(BinopContext context) {
+		public Binary_operatorContext() { }
+		public virtual void CopyFrom(Binary_operatorContext context) {
 			base.CopyFrom(context);
 		}
 	}
-	public partial class LessOrEqOperationContext : BinopContext {
+	public partial class LessOrEqOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LESS_OR_EQ() { return GetToken(ASPParser.LESS_OR_EQ, 0); }
-		public LessOrEqOperationContext(BinopContext context) { CopyFrom(context); }
+		public LessOrEqOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -708,9 +708,9 @@ public partial class ASPParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class GreaterOrEqOperationContext : BinopContext {
+	public partial class GreaterOrEqOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GREATER_OR_EQ() { return GetToken(ASPParser.GREATER_OR_EQ, 0); }
-		public GreaterOrEqOperationContext(BinopContext context) { CopyFrom(context); }
+		public GreaterOrEqOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -718,9 +718,9 @@ public partial class ASPParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class DisunificationOperationContext : BinopContext {
+	public partial class DisunificationOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DISUNIFICATION() { return GetToken(ASPParser.DISUNIFICATION, 0); }
-		public DisunificationOperationContext(BinopContext context) { CopyFrom(context); }
+		public DisunificationOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -728,9 +728,9 @@ public partial class ASPParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class LessOperationContext : BinopContext {
+	public partial class LessOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LESS() { return GetToken(ASPParser.LESS, 0); }
-		public LessOperationContext(BinopContext context) { CopyFrom(context); }
+		public LessOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -738,9 +738,9 @@ public partial class ASPParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class GreaterOperationContext : BinopContext {
+	public partial class GreaterOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GREATER() { return GetToken(ASPParser.GREATER, 0); }
-		public GreaterOperationContext(BinopContext context) { CopyFrom(context); }
+		public GreaterOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -748,9 +748,9 @@ public partial class ASPParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class EqualityOperationContext : BinopContext {
+	public partial class EqualityOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUAL() { return GetToken(ASPParser.EQUAL, 0); }
-		public EqualityOperationContext(BinopContext context) { CopyFrom(context); }
+		public EqualityOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -760,9 +760,9 @@ public partial class ASPParser : Parser {
 	}
 
 	[RuleVersion(0)]
-	public BinopContext binop() {
-		BinopContext _localctx = new BinopContext(Context, State);
-		EnterRule(_localctx, 20, RULE_binop);
+	public Binary_operatorContext binary_operator() {
+		Binary_operatorContext _localctx = new Binary_operatorContext(Context, State);
+		EnterRule(_localctx, 20, RULE_binary_operator);
 		try {
 			State = 99;
 			ErrorHandler.Sync(this);

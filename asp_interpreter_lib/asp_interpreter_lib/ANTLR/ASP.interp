@@ -86,8 +86,8 @@ body
 naf_literals
 naf_literal
 classical_literal
-builtin_atom
-binop
+binary_operation
+binary_operator
 terms
 term
 arithop

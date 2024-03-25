@@ -13,12 +13,12 @@ head: classical_literal;
 body : naf_literal (COMMA naf_literal)*;
 
 naf_literals :  naf_literal (COMMA naf_literals)?;
-naf_literal : NAF? classical_literal | builtin_atom;
+naf_literal : NAF? classical_literal | binary_operation;
 
 classical_literal : MINUS? ID (PAREN_OPEN terms? PAREN_CLOSE)?;
-builtin_atom : term binop term;
+binary_operation : term binary_operator term;
 
-binop 
+binary_operator
     : EQUAL             #equalityOperation
     | DISUNIFICATION    #disunificationOperation
     | LESS              #lessOperation

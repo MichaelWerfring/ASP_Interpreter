@@ -1,9 +1,11 @@
-﻿namespace asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.Types.BinaryOperations;
+
+namespace asp_interpreter_lib.Types;
 
 public class NafLiteral
 {
     private ClassicalLiteral _classicalLiteral;
-    private BuiltinAtom _builtinAtom;
+    private BinaryOperation _builtinAtom;
 
     public NafLiteral(ClassicalLiteral literal, bool isNafNegated)
     {
@@ -12,7 +14,7 @@ public class NafLiteral
         IsNafNegated = isNafNegated;
     }
 
-    public NafLiteral(BuiltinAtom atom)
+    public NafLiteral(BinaryOperation atom)
     {
         IsBuiltinAtom = true;
         BuiltinAtom = atom;
@@ -34,7 +36,7 @@ public class NafLiteral
         private set => _classicalLiteral = value ?? throw new ArgumentNullException(nameof(ClassicalLiteral));
     }
 
-    public BuiltinAtom BuiltinAtom
+    public BinaryOperation BuiltinAtom
     {
         get => _builtinAtom;
         private set => _builtinAtom = value ?? throw new ArgumentNullException(nameof(BuiltinAtom));
@@ -59,7 +61,7 @@ public class NafLiteral
         IsClassicalLiteral = true;
     }
     
-    public void AddBuiltinAtom(BuiltinAtom atom)
+    public void AddBuiltinAtom(BinaryOperation atom)
     {
         ArgumentNullException.ThrowIfNull(atom);
         

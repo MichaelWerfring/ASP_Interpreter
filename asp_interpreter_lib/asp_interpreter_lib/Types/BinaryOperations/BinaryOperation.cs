@@ -2,14 +2,16 @@
 
 namespace asp_interpreter_lib.Types.BinaryOperations;
 
-public abstract class BinaryOperation
+public class BinaryOperation
 {
     private Term _left;
     private Term _right;
+    private BinaryOperator _binaryOperator;
 
-    protected BinaryOperation(Term left, Term right)
+    public BinaryOperation(Term left, BinaryOperator binaryOperator, Term right)
     {
         Left = left;
+        BinaryOperator = binaryOperator;
         Right = right;
     }
 
@@ -19,11 +21,17 @@ public abstract class BinaryOperation
         private set => _left = value ?? throw new ArgumentNullException(nameof(Left));
     }
 
+    public BinaryOperator BinaryOperator
+    {
+        get => _binaryOperator;
+        private set => _binaryOperator = value ?? throw new ArgumentNullException(nameof(BinaryOperator));
+    }
+
     public Term Right
     {
         get => _right;
         private set => _right = value ?? throw new ArgumentNullException(nameof(Right));
     }
-
-    public abstract bool Evaluate();
+    
+    //Evaluate by delegating to the operator
 }

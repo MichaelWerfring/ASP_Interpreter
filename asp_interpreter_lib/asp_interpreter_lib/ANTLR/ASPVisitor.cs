@@ -86,49 +86,49 @@ public interface IASPVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitClassical_literal([NotNull] ASPParser.Classical_literalContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.builtin_atom"/>.
+	/// Visit a parse tree produced by <see cref="ASPParser.binary_operation"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitBuiltin_atom([NotNull] ASPParser.Builtin_atomContext context);
+	Result VisitBinary_operation([NotNull] ASPParser.Binary_operationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>equalityOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitEqualityOperation([NotNull] ASPParser.EqualityOperationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>disunificationOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>lessOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitLessOperation([NotNull] ASPParser.LessOperationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitGreaterOperation([NotNull] ASPParser.GreaterOperationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>lessOrEqOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitLessOrEqOperation([NotNull] ASPParser.LessOrEqOperationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterOrEqOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>

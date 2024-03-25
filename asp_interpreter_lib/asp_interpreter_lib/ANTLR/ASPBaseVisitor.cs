@@ -125,7 +125,7 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitClassical_literal([NotNull] ASPParser.Classical_literalContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.builtin_atom"/>.
+	/// Visit a parse tree produced by <see cref="ASPParser.binary_operation"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -133,10 +133,10 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitBuiltin_atom([NotNull] ASPParser.Builtin_atomContext context) { return VisitChildren(context); }
+	public virtual Result VisitBinary_operation([NotNull] ASPParser.Binary_operationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>equalityOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -147,7 +147,7 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	public virtual Result VisitEqualityOperation([NotNull] ASPParser.EqualityOperationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>disunificationOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -158,7 +158,7 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	public virtual Result VisitDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>lessOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -169,7 +169,7 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	public virtual Result VisitLessOperation([NotNull] ASPParser.LessOperationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -180,7 +180,7 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	public virtual Result VisitGreaterOperation([NotNull] ASPParser.GreaterOperationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>lessOrEqOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -191,7 +191,7 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	public virtual Result VisitLessOrEqOperation([NotNull] ASPParser.LessOrEqOperationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterOrEqOperation</c>
-	/// labeled alternative in <see cref="ASPParser.binop"/>.
+	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.

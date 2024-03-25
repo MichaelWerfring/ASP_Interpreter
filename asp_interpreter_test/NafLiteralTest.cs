@@ -38,9 +38,9 @@ public class NafLiteralTest
     public void CreatesNafLiteralWithBuiltinAtom()
     {
         //It does not make a difference what the terms are for this test
-        var builtinAtom = new BuiltinAtom(
+        var builtinAtom = new BinaryOperation(
             new AnonymusVariableTerm(),
-            new Equality(new AnonymusVariableTerm(), new AnonymusVariableTerm()),
+            new Equality(),
             new AnonymusVariableTerm());
         
         var nafLiteral = new NafLiteral(builtinAtom);
@@ -73,9 +73,9 @@ public class NafLiteralTest
     public void AddsBuiltinAtomToNafLiteral()
     {
         var nafLiteral = new NafLiteral();
-        var builtinAtom = new BuiltinAtom(
+        var builtinAtom = new BinaryOperation(
             new AnonymusVariableTerm(),
-            new Equality(new AnonymusVariableTerm(), new AnonymusVariableTerm()),
+            new Equality(),
             new AnonymusVariableTerm());
         
         nafLiteral.AddBuiltinAtom(builtinAtom);
@@ -103,9 +103,9 @@ public class NafLiteralTest
     public void ThrowsOnAddingBuiltinAtomTwice()
     {
         var nafLiteral = new NafLiteral();
-        var builtinAtom = new BuiltinAtom(
+        var builtinAtom = new BinaryOperation(
             new AnonymusVariableTerm(),
-            new Equality(new AnonymusVariableTerm(), new AnonymusVariableTerm()),
+            new Equality(),
             new AnonymusVariableTerm());
         
         nafLiteral.AddBuiltinAtom(builtinAtom);
@@ -133,9 +133,9 @@ public class NafLiteralTest
     public void ThrowsOnAddingClassicalLiteralToBuiltinAtom()
     {
         var literal = new ClassicalLiteral("a", false, []);
-        var builtinAtom = new BuiltinAtom(
+        var builtinAtom = new BinaryOperation(
             new AnonymusVariableTerm(),
-            new Equality(new AnonymusVariableTerm(), new AnonymusVariableTerm()),
+            new Equality(),
             new AnonymusVariableTerm());
 
         var nafLiteral = new NafLiteral(builtinAtom);
@@ -146,9 +146,9 @@ public class NafLiteralTest
     public void ThrowsOnAddingBuiltinAtomToClassicalLiteral()
     {
         var literal = new ClassicalLiteral("a", false, []);
-        var builtinAtom = new BuiltinAtom(
+        var builtinAtom = new BinaryOperation(
             new AnonymusVariableTerm(),
-            new Equality(new AnonymusVariableTerm(), new AnonymusVariableTerm()),
+            new Equality(),
             new AnonymusVariableTerm());
         
         var nafLiteral = new NafLiteral(literal, true);

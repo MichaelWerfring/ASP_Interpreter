@@ -11,17 +11,19 @@ public class NafLiteralVisitor : ASPBaseVisitor<NafLiteral>
         
         if (context.classical_literal() == null)
         {
-            var atom = context.builtin_atom().Accept(new BuiltinAtomVisitor());
+            var atom = context.binary_operation().Accept(new BinaryOperationVisitor());
             literal.AddBuiltinAtom(atom);
         }
 
-        if (context.builtin_atom() == null)
+        if (context.binary_operation() == null)
         {
             var classicalLiteral = context.classical_literal().Accept(new ClassicalLiteralVisitor());
             var negated = context.NAF() != null;
             literal.AddClassicalLiteral(classicalLiteral, negated);
         }
+        
 
+        
         return literal;
     }
 }

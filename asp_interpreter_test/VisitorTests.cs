@@ -10,6 +10,8 @@ public class VisitorTests
 {
     private string _graphCode;
     
+    private MockErrorLogger _errorLogger = new();
+    
     [SetUp]
     public void Setup()
     {
@@ -254,7 +256,7 @@ public class VisitorTests
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var visitor = new ProgramVisitor();
+        var visitor = new ProgramVisitor(_errorLogger);
         return visitor.VisitProgram(context);
     }
 }
