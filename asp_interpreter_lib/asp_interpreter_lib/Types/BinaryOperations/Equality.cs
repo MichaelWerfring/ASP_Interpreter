@@ -11,6 +11,6 @@ public class Equality: BinaryOperator
 
     public override string ToString()
     {
-        return $"{Left.ToString()} = {Right.ToString()}";
+        return "=";
     }
 }

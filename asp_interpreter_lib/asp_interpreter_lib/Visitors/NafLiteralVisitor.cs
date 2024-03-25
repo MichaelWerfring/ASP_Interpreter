@@ -12,7 +12,7 @@ public class NafLiteralVisitor : ASPBaseVisitor<NafLiteral>
         if (context.classical_literal() == null)
         {
             var atom = context.binary_operation().Accept(new BinaryOperationVisitor());
-            literal.AddBuiltinAtom(atom);
+            literal.AddBinaryOperation(atom);
         }
 
         if (context.binary_operation() == null)

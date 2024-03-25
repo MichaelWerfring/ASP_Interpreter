@@ -14,9 +14,9 @@ public class NafLiteralTest
         Assert.That(nafLiteral is 
             {
                 IsNafNegated:false,
-                IsBuiltinAtom: false,
+                IsBinaryOperation: false,
                 IsClassicalLiteral: false,
-                BuiltinAtom: null,
+                BinaryOperation: null,
                 ClassicalLiteral:null});
     }
     
@@ -29,28 +29,28 @@ public class NafLiteralTest
         Assert.That(nafLiteral is 
             {
                 IsNafNegated:true,
-                IsBuiltinAtom: false,
+                IsBinaryOperation: false,
                 IsClassicalLiteral: true,
-                BuiltinAtom: null} && nafLiteral.ClassicalLiteral == literal);
+                BinaryOperation: null} && nafLiteral.ClassicalLiteral == literal);
     }
     
     [Test]
-    public void CreatesNafLiteralWithBuiltinAtom()
+    public void CreatesNafLiteralWithBinaryOperation()
     {
         //It does not make a difference what the terms are for this test
-        var builtinAtom = new BinaryOperation(
+        var binaryOperation = new BinaryOperation(
             new AnonymusVariableTerm(),
             new Equality(),
             new AnonymusVariableTerm());
         
-        var nafLiteral = new NafLiteral(builtinAtom);
+        var nafLiteral = new NafLiteral(binaryOperation);
         
         Assert.That(nafLiteral is 
             {
                 IsNafNegated:false,
-                IsBuiltinAtom: true,
+                IsBinaryOperation: true,
                 IsClassicalLiteral: false,
-                ClassicalLiteral: null} && nafLiteral.BuiltinAtom == builtinAtom);
+                ClassicalLiteral: null} && nafLiteral.BinaryOperation == binaryOperation);
     }
     
     [Test]
@@ -64,28 +64,28 @@ public class NafLiteralTest
         Assert.That(nafLiteral is 
             {
                 IsNafNegated:true,
-                IsBuiltinAtom: false,
+                IsBinaryOperation: false,
                 IsClassicalLiteral: true,
-                BuiltinAtom: null} && nafLiteral.ClassicalLiteral == literal);
+                BinaryOperation: null} && nafLiteral.ClassicalLiteral == literal);
     }
     
     [Test]
-    public void AddsBuiltinAtomToNafLiteral()
+    public void AddsBinaryOperationToNafLiteral()
     {
         var nafLiteral = new NafLiteral();
-        var builtinAtom = new BinaryOperation(
+        var binaryOperation = new BinaryOperation(
             new AnonymusVariableTerm(),
             new Equality(),
             new AnonymusVariableTerm());
         
-        nafLiteral.AddBuiltinAtom(builtinAtom);
+        nafLiteral.AddBinaryOperation(binaryOperation);
         
         Assert.That(nafLiteral is 
             {
                 IsNafNegated:false,
-                IsBuiltinAtom: true,
+                IsBinaryOperation: true,
                 IsClassicalLiteral: false,
-                ClassicalLiteral: null} && nafLiteral.BuiltinAtom == builtinAtom);
+                ClassicalLiteral: null} && nafLiteral.BinaryOperation == binaryOperation);
     }
     
     [Test]
@@ -100,17 +100,17 @@ public class NafLiteralTest
     }
     
     [Test]
-    public void ThrowsOnAddingBuiltinAtomTwice()
+    public void ThrowsOnAddingBinaryOperationTwice()
     {
         var nafLiteral = new NafLiteral();
-        var builtinAtom = new BinaryOperation(
+        var binaryOperation = new BinaryOperation(
             new AnonymusVariableTerm(),
             new Equality(),
             new AnonymusVariableTerm());
         
-        nafLiteral.AddBuiltinAtom(builtinAtom);
+        nafLiteral.AddBinaryOperation(binaryOperation);
         
-        Assert.Throws<InvalidOperationException>(() => nafLiteral.AddBuiltinAtom(builtinAtom));
+        Assert.Throws<InvalidOperationException>(() => nafLiteral.AddBinaryOperation(binaryOperation));
     }
     
     [Test]
@@ -122,36 +122,36 @@ public class NafLiteralTest
     }
     
     [Test]
-    public void ThrowsOnAddingNullBuiltinAtom()
+    public void ThrowsOnAddingNullBinaryOperation()
     {
         var nafLiteral = new NafLiteral();
         
-        Assert.Throws<ArgumentNullException>(() => nafLiteral.AddBuiltinAtom(null));
+        Assert.Throws<ArgumentNullException>(() => nafLiteral.AddBinaryOperation(null));
     }
     
     [Test]
-    public void ThrowsOnAddingClassicalLiteralToBuiltinAtom()
+    public void ThrowsOnAddingClassicalLiteralToBinaryOperation()
     {
         var literal = new ClassicalLiteral("a", false, []);
-        var builtinAtom = new BinaryOperation(
+        var binaryOperation = new BinaryOperation(
             new AnonymusVariableTerm(),
             new Equality(),
             new AnonymusVariableTerm());
 
-        var nafLiteral = new NafLiteral(builtinAtom);
+        var nafLiteral = new NafLiteral(binaryOperation);
         Assert.Throws<InvalidOperationException>(() => nafLiteral.AddClassicalLiteral(literal, true));
     }
     
     [Test]
-    public void ThrowsOnAddingBuiltinAtomToClassicalLiteral()
+    public void ThrowsOnAddingBinaryOperationToClassicalLiteral()
     {
         var literal = new ClassicalLiteral("a", false, []);
-        var builtinAtom = new BinaryOperation(
+        var binaryOperation = new BinaryOperation(
             new AnonymusVariableTerm(),
             new Equality(),
             new AnonymusVariableTerm());
         
         var nafLiteral = new NafLiteral(literal, true);
-        Assert.Throws<InvalidOperationException>(() => nafLiteral.AddBuiltinAtom(builtinAtom));
+        Assert.Throws<InvalidOperationException>(() => nafLiteral.AddBinaryOperation(binaryOperation));
     }
 }
