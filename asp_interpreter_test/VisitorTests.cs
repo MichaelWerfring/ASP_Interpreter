@@ -112,8 +112,6 @@ public class VisitorTests
         Assert.That(
             statement.HasBody && 
             !statement.HasHead &&
-            statement.Head == null &&
-            statement.Body != null && 
             statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
     }
     
@@ -131,8 +129,6 @@ public class VisitorTests
         Assert.That(
             !statement.HasBody && 
             statement.HasHead &&
-            statement.Head != null &&
-            statement.Body == null && 
             statement.Head.Literal is {Negated: false, Identifier: "a"});
     }
     
@@ -150,8 +146,6 @@ public class VisitorTests
         Assert.That(
             statement.HasBody && 
             statement.HasHead &&
-            statement.Head != null &&
-            statement.Body != null && 
             statement.Head.Literal is {Negated: false, Identifier: "a"} &&
             statement.Body.Literals[0] is {Negated: false, Literal.Identifier: "b"});
     }

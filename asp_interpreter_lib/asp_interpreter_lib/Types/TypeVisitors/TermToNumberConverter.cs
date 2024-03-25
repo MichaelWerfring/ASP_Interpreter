@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.Types.Terms.TermConversion;
+﻿using asp_interpreter_lib.Types.Terms;
 
-namespace asp_interpreter_lib.Types.Terms;
+namespace asp_interpreter_lib.Types.TypeVisitors;
 
 public class TermToNumberConverter : ITermVisitor<int>
 {

@@ -8,20 +8,25 @@ public class StatementVisitor : ASPBaseVisitor<Statement>
     {
         Head head = null;
         var headContext = context.head();
+        //Empty Statement per default
+        //If Head or Body are found they will be added
+        var statement = new Statement();
         
         if (headContext != null)
         {
             head = headContext.Accept(new HeadVisitor());
+            statement.AddHead(head);
         }
         
         Body body = null;
         var bodyContext = context.body();
-
+        
         if (bodyContext != null)
         {
             body = bodyContext.Accept(new BodyVisitor());
+            statement.AddBody(body);
         }
         
-        return new Statement(head, body);
+        return statement;
     }
 }
