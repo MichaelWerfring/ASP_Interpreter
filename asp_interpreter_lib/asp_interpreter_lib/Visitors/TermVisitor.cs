@@ -15,14 +15,20 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Term>
     public override Term VisitStringTerm(ASPParser.StringTermContext context)
     {
         var text = context.STRING().GetText() ?? string.Empty;
+        _errorLogger.LogError("The string must not be null!", context);
         // Remove the quotes from the string
         return new StringTerm(text[1..^1]);
     }
 
     public override Term VisitBasicTerm(ASPParser.BasicTermContext context)
     {
-        var id = context.ID().GetText() 
-                 ?? throw new ArgumentException($"The given term has no id!");
+        var id = context.ID().GetText();
+
+        if (id == null)
+        {
+            _errorLogger.LogError("The term must have an identifier!", context);
+            return null;
+        }
         
         List<Term> terms = [];
 
@@ -51,7 +57,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Term>
 
         var operation = context.arithop().Accept(new ArithmeticOperationVisitor(_errorLogger)) 
                         ?? throw new ArgumentException("The given arithmetic operation is not valid!");
-        
+
         return new ArithmeticOperationTerm(left, operation, right);
     }
 

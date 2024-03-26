@@ -24,7 +24,8 @@ public class BodyVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Body>
 
         if (literals.Count == 0)
         {
-            throw new  ArgumentException("A body must contain at least one literal");
+            errorLogger.LogError("A body must contain at least one literal", context);
+            return null;
         }
         
         return new Body(literals);

@@ -12,8 +12,14 @@ public class ClassicalLiteralVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<
     public override ClassicalLiteral VisitClassical_literal(ASPParser.Classical_literalContext context)
     {
         var negated = context.MINUS() !=  null;
-        var id = context.ID().GetText() ?? 
-                 throw new ArgumentException("The given literal has no id!");
+        var id = context.ID().GetText();
+
+        if (id == null)
+        {
+            _errorLogger.LogError($"The literal must have an identifier!", context);
+            return null!;
+        }
+        
         
         List<Term> terms = [];
         var termVisitor = new TermVisitor(_errorLogger);
