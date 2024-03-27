@@ -10,23 +10,28 @@ namespace asp_interpreter_lib.OLONDetection
 {
     public class OLONRulesFilterer
     {
-        private CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
-
-        private CycleFinder<Statement, CallGraphEdge> _cycleFinder = new CycleFinder<Statement, CallGraphEdge> ();
-
         public List<Statement> FilterOlonRules(List<Statement> rules)
         {
             ArgumentNullException.ThrowIfNull(rules, nameof(rules));
 
             List<Statement> filteredStatements = new List<Statement>();
 
+            // add all rules without a head.
+            foreach (var rule in rules)
+            {
+                if (!rule.HasHead)
+                {
+                    filteredStatements.Add(rule);
+                }
+            }
+
             var callGraph = _callGraphBuilder.BuildCallGraph(rules);
             var statementToCyclesMapping = _cycleFinder.FindAllCycles(callGraph);
 
             // add statement if it any of its cycles are OLON.
-            foreach( var mapping in statementToCyclesMapping )
+            foreach (var mapping in statementToCyclesMapping)
             {
-                if(mapping.Value.Any( (cycle) =>  CountNegations(cycle) % 2  != 0))
+                if (mapping.Value.Any((cycle) => CountNegations(cycle) % 2 != 0))
                 {
                     filteredStatements.Add(mapping.Key);
                 }
@@ -34,6 +39,10 @@ namespace asp_interpreter_lib.OLONDetection
 
             return filteredStatements;
         }
+
+        private CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
+
+        private CycleFinder<Statement, CallGraphEdge> _cycleFinder = new CycleFinder<Statement, CallGraphEdge> ();
 
         private int CountNegations(List<CallGraphEdge> cycle)
         {
