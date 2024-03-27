@@ -58,7 +58,7 @@ Console.WriteLine("-------------------------------------------------------------
 Console.WriteLine("Cycles:");
 Console.WriteLine("---------------------------------------------------------------------------");
 
-var cycleFinder = new CycleFinder<Statement, CallGraphEdge>();
+var cycleFinder = new CallGraphCycleFinder();
 var vertexToCycleMapping = cycleFinder.FindAllCycles(callGraph);
 
 foreach (var vertex in vertexToCycleMapping.Keys)

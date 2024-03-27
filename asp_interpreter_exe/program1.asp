@@ -1,10 +1,16 @@
 a :- not b.
+a :- c.
+c :- not e.
+e:- not a.
 
-b :- not a.
 
-a :- not b, not c.
+g :- s, not b.
+a :- f, g.
 
-:- a, f.
-c :- not b.
+s :- not a, c.
+s :- not e, g.
+g :- not b.
+
+b :- a.
 
 edge(X, b)?

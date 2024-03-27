@@ -42,7 +42,7 @@ namespace asp_interpreter_lib.OLONDetection
 
         private CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
 
-        private CycleFinder<Statement, CallGraphEdge> _cycleFinder = new CycleFinder<Statement, CallGraphEdge> ();
+        private CallGraphCycleFinder _cycleFinder = new CallGraphCycleFinder();
 
         private int CountNegations(List<CallGraphEdge> cycle)
         {
