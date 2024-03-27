@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.Types.BinaryOperations;
+using System.Text;
 
 namespace asp_interpreter_lib.Types;
 
@@ -77,5 +78,26 @@ public class NafLiteral
         
         BinaryOperation = binaryOperation;
         IsBinaryOperation = true;
+    }
+
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+
+        if(IsNafNegated)
+        {
+            builder.Append("not ");
+        }
+
+        if (IsClassicalLiteral)
+        {
+            builder.Append(ClassicalLiteral.ToString());
+        }
+        else
+        {
+            builder.Append(BinaryOperation.ToString());
+        }
+
+        return builder.ToString();
     }
 }

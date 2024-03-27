@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.Types.Terms;
+using System.Data;
 
 namespace asp_interpreter_lib.Types.BinaryOperations;
 
@@ -34,4 +35,9 @@ public class BinaryOperation
     }
 
     //Evaluate by delegating to the operator
+
+    public override string ToString()
+    {
+        return $"{Left.ToString()} {BinaryOperator.ToString()} {Right.ToString()}";
+    }
 }

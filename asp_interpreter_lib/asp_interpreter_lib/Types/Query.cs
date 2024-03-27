@@ -14,4 +14,9 @@ public class Query
         get => _classicalLiteral;
         private set => _classicalLiteral = value ?? throw new ArgumentNullException(nameof(ClassicalLiteral));
     }
+
+    public override string ToString()
+    {
+        return $"?- {ClassicalLiteral.ToString()}.";
+    }
 }

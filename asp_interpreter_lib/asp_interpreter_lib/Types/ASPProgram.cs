@@ -1,4 +1,6 @@
-﻿namespace asp_interpreter_lib.Types;
+﻿using System.Text;
+
+namespace asp_interpreter_lib.Types;
 
 public class AspProgram
 {
@@ -21,5 +23,20 @@ public class AspProgram
     {
         get => _query;
         private set => _query = value ?? throw new ArgumentNullException(nameof(Query));
+    }
+
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+        foreach (var statement in Statements)
+        {
+            builder.Append(statement.ToString());
+            builder.AppendLine();
+        }
+
+        builder.Append(Query.ToString());
+        builder.AppendLine();
+
+        return builder.ToString();
     }
 }

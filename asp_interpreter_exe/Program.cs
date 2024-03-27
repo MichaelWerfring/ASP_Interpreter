@@ -8,6 +8,10 @@ using QuikGraph;
 using QuikGraph.Algorithms;
 using QuikGraph.Graphviz;
 using System.IO;
+using asp_interpreter_lib.Types;
+using asp_interpreter_lib.ListExtensions;
+using asp_interpreter_lib.OLONDetection.CallGraph;
+using asp_interpreter_lib.OLONDetection;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
@@ -15,12 +19,12 @@ builder.Services.AddTransient<ProgramVisitor>();
 using var host = builder.Build();
 
 
-if(args.Length != 1)
-{
-    throw new ArgumentException("Please provide a source file!");
-}
+//if(args.Length != 1)
+//{
+//    throw new ArgumentException("Please provide a source file!");
+//}
 
-var result = FileReader.ReadFile(args[0]);
+var result = FileReader.ReadFile("D:\\FH\\Semester 4\\Logikprogrammierung ILV\\SASP-Projekt\\ASP_Interpreter\\asp_interpreter_exe\\program1.asp");
 
 if (!result.Success)
 {
@@ -34,4 +38,50 @@ var parser = new ASPParser(commonTokenStream);
 var context = parser.program();
 var visitor = host.Services.GetRequiredService<ProgramVisitor>();
 var program = visitor.VisitProgram(context);
-Console.ReadLine();
+
+var graphBuilder = new CallGraphBuilder();
+
+var callGraph = graphBuilder.BuildCallGraph(program.Statements);
+
+Console.WriteLine("Program:");
+Console.WriteLine("---------------------------------------------------------------------------");
+Console.WriteLine(program.ToString());
+
+Console.WriteLine("Graph:");
+Console.WriteLine("---------------------------------------------------------------------------");
+foreach(var edge in callGraph.Edges)
+{
+    Console.WriteLine(edge.ToString());
+}
+Console.WriteLine("---------------------------------------------------------------------------");
+
+Console.WriteLine("Cycles:");
+Console.WriteLine("---------------------------------------------------------------------------");
+
+var cycleFinder = new CycleFinder<Statement, CallGraphEdge>();
+var vertexToCycleMapping = cycleFinder.FindAllCycles(callGraph);
+
+foreach (var vertex in vertexToCycleMapping.Keys)
+{
+    var cycles = vertexToCycleMapping[vertex];
+
+    Console.WriteLine($"Cycles of {vertex.ToString()}:");
+    Console.WriteLine("---------------------------------------------------------------------------");
+    foreach (var cycle in cycles)
+    {
+       Console.WriteLine(CycleStringifier.CycleToString(cycle));
+    }
+    Console.WriteLine("---------------------------------------------------------------------------");
+}
+
+
+var olonRulesFilterer = new OLONRulesFilterer();
+var olonRules = olonRulesFilterer.FilterOlonRules(program.Statements);
+
+Console.WriteLine("OLON rules:");
+Console.WriteLine("---------------------------------------------------------------------------");
+
+foreach (var rule in olonRules)
+{
+    Console.WriteLine(rule);
+}

@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.Types.TypeVisitors;
+﻿using asp_interpreter_lib.ListExtensions;
+using asp_interpreter_lib.Types.TypeVisitors;
 using System.Text;
 
 namespace asp_interpreter_lib.Types.Terms;
@@ -51,13 +52,13 @@ public class BasicTerm: Term
     {
         var builder = new StringBuilder();
         builder.Append(Identifier);
-        builder.Append('(');
-        for(int i = 0; i < Terms.Count - 1; i++)
+
+        if(Terms.Count > 0)
         {
-            builder.Append($"{Terms[i].ToString()}, ");
+            builder.Append('(');
+            builder.Append(Terms.ListToString());
+            builder.Append(')');
         }
-        builder.Append($"{Terms[Terms.Count - 1].ToString()}");
-        builder.Append(')');
 
         return builder.ToString();
     }

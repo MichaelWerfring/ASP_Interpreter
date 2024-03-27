@@ -24,4 +24,9 @@ public class Head
     }
 
     public bool HasValue => _literal != null;
+
+    public override string ToString()
+    {
+        return Literal?.ToString() ?? String.Empty;
+    }
 }

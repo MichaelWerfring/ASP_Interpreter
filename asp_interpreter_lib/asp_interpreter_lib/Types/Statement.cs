@@ -33,6 +33,15 @@ public class Statement
 
     public override string ToString()
     {
-        return "Test";
+        if(HasBody)
+        {
+            return $"{Head.ToString()} :- {Body.ToString()}.";
+        }
+        else
+        {
+            return $"{Head.ToString()}.";
+        }
+
+
     }
 }

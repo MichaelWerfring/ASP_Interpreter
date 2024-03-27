@@ -1,4 +1,5 @@
-﻿using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
+﻿using asp_interpreter_lib.ListExtensions;
+using System.Text;
 
 namespace asp_interpreter_lib.Types;
 
@@ -17,5 +18,13 @@ public class Body
     {
         get => _literals;
         private set => _literals = value ?? throw new ArgumentNullException(nameof(Literals));
+    }
+
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+        builder.Append(Literals.ListToString());
+
+        return builder.ToString();
     }
 }

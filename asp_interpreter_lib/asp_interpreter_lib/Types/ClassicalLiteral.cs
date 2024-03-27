@@ -1,5 +1,7 @@
-﻿using asp_interpreter_lib.Types.Terms;
+﻿using asp_interpreter_lib.ListExtensions;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
+using System.Text;
 
 namespace asp_interpreter_lib.Types;
 
@@ -37,5 +39,26 @@ public class ClassicalLiteral
 
             _identifier = value;
         }
+    }
+
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+
+        if(Negated)
+        {
+            builder.Append('-');
+        }
+
+        builder.Append(Identifier);
+
+        if (Terms.Count > 0)
+        {
+            builder.Append('(');
+            builder.Append(Terms.ListToString());
+            builder.Append(')');
+        }
+
+        return builder.ToString();
     }
 }

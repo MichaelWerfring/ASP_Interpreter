@@ -1,8 +1,11 @@
-a :- b, not c.
+a :- not b.
 
-c :- not a, b.
+b :- not a.
 
-b.
 
-a(X, Y)?
+a :- not b, not c.
 
+
+c :- not b.
+
+edge(X, b)?

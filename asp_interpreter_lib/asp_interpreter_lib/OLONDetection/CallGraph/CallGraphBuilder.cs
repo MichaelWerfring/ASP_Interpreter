@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.CallGraph;
+namespace asp_interpreter_lib.OLONDetection.CallGraph;
 
 public class CallGraphBuilder
 {
@@ -15,29 +15,28 @@ public class CallGraphBuilder
     /// </summary>
     /// <param name="program"></param>
     /// <returns>An directed graph of statements, with edges indicating negation.</returns>
-    public AdjacencyGraph<Statement, CallGraphEdge<Statement>> BuildCallGraph(AspProgram program)
+    public AdjacencyGraph<Statement, CallGraphEdge> BuildCallGraph(List<Statement> statements)
     {
-        ArgumentNullException.ThrowIfNull(program, "Must not be null.");
+        ArgumentNullException.ThrowIfNull(statements, "Must not be null.");
 
-        var graph = new AdjacencyGraph<Statement, CallGraphEdge<Statement>>(false);
+        var graph = new AdjacencyGraph<Statement, CallGraphEdge>();
 
-        foreach(var statement in program.Statements)
+        foreach (var statement in statements)
         {
-            if(statement.Head.HasValue)
+            if (statement.Head.HasValue)
             {
                 graph.AddVertex(statement);
-            }     
+            }
         }
 
-        foreach(var statement in program.Statements)
+        foreach (var statement in graph.Vertices)
         {
-            foreach(var nafLiteral in statement.Body.Literals)
+            foreach (var nafLiteral in statement.Body.Literals)
             {
                 var nafLiteralEdges = GetEdges(statement, nafLiteral, graph);
 
                 graph.AddEdgeRange(nafLiteralEdges);
             }
-
         }
 
         return graph;
@@ -51,9 +50,9 @@ public class CallGraphBuilder
     /// <param name="graph"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    private List<CallGraphEdge<Statement>> GetEdges(Statement statement, NafLiteral nafLiteral, AdjacencyGraph<Statement, CallGraphEdge<Statement>> graph) 
+    private List<CallGraphEdge> GetEdges(Statement statement, NafLiteral nafLiteral, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
-        if(!nafLiteral.IsClassicalLiteral) 
+        if (!nafLiteral.IsClassicalLiteral)
         {
             throw new ArgumentException($"{nameof(nafLiteral)} must be a classical literal");
         }
@@ -62,11 +61,11 @@ public class CallGraphBuilder
 
         List<Statement> matchingStatements = GetMatchingStatements(classicalLiteral, graph);
 
-        List<CallGraphEdge<Statement>> edges = new List<CallGraphEdge<Statement>>();
+        List<CallGraphEdge> edges = new List<CallGraphEdge>();
 
-        foreach( var currentStatement in matchingStatements)
+        foreach (var currentStatement in matchingStatements)
         {
-            edges.Add(new CallGraphEdge<Statement>(statement, currentStatement, nafLiteral.IsNafNegated));
+            edges.Add(new CallGraphEdge(statement, currentStatement, nafLiteral));
         }
 
         return edges;
@@ -78,7 +77,7 @@ public class CallGraphBuilder
     /// <param name="literal"></param>
     /// <param name="graph"></param>
     /// <returns>A list of matching statements.</returns>
-    private List<Statement> GetMatchingStatements(ClassicalLiteral literal, AdjacencyGraph<Statement, CallGraphEdge<Statement>> graph)
+    private List<Statement> GetMatchingStatements(ClassicalLiteral literal, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
         var matches = new List<Statement>();
 
@@ -88,7 +87,7 @@ public class CallGraphBuilder
 
             ClassicalLiteral? currentLiteral = currentHead.Literal;
 
-            if(currentLiteral == null) 
+            if (currentLiteral == null)
             {
                 continue;
             }
@@ -102,15 +101,14 @@ public class CallGraphBuilder
             {
                 continue;
             }
-            if(literal.Terms.Count != currentLiteral.Terms.Count)
+            if (literal.Terms.Count != currentLiteral.Terms.Count)
             {
                 continue;
             }
- 
+
             matches.Add(statement);
         }
 
         return matches;
     }
 }
-
