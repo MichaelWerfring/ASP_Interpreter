@@ -41,7 +41,5 @@ public class Statement
         {
             return $"{Head.ToString()}.";
         }
-
-
     }
 }
