@@ -3,31 +3,44 @@ using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Term>
+public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Term>>
 {
     private IErrorLogger _errorLogger = errorLogger;
     
-    public override Term VisitNegatedTerm(ASPParser.NegatedTermContext context)
+    public override IOption<Term> VisitNegatedTerm(ASPParser.NegatedTermContext context)
     {
-        return new NegatedTerm(context.term().Accept(this));
+        var baseTerm = context.term().Accept(this);
+
+        if (!baseTerm.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse inner term!", context);
+            return new None<Term>();
+        }
+
+        return new Some<Term>(baseTerm.GetValueOrThrow());
     }
 
-    public override Term VisitStringTerm(ASPParser.StringTermContext context)
+    public override IOption<Term> VisitStringTerm(ASPParser.StringTermContext context)
     {
-        var text = context.STRING().GetText() ?? string.Empty;
-        _errorLogger.LogError("The string must not be null!", context);
-        // Remove the quotes from the string
-        return new StringTerm(text[1..^1]);
+        var text = context.STRING().GetText();
+
+        if (text == null)
+        {
+            _errorLogger.LogError("The string term must have a text!", context);
+            return new None<Term>();
+        }
+
+        return new Some<Term>(new StringTerm(text[1..^1]));
     }
 
-    public override Term VisitBasicTerm(ASPParser.BasicTermContext context)
+    public override IOption<Term> VisitBasicTerm(ASPParser.BasicTermContext context)
     {
         var id = context.ID().GetText();
 
         if (id == null)
         {
             _errorLogger.LogError("The term must have an identifier!", context);
-            return null;
+            return new None<Term>();
         }
         
         List<Term> terms = [];
@@ -36,57 +49,92 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Term>
 
         if (childTerms == null)
         {
-            return new BasicTerm(id, terms);
+            return new Some<Term>(new BasicTerm(id, terms));
         }
         
         foreach (var term in childTerms.children)
         {
-            terms.Add(term.Accept(this));
+            var child = term.Accept(this);
+            
+            if (!child.HasValue)
+            {
+                _errorLogger.LogError("Cannot parse inner term!", context);
+                return new None<Term>();
+            }
+            
+            terms.Add(child.GetValueOrThrow());
         }
 
-        return new BasicTerm(id, terms);
+        return new Some<Term>(new BasicTerm(id, terms));
     }
 
-    public override Term VisitArithmeticOperationTerm(ASPParser.ArithmeticOperationTermContext context)
+    public override IOption<Term> VisitArithmeticOperationTerm(ASPParser.ArithmeticOperationTermContext context)
     {
-        var left = context.term(0).Accept(this) 
-                   ?? throw new ArgumentException("Cannot find left side of arithmetic operation!");
+        var left = context.term(0).Accept(this);
+        var right = context.term(1).Accept(this);
+        var operation = context.arithop().Accept(new ArithmeticOperationVisitor(_errorLogger));
         
-        var right = context.term(1).Accept(this) 
-                    ?? throw new ArgumentException("Cannot find right side of arithmetic operation!");
+        if (!left.HasValue || !right.HasValue || !operation.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse arithmetic operation!", context);
+            return new None<Term>();
+        }        
 
-        var operation = context.arithop().Accept(new ArithmeticOperationVisitor(_errorLogger)) 
-                        ?? throw new ArgumentException("The given arithmetic operation is not valid!");
-
-        return new ArithmeticOperationTerm(left, operation, right);
+        return new Some<Term>(new ArithmeticOperationTerm(
+            left.GetValueOrThrow(), 
+            operation.GetValueOrThrow(), 
+            right.GetValueOrThrow()));
     }
 
-    public override Term VisitParenthesizedTerm(ASPParser.ParenthesizedTermContext context)
+    public override IOption<Term> VisitParenthesizedTerm(ASPParser.ParenthesizedTermContext context)
     {
-        return context.term().Accept(this);
+        var baseTerm = context.term().Accept(this);
+        
+        if (!baseTerm.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse inner term!", context);
+            return new None<Term>();
+        }
+
+        return new Some<Term>(baseTerm.GetValueOrThrow());
     }
 
-    public override Term VisitAnonymousVariableTerm(ASPParser.AnonymousVariableTermContext context)
+    public override IOption<Term> VisitAnonymousVariableTerm(ASPParser.AnonymousVariableTermContext context)
     {
-        return new AnonymusVariableTerm();
+        return new Some<Term>(new AnonymusVariableTerm());
     }
 
-    public override Term VisitNumberTerm(ASPParser.NumberTermContext context)
+    public override IOption<Term> VisitNumberTerm(ASPParser.NumberTermContext context)
     {
-        var isValid = int.TryParse(context.NUMBER().GetText(), out var number);
+        var textNumber = context.NUMBER().GetText();
+        
+        if (textNumber == null)
+        {
+            _errorLogger.LogError("Cannot find number!", context);
+            return new None<Term>();
+        }
+        
+        var isValid = int.TryParse(textNumber, out var number);
 
         if (!isValid)
         {
-            throw new ArgumentException("The given number is not valid!");
+            _errorLogger.LogError("Term cannot be converted to number!", context);
+            return new None<Term>();
         }
         
-        return new NumberTerm(number);
+        return new Some<Term>(new NumberTerm(number));
     }
 
-    public override Term VisitVariableTerm(ASPParser.VariableTermContext context)
+    public override IOption<Term> VisitVariableTerm(ASPParser.VariableTermContext context)
     {
-        var variable = context.VARIABLE().GetText() 
-                       ?? throw new ArgumentException("Cannot find variable name!");
-        return new VariableTerm(variable);
+        var variable = context.VARIABLE().GetText();
+
+        if (variable == null)
+        {
+            _errorLogger.LogError("Cannot parse name of the variable!", context);
+            return new None<Term>();
+        }
+        
+        return new Some<Term>(new VariableTerm(variable));
     }
 }

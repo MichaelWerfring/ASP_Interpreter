@@ -1,26 +1,26 @@
 ﻿using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class ClassicalLiteralVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<ClassicalLiteral>
+public class ClassicalLiteralVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ClassicalLiteral>>
 {
     private IErrorLogger _errorLogger = errorLogger;
     
-    public override ClassicalLiteral VisitClassical_literal(ASPParser.Classical_literalContext context)
+    public override IOption<ClassicalLiteral> VisitClassical_literal(ASPParser.Classical_literalContext context)
     {
         var negated = context.MINUS() !=  null;
         var id = context.ID().GetText();
 
         if (id == null)
         {
-            _errorLogger.LogError($"The literal must have an identifier!", context);
-            return null!;
+            _errorLogger.LogError($"Cannot parse the literals identifier!", context);
+            return new None<ClassicalLiteral>();
         }
-        
-        
+                
         List<Term> terms = [];
         var termVisitor = new TermVisitor(_errorLogger);
         
@@ -28,18 +28,26 @@ public class ClassicalLiteralVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<
 
         if (childTerms == null)
         {
-            return new ClassicalLiteral(id, negated, terms);
+            //Not an error just a literal without child terms
+            return new Some<ClassicalLiteral>(new ClassicalLiteral(id, negated,terms));
         }
         
-        foreach (var t in childTerms)
+        foreach (var child in childTerms)
         {
-            Term term = t.Accept(termVisitor);
-            if (term != null)
+            var term = child.Accept(termVisitor);
+
+            //The children can sometimes be null therefore ignore them
+            if (term == null) continue;
+            
+            if (!term.HasValue)
             {
-                terms.Add(term);
+                _errorLogger.LogError("Cannot parse the term contained the literal!", context);
+                return new None<ClassicalLiteral>();
             }
+            
+            terms.Add(term.GetValueOrThrow());
         }
         
-        return new ClassicalLiteral(id, negated, terms);
+        return new Some<ClassicalLiteral>(new ClassicalLiteral(id, negated,terms));
     }
 }

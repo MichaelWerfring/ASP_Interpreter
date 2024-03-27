@@ -6,14 +6,21 @@ using asp_interpreter_lib.Types;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class HeadVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Head>
+public class HeadVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Head>>
 {
     private IErrorLogger _errorLogger = errorLogger;
     
-    public override Head VisitHead(ASPParser.HeadContext context)
+    public override IOption<Head> VisitHead(ASPParser.HeadContext context)
     {
-        var headLiteral = context.classical_literal().Accept(new ClassicalLiteralVisitor(_errorLogger));
+        var headLiteral = context.classical_literal().Accept(
+            new ClassicalLiteralVisitor(_errorLogger));
         
-        return new Head(headLiteral);
+        if (!headLiteral.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse head literal!", context);
+            return new None<Head>(); 
+        }
+        
+        return new Some<Head>(new Head(headLiteral.GetValueOrThrow()));
     }
 }

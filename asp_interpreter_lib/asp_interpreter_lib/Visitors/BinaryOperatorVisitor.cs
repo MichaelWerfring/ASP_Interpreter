@@ -3,37 +3,37 @@ using asp_interpreter_lib.Types.BinaryOperations;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class BinaryOperatorVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<BinaryOperator>
+public class BinaryOperatorVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<BinaryOperator>>
 {
     private IErrorLogger _errorLogger = errorLogger;
     
-    public override BinaryOperator VisitEqualityOperation(ASPParser.EqualityOperationContext context)
+    public override IOption<BinaryOperator> VisitEqualityOperation(ASPParser.EqualityOperationContext context)
     {
-        return new Equality();
+        return new Some<BinaryOperator>(new Equality());
     }
 
-    public override BinaryOperator VisitDisunificationOperation(ASPParser.DisunificationOperationContext context)
+    public override IOption<BinaryOperator> VisitDisunificationOperation(ASPParser.DisunificationOperationContext context)
     {
-        return new Disunification();
+        return new Some<BinaryOperator>(new Disunification());
     }
 
-    public override BinaryOperator VisitLessOperation(ASPParser.LessOperationContext context)
+    public override IOption<BinaryOperator> VisitLessOperation(ASPParser.LessOperationContext context)
     {
-        return new LessThan();
+        return new Some<BinaryOperator>(new LessThan());
     }
 
-    public override BinaryOperator VisitGreaterOperation(ASPParser.GreaterOperationContext context)
+    public override IOption<BinaryOperator> VisitGreaterOperation(ASPParser.GreaterOperationContext context)
     {
-        return new GreaterThan();
+        return new Some<BinaryOperator>(new GreaterThan());
     }
 
-    public override BinaryOperator VisitLessOrEqOperation(ASPParser.LessOrEqOperationContext context)
+    public override IOption<BinaryOperator> VisitLessOrEqOperation(ASPParser.LessOrEqOperationContext context)
     {
-        return new LessOrEqualThan();
+        return new Some<BinaryOperator>(new LessOrEqualThan());
     }
 
-    public override BinaryOperator VisitGreaterOrEqOperation(ASPParser.GreaterOrEqOperationContext context)
+    public override IOption<BinaryOperator> VisitGreaterOrEqOperation(ASPParser.GreaterOrEqOperationContext context)
     {
-        return new GreaterOrEqualThan();
+        return new Some<BinaryOperator>(new GreaterOrEqualThan());
     }
 }

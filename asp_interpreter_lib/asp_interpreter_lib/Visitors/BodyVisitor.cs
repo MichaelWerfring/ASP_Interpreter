@@ -4,30 +4,38 @@ using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class BodyVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<Body>
+public class BodyVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Body>>
 {
-    public override Body VisitBody(ASPParser.BodyContext context)
+    private IErrorLogger _errorLogger = errorLogger;
+    
+    public override IOption<Body> VisitBody(ASPParser.BodyContext context)
     {
         var children = context.children;
         List<NafLiteral> literals = [];
-        var literalVisitor = new NafLiteralVisitor(errorLogger);
+        var literalVisitor = new NafLiteralVisitor(_errorLogger);
         
         foreach (var c in children)
         {
             var literal = c.Accept(literalVisitor);
 
-            if (literal != null)
+            //The children can sometimes be null therefore ignore them
+            if (literal == null) continue;
+            
+            if (!literal.HasValue)
             {
-                literals.Add(literal);   
+                _errorLogger.LogError("Failed to parse literal in body!", context);
+                return new None<Body>();
             }
+            
+            literals.Add(literal.GetValueOrThrow());
         }
 
         if (literals.Count == 0)
         {
-            errorLogger.LogError("A body must contain at least one literal", context);
-            return null;
+            _errorLogger.LogError("A body must contain at least one literal", context);
+            return new None<Body>();
         }
         
-        return new Body(literals);
+        return new Some<Body>(new Body(literals));
     }
 }

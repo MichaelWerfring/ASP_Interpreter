@@ -52,6 +52,7 @@ public class VisitorTest
         //Then outer part for NAF
         Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: true } && 
             !nafLiteral.IsNafNegated);
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -69,6 +70,7 @@ public class VisitorTest
         //Then outer part for NAF
         Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: false } && 
                     nafLiteral.IsNafNegated);
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -86,6 +88,7 @@ public class VisitorTest
         //Then outer part for NAF
         Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: true } && 
                     nafLiteral.IsNafNegated);
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -98,6 +101,7 @@ public class VisitorTest
                    """;
         
         Assert.Throws<NullReferenceException>(() => GetProgram(code));
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -115,6 +119,7 @@ public class VisitorTest
             statement.HasBody && 
             !statement.HasHead &&
             statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -132,6 +137,7 @@ public class VisitorTest
             !statement.HasBody && 
             statement.HasHead &&
             statement.Head.Literal is {Negated: false, Identifier: "a"});
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -150,6 +156,7 @@ public class VisitorTest
             statement.HasHead &&
             statement.Head.Literal is {Negated: false, Identifier: "a"} &&
             statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -170,6 +177,7 @@ public class VisitorTest
             statement.Body != null && 
             statement.Head.Literal is {Negated: true, Identifier: "a"} &&
             statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -184,6 +192,7 @@ public class VisitorTest
         Assert.That(
             headLiteral is { Identifier: "separate", Negated: false, Terms.Count: 2 } &&
             firstTerm.Identifier == "X" && secondTerm.Identifier == "Y");
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
 
     [Test]
@@ -198,6 +207,7 @@ public class VisitorTest
         Assert.That(
             queryLiteral is { Identifier: "edge", Negated: false, Terms.Count: 2 } &&
             firstTerm.Identifier == "X" && secondTerm.Identifier == "b");
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     [Test]
@@ -215,6 +225,7 @@ public class VisitorTest
             firstLiteral.ClassicalLiteral.Identifier == "node" && !firstLiteral.ClassicalLiteral.Negated &&
             secondLiteral.ClassicalLiteral.Identifier == "node" && !secondLiteral.ClassicalLiteral.Negated &&
             thirdLiteral.IsNafNegated && thirdLiteral.ClassicalLiteral.Identifier == "edge");
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
 
     [Test]
@@ -246,6 +257,8 @@ public class VisitorTest
         {
             Assert.That(fourthVarTerm.Identifier == "Y");
         }
+        
+        Assert.That(_errorLogger.Errors.Count == 0);
     }
     
     // Helper method to get a program from a given code
@@ -257,6 +270,8 @@ public class VisitorTest
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
         var visitor = new ProgramVisitor(_errorLogger);
-        return visitor.VisitProgram(context);
+        var program = visitor.VisitProgram(context); 
+        
+        return program.GetValueOrThrow();
     }
 }

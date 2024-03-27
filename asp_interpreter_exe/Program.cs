@@ -12,6 +12,7 @@ using asp_interpreter_lib.Types;
 using asp_interpreter_lib.ListExtensions;
 using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
+using asp_interpreter_lib.Types.Terms;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
@@ -39,9 +40,14 @@ var context = parser.program();
 var visitor = host.Services.GetRequiredService<ProgramVisitor>();
 var program = visitor.VisitProgram(context);
 
+if (!program.HasValue)
+{
+    throw new ArgumentException("Failed to parse program!");
+}
+
 var graphBuilder = new CallGraphBuilder();
 
-var callGraph = graphBuilder.BuildCallGraph(program.Statements);
+var callGraph = graphBuilder.BuildCallGraph(program.GetValueOrThrow().Statements);
 
 Console.WriteLine("Program:");
 Console.WriteLine("---------------------------------------------------------------------------");
@@ -76,7 +82,7 @@ foreach (var vertex in vertexToCycleMapping.Keys)
 
 
 var olonRulesFilterer = new OLONRulesFilterer();
-var olonRules = olonRulesFilterer.FilterOlonRules(program.Statements);
+var olonRules = olonRulesFilterer.FilterOlonRules(program.GetValueOrThrow().Statements);
 
 Console.WriteLine("OLON rules:");
 Console.WriteLine("---------------------------------------------------------------------------");
