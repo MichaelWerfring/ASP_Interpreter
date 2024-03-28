@@ -8,9 +8,17 @@ public class Divide(Term left, Term right) : ArithmeticOperation(left, right)
     public override Term Evaluate()
     {
         var visitor = new TermToNumberConverter();
-        var leftValue = Left.Accept(visitor);
-        var rightValue = Right.Accept(visitor);
-
+        var left = Left.Accept(visitor);
+        var right = Right.Accept(visitor);
+        
+        left.IfHasNoValue(()=> throw new InvalidOperationException(
+            "The left term of a division must be a number."));
+        right.IfHasNoValue(()=> throw new InvalidOperationException(
+            "The right term of a division must be a number."));
+        
+        int rightValue = right.GetValueOrThrow();
+        int leftValue = left.GetValueOrThrow();
+        
         if (rightValue == 0)
         {
             throw new DivideByZeroException("The right term of a division cannot be zero.");

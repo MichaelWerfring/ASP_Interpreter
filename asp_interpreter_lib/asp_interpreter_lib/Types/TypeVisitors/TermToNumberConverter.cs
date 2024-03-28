@@ -1,47 +1,69 @@
-﻿using asp_interpreter_lib.Types.Terms;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.Types.TypeVisitors;
 
-public class TermToNumberConverter : ITermVisitor<int>
+public class TermToNumberConverter : ITermVisitor<IOption<int>>
 {
-    public int Visit(BasicTerm term)
+    public IOption<int> Visit(BasicTerm term)
     {
-        throw new InvalidOperationException("Cannot convert basic term to a number!"); 
+        return new None<int>();
     }
 
-    public int Visit(AnonymusVariableTerm term)
+    public IOption<int> Visit(AnonymusVariableTerm term)
     {
-        throw new InvalidOperationException("Cannot convert _ to a number!"); 
+        return new None<int>(); 
     }
 
-    public int Visit(VariableTerm term)
+    public IOption<int> Visit(VariableTerm term)
     {
         throw new NotImplementedException();
     }
 
-    public int Visit(ArithmeticOperationTerm term)
+    public IOption<int> Visit(ArithmeticOperationTerm term)
     {
         var result = term.Operation.Evaluate();
-        return result.Accept(this);
+        var number = result.Accept(this);
+
+        if (number.HasValue)
+        {
+            return new Some<int>(number.GetValueOrThrow());
+        }
+        
+        return new None<int>();
     }
 
-    public int Visit(ParenthesizedTerm term)
+    public IOption<int> Visit(ParenthesizedTerm term)
     {
-        return term.Accept(this);
+        var result = term.Term.Accept(this);
+        
+        if (result.HasValue)
+        {
+            return new Some<int>(result.GetValueOrThrow());
+        }
+        
+        return new None<int>();
     }
 
-    public int Visit(StringTerm term)
+    public IOption<int> Visit(StringTerm term)
     {
-        throw new InvalidOperationException("Cannot convert a string to a number!"); 
+        return new None<int>();
     }
 
-    public int Visit(NegatedTerm term)
+    public IOption<int> Visit(NegatedTerm term)
     {
-        return -term.Term.Accept(this);
+        var result = term.Term.Accept(this); 
+        
+        if (result.HasValue)
+        {
+            return new Some<int>(-result.GetValueOrThrow());
+        }
+        
+        return new None<int>();
     }
 
-    public int Visit(NumberTerm term)
+    public IOption<int> Visit(NumberTerm term)
     {
-        return term.Value;
+        return new Some<int>(term.Value);
     }
 }

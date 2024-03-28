@@ -28,15 +28,6 @@ public class VisitorTest
                      """;
     }
     
-    //Disjunction in Rule Head
-    //STMT without Rule Head
-    //STMT without Rule Body (fact)
-    //STMT with Rule Body and Head (rule)
-    // -a
-    // not a
-    // not -a 
-    // - not a => must be wrong
-
     [Test]
     public void HandlesClassicalNegationCorrectly()
     {

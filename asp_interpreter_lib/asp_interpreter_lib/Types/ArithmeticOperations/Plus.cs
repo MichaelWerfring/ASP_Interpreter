@@ -8,8 +8,17 @@ public class Plus(Term left, Term right) : ArithmeticOperation(left, right)
     public override Term Evaluate()
     {
         var visitor = new TermToNumberConverter();
-        var leftValue = Left.Accept(visitor);
-        var rightValue = Right.Accept(visitor);
+        var left = Left.Accept(visitor);
+        var right = Right.Accept(visitor);
+
+        left.IfHasNoValue(()=> throw new InvalidOperationException(
+            "The left term of a division must be a number."));
+        right.IfHasNoValue(()=> throw new InvalidOperationException(
+            "The right term of a division must be a number."));
+        
+        int rightValue = right.GetValueOrThrow();
+        int leftValue = left.GetValueOrThrow();
+
         return new NumberTerm(leftValue + rightValue);
     }
 

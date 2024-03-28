@@ -17,9 +17,9 @@ public class ArithmeticOperationTest
         var term = new NegatedTerm(innerTerm);
 
         var converter = new TermToNumberConverter();
-        int actual = term.Accept(converter);
+        var actual = term.Accept(converter);
         
-        Assert.That(actual == expected);
+        Assert.That(actual.HasValue && actual.GetValueOrThrow() == expected);
     }
     
     [TestCase(5, 5, 10)]
@@ -32,9 +32,9 @@ public class ArithmeticOperationTest
         Term result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
-        int actual = result.Accept(converter);
+        var actual = result.Accept(converter);
         
-        Assert.That(actual == expected);
+        Assert.That(actual.HasValue && actual.GetValueOrThrow() == expected);
     }
     
     [TestCase(5, 5, 25)]
@@ -47,9 +47,9 @@ public class ArithmeticOperationTest
         Term result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
-        int actual = result.Accept(converter);
+        var actual = result.Accept(converter);
         
-        Assert.That(actual == expected);
+        Assert.That(actual.HasValue && actual.GetValueOrThrow() == expected);
     }
     
     [TestCase(5, 5, 0)]
@@ -62,9 +62,9 @@ public class ArithmeticOperationTest
         Term result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
-        int actual = result.Accept(converter);
+        var actual = result.Accept(converter);
         
-        Assert.That(actual == expected);
+        Assert.That(actual.HasValue && actual.GetValueOrThrow() == expected);
     }
     
     [TestCase(5, 5, 1)]
@@ -77,9 +77,9 @@ public class ArithmeticOperationTest
         Term result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
-        int actual = result.Accept(converter);
+        var actual = result.Accept(converter);
         
-        Assert.That(actual == expected);
+        Assert.That(actual.HasValue && actual.GetValueOrThrow() == expected);
     }
     
     [Test]

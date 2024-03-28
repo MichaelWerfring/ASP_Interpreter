@@ -80,10 +80,12 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Term
             return new None<Term>();
         }        
 
-        return new Some<Term>(new ArithmeticOperationTerm(
-            left.GetValueOrThrow(), 
-            operation.GetValueOrThrow(), 
-            right.GetValueOrThrow()));
+        //return new Some<Term>(new ArithmeticOperationTerm(
+        //    left.GetValueOrThrow(), 
+        //    operation.GetValueOrThrow(), 
+        //    right.GetValueOrThrow()));
+        
+        return new Some<Term>(new ArithmeticOperationTerm(operation.GetValueOrThrow()));
     }
 
     public override IOption<Term> VisitParenthesizedTerm(ASPParser.ParenthesizedTermContext context)

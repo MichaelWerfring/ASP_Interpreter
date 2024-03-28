@@ -35,7 +35,11 @@ public class BinaryOperation
     }
 
     //Evaluate by delegating to the operator
-
+    public bool Evaluate()
+    {
+        return BinaryOperator.Evaluate(Left, Right);
+    }
+    
     public override string ToString()
     {
         return $"{Left.ToString()} {BinaryOperator.ToString()} {Right.ToString()}";
