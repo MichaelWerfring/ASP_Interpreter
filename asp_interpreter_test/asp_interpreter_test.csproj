@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\asp_interpreter_lib\asp_interpreter_lib\asp_interpreter_lib.csproj" />
+    <ProjectReference Include="..\asp_interpreter_lib\asp_interpreter_lib.csproj" />
   </ItemGroup>
 
 </Project>
