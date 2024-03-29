@@ -42,34 +42,24 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Term
             _errorLogger.LogError("The term must have an identifier!", context);
             return new None<Term>();
         }
-        
-        List<Term> terms = [];
 
-        var childTerms = context.terms();
+        var terms = context.terms();
 
-        if (childTerms == null)
+        if (terms == null)
         {
-            return new Some<Term>(new BasicTerm(id, terms));
+            //Can be a basic term without any inner terms
+            return new Some<Term>(new BasicTerm(id, []));
         }
         
-        foreach (var term in childTerms.children)
-        {
-            var child = term.Accept(this);
-            
-            //Sometimes the child term cannot be visited e.g. ,  in a(b, c(d, e)). a? is seen as 
-            //a child therefore we have to ignore it here
-            if (child == null) continue;
-            
-            if (!child.HasValue)
-            {
-                _errorLogger.LogError("Cannot parse inner term!", context);
-                return new None<Term>();
-            }
-            
-            terms.Add(child.GetValueOrThrow());
-        }
+        var innerTerms = terms.Accept(new TermsVisitor(errorLogger));
 
-        return new Some<Term>(new BasicTerm(id, terms));
+        if (innerTerms == null || !innerTerms.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse inner terms!", context);
+            return new None<Term>();
+        }
+        
+        return new Some<Term>(new BasicTerm(id, innerTerms.GetValueOrThrow()));
     }
 
     public override IOption<Term> VisitArithmeticOperationTerm(ASPParser.ArithmeticOperationTermContext context)

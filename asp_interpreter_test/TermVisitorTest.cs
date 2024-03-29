@@ -119,9 +119,9 @@ public class TermVisitorTest
     }
     
     [Test]
-    public void ParseParenthesizedTermWithInnerTerms()
+    public void ParseParenthesizedTermWithMultipleInnerTerms()
     {
-        string code = "a(b,(c(d, e))). a?";
+        string code = "a(b,(c(d, e, f, g))). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
         var literal = program.Statements[0].Head.Literal;
@@ -129,7 +129,7 @@ public class TermVisitorTest
         Assert.That(literal != null &&
             literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
             literal.Terms[0].ToString() == "b" && 
-            literal.Terms[1].ToString() == "c(d, e)");
+            literal.Terms[1].ToString() == "c(d, e, f, g)");
     }
     
     [Test]
