@@ -17,7 +17,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Term
             return new None<Term>();
         }
 
-        return new Some<Term>(baseTerm.GetValueOrThrow());
+        return new Some<Term>(new NegatedTerm(baseTerm.GetValueOrThrow()));
     }
 
     public override IOption<Term> VisitStringTerm(ASPParser.StringTermContext context)
@@ -56,6 +56,10 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Term
         {
             var child = term.Accept(this);
             
+            //Sometimes the child term cannot be visited e.g. ,  in a(b, c(d, e)). a? is seen as 
+            //a child therefore we have to ignore it here
+            if (child == null) continue;
+            
             if (!child.HasValue)
             {
                 _errorLogger.LogError("Cannot parse inner term!", context);
@@ -79,11 +83,6 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Term
             _errorLogger.LogError("Cannot parse arithmetic operation!", context);
             return new None<Term>();
         }        
-
-        //return new Some<Term>(new ArithmeticOperationTerm(
-        //    left.GetValueOrThrow(), 
-        //    operation.GetValueOrThrow(), 
-        //    right.GetValueOrThrow()));
         
         return new Some<Term>(new ArithmeticOperationTerm(operation.GetValueOrThrow()));
     }

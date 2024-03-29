@@ -1,4 +1,7 @@
-﻿using Antlr4.Runtime;
+﻿using System.Xml.Schema;
+using Antlr4.Runtime;
+using asp_interpreter_lib;
+using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Visitors;
@@ -27,6 +30,70 @@ public class VisitorTest
                      edge(X, b)?
                      """;
     }
+
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("\n")]
+    [TestCase("\t")]
+    [TestCase("\r")]
+    [TestCase("\r\n")]
+    public void HandlesEmptyProgramCorrectly(string code)
+    {
+        var logger = new MockErrorLogger();
+        
+        var inputStream = new AntlrInputStream(code);
+        var lexer = new ASPLexer(inputStream);
+        var commonTokenStream = new CommonTokenStream(lexer);
+        var parser = new ASPParser(commonTokenStream);
+        var context = parser.program();
+        var visitor = new ProgramVisitor(logger);
+        var program = GetOptionalProgram(code, logger);
+        
+        //Count at least 1 error for empty program
+        Assert.That(!program.HasValue && logger.Errors.Count > 0);
+    }
+    
+    [Test]
+    public void HandlesProgramWithoutQueryCorrectly()
+    {
+        var logger = new MockErrorLogger();
+        var code = """
+                   a :- b.
+                   """;
+        
+        var program = GetOptionalProgram(code, logger);
+        
+        Assert.That(!program.HasValue && logger.Errors.Count > 0);
+    }
+    
+    [Test]
+    public void HandlesProgramWithoutStatementsCorrectly()
+    {
+        var logger = new MockErrorLogger();
+        var code = """
+                   a?
+                   """;
+        
+        var program = GetOptionalProgram(code, logger);
+        
+        //Program without statements is valid but still logs a warning
+        Assert.That(program.HasValue && logger.Errors.Count > 0);
+    }
+    
+    [Test]
+    public void HandlesMinimalProgramCorrectly()
+    {
+        var logger = new MockErrorLogger();
+        var code = """
+                   a.
+                   a?
+                   """;
+        
+        var program = GetOptionalProgram(code, logger);
+        
+        //Program without statements is valid but still logs a warning
+        Assert.That(program.HasValue && logger.Errors.Count == 0);
+    }
     
     [Test]
     public void HandlesClassicalNegationCorrectly()
@@ -36,7 +103,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = GetProgram(code);
+        var program = ASPExtensions.GetProgram(code, _errorLogger);
         var nafLiteral = program.Statements[0].Body?.Literals[0]; 
         
         //First check inner part for classical negation
@@ -54,7 +121,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = GetProgram(code);
+        var program = ASPExtensions.GetProgram(code, _errorLogger);
         var nafLiteral = program.Statements[0].Body?.Literals[0]; 
         
         //First check inner part for classical negation
@@ -72,7 +139,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = GetProgram(code);
+        var program = ASPExtensions.GetProgram(code, _errorLogger);
         var nafLiteral = program.Statements[0].Body?.Literals[0]; 
         
         //First check inner part for classical negation
@@ -91,7 +158,7 @@ public class VisitorTest
                    a?
                    """;
         
-        Assert.Throws<NullReferenceException>(() => GetProgram(code));
+        Assert.Throws<NullReferenceException>(() => ASPExtensions.GetProgram(code, _errorLogger));
         Assert.That(_errorLogger.Errors.Count == 0);
     }
     
@@ -103,7 +170,7 @@ public class VisitorTest
                    b?
                    """;
         
-        var program = GetProgram(code);
+        var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         Assert.That(
@@ -121,7 +188,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = GetProgram(code);
+        var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         Assert.That(
@@ -139,7 +206,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = GetProgram(code);
+        var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         Assert.That(
@@ -158,7 +225,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = GetProgram(code);
+        var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         Assert.That(
@@ -174,7 +241,7 @@ public class VisitorTest
     [Test]
     public void HandlesTermsInHeadCorrectly()
     {
-        AspProgram program = GetProgram(_graphCode);
+        AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
 
         var headLiteral = program.Statements[6].Head?.Literal; 
         var firstTerm = headLiteral.Terms[0] as VariableTerm;
@@ -189,7 +256,7 @@ public class VisitorTest
     [Test]
     public void HandlesLiteralInQueryCorrectly()
     {
-        AspProgram program = GetProgram(_graphCode);
+        AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
 
         var queryLiteral = program.Query?.ClassicalLiteral;
         var firstTerm = queryLiteral.Terms[0] as VariableTerm;
@@ -204,7 +271,7 @@ public class VisitorTest
     [Test]
     public void HandlesBodyLiteralsCorrectly()
     {
-        AspProgram program = GetProgram(_graphCode);
+        AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
 
         var body = program.Statements[6].Body;
         var firstLiteral = body.Literals[0];
@@ -222,7 +289,7 @@ public class VisitorTest
     [Test]
     public void HandlesBodyTermsCorrectly()
     {
-        var program = GetProgram(_graphCode);
+        var program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
         
         var body = program.Statements[6].Body;
         var firstLiteral = body.Literals[0];
@@ -252,17 +319,14 @@ public class VisitorTest
         Assert.That(_errorLogger.Errors.Count == 0);
     }
     
-    // Helper method to get a program from a given code
-    private AspProgram GetProgram(string code)
+    private IOption<AspProgram> GetOptionalProgram(string code, IErrorLogger logger)
     {
         var inputStream = new AntlrInputStream(code);
         var lexer = new ASPLexer(inputStream);
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var visitor = new ProgramVisitor(_errorLogger);
-        var program = visitor.VisitProgram(context); 
-        
-        return program.GetValueOrThrow();
+        var visitor = new ProgramVisitor(logger);
+        return visitor.VisitProgram(context);
     }
 }

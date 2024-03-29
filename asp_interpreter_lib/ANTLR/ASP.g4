@@ -27,6 +27,7 @@ binary_operator
     | GREATER_OR_EQ     #greaterOrEqOperation;
 
 terms : term (COMMA terms)?;
+//terms : term (COMMA term)*;
 term 
     : ID (PAREN_OPEN terms? PAREN_CLOSE)?   #basicTerm
     | NUMBER                                #numberTerm
