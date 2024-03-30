@@ -1,8 +1,9 @@
-﻿using asp_interpreter_lib.Types.TypeVisitors;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types.Terms;
 
-public class VariableTerm: Term
+public class VariableTerm: ITerm
 {
     private string _identifier;
 
@@ -26,16 +27,10 @@ public class VariableTerm: Term
         }
     }
 
-    public override T Accept<T>(ITermVisitor<T> visitor)
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
-        ArgumentNullException.ThrowIfNull(visitor);
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
         return visitor.Visit(this);
-    }
-    
-    public override void Accept(ITermVisitor visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor);
-        visitor.Visit(this);
     }
 
     public override string ToString()

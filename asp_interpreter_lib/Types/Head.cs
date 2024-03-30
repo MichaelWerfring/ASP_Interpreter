@@ -1,8 +1,10 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types;
 
-public class Head
+public class Head : IVisitableType
 {
     private ClassicalLiteral? _literal;
 
@@ -28,5 +30,11 @@ public class Head
     public override string ToString()
     {
         return Literal?.ToString() ?? String.Empty;
+    }
+    
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }

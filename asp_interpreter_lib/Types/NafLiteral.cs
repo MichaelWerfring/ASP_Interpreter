@@ -1,9 +1,11 @@
 ﻿using asp_interpreter_lib.Types.BinaryOperations;
 using System.Text;
+using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types;
 
-public class NafLiteral
+public class NafLiteral : IVisitableType
 {
     private ClassicalLiteral _classicalLiteral;
     private BinaryOperation _binaryOperation;
@@ -99,5 +101,11 @@ public class NafLiteral
         }
 
         return builder.ToString();
+    }
+    
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }

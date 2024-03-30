@@ -29,7 +29,7 @@ public class ArithmeticOperationTest
     public void AdditionOnNumbersWorks(int left, int right, int expected)
     {
         var term = new Plus(new NumberTerm(left), new NumberTerm(right));
-        Term result = term.Evaluate();
+        ITerm result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
         var actual = result.Accept(converter);
@@ -44,7 +44,7 @@ public class ArithmeticOperationTest
     public void MultiplicationOnNumbersWorks(int left, int right, int expected)
     {
         var term = new Multiply(new NumberTerm(left), new NumberTerm(right));
-        Term result = term.Evaluate();
+        ITerm result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
         var actual = result.Accept(converter);
@@ -59,7 +59,7 @@ public class ArithmeticOperationTest
     public void SubtractionOnNumbersWorks(int left, int right, int expected)
     {
         var term = new Minus(new NumberTerm(left), new NumberTerm(right));
-        Term result = term.Evaluate();
+        ITerm result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
         var actual = result.Accept(converter);
@@ -74,7 +74,7 @@ public class ArithmeticOperationTest
     public void DivisionOnNumbersWorks(int left, int right, int expected)
     {
         var term = new Divide(new NumberTerm(left), new NumberTerm(right));
-        Term result = term.Evaluate();
+        ITerm result = term.Evaluate();
         
         var converter = new TermToNumberConverter();
         var actual = result.Accept(converter);

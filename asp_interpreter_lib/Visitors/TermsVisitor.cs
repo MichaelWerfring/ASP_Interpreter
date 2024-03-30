@@ -3,14 +3,14 @@ using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class TermsVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<List<Term>>>
+public class TermsVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<List<ITerm>>>
 {
 
     private IErrorLogger _errorLogger = errorLogger;
     
     private TermVisitor _termVisitor = new TermVisitor(errorLogger);
     
-    public override IOption<List<Term>> VisitTerms(ASPParser.TermsContext context)
+    public override IOption<List<ITerm>> VisitTerms(ASPParser.TermsContext context)
     {
         var multipleTerms = context.terms();
         var singleTerm = context.term().Accept(_termVisitor);
@@ -19,13 +19,13 @@ public class TermsVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Lis
         {
             //This should never happen but if it does its a severe fail
             _errorLogger.LogError("Cannot parse value of compound term!", context);
-            return new None<List<Term>>();
+            return new None<List<ITerm>>();
         }
         
         //End of recursion
         if (multipleTerms == null)
         {
-            return new Some<List<Term>>([singleTerm.GetValueOrThrow()]);
+            return new Some<List<ITerm>>([singleTerm.GetValueOrThrow()]);
         }
         
         var terms = multipleTerms.Accept(this);
@@ -33,7 +33,7 @@ public class TermsVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Lis
         if (!terms.HasValue)
         {
             _errorLogger.LogError("Cannot parse value of compound term!", context);
-            return new None<List<Term>>();
+            return new None<List<ITerm>>();
         }
 
         var list = terms.GetValueOrThrow();

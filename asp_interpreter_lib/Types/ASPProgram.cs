@@ -1,8 +1,10 @@
 ﻿using System.Text;
+using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types;
 
-public class AspProgram
+public class AspProgram : IVisitableType
 {
     private List<Statement> _statements;
     private Query _query;
@@ -38,5 +40,11 @@ public class AspProgram
         builder.AppendLine();
 
         return builder.ToString();
+    }
+
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }

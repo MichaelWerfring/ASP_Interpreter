@@ -1,9 +1,11 @@
 ﻿using asp_interpreter_lib.ListExtensions;
 using System.Text;
+using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types;
 
-public class Body
+public class Body : IVisitableType
 {
     private List<NafLiteral> _literals;
 
@@ -26,5 +28,11 @@ public class Body
         builder.Append(Literals.ListToString());
 
         return builder.ToString();
+    }
+    
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }

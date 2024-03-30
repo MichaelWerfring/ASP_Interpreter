@@ -1,6 +1,9 @@
-﻿namespace asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
-public class Statement
+namespace asp_interpreter_lib.Types;
+
+public class Statement: IVisitableType
 {
     //Empty rule per default
 
@@ -41,5 +44,11 @@ public class Statement
         {
             return $"{Head.ToString()}.";
         }
+    }
+    
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }

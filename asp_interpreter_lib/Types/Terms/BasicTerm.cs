@@ -1,15 +1,16 @@
 ﻿using asp_interpreter_lib.ListExtensions;
 using asp_interpreter_lib.Types.TypeVisitors;
 using System.Text;
+using asp_interpreter_lib.ErrorHandling;
 
 namespace asp_interpreter_lib.Types.Terms;
 
-public class BasicTerm: Term
+public class BasicTerm: ITerm
 {
     private string _identifier;
-    private List<Term> _terms;
+    private List<ITerm> _terms;
 
-    public BasicTerm(string identifier, List<Term> terms)
+    public BasicTerm(string identifier, List<ITerm> terms)
     {
         Identifier = identifier;
         Terms = terms;
@@ -30,22 +31,16 @@ public class BasicTerm: Term
         }
     }
 
-    public List<Term> Terms
+    public List<ITerm> Terms
     {
         get => _terms;
         set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
     }
     
-    public override T Accept<T>(ITermVisitor<T> visitor)
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
-        ArgumentNullException.ThrowIfNull(visitor);
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
         return visitor.Visit(this);
-    }
-    
-    public override void Accept(ITermVisitor visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor);
-        visitor.Visit(this);
     }
 
     public override string ToString()

@@ -11,7 +11,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterFailsOnBasicTerm()
     {
-        Term term = new BasicTerm("a", []);
+        ITerm term = new BasicTerm("a", []);
         var result = term.Accept(_visitor);
         
         Assert.That(!result.HasValue);
@@ -20,7 +20,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterFailsOnAnonymusVariableTerm()
     {
-        Term term = new AnonymusVariableTerm();
+        ITerm term = new AnonymusVariableTerm();
         var result = term.Accept(_visitor);
         
         Assert.That(!result.HasValue);
@@ -29,7 +29,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterFailsOnVariableTerm()
     {
-        Term term = new VariableTerm("a");
+        ITerm term = new VariableTerm("a");
         
         Assert.Throws<NotImplementedException>(() => term.Accept(_visitor));
     }
@@ -37,7 +37,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnPlus()
     {
-        Term term = new ArithmeticOperationTerm(new Plus(new NumberTerm(1), new NumberTerm(1)));
+        ITerm term = new ArithmeticOperationTerm(new Plus(new NumberTerm(1), new NumberTerm(1)));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 2);
@@ -46,7 +46,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnMinus()
     {
-        Term term = new ArithmeticOperationTerm(new Minus(new NumberTerm(1), new NumberTerm(1)));
+        ITerm term = new ArithmeticOperationTerm(new Minus(new NumberTerm(1), new NumberTerm(1)));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 0);
@@ -55,7 +55,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnTimes()
     {
-        Term term = new ArithmeticOperationTerm(new Multiply(new NumberTerm(2), new NumberTerm(2)));
+        ITerm term = new ArithmeticOperationTerm(new Multiply(new NumberTerm(2), new NumberTerm(2)));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 4);
@@ -64,7 +64,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnDivide()
     {
-        Term term = new ArithmeticOperationTerm(new Divide(new NumberTerm(4), new NumberTerm(2)));
+        ITerm term = new ArithmeticOperationTerm(new Divide(new NumberTerm(4), new NumberTerm(2)));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 2);
@@ -73,7 +73,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSuccessOnParenthesizedTerm()
     {
-        Term term = new ParenthesizedTerm(new NumberTerm(1));
+        ITerm term = new ParenthesizedTerm(new NumberTerm(1));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 1);
@@ -82,7 +82,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterFailsOnStringTerm()
     {
-        Term term = new StringTerm("a");
+        ITerm term = new StringTerm("a");
         var result = term.Accept(_visitor);
         
         Assert.That(!result.HasValue);
@@ -91,7 +91,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnNegatedTerm()
     {
-        Term term = new NegatedTerm(new NumberTerm(1));
+        ITerm term = new NegatedTerm(new NumberTerm(1));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == -1);
@@ -100,7 +100,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnConventionalNumberTerm()
     {
-        Term term = new NumberTerm(1);
+        ITerm term = new NumberTerm(1);
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 1);

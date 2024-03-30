@@ -3,9 +3,9 @@ using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types.ArithmeticOperations;
 
-public class Minus(Term left, Term right) : ArithmeticOperation(left, right)
+public class Minus(IVisitableType left, IVisitableType right) : ArithmeticOperation(left, right)
 {
-    public override Term Evaluate()
+    public override ITerm Evaluate()
     {
         var visitor = new TermToNumberConverter();
         var left = Left.Accept(visitor);

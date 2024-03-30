@@ -4,7 +4,7 @@ namespace asp_interpreter_lib.Types.BinaryOperations;
 
 public class Disunification : BinaryOperator 
 {
-    public override bool Evaluate(Term left, Term right)
+    public override bool Evaluate(ITerm left, ITerm right)
     {
         throw new NotImplementedException();
     }

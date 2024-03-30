@@ -1,4 +1,7 @@
-﻿namespace asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
+
+namespace asp_interpreter_lib.Types;
 
 public class Query
 {
@@ -18,5 +21,11 @@ public class Query
     public override string ToString()
     {
         return $"?- {ClassicalLiteral.ToString()}.";
+    }
+    
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }

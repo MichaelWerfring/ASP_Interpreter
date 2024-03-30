@@ -1,29 +1,30 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types.ArithmeticOperations;
 
 public abstract class ArithmeticOperation
 {
-    private Term _left;
+    private IVisitableType _left;
     
-    private Term _right;
+    private IVisitableType _right;
     
-    protected ArithmeticOperation(Term left ,Term right)
+    protected ArithmeticOperation(IVisitableType left ,IVisitableType right)
     {
         Left = left;
         Right = right;
     }
     
-    public abstract Term Evaluate();
+    public abstract ITerm Evaluate();
 
-    public Term Left
+    public IVisitableType Left
     {
         get => _left;
         private set => _left = value ?? throw new ArgumentNullException(nameof(Left));
     }
 
-    public Term Right
+    public IVisitableType Right
     {
         get => _right;
         private set => _right = value ?? throw new ArgumentNullException(nameof(Right));

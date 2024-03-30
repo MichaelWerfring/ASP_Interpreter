@@ -2,22 +2,23 @@
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using System.Text;
+using asp_interpreter_lib.ErrorHandling;
 
 namespace asp_interpreter_lib.Types;
 
-public class ClassicalLiteral
+public class ClassicalLiteral : IVisitableType
 {
-    private List<Term> _terms;
+    private List<ITerm> _terms;
     private string _identifier;
 
-    public ClassicalLiteral(string identifier, bool negated, List<Term> terms) 
+    public ClassicalLiteral(string identifier, bool negated, List<ITerm> terms) 
     {
         Identifier = identifier;
         Terms = terms;
         Negated = negated;
     }
 
-    public List<Term> Terms
+    public List<ITerm> Terms
     {
         get => _terms;
         private set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
@@ -60,5 +61,11 @@ public class ClassicalLiteral
         }
 
         return builder.ToString();
+    }
+    
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }

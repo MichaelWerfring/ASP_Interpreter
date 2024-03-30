@@ -1,8 +1,9 @@
-﻿using asp_interpreter_lib.Types.TypeVisitors;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types.Terms;
 
-public class StringTerm: Term
+public class StringTerm: ITerm
 {
     private string _value;
 
@@ -18,20 +19,14 @@ public class StringTerm: Term
         private set => _value = value ?? throw new ArgumentNullException(nameof(Value),"Value cannot be null!");
     }
     
-    public override T Accept<T>(ITermVisitor<T> visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor);
-        return visitor.Visit(this);
-    }
-    
-    public override void Accept(ITermVisitor visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor);
-        visitor.Visit(this);
-    }
-
     public override string ToString()
     {
         return $"StringTerm({Value})";
+    }
+
+    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        return visitor.Visit(this);
     }
 }
