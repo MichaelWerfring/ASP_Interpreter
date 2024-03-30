@@ -24,10 +24,13 @@ binary_operator
     | LESS              #lessOperation
     | GREATER           #greaterOperation
     | LESS_OR_EQ        #lessOrEqOperation
-    | GREATER_OR_EQ     #greaterOrEqOperation;
+    | GREATER_OR_EQ     #greaterOrEqOperation
+    | IS                #isOperation;
 
-terms : term (COMMA terms)?;
-//terms : term (COMMA term)*;
+terms 
+    : term (COMMA terms)?;
+
+
 term 
     : ID (PAREN_OPEN terms? PAREN_CLOSE)?   #basicTerm
     | NUMBER                                #numberTerm
@@ -74,6 +77,7 @@ GREATER : '>';
 LESS_OR_EQ : '<=';
 GREATER_OR_EQ : '>=';
 DISUNIFICATION : '\\=';
+IS : 'is';
 
 //put this down so it does not match the not token
 ID : [a-z][a-zA-Z0-9_]*;

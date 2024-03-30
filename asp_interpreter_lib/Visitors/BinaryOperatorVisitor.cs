@@ -36,4 +36,9 @@ public class BinaryOperatorVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IO
     {
         return new Some<BinaryOperator>(new GreaterOrEqualThan());
     }
+    
+    public override IOption<BinaryOperator> VisitIsOperation(ASPParser.IsOperationContext context)
+    {
+        return new Some<BinaryOperator>(new Is());
+    }
 }
