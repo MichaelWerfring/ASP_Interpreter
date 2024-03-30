@@ -85,7 +85,7 @@ var olonRulesFilterer = new OLONRulesFilterer();
 var olonRules = olonRulesFilterer.FilterOlonRules(program.GetValueOrThrow().Statements);
 
 Console.WriteLine("OLON rules:");
-Console.WriteLine("---------------------------------------------------------------------------");
+Console.WriteLine("----------------------------------------------------------------------------");
 
 foreach (var rule in olonRules)
 {
