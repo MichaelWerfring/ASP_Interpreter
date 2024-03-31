@@ -12,6 +12,7 @@ using asp_interpreter_lib.Types;
 using asp_interpreter_lib.ListExtensions;
 using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
+using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types.Terms;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -25,7 +26,7 @@ using var host = builder.Build();
 //    throw new ArgumentException("Please provide a source file!");
 //}
 
-var result = FileReader.ReadFile("D:\\FH\\Semester 4\\Logikprogrammierung ILV\\SASP-Projekt\\ASP_Interpreter\\asp_interpreter_exe\\program1.asp");
+var result = FileReader.ReadFile(args[0]);
 
 if (!result.Success)
 {
@@ -45,49 +46,55 @@ if (!program.HasValue)
     throw new ArgumentException("Failed to parse program!");
 }
 
+var duals = DualRuleConverter.GetDualRules(program.GetValueOrThrow().Statements);
+
 var graphBuilder = new CallGraphBuilder();
-
 var callGraph = graphBuilder.BuildCallGraph(program.GetValueOrThrow().Statements);
+PrintAll(program.GetValueOrThrow(), callGraph);
 
-Console.WriteLine("Program:");
-Console.WriteLine("---------------------------------------------------------------------------");
-Console.WriteLine(program.ToString());
-
-Console.WriteLine("Graph:");
-Console.WriteLine("---------------------------------------------------------------------------");
-foreach(var edge in callGraph.Edges)
+static void PrintAll(AspProgram program, AdjacencyGraph<Statement, CallGraphEdge?> callGraph)
 {
-    Console.WriteLine(edge.ToString());
-}
-Console.WriteLine("---------------------------------------------------------------------------");
-
-Console.WriteLine("Cycles:");
-Console.WriteLine("---------------------------------------------------------------------------");
-
-var cycleFinder = new CallGraphCycleFinder();
-var vertexToCycleMapping = cycleFinder.FindAllCycles(callGraph);
-
-foreach (var vertex in vertexToCycleMapping.Keys)
-{
-    var cycles = vertexToCycleMapping[vertex];
-
-    Console.WriteLine($"Cycles of {vertex.ToString()}:");
+    Console.WriteLine("Program:");
     Console.WriteLine("---------------------------------------------------------------------------");
-    foreach (var cycle in cycles)
+    Console.WriteLine(program.ToString());
+
+    Console.WriteLine("Graph:");
+    Console.WriteLine("---------------------------------------------------------------------------");
+    foreach(var edge in callGraph.Edges)
     {
-       Console.WriteLine(CycleStringifier.CycleToString(cycle));
+        Console.WriteLine(edge.ToString());
     }
     Console.WriteLine("---------------------------------------------------------------------------");
+
+    Console.WriteLine("Cycles:");
+    Console.WriteLine("---------------------------------------------------------------------------");
+
+    var cycleFinder = new CallGraphCycleFinder();
+    var vertexToCycleMapping = cycleFinder.FindAllCycles(callGraph);
+
+    foreach (var vertex in vertexToCycleMapping.Keys)
+    {
+        var cycles = vertexToCycleMapping[vertex];
+
+        Console.WriteLine($"Cycles of {vertex.ToString()}:");
+        Console.WriteLine("---------------------------------------------------------------------------");
+        foreach (var cycle in cycles)
+        {
+            Console.WriteLine(CycleStringifier.CycleToString(cycle));
+        }
+        Console.WriteLine("---------------------------------------------------------------------------");
+    }
+
+
+    var olonRulesFilterer = new OLONRulesFilterer();
+    var olonRules = olonRulesFilterer.FilterOlonRules(program.Statements);
+
+    Console.WriteLine("OLON rules:");
+    Console.WriteLine("----------------------------------------------------------------------------");
+
+    foreach (var rule in olonRules)
+    {
+        Console.WriteLine(rule);
+    }
 }
 
-
-var olonRulesFilterer = new OLONRulesFilterer();
-var olonRules = olonRulesFilterer.FilterOlonRules(program.GetValueOrThrow().Statements);
-
-Console.WriteLine("OLON rules:");
-Console.WriteLine("----------------------------------------------------------------------------");
-
-foreach (var rule in olonRules)
-{
-    Console.WriteLine(rule);
-}
