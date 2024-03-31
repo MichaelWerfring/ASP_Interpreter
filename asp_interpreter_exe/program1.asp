@@ -1,16 +1,7 @@
-a :- not b.
-a :- c.
-c :- not e.
-e:- not a.
+
+a(X,1).
+a(X,Y).
 
 
-g :- s, not b.
-a :- f, g.
-
-s :- not a, c.
-s :- not e, g.
-g :- not b.
-
-b :- a.
 
 edge(X, b)?

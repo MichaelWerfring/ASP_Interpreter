@@ -1,0 +1,1 @@
+antlr4-parse "asp_interpreter_lib\ANTLR\ASP.g4" program -gui "asp_interpreter_exe\program.asp"

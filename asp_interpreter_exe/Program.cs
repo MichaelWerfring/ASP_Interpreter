@@ -14,6 +14,9 @@ using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Unification.Interfaces;
+using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm;
+using asp_interpreter_lib.Unification;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
@@ -45,6 +48,14 @@ if (!program.HasValue)
 {
     throw new ArgumentException("Failed to parse program!");
 }
+
+IUnificationAlgorithm algorithm = new MMUnificationAlgorithm(true);
+
+var prog = program.GetValueOrThrow();
+var converter = new ClassicalLiteralToTermConverter();
+
+var variables = algorithm.Unify(converter.Convert(prog.Statements[0].Head.Literal), converter.Convert(prog.Statements[1].Head.Literal));
+
 
 var duals = DualRuleConverter.GetDualRules(program.GetValueOrThrow().Statements);
 
