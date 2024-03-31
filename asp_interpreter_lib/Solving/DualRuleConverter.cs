@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.Types;
+﻿using System.Xml.XPath;
+using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
 
@@ -49,7 +50,8 @@ public class DualRuleConverter
                 continue;
             }
 
-            var newVariable = new VariableTerm(RewriteVariable(current, variables));
+            var newVariable = new VariableTerm(
+                ASPExtensions.GenerateVariableName(current, variables, "rwh"));
 
             //Rewrite the head
             terms[terms.IndexOf(term)] = newVariable;
@@ -60,16 +62,6 @@ public class DualRuleConverter
         }
 
         return rule;
-    }
-
-    private static string RewriteVariable(string current, HashSet<string> variables)
-    {
-        ArgumentNullException.ThrowIfNull(variables);
-        
-        int rewriteCount = variables.Count(v => v.StartsWith("rwh") && v.EndsWith(current));
-        string newVariable = "rwh" + rewriteCount + "_" + current;
-        variables.Add(newVariable);
-        return newVariable;
     }
     
     public static AspProgram GetDualProgram(AspProgram initial)

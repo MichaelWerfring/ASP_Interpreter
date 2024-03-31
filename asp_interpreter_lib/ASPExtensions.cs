@@ -24,4 +24,14 @@ public static class ASPExtensions
         
         return program.GetValueOrThrow();
     }
+    
+    public static string GenerateVariableName(string currentName, HashSet<string> variables, string prefix)
+    {
+        ArgumentNullException.ThrowIfNull(variables);
+        
+        int rewriteCount = variables.Count(v => v.StartsWith(prefix) && v.EndsWith(currentName));
+        string newVariable = prefix + rewriteCount + "_" + currentName;
+        variables.Add(newVariable);
+        return newVariable;
+    }
 }
