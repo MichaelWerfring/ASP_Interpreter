@@ -28,7 +28,7 @@ public class DualRuleConverter
         if (terms == null) return rule;
         var visitor = new VariableTermVisitor();
         
-        List<string> variables = [];
+        HashSet<string> variables = [];
         int count = terms.Count;
         
         for (var i = 0; i < count; i++)
@@ -44,9 +44,8 @@ public class DualRuleConverter
 
             //If it occurs for the first time it can be skipped
             string current = variableTerm.GetValueOrThrow().Identifier;
-            if (!variables.Contains(current))
+            if (variables.Add(current))
             {
-                variables.Add(current);
                 continue;
             }
 
@@ -63,8 +62,10 @@ public class DualRuleConverter
         return rule;
     }
 
-    private static string RewriteVariable(string current, List<string> variables)
+    private static string RewriteVariable(string current, HashSet<string> variables)
     {
+        ArgumentNullException.ThrowIfNull(variables);
+        
         int rewriteCount = variables.Count(v => v.StartsWith("rwh") && v.EndsWith(current));
         string newVariable = "rwh" + rewriteCount + "_" + current;
         variables.Add(newVariable);
