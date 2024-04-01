@@ -1,48 +1,42 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.SimplifiedTerm;
 using asp_interpreter_lib.Unification.Interfaces;
 using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.CaseDetection;
 using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.CaseDetection.Rules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm
 {
     public class MMUnificationAlgorithm : IUnificationAlgorithm
     {
-        private RuleMapper _rulesMapper;
+        private RuleMatcher _rulesMapper;
 
         public MMUnificationAlgorithm(bool doOccursCheck)
         {
-            _rulesMapper = new RuleMapper(doOccursCheck);
+            _rulesMapper = new RuleMatcher(doOccursCheck);
         }
 
-        public IOption<Dictionary<VariableTerm, ITerm>> Unify(ITerm left, ITerm right)
+        public IOption<Dictionary<VariableTerm, ISimplifiedTerm>> Unify(ISimplifiedTerm left, ISimplifiedTerm right)
         {
             ArgumentNullException.ThrowIfNull(left, nameof(left));
             ArgumentNullException.ThrowIfNull(right, nameof(right));
 
-            List<(ITerm, ITerm)> initialEquations = new List<(ITerm, ITerm)>()
+            List<(ISimplifiedTerm, ISimplifiedTerm)> initialEquations = new List<(ISimplifiedTerm, ISimplifiedTerm)>()
             {
                 (left, right)
             };
 
-            var resultsList = new List<IEnumerable<(ITerm, ITerm)>>();
+            var resultsList = new List<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>>();
 
             DoUnification(initialEquations, resultsList);
 
             if(resultsList.Count != 1)
             {
-                return new None<Dictionary<VariableTerm, ITerm>>();
+                return new None<Dictionary<VariableTerm, ISimplifiedTerm>>();
             }
 
             var equations = resultsList[0];
 
-            var mapping = new Dictionary<VariableTerm, ITerm>();
-
+            var mapping = new Dictionary<VariableTerm, ISimplifiedTerm>();
             foreach( var equation in equations)
             {
                 if(equation.Item1.GetType() != typeof(VariableTerm))
@@ -50,15 +44,15 @@ namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm
                     Console.Write("Error: not a variable term");
                 }
 
-                VariableTerm variable = equation.Item1 as VariableTerm;
+                VariableTerm variable = (VariableTerm) equation.Item1;
 
                 mapping.Add(variable, equation.Item2);
             }
 
-            return new Some<Dictionary<VariableTerm, ITerm>>(mapping);
+            return new Some<Dictionary<VariableTerm, ISimplifiedTerm>>(mapping);
         }
 
-        private void DoUnification(IEnumerable<(ITerm, ITerm)> currentEquations, List<IEnumerable<(ITerm, ITerm)>> finalList)
+        private void DoUnification(IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> currentEquations, List<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>> finalList)
         {
             foreach (var equation in currentEquations)
             {
@@ -75,7 +69,7 @@ namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm
                 }
 
                 var newEquationsMaybe = rule.ApplyRule(equation, currentEquations);
-                IEnumerable<(ITerm, ITerm)> newEquations;
+                IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> newEquations;
                 try
                 {
                     newEquations = newEquationsMaybe.GetValueOrThrow();

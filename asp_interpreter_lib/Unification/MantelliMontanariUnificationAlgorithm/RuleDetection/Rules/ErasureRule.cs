@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.SimplifiedTerm;
 using asp_interpreter_lib.Types.Terms;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,11 @@ namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.
 {
     public class ErasureRule : IMMRule
     {
-        public IOption<IEnumerable<(ITerm, ITerm)>> ApplyRule((ITerm, ITerm) equation, IEnumerable<(ITerm, ITerm)> equations)
+        public IOption<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>> ApplyRule
+        (
+            (ISimplifiedTerm, ISimplifiedTerm) equation,
+            IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> equations
+        )
         {
             ArgumentNullException.ThrowIfNull(equation);
             ArgumentNullException.ThrowIfNull(equations);
@@ -20,10 +25,9 @@ namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.
             }
 
             var newEquations = equations.ToList();
-
             newEquations.Remove(equation);
 
-            return new Some<IEnumerable<(ITerm, ITerm)>>(newEquations);
+            return new Some<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>>(newEquations);
         }
     }
 }

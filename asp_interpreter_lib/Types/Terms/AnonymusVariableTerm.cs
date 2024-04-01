@@ -10,6 +10,7 @@ public class AnonymusVariableTerm : ITerm
         ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
         return visitor.Visit(this);
     }
+
     public override string ToString()
     {
         return "_";

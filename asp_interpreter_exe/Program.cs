@@ -5,24 +5,20 @@ using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.FileIO;
 using asp_interpreter_lib.Visitors;
 using QuikGraph;
-using QuikGraph.Algorithms;
-using QuikGraph.Graphviz;
-using System.IO;
 using asp_interpreter_lib.Types;
-using asp_interpreter_lib.ListExtensions;
 using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
 using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Unification.Interfaces;
 using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm;
 using asp_interpreter_lib.Unification;
+using asp_interpreter_lib.SimplifiedTerm;
+using asp_interpreter_lib.SimplifiedTerm.TermFunctionality;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
 builder.Services.AddTransient<ProgramVisitor>();
 using var host = builder.Build();
-
 
 //if(args.Length != 1)
 //{
@@ -48,14 +44,59 @@ if (!program.HasValue)
 {
     throw new ArgumentException("Failed to parse program!");
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-IUnificationAlgorithm algorithm = new MMUnificationAlgorithm(true);
+var containsChecker = new TermContainsChecker();
+var equivalenceChecker = new TermEquivalenceChecker();
+var termReplacer = new TermReplacer();
 
+IUnificationAlgorithm algorithm = new MMUnificationAlgorithm(false);
+
+var left = new BasicTerm
+(
+    "nat",
+    new List<ISimplifiedTerm>() 
+    {
+        new VariableTerm("X"),
+        new VariableTerm("X")
+    },
+    false
+);
+
+var right = new BasicTerm
+(
+    "nat",
+    new List<ISimplifiedTerm>()
+    {
+        new VariableTerm("Y"),
+        new BasicTerm
+        (
+            "nat",
+            new List<ISimplifiedTerm>()
+            {
+                new VariableTerm("X"),
+                new BasicTerm
+                (
+                    "nat",
+                    new List<ISimplifiedTerm>()
+                    {
+                        new VariableTerm("Y")
+                    },
+                    false
+                ),
+            },
+            false
+        ),
+    },
+    false
+);
+
+var substitution = algorithm.Unify(left, right);
+
+Console.WriteLine(substitution);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 var prog = program.GetValueOrThrow();
-var converter = new ClassicalLiteralToTermConverter();
-
-var variables = algorithm.Unify(converter.Convert(prog.Statements[0].Head.Literal), converter.Convert(prog.Statements[1].Head.Literal));
-
 
 var duals = DualRuleConverter.GetDualRules(program.GetValueOrThrow().Statements);
 
