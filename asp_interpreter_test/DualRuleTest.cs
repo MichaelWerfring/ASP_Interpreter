@@ -74,7 +74,8 @@ public class DualRuleTest
         
         var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
        
-        Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = rwh0_A."));
+        //Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = rwh0_A."));
+        Assert.That(result, Is.EqualTo("test(rwh0_a, A, rwh0_A, rwh1_a, B) :- rwh1_a = a, A = rwh0_A, rwh0_a = a."));
     }
     
     [Test]
@@ -103,7 +104,8 @@ public class DualRuleTest
         
         var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
        
-        Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = B, A = rwh0_A."));
+        //Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = B, A = rwh0_A."));
+        Assert.That(result, Is.EqualTo("test(rwh0_a, A, rwh0_A, rwh1_a, B) :- rwh1_a = a, A = rwh0_A, rwh0_a = a, A = B."));
     }
     
     [Test]
@@ -124,7 +126,9 @@ public class DualRuleTest
         
         var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
         
-        Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, rwh1_A, B) :- A = rwh0_A, A = rwh1_A."));
+        
+        Assert.That(result, Is.EqualTo(
+            "test(rwh0_a, A, rwh0_A, rwh1_a, rwh1_A, B) :- A = rwh1_A, rwh1_a = a, A = rwh0_A, rwh0_a = a."));
     }
     
     [Test]
@@ -147,9 +151,10 @@ public class DualRuleTest
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
         var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
-        
-        Assert.That(result, Is.EqualTo(
-            "test(B, A, b, b, rwh0_A, a, rwh0_B, rwh1_A, rwh1_B) :- A = rwh0_A, B = rwh0_B, A = rwh1_A, B = rwh1_B."));
+        var expected =
+            "test(B, A, rwh0_b, rwh1_b, rwh0_A, rwh0_a, rwh0_B, rwh1_A, rwh1_B) :- " +
+            "B = rwh1_B, A = rwh1_A, B = rwh0_B, rwh0_a = a, A = rwh0_A, rwh1_b = b, rwh0_b = b.";
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]

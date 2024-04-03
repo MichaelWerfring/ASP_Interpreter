@@ -27,9 +27,20 @@ public class DualRuleConverter
             var term = terms[i];
             var variableTerm = term.Accept(visitor);
 
-            //If the term is not a variable it can be skipped
+            //If the term is not a variable it is replaced by a variable and unified with it
             if (!variableTerm.HasValue)
             {
+                
+                //Accept ToString/Null values for now
+                var newHeadVariable = new VariableTerm(
+                    ASPExtensions.GenerateVariableName(term.ToString() ?? "", variables, "rwh"));
+                
+                //replace head
+                terms[terms.IndexOf(term)] = newHeadVariable;
+                
+                //replace body
+                rule.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
+                    newHeadVariable, new Equality(), term)));
                 continue;
             }
 
@@ -47,7 +58,7 @@ public class DualRuleConverter
             terms[terms.IndexOf(term)] = newVariable;
             
             //Rewrite the body
-            rule.Body.Literals.Add(new NafLiteral(new BinaryOperation(
+            rule.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
                 variableTerm.GetValueOrThrow(), new Equality(), newVariable)));
         }
 
