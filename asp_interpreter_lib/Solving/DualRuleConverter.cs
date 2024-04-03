@@ -17,7 +17,7 @@ public class DualRuleConverter
         
         var terms = rule.Head.Literal?.Terms;
         if (terms == null) return rule;
-        var visitor = new VariableTermVisitor();
+        var visitor = new VariableTermConverter();
         
         HashSet<string> variables = [];
         int count = terms.Count;
@@ -120,32 +120,34 @@ public class DualRuleConverter
 
         return duals;
     }
-    
-    
-    //Get all variables
-    //VariableTermConverter variableConverter = new();
-    //BasicTermConverter basicConverter = new();
-    //List<VariableTerm> variables = [];
-    //foreach (var c in term.Children)
-    //{
-    //    var variable = c.Accept(variableConverter);
-    //
-    //    if (variable.HasValue)
-    //    {
-    //        variables.Add(variable.GetValueOrThrow());
-    //        continue;
-    //    }
-    //    
-    //    //Should never throw due to the fact that there are only those two simplified terms
-    //    ReplaceDuplicateVariables(c.Accept(basicConverter).GetValueOrThrow(
-    //        "The given Terms children cannot be parsed to variable or basic terms!"));
-    //}
-    
-    public static AspProgram GetDualProgram(AspProgram initial)
-    {
-        var rules = initial.Statements;
-        var duals = new List<Statement>();
 
-        return new AspProgram(duals, initial.Query);
+    private static Statement AddForall(Statement rule)
+    {
+        var result = new Statement();
+        
+        //First check if applicable else return just the statement
+        
+        
+        //1) generate Dual rules normally (except predicate in the head
+        //                                 is replaced with a new one => this is a positive literal with custom name)
+        //2) Add Body variables to the head of each dual
+        //3) Create Clause for teh dual containing the forall over the new predicate
+
+        // q(X) :- not p(X, Y).
+
+        // 1)
+        // q_new(X) :- p(X, Y). 
+
+        // 2)
+        // q_new(X, Y) :- p(X, Y).
+
+        // 3)
+        // not q(X) :- forall(Y, q_new(X, Y)).
+        // q_new(X, Y) :- p(X, Y).
+
+        //not q(X) :- forall(Y, nq1(X, Y)).
+        //nq1(X, Y) :- p(X, Y).
+
+        return result;
     }
 }

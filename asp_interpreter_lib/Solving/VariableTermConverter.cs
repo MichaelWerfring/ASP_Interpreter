@@ -4,7 +4,7 @@ using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Solving;
 
-public class VariableTermVisitor : TypeBaseVisitor<VariableTerm>
+public class VariableTermConverter : TypeBaseVisitor<VariableTerm>
 {
     public override IOption<VariableTerm> Visit(VariableTerm term)
     {
