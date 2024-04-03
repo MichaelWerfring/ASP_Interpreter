@@ -79,7 +79,7 @@ GREATER_OR_EQ : '>=';
 DISUNIFICATION : '\\=';
 IS : 'is';
 
-//put this down so it does not match the not token
+//put this down so it does not match the not and is token
 ID : [a-z][a-zA-Z0-9_]*;
 VARIABLE : [A-Z][a-zA-Z0-9_]*;
 

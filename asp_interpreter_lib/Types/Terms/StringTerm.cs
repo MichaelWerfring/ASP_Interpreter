@@ -21,7 +21,7 @@ public class StringTerm: ITerm
     
     public override string ToString()
     {
-        return $"StringTerm({Value})";
+        return Value;
     }
 
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)

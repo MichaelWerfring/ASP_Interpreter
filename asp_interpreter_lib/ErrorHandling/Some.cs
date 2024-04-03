@@ -14,6 +14,13 @@ public class Some<T> : IOption<T>
 
 
     public T GetValueOrThrow() => _value;
+    public T GetValueOrThrow(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(message));
+
+        return _value;
+    }
 
     public void IfHasValue(Action<T> hasValue) => hasValue(_value);
 
