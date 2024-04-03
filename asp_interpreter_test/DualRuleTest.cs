@@ -1,6 +1,9 @@
 ﻿using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
+using NuGet.Frameworks;
+using Is = NUnit.Framework.Is;
 
 namespace asp_interpreter_test;
 
@@ -12,7 +15,7 @@ public class DualRuleTest
         var rule = new Statement();
         rule.AddHead(new Head());
         
-        var result = DualRuleConverter.TransformHead(rule);
+        var result = DualRuleConverter.ReplaceDuplicateVariables(rule);
         Assert.That(result, Is.EqualTo(rule));
     }
     
@@ -30,7 +33,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.TransformHead(rule);
+        var result = DualRuleConverter.ReplaceDuplicateVariables(rule);
         Assert.That(result, Is.EqualTo(rule));
     }
     
@@ -49,7 +52,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.TransformHead(rule);
+        var result = DualRuleConverter.ReplaceDuplicateVariables(rule);
         
         Assert.That(result, Is.EqualTo(rule));
     }
@@ -69,9 +72,38 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.TransformHead(rule).ToString();
+        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
        
         Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = rwh0_A."));
+    }
+    
+    [Test]
+    public void TransformHeadDoesNotAlterRuleBody()
+    {
+        var rule = new Statement();
+        var terms = new List<ITerm>
+        {
+            new BasicTerm("a", []),
+            new VariableTerm("A"),
+            new VariableTerm("A"),
+            new BasicTerm("a", []),
+            new VariableTerm("B")
+        };
+        
+        rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
+        
+        var operation = new BinaryOperation(
+            new VariableTerm("A"),
+            new Equality(),
+            new VariableTerm("B"));
+        var body = new Body([new NafLiteral(operation)]);
+        
+        rule.AddBody(body);
+        
+        
+        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
+       
+        Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = B, A = rwh0_A."));
     }
     
     [Test]
@@ -90,7 +122,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.TransformHead(rule).ToString();
+        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
         
         Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, rwh1_A, B) :- A = rwh0_A, A = rwh1_A."));
     }
@@ -114,9 +146,38 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.TransformHead(rule).ToString();
+        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
         
         Assert.That(result, Is.EqualTo(
             "test(B, A, b, b, rwh0_A, a, rwh0_B, rwh1_A, rwh1_B) :- A = rwh0_A, B = rwh0_B, A = rwh1_A, B = rwh1_B."));
+    }
+
+    [Test]
+    public void GetDualRulesForStatementReturnsCorrectDualRules()
+    {
+        var rule = new Statement();
+        
+        //p(X, Y) :- not q(X), t(Y, Y).
+        List<ITerm> headTerms = new List<ITerm> { new VariableTerm("X"), new VariableTerm("Y") };
+        rule.AddHead(new Head(new ClassicalLiteral("p", false ,headTerms)));
+
+        List<NafLiteral> body = new List<NafLiteral>()
+        {
+            new NafLiteral(new ClassicalLiteral("q", false, [new VariableTerm("X")]),true),
+            new NafLiteral(new ClassicalLiteral("t",false, [new VariableTerm("Y"), new VariableTerm("Y")]),false),
+        };
+        
+        rule.AddBody(new Body(body));
+
+
+        var result = DualRuleConverter.GetDualRules(rule);
+
+        //not p(X, Y) :- q(X).
+        string firstDual = result[0].ToString();
+        
+        //not p(X, Y) :- not q(X), not t(Y, Y).
+        string secondDual = result[1].ToString();
+        
+        Assert.That(firstDual == "p(X, Y) :- q(X)." && secondDual == "p(X, Y) :- not q(X), not t(Y, Y).");
     }
 }
