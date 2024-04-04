@@ -50,7 +50,7 @@ arithop
 
 //escaping the " and then match everything except " 
 STRING : '"'([^"]|'"')*'"';
-NUMBER : [0] | [1-9]+;
+NUMBER :  [0] | [1-9][0-9]*;
 ANONYMOUS_VARIABLE : '_';
 DOT : '.';
 COMMA : ',';
