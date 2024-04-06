@@ -185,7 +185,7 @@ public class DualRuleTest
         //not p(X, Y) :- not q(X), not t(Y, Y).
         string secondDual = result[1].ToString();
         
-        Assert.That(firstDual == "p(X, Y) :- q(X)." && secondDual == "p(X, Y) :- not q(X), not t(Y, Y).");
+        Assert.That(firstDual == "not p(X, Y) :- q(X)." && secondDual == "not p(X, Y) :- not q(X), not t(Y, Y).");
     }
 
     [Test]
@@ -216,7 +216,7 @@ public class DualRuleTest
         
         Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
                     duals[0].ToString() == "not q(X) :- forall(Y, fa0_q(X, Y))." && 
-                    duals[1].ToString() == "fa0_q(X, Y) :- p(X, Y).");
+                    duals[1].ToString() == "not fa0_q(X, Y) :- p(X, Y).");
     }
 
     [Test]
@@ -234,7 +234,7 @@ public class DualRuleTest
         
         Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
                     duals[0].ToString() == "not q(X) :- forall(Y, forall(Z, fa0_q(X, Y, Z)))." && 
-                    duals[1].ToString() == "fa0_q(X, Y, Z) :- p(X, Y, Z).");
+                    duals[1].ToString() == "not fa0_q(X, Y, Z) :- p(X, Y, Z).");
     }
     
     [Test]

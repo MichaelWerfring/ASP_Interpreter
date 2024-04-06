@@ -93,6 +93,7 @@ public class DualRuleConverter
         List<Statement> duals = [];
         var disjunctions = PreprocessRules(rules);
         
+        //rename
         List<string>allVariables = [];
         foreach (var disjunction in disjunctions)
         {
@@ -129,8 +130,9 @@ public class DualRuleConverter
                 var statement = statements[i];
                 var tempStatement = new Statement();
                 string tempVariableId = ASPExtensions.GenerateVariableName("", allVariables, "idis");
-                //tempStatement.AddHead(new Head(new ClassicalLiteral(tempVariableId, statement.Head.Literal.Negated, statement.Head.Literal.Terms));
-
+                //tempStatement.AddHead(new Head(new ClassicalLiteral(tempVariableId, statement.Head.Literal.Negated, statement.Head.Literal.Terms)));
+                statement.Head.Literal.Identifier = tempVariableId;
+                
                 newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, []), true));
 
                 var withForall = AddForall(statement, allVariables.ToHashSet());
@@ -156,9 +158,12 @@ public class DualRuleConverter
         return duals;
     }
     
-    public static List<Statement> GetDualRules(Statement rule, HashSet<string> variables)
+    public static List<Statement> GetDualRules(Statement stmt, HashSet<string> variables)
     {
-        ArgumentNullException.ThrowIfNull(rule);
+        ArgumentNullException.ThrowIfNull(stmt);
+
+        var copier = new StatementCopyVisitor();
+        Statement rule = stmt.Accept(copier).GetValueOrThrow("Cannot copy given statement!");
         
         List<Statement> duals = [];
 
@@ -170,6 +175,7 @@ public class DualRuleConverter
             
             //Maybe set negated on the classical literal in the head 
             //to indicate a dual rule
+            rule.Head.IsDual = true;
             dualStatement.AddHead(rule.Head);
 
             List<NafLiteral> dualBody = [];
@@ -203,6 +209,9 @@ public class DualRuleConverter
 
     public static List<Statement> AddForall(Statement statement, HashSet<string> variablesInProgram)
     {
+        ArgumentNullException.ThrowIfNull(statement);
+        ArgumentNullException.ThrowIfNull(variablesInProgram);
+        
         var bodyVariables = GetBodyVariables(statement);
 
         if (bodyVariables.Count == 0)
@@ -226,12 +235,10 @@ public class DualRuleConverter
         
         // 2) Body Variables added to head of each dual
         
-        foreach (var dual in duals)
+        foreach (var variable in bodyVariables)
         {
-            foreach (var variable in bodyVariables)
-            {
-                dual.Head.Literal.Terms.Add(new VariableTerm(variable));
-            }
+            //They share the same head
+            duals[0].Head.Literal.Terms.Add(new VariableTerm(variable));
         }
         
         // 3) Create Clause with forall over the new Predicate
