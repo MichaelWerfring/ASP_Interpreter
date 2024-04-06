@@ -12,7 +12,7 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 
     public override IOption<ITerm> Visit(VariableTerm term)
     {
-        return new Some<ITerm>(new VariableTerm(term.ToString()));
+        return new Some<ITerm>(new VariableTerm(term.Identifier.GetCopy()));
     }
 
     public override IOption<ITerm> Visit(ArithmeticOperationTerm term)
@@ -35,7 +35,7 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 
     public override IOption<ITerm> Visit(StringTerm term)
     {
-        return new Some<ITerm>(new StringTerm(term.Value.ToString()));
+        return new Some<ITerm>(new StringTerm(term.Value.GetCopy()));
     }
 
     public override IOption<ITerm> Visit(NumberTerm term)

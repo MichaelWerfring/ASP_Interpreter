@@ -59,4 +59,6 @@ public class TypeBaseVisitor<T>
     public virtual IOption<T> Visit(NegatedTerm _) => new None<T>();
     
     public virtual IOption<T> Visit(ParenthesizedTerm _) => new None<T>();
+
+    public virtual IOption<T> Visit(Forall _) => new None<T>();
 }

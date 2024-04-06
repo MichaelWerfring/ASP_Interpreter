@@ -27,8 +27,15 @@ public class Head : IVisitableType
 
     public bool HasValue => _literal != null;
 
+    public bool IsDual { get; set; }
+    
     public override string ToString()
     {
+        if (IsDual)
+        {
+            return ("not " + Literal?.ToString() ?? String.Empty);
+        }
+        
         return Literal?.ToString() ?? String.Empty;
     }
     

@@ -1,4 +1,6 @@
-﻿using asp_interpreter_lib.Solving;
+﻿using System.Xml.Linq;
+using asp_interpreter_lib;
+using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
@@ -15,7 +17,7 @@ public class DualRuleTest
         var rule = new Statement();
         rule.AddHead(new Head());
         
-        var result = DualRuleConverter.ReplaceDuplicateVariables(rule);
+        var result = DualRuleConverter.ComputeHead(rule);
         Assert.That(result, Is.EqualTo(rule));
     }
     
@@ -33,7 +35,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.ReplaceDuplicateVariables(rule);
+        var result = DualRuleConverter.ComputeHead(rule);
         Assert.That(result, Is.EqualTo(rule));
     }
     
@@ -52,7 +54,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.ReplaceDuplicateVariables(rule);
+        var result = DualRuleConverter.ComputeHead(rule);
         
         Assert.That(result, Is.EqualTo(rule));
     }
@@ -72,7 +74,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
+        var result = DualRuleConverter.ComputeHead(rule).ToString();
        
         //Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = rwh0_A."));
         Assert.That(result, Is.EqualTo("test(rwh0_a, A, rwh0_A, rwh1_a, B) :- rwh1_a = a, A = rwh0_A, rwh0_a = a."));
@@ -102,7 +104,7 @@ public class DualRuleTest
         rule.AddBody(body);
         
         
-        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
+        var result = DualRuleConverter.ComputeHead(rule).ToString();
        
         //Assert.That(result, Is.EqualTo("test(a, A, rwh0_A, a, B) :- A = B, A = rwh0_A."));
         Assert.That(result, Is.EqualTo("test(rwh0_a, A, rwh0_A, rwh1_a, B) :- rwh1_a = a, A = rwh0_A, rwh0_a = a, A = B."));
@@ -124,7 +126,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
+        var result = DualRuleConverter.ComputeHead(rule).ToString();
         
         
         Assert.That(result, Is.EqualTo(
@@ -150,7 +152,7 @@ public class DualRuleTest
         
         rule.AddHead(new Head(new ClassicalLiteral("test", false, terms)));
         
-        var result = DualRuleConverter.ReplaceDuplicateVariables(rule).ToString();
+        var result = DualRuleConverter.ComputeHead(rule).ToString();
         var expected =
             "test(B, A, rwh0_b, rwh1_b, rwh0_A, rwh0_a, rwh0_B, rwh1_A, rwh1_B) :- " +
             "B = rwh1_B, A = rwh1_A, B = rwh0_B, rwh0_a = a, A = rwh0_A, rwh1_b = b, rwh0_b = b.";
@@ -175,7 +177,7 @@ public class DualRuleTest
         rule.AddBody(new Body(body));
 
 
-        var result = DualRuleConverter.GetDualRules(rule);
+        var result = DualRuleConverter.GetDualRules(rule, ["X,Y"]);
 
         //not p(X, Y) :- q(X).
         string firstDual = result[0].ToString();
@@ -184,5 +186,54 @@ public class DualRuleTest
         string secondDual = result[1].ToString();
         
         Assert.That(firstDual == "p(X, Y) :- q(X)." && secondDual == "p(X, Y) :- not q(X), not t(Y, Y).");
+    }
+
+    [Test]
+    public void GetDualWorks()
+    {
+        string code = """
+                      p(0).
+                      p(X) :- q(X), not t(X,Y).
+                      p?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var dual = DualRuleConverter.GetDualRules(program.Statements);
+    }
+
+    [Test]
+    public void ForallTreatsSingleBodyVariableCorrectly()
+    {
+        string code = """
+                      q(X) :- not p(X, Y).
+                      q?
+                      """;
+
+        var errorLogger = new MockErrorLogger();
+        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var variables = new HashSet<string>() { "X", "Y" };
+        var duals = DualRuleConverter.AddForall(program.Statements[0], variables);
+        
+        Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
+                    duals[0].ToString() == "not q(X) :- forall(Y, fa0_q(X, Y))." && 
+                    duals[1].ToString() == "fa0_q(X, Y) :- p(X, Y).");
+    }
+
+    [Test]
+    public void ForallTreatsMultipleBodyVariablesCorrectly()
+    {
+        string code = """
+                      q(X) :- not p(X, Y, Z).
+                      q?
+                      """;
+
+        var errorLogger = new MockErrorLogger();
+        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var variables = new HashSet<string>() { "X", "Y", "Z" };
+        var duals = DualRuleConverter.AddForall(program.Statements[0], variables);
+        
+        Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
+                    duals[0].ToString() == "not q(X) :- forall(Y, forall(Z, fa0_q(X, Y, Z)))." && 
+                    duals[1].ToString() == "fa0_q(X, Y, Z) :- p(X, Y, Z).");
     }
 }

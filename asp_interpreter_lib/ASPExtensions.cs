@@ -34,4 +34,27 @@ public static class ASPExtensions
         variables.Add(newVariable);
         return newVariable;
     }
+    
+    public static string GenerateVariableName(string currentName, List<string> variables, string prefix)
+    {
+        ArgumentNullException.ThrowIfNull(variables);
+        
+        int rewriteCount = variables.Count(v => v.StartsWith(prefix) && v.EndsWith(currentName));
+        string newVariable = prefix + rewriteCount + "_" + currentName;
+        variables.Add(newVariable);
+        return newVariable;
+    }
+
+    public static string GetCopy(this string input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        string copy = string.Empty;
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            copy += input[i];
+        }
+
+        return copy;
+    }
 }
