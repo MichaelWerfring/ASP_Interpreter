@@ -236,4 +236,19 @@ public class DualRuleTest
                     duals[0].ToString() == "not q(X) :- forall(Y, forall(Z, fa0_q(X, Y, Z)))." && 
                     duals[1].ToString() == "fa0_q(X, Y, Z) :- p(X, Y, Z).");
     }
+    
+    [Test]
+    public void GetDualsHandlesProgramCorrectly()
+    {
+        string code = """
+                      p(0).
+                      p(X) :- q(X), not t(X, Y).
+                      p?
+                      """;
+
+        var errorLogger = new MockErrorLogger();
+        var program = ASPExtensions.GetProgram(code, errorLogger);
+
+        var duals = DualRuleConverter.GetDualRules(program.Statements);
+    }
 }
