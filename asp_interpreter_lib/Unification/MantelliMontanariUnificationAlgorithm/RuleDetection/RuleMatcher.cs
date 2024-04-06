@@ -1,21 +1,25 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.SimplifiedTerm;
-using asp_interpreter_lib.SimplifiedTerm.TermFunctionality;
-using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.CaseDetection.Rules;
+using asp_interpreter_lib.InternalProgramClasses.InternalTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
 using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.RuleDetection.Rules;
 
-namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.CaseDetection;
+namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.RuleDetection;
 
 public class RuleMatcher
 {
-    private TermEquivalenceChecker _termEquivalenceChecker;
-    private TermContainsChecker _termContainsChecker;
+    private InternalTermComparer _termEquivalenceChecker;
+    private InternalTermContainsChecker _termContainsChecker;
+    private VariabilityDecider _variabilityDecider;
+    private ReducabilityDecider _collapsabilityDecider;
+
     private bool _doOccursCheck;
 
     public RuleMatcher(bool doOccursCheck)
     {
-        _termEquivalenceChecker = new TermEquivalenceChecker();
-        _termContainsChecker = new TermContainsChecker();
+        _termEquivalenceChecker = new InternalTermComparer();
+        _termContainsChecker = new InternalTermContainsChecker();
+        _variabilityDecider = new VariabilityDecider();
+        _collapsabilityDecider = new ReducabilityDecider();
 
         _doOccursCheck = doOccursCheck;
     }
@@ -24,21 +28,21 @@ public class RuleMatcher
     /// Find out which case matches the equation, and get appropriate rule (if exists).
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when equation is not in equations.</exception>
-    public IOption<IMMRule> GetAppropriateRule((ISimplifiedTerm, ISimplifiedTerm) equation, IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> equations)
+    public IOption<IMMRule> GetAppropriateRule((IInternalTerm, IInternalTerm) equation, IEnumerable<(IInternalTerm, IInternalTerm)> equations)
     {
         ArgumentNullException.ThrowIfNull(equation);
         ArgumentNullException.ThrowIfNull(equations);
-        if(! equations.Contains(equation))
+        if (!equations.Contains(equation))
         {
             throw new ArgumentException(nameof(equations), $"Must contain {nameof(equation)}.");
         }
 
-        if(IsRewriteCase(equation))
+        if (IsRewriteCase(equation))
         {
             return new Some<IMMRule>(new RewriteRule());
         }
 
-        if(IsErasureCase(equation))
+        if (IsErasureCase(equation))
         {
             return new Some<IMMRule>(new ErasureRule());
         }
@@ -69,9 +73,9 @@ public class RuleMatcher
     /// <summary>
     /// It is an erasure case if left is not a variable and right is a variable.
     /// </summary>
-    private bool IsRewriteCase( (ISimplifiedTerm, ISimplifiedTerm) equation)
-    {     
-        if(equation.Item1.GetType() != typeof(VariableTerm) && equation.Item2.GetType() == typeof(VariableTerm))
+    private bool IsRewriteCase((IInternalTerm, IInternalTerm) equation)
+    {
+        if (!_variabilityDecider.CountsAsVariable(equation.Item1) && _variabilityDecider.CountsAsVariable(equation.Item2))
         {
             return true;
         }
@@ -84,15 +88,15 @@ public class RuleMatcher
     /// <summary>
     /// It is an erasure case if both are variables and they are equal.
     /// </summary>
-    private bool IsErasureCase( (ISimplifiedTerm, ISimplifiedTerm) equation)
+    private bool IsErasureCase((IInternalTerm, IInternalTerm) equation)
     {
-        if 
+        if
         (
-            equation.Item1.GetType() == typeof(VariableTerm)
+            _variabilityDecider.CountsAsVariable(equation.Item1) 
             && 
-            equation.Item2.GetType() == typeof(VariableTerm)
-            && 
-            _termEquivalenceChecker.AreEqual(equation.Item1, equation.Item2)
+            _variabilityDecider.CountsAsVariable(equation.Item2)
+            &&
+            _termEquivalenceChecker.Equals(equation.Item1, equation.Item2)
         )
         {
             return true;
@@ -104,56 +108,29 @@ public class RuleMatcher
     }
 
     /// <summary>
-    /// It is a reduction case if both are basic terms with same functor, negation status and children count.
+    /// It is a reduction case if both are structures with same functor, negation status and children count.
     /// </summary>
-    private bool IsReductionCase((ISimplifiedTerm, ISimplifiedTerm) equation)
+    private bool IsReductionCase((IInternalTerm, IInternalTerm) equation)
     {
-        if (!(equation.Item1.GetType() == typeof(BasicTerm) && equation.Item2.GetType() == typeof(BasicTerm)))
-        {
-            return false;
-        }
-
-        BasicTerm aVar = (BasicTerm)equation.Item1;
-        BasicTerm bVar = (BasicTerm)equation.Item2;
-
-        if (aVar.Functor != bVar.Functor)
-        {
-            return false;
-        }
-
-        if (aVar.IsNegated != bVar.IsNegated)
-        {
-            return false;
-        }
-
-        if (aVar.Children.Count() != bVar.Children.Count())
-        {
-            return false;
-        }
-
-        return true;
+        return _collapsabilityDecider.CanReduce(equation.Item1, equation.Item2);
     }
 
     /// <summary>
-    /// It is a reduction failure case if both are basic terms, with negation status or functor or children count not being equal.
+    /// It is a reduction failure case if both are structures, with negation status or functor or children count not being equal.
     /// </summary>
-    private bool IsReductionFailureCase((ISimplifiedTerm, ISimplifiedTerm) equation)
+    private bool IsReductionFailureCase((IInternalTerm, IInternalTerm) equation)
     {
-        if (!(equation.Item1.GetType() == typeof(BasicTerm) && equation.Item2.GetType() == typeof(BasicTerm)))
+        if 
+        (
+            _variabilityDecider.CountsAsVariable(equation.Item1)
+            ||
+            _variabilityDecider.CountsAsVariable(equation.Item2)
+        )
         {
             return false;
         }
-        BasicTerm aVar = (BasicTerm)equation.Item1;
-        BasicTerm bVar = (BasicTerm)equation.Item2;
 
-        if (aVar.IsNegated != bVar.IsNegated || aVar.Functor != bVar.Functor || aVar.Children.Count() != bVar.Children.Count())
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return !_collapsabilityDecider.CanReduce(equation.Item1, equation.Item2);
     }
 
     /// <summary>
@@ -163,14 +140,14 @@ public class RuleMatcher
     /// right does not contain left,
     /// left is found somewhere else in the set of equations.
     /// </summary>
-    private bool IsEliminationCase((ISimplifiedTerm, ISimplifiedTerm) equation, IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> equations)
+    private bool IsEliminationCase((IInternalTerm, IInternalTerm) equation, IEnumerable<(IInternalTerm, IInternalTerm)> equations)
     {
-        if (equation.Item1.GetType() != typeof(VariableTerm))
+        if (!_variabilityDecider.CountsAsVariable(equation.Item1))
         {
             return false;
         }
 
-        if (_termEquivalenceChecker.AreEqual(equation.Item1,equation.Item2))
+        if (_termEquivalenceChecker.Equals(equation.Item1, equation.Item2))
         {
             return false;
         }
@@ -180,7 +157,7 @@ public class RuleMatcher
             return false;
         }
 
-        IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> filteredList = equations.ToList();
+        IEnumerable<(IInternalTerm, IInternalTerm)> filteredList = equations.ToList();
         filteredList = filteredList.Where((eq) =>
         {
             return eq != equation;
@@ -191,7 +168,7 @@ public class RuleMatcher
             ||
             _termContainsChecker.LeftContainsRight(eq.Item2, equation.Item1);
         });
-        if(filteredList.Count() == 0)
+        if (filteredList.Count() == 0)
         {
             return false;
         }
@@ -201,14 +178,14 @@ public class RuleMatcher
 
     /// <summary>
     /// It is an occurs check failure case if left is a variable, right is not equal to left, and right contains left.
-    private bool IsOccursCheckFailureCase((ISimplifiedTerm, ISimplifiedTerm) equation)
+    private bool IsOccursCheckFailureCase((IInternalTerm, IInternalTerm) equation)
     {
-        if (equation.Item1.GetType() != typeof (VariableTerm))
-        { 
-            return false; 
+        if (!_variabilityDecider.CountsAsVariable(equation.Item1))
+        {
+            return false;
         }
 
-        if (_termEquivalenceChecker.AreEqual(equation.Item1, equation.Item2))
+        if (_termEquivalenceChecker.Equals(equation.Item1, equation.Item2))
         {
             return false;
         }
@@ -220,5 +197,4 @@ public class RuleMatcher
 
         return true;
     }
-
 }

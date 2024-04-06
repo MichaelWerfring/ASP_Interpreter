@@ -11,9 +11,12 @@ using asp_interpreter_lib.OLONDetection;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Unification.Interfaces;
 using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm;
-using asp_interpreter_lib.Unification;
-using asp_interpreter_lib.SimplifiedTerm;
-using asp_interpreter_lib.SimplifiedTerm.TermFunctionality;
+using asp_interpreter_lib.ProgramToInternalProgramConversion;
+using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
+using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
+using asp_interpreter_lib.SLDSolverClasses;
+using asp_interpreter_lib.ListExtensions;
+using asp_interpreter_lib.SLDSolverClasses.VariableRenamer;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
@@ -44,58 +47,7 @@ if (!program.HasValue)
 {
     throw new ArgumentException("Failed to parse program!");
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var containsChecker = new TermContainsChecker();
-var equivalenceChecker = new TermEquivalenceChecker();
-var termReplacer = new TermReplacer();
-
-IUnificationAlgorithm algorithm = new MMUnificationAlgorithm(false);
-
-var left = new BasicTerm
-(
-    "nat",
-    new List<ISimplifiedTerm>() 
-    {
-        new VariableTerm("X"),
-        new VariableTerm("X")
-    },
-    false
-);
-
-var right = new BasicTerm
-(
-    "nat",
-    new List<ISimplifiedTerm>()
-    {
-        new VariableTerm("Y"),
-        new BasicTerm
-        (
-            "nat",
-            new List<ISimplifiedTerm>()
-            {
-                new VariableTerm("X"),
-                new BasicTerm
-                (
-                    "nat",
-                    new List<ISimplifiedTerm>()
-                    {
-                        new VariableTerm("Y")
-                    },
-                    false
-                ),
-            },
-            false
-        ),
-    },
-    false
-);
-
-var substitution = algorithm.Unify(left, right);
-
-Console.WriteLine(substitution);
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 var prog = program.GetValueOrThrow();
 
 var duals = DualRuleConverter.GetDualRules(program.GetValueOrThrow().Statements);
@@ -103,6 +55,20 @@ var duals = DualRuleConverter.GetDualRules(program.GetValueOrThrow().Statements)
 var graphBuilder = new CallGraphBuilder();
 var callGraph = graphBuilder.BuildCallGraph(program.GetValueOrThrow().Statements);
 PrintAll(program.GetValueOrThrow(), callGraph);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+Console.WriteLine("---------------------------------------------------------------------------");
+
+var renamer = new VariableToInternalVariableRenamer();
+
+var converter = new ProgramConverter();
+InternalAspProgram internalProgram = converter.Preprocess(prog);
+
+var solver = new SLDSolver(new MMUnificationAlgorithm(false));
+solver.Solve(internalProgram);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void PrintAll(AspProgram program, AdjacencyGraph<Statement, CallGraphEdge?> callGraph)
 {
@@ -136,7 +102,6 @@ static void PrintAll(AspProgram program, AdjacencyGraph<Statement, CallGraphEdge
         }
         Console.WriteLine("---------------------------------------------------------------------------");
     }
-
 
     var olonRulesFilterer = new OLONRulesFilterer();
     var olonRules = olonRulesFilterer.FilterOlonRules(program.Statements);

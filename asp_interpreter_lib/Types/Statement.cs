@@ -10,7 +10,7 @@ public class Statement: IVisitableType
     public bool HasBody => Body.Literals.Count != 0;
     public bool HasHead => Head.HasValue;
     
-    //Empty Head and Body per default
+    //Empty InternalHead and InternalBody per default
     public Head Head { get; private set; } = new();
     public Body Body { get; private set; } = new([]);
 

@@ -1,49 +1,54 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.SimplifiedTerm;
+using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
 using asp_interpreter_lib.Types.Terms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BasicTerm = asp_interpreter_lib.SimplifiedTerm.BasicTerm;
+using Structure = asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms.Structure;
 
-namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.CaseDetection.Rules
+namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.RuleDetection.Rules;
+
+public class ReductionRule : IMMRule
 {
-    public class ReductionRule : IMMRule
+    public IOption<IEnumerable<(IInternalTerm, IInternalTerm)>> ApplyRule
+    (
+        (IInternalTerm, IInternalTerm) equation,
+        IEnumerable<(IInternalTerm, IInternalTerm)> equations
+    )
     {
-        public IOption<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>> ApplyRule
-        (
-            (ISimplifiedTerm, ISimplifiedTerm) equation,
-            IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> equations
-        )
+        ArgumentNullException.ThrowIfNull(equation);
+        ArgumentNullException.ThrowIfNull(equations);
+
+        var newEquations = equations.ToList();
+        newEquations.Remove(equation);
+
+        IEnumerable<(IInternalTerm, IInternalTerm)> terms = newEquations;
+        if (equation.Item1 is Structure a && equation.Item2 is Structure b)
         {
-            ArgumentNullException.ThrowIfNull(equation);
-            ArgumentNullException.ThrowIfNull(equations);
-            if (!equations.Contains(equation))
-            {
-                throw new ArgumentException(nameof(equations), $"Must contain {nameof(equation)}");
-            }
-            BasicTerm left;
-            BasicTerm right;
-            try
-            {
-                left = (BasicTerm)equation.Item1;
-                right = (BasicTerm)equation.Item2;
-            }
-            catch
-            {
-                throw new ArgumentException($"{nameof(equation.Item1)}, {nameof(equation.Item2)}, must both be of type {typeof(BasicTerm)}");
-            }
-
-            var newEquations = equations.ToList();
-            newEquations.Remove(equation);
-            for(int i = 0; i < left.Children.Count(); i++)
-            {
-                newEquations.Add((left.Children.ElementAt(i), right.Children.ElementAt(i)));
-            }
-
-            return new Some<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>>(newEquations);
+            terms = newEquations.Concat(ReduceStructures(a, b));
         }
+        else if (equation.Item1 is Integer aInt && equation.Item2 is Integer bInt)
+        {
+            terms = newEquations.Concat(ReduceIntegers(aInt, bInt));
+        }
+        else
+        {
+            throw new ArgumentException("Must both be reducible terms");
+        }
+
+        return new Some<IEnumerable<(IInternalTerm, IInternalTerm)>>(terms.ToList());
+    }
+
+
+    private IEnumerable<(IInternalTerm, IInternalTerm)> ReduceStructures(Structure a, Structure b)
+    {
+        return a.Children.Zip(b.Children);
+    }
+
+    private IEnumerable<(IInternalTerm, IInternalTerm)> ReduceIntegers(Integer a, Integer b)
+    {
+        return Enumerable.Empty<(IInternalTerm, IInternalTerm)>();
     }
 }
