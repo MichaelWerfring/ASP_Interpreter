@@ -1,47 +1,36 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.SimplifiedTerm;
-using asp_interpreter_lib.SimplifiedTerm.TermFunctionality;
-using asp_interpreter_lib.Types.Terms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using asp_interpreter_lib.InternalProgramClasses.InternalTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
 
-namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.CaseDetection.Rules
+
+namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.RuleDetection.Rules
 {
     public class EliminationRule : IMMRule
     {
-        private TermContainsChecker _termContainsChecker;
-        private TermReplacer _replacer;
+        private InternalTermReplacer _replacer;
 
         public EliminationRule()
         {
-            _termContainsChecker = new TermContainsChecker();
-            _replacer = new TermReplacer();
+            _replacer = new InternalTermReplacer();
         }
 
-        public IOption<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>> ApplyRule
+        public IOption<IEnumerable<(IInternalTerm, IInternalTerm)>> ApplyRule
         (
-            (ISimplifiedTerm, ISimplifiedTerm) equation,
-            IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> equations
+            (IInternalTerm, IInternalTerm) equation,
+            IEnumerable<(IInternalTerm, IInternalTerm)> equations
         )
         {
             ArgumentNullException.ThrowIfNull(equation);
             ArgumentNullException.ThrowIfNull(equations);
-            if (!equations.Contains(equation))
-            {
-                throw new ArgumentException(nameof(equations), $"Must contain {nameof(equation)}");
-            }
 
             var newEquations = equations.ToList();
             newEquations.Remove(equation);
-            newEquations= newEquations.Select
+            newEquations = newEquations.Select
             (
                 (eq) =>
                 {
-                    ISimplifiedTerm left = _replacer.Replace(eq.Item1, equation.Item1, equation.Item2);
-                    ISimplifiedTerm right = _replacer.Replace(eq.Item2, equation.Item1, equation.Item2);
+                    IInternalTerm left = _replacer.Replace(eq.Item1, equation.Item1, equation.Item2);
+                    IInternalTerm right = _replacer.Replace(eq.Item2, equation.Item1, equation.Item2);
 
                     return (left, right);
                 }
@@ -50,7 +39,7 @@ namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.
 
             newEquations.Add(equation);
 
-            return new Some<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>>(newEquations);
+            return new Some<IEnumerable<(IInternalTerm, IInternalTerm)>>(newEquations);
         }
     }
 }

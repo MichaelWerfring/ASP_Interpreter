@@ -7,13 +7,13 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
 {
     private IErrorLogger _errorLogger = errorLogger;
     
-    //public override IOption<Statement> VisitStatement(ASPParser.StatementContext context)
+    //public override IOption<InternalStatement> VisitStatement(ASPParser.StatementContext context)
     //{
-    //    Head head = null;
+    //    InternalHead head = null;
     //    var headContext = context.head();
-    //    //Empty Statement per default
-    //    //If Head or Body are found they will be added
-    //    var statement = new Statement();
+    //    //Empty InternalStatement per default
+    //    //If InternalHead or InternalBody are found they will be added
+    //    var statement = new InternalStatement();
     //    
     //    if (headContext != null)
     //    {
@@ -21,7 +21,7 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
     //        statement.AddHead(head);
     //    }
     //    
-    //    Body body = null;
+    //    InternalBody body = null;
     //    var bodyContext = context.body();
     //    
     //    if (bodyContext != null)
@@ -35,8 +35,8 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
     
     public override IOption<Statement> VisitStatement(ASPParser.StatementContext context)
     {
-        //Empty Statement per default
-        //If Head or Body are found they will be added
+        //Empty InternalStatement per default
+        //If InternalHead or InternalBody are found they will be added
         var statement = new Statement();
         
         //In this case it is ok to ignore if head or body are null

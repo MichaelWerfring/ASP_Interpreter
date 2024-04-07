@@ -1,6 +1,5 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.SimplifiedTerm;
-using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.CaseDetection.Rules;
+using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +10,16 @@ namespace asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm.
 {
     public class FailureRule : IMMRule
     {
-        public IOption<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>> ApplyRule
+        public IOption<IEnumerable<(IInternalTerm, IInternalTerm)>> ApplyRule
         (
-            (ISimplifiedTerm, ISimplifiedTerm) equation,
-            IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)> equations
+            (IInternalTerm, IInternalTerm) equation,
+            IEnumerable<(IInternalTerm, IInternalTerm)> equations
         )
         {
             ArgumentNullException.ThrowIfNull(equation);
             ArgumentNullException.ThrowIfNull(equations);
-            if (!equations.Contains(equation))
-            {
-                throw new ArgumentException(nameof(equations), $"Must contain {nameof(equation)}");
-            }
 
-            return new None<IEnumerable<(ISimplifiedTerm, ISimplifiedTerm)>>();
+            return new None<IEnumerable<(IInternalTerm, IInternalTerm)>>();
         }
     }
 }
