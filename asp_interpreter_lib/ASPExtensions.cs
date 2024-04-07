@@ -25,7 +25,7 @@ public static class ASPExtensions
         return program.GetValueOrThrow();
     }
     
-    public static string GenerateVariableName(string currentName, HashSet<string> variables, string prefix)
+    public static string GenerateUniqeName(string currentName, HashSet<string> variables, string prefix)
     {
         ArgumentNullException.ThrowIfNull(variables);
         
@@ -35,7 +35,7 @@ public static class ASPExtensions
         return newVariable;
     }
     
-    public static string GenerateVariableName(string currentName, List<string> variables, string prefix)
+    public static string GenerateUniqeName(string currentName, List<string> variables, string prefix)
     {
         ArgumentNullException.ThrowIfNull(variables);
         

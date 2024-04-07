@@ -252,10 +252,11 @@ public class DualRuleTest
         var duals = DualRuleConverter.GetDualRules(program.Statements);
         
         Assert.That(errorLogger.Errors.Count == 0 && duals.Count == 5 &&
-                    duals[0].ToString() == "not p(X) :- not dis0_p(X), not dis1_p(X)." &&
-                    duals[1].ToString() == "not dis0_p(X) :- X \\= 0." &&
-                    duals[2].ToString() == "not dis1_p :- forall(Y, not fa0_)" &&
-                    duals[3].ToString() == "" &&
-                    duals[4].ToString() == "");
+                    duals[0].ToString() == "not p(dis0_) :- not idis0_p(dis0_), not idis1_p(dis0_)." &&
+                    duals[1].ToString() == "not idis0_p(rwh0_0) :- rwh0_0 \\= 0." &&
+                    duals[2].ToString() == "not idis1_p(X) :- forall(Y, fa0_idis1_p(X, Y))." &&
+                    duals[3].ToString() == "not fa0_idis1_p(X, Y) :- not q(X)." &&
+                    duals[4].ToString() == "not fa0_idis1_p(X, Y) :- q(X), t(X, Y).");
+
     }
 }
