@@ -249,9 +249,11 @@ public class DualRuleConverter
             forall.AddHead(statement.Head);    
         }
 
-        BasicTerm innerTerm = new BasicTerm(
-            newId, rule.Body.Literals[0].ClassicalLiteral.Terms);
-
+        //BasicTerm innerTerm = new BasicTerm(
+            //newId, rule.Body.Literals[0].ClassicalLiteral.Terms);
+            BasicTerm innerTerm = new BasicTerm(newId, duals[0].Head.Literal.Terms);
+            
+            
         string firstBodyVariable = bodyVariables[0];
         bodyVariables.RemoveAt(0);
         BasicTerm forallTerm = NestForall(bodyVariables.ToList(), innerTerm);
@@ -281,7 +283,7 @@ public class DualRuleConverter
         bodyVariables.RemoveAt(0);
 
         BasicTerm result = NestForall(bodyVariables, innerTerm);
-
+        
         return new BasicTerm("forall", [ new VariableTerm(v), result]);
     }
     

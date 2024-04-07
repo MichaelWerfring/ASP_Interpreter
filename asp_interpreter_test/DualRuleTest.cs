@@ -250,5 +250,12 @@ public class DualRuleTest
         var program = ASPExtensions.GetProgram(code, errorLogger);
 
         var duals = DualRuleConverter.GetDualRules(program.Statements);
+        
+        Assert.That(errorLogger.Errors.Count == 0 && duals.Count == 5 &&
+                    duals[0].ToString() == "not p(X) :- not dis0_p(X), not dis1_p(X)." &&
+                    duals[1].ToString() == "not dis0_p(X) :- X \\= 0." &&
+                    duals[2].ToString() == "not dis1_p :- forall(Y, not fa0_)" &&
+                    duals[3].ToString() == "" &&
+                    duals[4].ToString() == "");
     }
 }
