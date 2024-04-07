@@ -66,13 +66,19 @@ public class DualRuleConverter
     private static Dictionary<(string,int), List<Statement>> PreprocessRules(List<Statement> rules)
     {
         //heads mapped to all bodies occuring in the program
-        //q(1,X) :- p(X), t(X). 
-        //(q, 2) {p(X), t(X)}
         Dictionary<(string,int), List<Statement>> disjunctions = [];
 
+        List<string> ruleNames = [];
+        
         foreach (var rule in rules)
         {
-            if (!rule.HasHead) continue;
+            if (!rule.HasHead)
+            {
+                rule.AddHead(new Head(new ClassicalLiteral(
+                    ASPExtensions.GenerateUniqeName("", ruleNames, "empty_head"), 
+                    false,
+                    new List<ITerm>())));
+            }
 
             var head = (rule.Head.Literal.Identifier, rule.Head.Literal.Terms.Count);
             
@@ -105,7 +111,21 @@ public class DualRuleConverter
             if (statements.Count == 1)
             {
                 statements[0].Head.IsDual = true;
-                duals.AddRange(GetDualRules(statements[0], ruleNames.ToHashSet()));
+
+                foreach (var statement in GetDualRules(statements[0], ruleNames.ToHashSet()))
+                {
+                    var withForall = AddForall(statement, ruleNames.ToHashSet());
+                    
+                    if (withForall.Count > 0)
+                    {
+                        duals.AddRange(withForall);
+                    }
+                    else
+                    {
+                        duals.Add(statement);
+                    }
+                }
+                
                 continue;
             }
             
@@ -162,6 +182,11 @@ public class DualRuleConverter
 
         var copier = new StatementCopyVisitor();
         Statement rule = stmt.Accept(copier).GetValueOrThrow("Cannot copy given statement!");
+
+        if (!stmt.HasBody)
+        {
+            return GetDualRules([ComputeHead(stmt)]);
+        }
         
         List<Statement> duals = [];
 

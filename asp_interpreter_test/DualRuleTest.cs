@@ -189,19 +189,6 @@ public class DualRuleTest
     }
 
     [Test]
-    public void GetDualWorks()
-    {
-        string code = """
-                      p(0).
-                      p(X) :- q(X), not t(X,Y).
-                      p?
-                      """;
-
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
-        var dual = DualRuleConverter.GetDualRules(program.Statements);
-    }
-
-    [Test]
     public void ForallTreatsSingleBodyVariableCorrectly()
     {
         string code = """
@@ -258,5 +245,35 @@ public class DualRuleTest
                     duals[3].ToString() == "not fa0_idis1_p(X, Y) :- not q(X)." &&
                     duals[4].ToString() == "not fa0_idis1_p(X, Y) :- q(X), t(X, Y).");
 
+    }
+
+    [Test]
+    public void GetDualsHandlesEmptyHead()
+    {
+        string code = """
+                      :- q(X).
+                      p?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var dual = DualRuleConverter.GetDualRules(program.Statements);   
+        
+        Assert.That(dual.Count == 2 && 
+                    dual[0].ToString() == "not empty_head0_ :- forall(X, fa0_empty_head0_(X))." && 
+                    dual[1].ToString() == "not fa0_empty_head0_(X) :- q(X).");
+    }
+    
+    [Test]
+    public void GetDualsHandlesEmptyBody()
+    {
+        string code = """
+                      p(3).
+                      p?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var dual = DualRuleConverter.GetDualRules(program.Statements);   
+        
+        Assert.That(dual.Count == 1 && dual[0].ToString() == "not p(rwh0_3) :- rwh0_3 \\= 3.");
     }
 }
