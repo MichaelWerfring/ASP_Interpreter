@@ -9,21 +9,43 @@ namespace asp_interpreter_lib.Solving;
 
 public class DualRuleConverter
 {
-    public static Statement ComputeHead(Statement rule)
+    private readonly HashSet<string> _variables;
+
+    private readonly HashSet<string> _ruleNames;
+    
+    private readonly List<VariableTerm> _variableTerms;
+    
+    private readonly VariableTermConverter _variableTermConverter;
+    
+    public DualRuleConverter(AspProgram program)
+    {
+        ArgumentNullException.ThrowIfNull(program);
+        _variables = new HashSet<string>();
+        _variableTermConverter = new VariableTermConverter();
+        _ruleNames = program.Accept(new RuleNameFinder()).
+            GetValueOrThrow("Cannot retrieve rule names from program!");
+        
+        
+        var variableGetter = new VariableFinder();
+        _variableTerms = program.Accept(variableGetter).
+            GetValueOrThrow("Cannot retrieve variables from program!");
+        _variableTerms.ForEach(t => _variables.Add(t.Identifier));
+    }
+    
+    public Statement ComputeHead(Statement rule)
     {
         ArgumentNullException.ThrowIfNull(rule);
         
+        //Perform this recursively
         var terms = rule.Head.Literal?.Terms;
         if (terms == null) return rule;
-        var visitor = new VariableTermConverter();
         
-        HashSet<string> variables = [];
         int count = terms.Count;
         
         for (var i = 0; i < count; i++)
         {
             var term = terms[i];
-            var variableTerm = term.Accept(visitor);
+            var variableTerm = term.Accept(_variableTermConverter);
 
             //If the term is not a variable it is replaced by a variable and unified with it
             if (!variableTerm.HasValue)
@@ -31,7 +53,7 @@ public class DualRuleConverter
                 
                 //Accept ToString/Null values for now
                 var newHeadVariable = new VariableTerm(
-                    ASPExtensions.GenerateUniqeName(term.ToString() ?? "", variables, "rwh"));
+                    ASPExtensions.GenerateUniqeName(term.ToString() ?? "", _variables, "rwh"));
                 
                 //replace head
                 terms[terms.IndexOf(term)] = newHeadVariable;
@@ -44,13 +66,13 @@ public class DualRuleConverter
 
             //If it occurs for the first time it can be skipped
             string current = variableTerm.GetValueOrThrow().Identifier;
-            if (variables.Add(current))
+            if (_variables.Add(current))
             {
                 continue;
             }
 
             var newVariable = new VariableTerm(
-                ASPExtensions.GenerateUniqeName(current, variables, "rwh"));
+                ASPExtensions.GenerateUniqeName(current, _variables, "rwh"));
 
             //Rewrite the head
             terms[terms.IndexOf(term)] = newVariable;
@@ -63,22 +85,15 @@ public class DualRuleConverter
         return rule;
     }
 
-    private static Dictionary<(string,int), List<Statement>> PreprocessRules(List<Statement> rules)
+    private Dictionary<(string,int), List<Statement>> PreprocessRules(List<Statement> rules)
     {
         //heads mapped to all bodies occuring in the program
         Dictionary<(string,int), List<Statement>> disjunctions = [];
-
-        List<string> ruleNames = [];
         
         foreach (var rule in rules)
         {
-            if (!rule.HasHead)
-            {
-                rule.AddHead(new Head(new ClassicalLiteral(
-                    ASPExtensions.GenerateUniqeName("", ruleNames, "empty_head"), 
-                    false,
-                    new List<ITerm>())));
-            }
+            //Headless rules will be treated within nmr check
+            if (!rule.HasHead) continue;
 
             var head = (rule.Head.Literal.Identifier, rule.Head.Literal.Terms.Count);
             
@@ -91,19 +106,12 @@ public class DualRuleConverter
         return disjunctions;
     }
     
-    //Just for easily handling entire programs
-    public static List<Statement> GetDualRules(List<Statement> rules)
+    public List<Statement> GetDualRules(List<Statement> rules)
     {
         ArgumentNullException.ThrowIfNull(rules);
         
         List<Statement> duals = [];
         var disjunctions = PreprocessRules(rules);
-        
-        List<string>ruleNames = [];
-        foreach (var disjunction in disjunctions)
-        {
-            ruleNames.Add(disjunction.Key.Item1);
-        }
         
         foreach (var disjunction in disjunctions)
         {
@@ -112,24 +120,15 @@ public class DualRuleConverter
             {
                 statements[0].Head.IsDual = true;
 
-                foreach (var statement in GetDualRules(statements[0], ruleNames.ToHashSet()))
+                foreach (var statement in GetDualRules(statements[0]))
                 {
-                    var withForall = AddForall(statement, ruleNames.ToHashSet());
-                    
-                    if (withForall.Count > 0)
-                    {
-                        duals.AddRange(withForall);
-                    }
-                    else
-                    {
-                        duals.Add(statement);
-                    }
+                    duals.Add(statement);
                 }
                 
                 continue;
             }
             
-            var newVariable = new VariableTerm(ASPExtensions.GenerateUniqeName("", ruleNames, "dis"));
+            var newVariable = new VariableTerm(ASPExtensions.GenerateUniqeName("", _ruleNames, "dis"));
             
             var newStatement = new Statement();
             var head = new Head(new ClassicalLiteral(
@@ -147,20 +146,20 @@ public class DualRuleConverter
             {
                 var statement = statements[i];
                 
-                string tempVariableId = ASPExtensions.GenerateUniqeName(statement.Head.Literal.Identifier, ruleNames, "idis");
+                string tempVariableId = ASPExtensions.GenerateUniqeName(statement.Head.Literal.Identifier, _ruleNames, "idis");
                 //tempStatement.AddHead(new Head(new ClassicalLiteral(tempVariableId, statement.Head.Literal.Negated, statement.Head.Literal.Terms)));
                 statement.Head.Literal.Identifier = tempVariableId;
                 
                 newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, [newVariable]), true));
 
-                var withForall = AddForall(statement, ruleNames.ToHashSet());
+                var withForall = AddForall(statement, _variables);
                 if (withForall.Count > 0)
                 {
                     duals.AddRange(withForall);
                     continue;
                 }
 
-                GetDualRules(ComputeHead(statement), ruleNames.ToHashSet()).ForEach(
+                GetDualRules(ComputeHead(statement)).ForEach(
                     s =>
                     {
                         s.Head.Literal.Identifier = tempVariableId;
@@ -176,7 +175,7 @@ public class DualRuleConverter
         return duals;
     }
     
-    public static List<Statement> GetDualRules(Statement stmt, HashSet<string> variables)
+    public List<Statement> GetDualRules(Statement stmt)
     {
         ArgumentNullException.ThrowIfNull(stmt);
 
@@ -230,7 +229,7 @@ public class DualRuleConverter
         return bodyVariables.Except(headVariables).ToList();
     }
 
-    public static List<Statement> AddForall(Statement statement, HashSet<string> variablesInProgram)
+    public List<Statement> AddForall(Statement statement, HashSet<string> variablesInProgram)
     {
         ArgumentNullException.ThrowIfNull(statement);
         ArgumentNullException.ThrowIfNull(variablesInProgram);
@@ -253,7 +252,7 @@ public class DualRuleConverter
         string newId = 
             ASPExtensions.GenerateUniqeName(rule.Head.Literal.Identifier, variablesInProgram, "fa");
         rule.Head.Literal.Identifier = newId;
-        duals.AddRange(GetDualRules(rule, variablesInProgram));
+        duals.AddRange(GetDualRules(rule));
         
         
         // 2) Body Variables added to head of each dual
