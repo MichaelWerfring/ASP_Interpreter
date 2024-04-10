@@ -12,42 +12,6 @@ namespace asp_interpreter_test;
 public class DualRuleTest
 {
     [Test]
-    public void TransformHeadIgnoresEmptyHead()
-    {
-    }
-
-    [Test]
-    public void TransformHeadIgnoresNonVariableTerms()
-    {
-        
-    }
-    
-    [Test]
-    public void TransformHeadIgnoresDistinctVariables()
-    {
-    }
-    
-    [Test]
-    public void TransformHeadRewritesDuplicateVariables()
-    {
-    }
-    
-    [Test]
-    public void TransformHeadDoesNotAlterRuleBody()
-    {
-    }
-    
-    [Test]
-    public void TransformHeadRewritesDuplicateMultipleOccurrences()
-    {
-    }
-    
-    [Test]
-    public void TransformHeadRewritesDuplicateMultipleOccurrencesOfDifferentVariables()
-    {
-    }
-    
-    [Test]
     public void TransformHeadHandlesCompoundTerms()
     {
         string code = """
@@ -59,9 +23,9 @@ public class DualRuleTest
         
         var dualRuleConverter = new DualRuleConverter(program);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
-        
-       
-        Assert.That(duals[0].ToString(), Is.EqualTo("a(X, b(rwh0_X, Y)) :- X = rwh0_X, c(X, Y)."));
+
+        Assert.That(duals[0].ToString(), Is.EqualTo("not a(X, b(rwh0_X, Y)) :- rwh0_X \\= X."));
+        Assert.That(duals[1].ToString(), Is.EqualTo("not a(X, b(rwh0_X, Y)) :- rwh0_X = X, not c(X, Y)."));
     }
 
     [Test]
@@ -151,6 +115,7 @@ public class DualRuleTest
                       p(X) :- q(X), not t(X, Y).
                       p?
                       """;
+
 
         var errorLogger = new MockErrorLogger();
         var program = ASPExtensions.GetProgram(code, errorLogger);

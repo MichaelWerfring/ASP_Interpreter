@@ -34,61 +34,11 @@ public class DualRuleConverter
             GetValueOrThrow("Cannot retrieve variables from program!");
         _variableTerms.ForEach(t => _variables.Add(t.Identifier));
     }
-    
+
     public Statement ComputeHead(Statement rule)
     {
-        ArgumentNullException.ThrowIfNull(rule);
-
-        
-        
-        //Perform this recursively
-        var terms = rule.Head.Literal?.Terms;
-        if (terms == null) return rule;
-
-        var variablesInHead = new HashSet<string>();
-        int count = terms.Count;
-        
-        for (var i = 0; i < count; i++)
-        {
-            var term = terms[i];
-            var variableTerm = term.Accept(_variableTermConverter);
-
-            //If the term is not a variable it is replaced by a variable and unified with it
-            if (!variableTerm.HasValue)
-            {
-                
-                //Accept ToString/Null values for now
-                var newHeadVariable = new VariableTerm(
-                    ASPExtensions.GenerateUniqeName(term.ToString() ?? "", _variables, "rwh"));
-                
-                //replace head
-                terms[terms.IndexOf(term)] = newHeadVariable;
-                
-                //replace body
-                rule.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
-                    newHeadVariable, new Equality(), term)));
-                continue;
-            }
-
-            //If it occurs for the first time it can be skipped
-            string current = variableTerm.GetValueOrThrow().Identifier;
-            if (variablesInHead.Add(current))
-            {
-                continue;
-            }
-
-            var newVariable = new VariableTerm(
-                ASPExtensions.GenerateUniqeName(current, _variables, "rwh"));
-
-            //Rewrite the head
-            terms[terms.IndexOf(term)] = newVariable;
-            
-            //Rewrite the body
-            rule.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
-                variableTerm.GetValueOrThrow(), new Equality(), newVariable)));
-        }
-        
-        return rule;
+        HeadRewriter rewriter = new HeadRewriter("rwh", rule);
+        return rewriter.Visit(rule).GetValueOrThrow("Cannot rewrite head of rule!");
     }
 
     private Dictionary<(string,int), List<Statement>> PreprocessRules(List<Statement> rules)
@@ -103,9 +53,12 @@ public class DualRuleConverter
 
             var head = (rule.Head.Literal.Identifier, rule.Head.Literal.Terms.Count);
             
-            if (!disjunctions.TryAdd(head, [rule]))
+            var converted = ComputeHead(rule);
+            
+            if (!disjunctions.TryAdd(head, [converted]))
             {
-                disjunctions[head].Add(rule);
+                //disjunctions[head].Add(rule);
+                disjunctions[head].Add(converted);
             }
         }
 
@@ -173,7 +126,8 @@ public class DualRuleConverter
                     continue;
                 }
 
-                GetDualRules(ComputeHead(statement)).ForEach(
+                //GetDualRules(ComputeHead(statement)).ForEach(
+                GetDualRules(statement).ForEach(
                     s =>
                     {
                         s.Head.Literal.Identifier = tempVariableId;
@@ -198,7 +152,8 @@ public class DualRuleConverter
 
         if (!stmt.HasBody)
         {
-            return GetDualRules([ComputeHead(stmt)]);
+            //return GetDualRules([ComputeHead(stmt)]);
+            return GetDualRules(stmt);
         }
         
         List<Statement> duals = [];
