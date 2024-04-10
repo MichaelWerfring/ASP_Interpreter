@@ -18,6 +18,8 @@ public class DualRuleConverter
     
     private readonly VariableTermConverter _variableTermConverter;
     
+    private readonly VariableFinder _variableFinder;
+
     public DualRuleConverter(AspProgram program)
     {
         ArgumentNullException.ThrowIfNull(program);
@@ -25,7 +27,7 @@ public class DualRuleConverter
         _variableTermConverter = new VariableTermConverter();
         _ruleNames = program.Accept(new RuleNameFinder()).
             GetValueOrThrow("Cannot retrieve rule names from program!");
-        
+        _variableFinder = new VariableFinder();
         
         var variableGetter = new VariableFinder();
         _variableTerms = program.Accept(variableGetter).
@@ -36,11 +38,14 @@ public class DualRuleConverter
     public Statement ComputeHead(Statement rule)
     {
         ArgumentNullException.ThrowIfNull(rule);
+
+        
         
         //Perform this recursively
         var terms = rule.Head.Literal?.Terms;
         if (terms == null) return rule;
-        
+
+        var variablesInHead = new HashSet<string>();
         int count = terms.Count;
         
         for (var i = 0; i < count; i++)
@@ -67,7 +72,7 @@ public class DualRuleConverter
 
             //If it occurs for the first time it can be skipped
             string current = variableTerm.GetValueOrThrow().Identifier;
-            if (_variables.Add(current))
+            if (variablesInHead.Add(current))
             {
                 continue;
             }
@@ -82,7 +87,7 @@ public class DualRuleConverter
             rule.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
                 variableTerm.GetValueOrThrow(), new Equality(), newVariable)));
         }
-
+        
         return rule;
     }
 
@@ -128,7 +133,7 @@ public class DualRuleConverter
                 }
                 else
                 {
-                    duals.AddRange(GetDualRules(statements[0]));   
+                    duals.AddRange(GetDualRules(statements[0]));
                 }
                 
                 continue;
@@ -219,35 +224,26 @@ public class DualRuleConverter
             dualBody.Add(negated);
             
             dualStatement.AddBody(new Body(dualBody));
+            
             duals.Add(dualStatement);
         }
 
         return duals;
     }
 
-    private static List<string> GetBodyVariables(Statement rule)
+    private List<string> GetBodyVariables(Statement rule)
     {
-        var variableFinder = new VariableFinder();
         var head = rule.Head
-            .Accept(variableFinder)
+            .Accept(_variableFinder)
             .GetValueOrThrow("Cannot retrieve variables from head!")
             .Select(v => v.Identifier);
         
         var body = rule.Body
-            .Accept(variableFinder)
+            .Accept(_variableFinder)
             .GetValueOrThrow("Cannot retrieve variables from body!")
             .Select(v => v.Identifier);
 
         return body.Except(head).ToList();
-        
-        //return h.Except(b).ToList();
-        //var variableGetter = new GetVariableVisitor();
-        //var headVariables = rule.Head.Accept(variableGetter)
-        //    .GetValueOrThrow("Cannot retrieve variables from head!");
-        //var bodyVariables = rule.Body.Accept(variableGetter)
-        //    .GetValueOrThrow("Cannot retrieve variables from body!");
-
-        //return bodyVariables.Except(headVariables).ToList();
     }
 
     public List<Statement> AddForall(Statement statement, HashSet<string> variablesInProgram)

@@ -29,8 +29,19 @@ public static class ASPExtensions
     {
         ArgumentNullException.ThrowIfNull(variables);
         
-        int rewriteCount = variables.Count(v => v.StartsWith(prefix) && v.EndsWith(currentName));
-        string newVariable = prefix + rewriteCount + "_" + currentName;
+        //int rewriteCount = variables.Count(v => v.StartsWith(prefix) && v.EndsWith(currentName));
+        //string newVariable = prefix + rewriteCount + "_" + currentName;
+        //variables.Add(newVariable);
+        //return newVariable;
+        
+        int count = 0;
+        string newVariable;
+        do
+        {
+            newVariable= prefix + count + "_" + currentName;
+            count++;
+        } while (variables.Contains(newVariable));
+        
         variables.Add(newVariable);
         return newVariable;
     }
@@ -39,8 +50,14 @@ public static class ASPExtensions
     {
         ArgumentNullException.ThrowIfNull(variables);
         
-        int rewriteCount = variables.Count(v => v.StartsWith(prefix) && v.EndsWith(currentName));
-        string newVariable = prefix + rewriteCount + "_" + currentName;
+        int count = 0;
+        string newVariable;
+        do
+        {
+            newVariable= prefix + count + "_" + currentName;
+            count++;
+        } while (variables.Contains(newVariable));
+        
         variables.Add(newVariable);
         return newVariable;
     }
