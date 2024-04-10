@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.Solving.DualRules;
+using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
@@ -226,15 +227,27 @@ public class DualRuleConverter
 
     private static List<string> GetBodyVariables(Statement rule)
     {
-        var result = new Statement();
+        var variableFinder = new VariableFinder();
+        var head = rule.Head
+            .Accept(variableFinder)
+            .GetValueOrThrow("Cannot retrieve variables from head!")
+            .Select(v => v.Identifier);
         
-        var variableGetter = new GetVariableVisitor();
-        var headVariables = rule.Head.Accept(variableGetter)
-            .GetValueOrThrow("Cannot retrieve variables from head!");
-        var bodyVariables = rule.Body.Accept(variableGetter)
-            .GetValueOrThrow("Cannot retrieve variables from body!");
+        var body = rule.Body
+            .Accept(variableFinder)
+            .GetValueOrThrow("Cannot retrieve variables from body!")
+            .Select(v => v.Identifier);
 
-        return bodyVariables.Except(headVariables).ToList();
+        return body.Except(head).ToList();
+        
+        //return h.Except(b).ToList();
+        //var variableGetter = new GetVariableVisitor();
+        //var headVariables = rule.Head.Accept(variableGetter)
+        //    .GetValueOrThrow("Cannot retrieve variables from head!");
+        //var bodyVariables = rule.Body.Accept(variableGetter)
+        //    .GetValueOrThrow("Cannot retrieve variables from body!");
+
+        //return bodyVariables.Except(headVariables).ToList();
     }
 
     public List<Statement> AddForall(Statement statement, HashSet<string> variablesInProgram)
@@ -266,7 +279,6 @@ public class DualRuleConverter
         rule.Head.Literal.Identifier = newId;
         duals.AddRange(GetDualRules(rule));
         
-        
         // 2) Body Variables added to head of each dual
         
         foreach (var variable in bodyVariables)
@@ -295,7 +307,6 @@ public class DualRuleConverter
                     newId, false, duals[0].Head.Literal.Terms),
                 duals[0].Head.Literal.Negated);
         }
-        
         
         //append body with (nested) forall
         forall.AddBody(new Body([NestForall(bodyVariables.ToList(), innerGoal)]));
