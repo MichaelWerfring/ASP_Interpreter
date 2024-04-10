@@ -151,11 +151,14 @@ public class DualRuleConverter
             {
                 var statement = statements[i];
                 
-                string tempVariableId = ASPExtensions.GenerateUniqeName(statement.Head.Literal.Identifier, _ruleNames, "idis");
-                //tempStatement.AddHead(new Head(new ClassicalLiteral(tempVariableId, statement.Head.Literal.Negated, statement.Head.Literal.Terms)));
+                string tempVariableId =
+                    ASPExtensions.GenerateUniqeName(statement.Head.Literal.Identifier, _ruleNames, "idis");
+                
                 statement.Head.Literal.Identifier = tempVariableId;
                 
-                newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, [newVariable]), true));
+                //newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, [newVariable]), true));
+                newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, [newVariable]), 
+                    true));
 
                 var withForall = AddForall(statement, _variables);
                 if (withForall.Count > 0)
@@ -274,35 +277,28 @@ public class DualRuleConverter
         
         // 3) Create Clause with forall over the new Predicate
         Statement forall = new();
-        if (statement.HasHead)
+        
+        statement.Head.IsDual = true;
+        forall.AddHead(statement.Head);
+        NafLiteral innerGoal;
+        //Made Disjunction
+        if (duals.Count > 1)
         {
-            statement.Head.IsDual = true;
-            forall.AddHead(statement.Head);    
+            //Inner goal has to be negated 
+            innerGoal = new NafLiteral(new ClassicalLiteral(
+                    newId, false, duals[0].Head.Literal.Terms),
+                !duals[0].Head.Literal.Negated);
+        }
+        else
+        {
+            innerGoal = new NafLiteral(new ClassicalLiteral(
+                    newId, false, duals[0].Head.Literal.Terms),
+                duals[0].Head.Literal.Negated);
         }
         
-        //BasicTerm innerTerm = new BasicTerm(newId, duals[0].Head.Literal.Terms);
-        //Inner goal has to be negated 
-        NafLiteral innerGoal = new NafLiteral(new ClassicalLiteral(
-                newId, false, duals[0].Head.Literal.Terms),
-            !duals[0].Head.Literal.Negated);
-            
-        //string firstBodyVariable = bodyVariables[0];
-        //bodyVariables.RemoveAt(0);
         
-        NafLiteral forallTerm = NestForall(bodyVariables.ToList(), innerGoal);
-        
-        //Body forallBody = new Body([
-        //    new NafLiteral(new ClassicalLiteral(
-        //        "forall", false, [
-        //            new VariableTerm(firstBodyVariable),
-        //            forallTerm]
-        //    ), false)
-        //]);
-        Body forallBody = new Body([
-            forallTerm 
-        ]);
-        
-        forall.AddBody(forallBody);
+        //append body with (nested) forall
+        forall.AddBody(new Body([NestForall(bodyVariables.ToList(), innerGoal)]));
         
         duals.Insert(0,forall);
         
