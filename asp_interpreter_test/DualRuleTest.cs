@@ -83,7 +83,8 @@ public class DualRuleTest
         //not p(X, Y) :- not q(X), not t(Y, Y).
         string secondDual = duals[1].ToString();
         
-        Assert.That(firstDual == "not p(X, Y) :- q(X)." && secondDual == "not p(X, Y) :- not q(X), not t(Y, Y).");
+        Assert.That(firstDual == "not p(X, Y) :- q(X)." && 
+                    secondDual == "not p(X, Y) :- not q(X), not t(Y, Y).");
     }
 
     [Test]
@@ -125,7 +126,7 @@ public class DualRuleTest
     }
     
     [Test]
-    public void  ()
+    public void TestComplexConversion ()
     {
         string code = """
                       p(0).

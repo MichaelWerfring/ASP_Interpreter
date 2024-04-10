@@ -49,8 +49,8 @@ if (!program.HasValue)
 }
 
 var prog = program.GetValueOrThrow();
-
-var duals = DualRuleConverter.GetDualRules(program.GetValueOrThrow().Statements);
+DualRuleConverter dualConverter = new(prog);
+var duals = dualConverter.GetDualRules(program.GetValueOrThrow().Statements);
 
 var graphBuilder = new CallGraphBuilder();
 var callGraph = graphBuilder.BuildCallGraph(program.GetValueOrThrow().Statements);

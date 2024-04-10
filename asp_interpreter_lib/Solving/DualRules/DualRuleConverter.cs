@@ -120,9 +120,14 @@ public class DualRuleConverter
             {
                 statements[0].Head.IsDual = true;
 
-                foreach (var statement in GetDualRules(statements[0]))
+                var withForall = AddForall(statements[0], _variables);
+                if (withForall.Count > 0)
                 {
-                    duals.Add(statement);
+                    duals.AddRange(withForall);
+                }
+                else
+                {
+                    duals.AddRange(GetDualRules(statements[0]));   
                 }
                 
                 continue;
@@ -240,15 +245,19 @@ public class DualRuleConverter
         {
             return [];
         }
+
+        //Headless statements are treated by the NMR Check
+        if (!statement.HasHead)
+        {
+            return [statement];
+        }
         
-        var copier = new StatementCopyVisitor();
-        Statement rule = statement.Accept(copier).
+        //Copy the statement before
+        Statement rule = statement.Accept(new StatementCopyVisitor()).
             GetValueOrThrow("Cannot retrieve copy of statement");
         
         List<Statement> duals = [];
         // 1) Compute Duals Normally but replace predicate in the head
-        string oldId = rule.Head.Literal.Identifier; 
-        
         string newId = 
             ASPExtensions.GenerateUniqeName(rule.Head.Literal.Identifier, variablesInProgram, "fa");
         rule.Head.Literal.Identifier = newId;
@@ -270,23 +279,29 @@ public class DualRuleConverter
             statement.Head.IsDual = true;
             forall.AddHead(statement.Head);    
         }
-
-        //BasicTerm innerTerm = new BasicTerm(
-            //newId, rule.Body.Literals[0].ClassicalLiteral.Terms);
-            BasicTerm innerTerm = new BasicTerm(newId, duals[0].Head.Literal.Terms);
-            
-            
-        string firstBodyVariable = bodyVariables[0];
-        bodyVariables.RemoveAt(0);
-        BasicTerm forallTerm = NestForall(bodyVariables.ToList(), innerTerm);
         
+        //BasicTerm innerTerm = new BasicTerm(newId, duals[0].Head.Literal.Terms);
+        //Inner goal has to be negated 
+        NafLiteral innerGoal = new NafLiteral(new ClassicalLiteral(
+                newId, false, duals[0].Head.Literal.Terms),
+            !duals[0].Head.Literal.Negated);
+            
+        //string firstBodyVariable = bodyVariables[0];
+        //bodyVariables.RemoveAt(0);
+        
+        NafLiteral forallTerm = NestForall(bodyVariables.ToList(), innerGoal);
+        
+        //Body forallBody = new Body([
+        //    new NafLiteral(new ClassicalLiteral(
+        //        "forall", false, [
+        //            new VariableTerm(firstBodyVariable),
+        //            forallTerm]
+        //    ), false)
+        //]);
         Body forallBody = new Body([
-            new NafLiteral(new ClassicalLiteral(
-                "forall", false, [
-                    new VariableTerm(firstBodyVariable),
-                    forallTerm]
-            ), false)
+            forallTerm 
         ]);
+        
         forall.AddBody(forallBody);
         
         duals.Insert(0,forall);
@@ -294,18 +309,21 @@ public class DualRuleConverter
         return duals;
     }
 
-    private static BasicTerm NestForall(List<string> bodyVariables, BasicTerm innerTerm)
+    private static NafLiteral NestForall(List<string> bodyVariables, NafLiteral innerGoal)
     {
         if (bodyVariables.Count == 0)
         {
-            return innerTerm;
+            return innerGoal;
         }
         
         string v = bodyVariables[0];
         bodyVariables.RemoveAt(0);
 
-        BasicTerm result = NestForall(bodyVariables, innerTerm);
+        NafLiteral result = NestForall(bodyVariables, innerGoal);
         
-        return new BasicTerm("forall", [ new VariableTerm(v), result]);
+        //return new BasicTerm("forall", [ new VariableTerm(v), result]);
+        var f = new Forall(new VariableTerm(v), result);
+        string s = f.ToString();
+        return f;
     }
 }
