@@ -1,5 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.Types;
 
 namespace asp_interpreter_lib.ProgramToInternalProgramConversion;
@@ -14,7 +14,7 @@ public class ProgramConverter
         ArgumentNullException.ThrowIfNull(program);
        
         var convertedQuery = _queryConverter.ProcessQuery(program.Query);
-        IEnumerable<IEnumerable<IInternalTerm>> convertedStatements = program.Statements.Select(_statementConverter.Convert);
+        IEnumerable<IEnumerable<ISimpleTerm>> convertedStatements = program.Statements.Select(_statementConverter.Convert);
 
         return new InternalAspProgram(convertedStatements, convertedQuery);
     }

@@ -1,4 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.ListExtensions;
 using System.Text;
 
@@ -6,7 +6,7 @@ namespace asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 
 public class InternalAspProgram 
 {
-    public InternalAspProgram(IEnumerable<IEnumerable<IInternalTerm>> statements, IEnumerable<IInternalTerm> query)
+    public InternalAspProgram(IEnumerable<IEnumerable<ISimpleTerm>> statements, IEnumerable<ISimpleTerm> query)
     {
         ArgumentNullException.ThrowIfNull(statements);
         ArgumentNullException.ThrowIfNull(query);
@@ -41,9 +41,9 @@ public class InternalAspProgram
         Query = query;
     }
 
-    public IEnumerable<IEnumerable<IInternalTerm>> Statements { get; }
+    public IEnumerable<IEnumerable<ISimpleTerm>> Statements { get; }
 
-    public IEnumerable<IInternalTerm> Query { get; }
+    public IEnumerable<ISimpleTerm> Query { get; }
 
     public override string ToString()
     {

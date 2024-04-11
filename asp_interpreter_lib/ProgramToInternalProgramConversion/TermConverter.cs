@@ -1,18 +1,18 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.ProgramToInternalProgramConversion;
 
-public class TermConverter : TypeBaseVisitor<IInternalTerm>
+public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 {
-    public IInternalTerm Convert(ITerm term)
+    public ISimpleTerm Convert(ITerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
         var result = term.Accept(this);
-        IInternalTerm convertedTerm;
+        ISimpleTerm convertedTerm;
         try
         {
             convertedTerm = result.GetValueOrThrow();
@@ -25,18 +25,18 @@ public class TermConverter : TypeBaseVisitor<IInternalTerm>
         return convertedTerm;
     }
 
-    public override IOption<IInternalTerm> Visit(VariableTerm term)
+    public override IOption<ISimpleTerm> Visit(VariableTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        return new Some<IInternalTerm>(new Variable(term.Identifier));
+        return new Some<ISimpleTerm>(new Variable(term.Identifier));
     }
 
-    public override IOption<IInternalTerm> Visit(BasicTerm term)
+    public override IOption<ISimpleTerm> Visit(BasicTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        var newChildren = new IInternalTerm[term.Terms.Count];
+        var newChildren = new ISimpleTerm[term.Terms.Count];
         for (int i = 0; i < term.Terms.Count; i++)
         {
             var result = term.Terms[i].Accept(this);
@@ -46,35 +46,35 @@ public class TermConverter : TypeBaseVisitor<IInternalTerm>
             }
             catch
             {
-                return new None<IInternalTerm>();
+                return new None<ISimpleTerm>();
             }
         }
 
-        return new Some<IInternalTerm>(new Structure(term.Identifier, newChildren));
+        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildren));
     }
 
-    public override IOption<IInternalTerm> Visit(NumberTerm term)
+    public override IOption<ISimpleTerm> Visit(NumberTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        return new Some<IInternalTerm>(new Integer(term.Value));
+        return new Some<ISimpleTerm>(new Structure(term.Value.ToString(), Enumerable.Empty<ISimpleTerm>()));
     }
 
-    public override IOption<IInternalTerm> Visit(NegatedTerm term)
+    public override IOption<ISimpleTerm> Visit(NegatedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
         var innerTermResult = term.Term.Accept(this);
-        IInternalTerm innerTerm;
+        ISimpleTerm innerTerm;
         try
         {
             innerTerm = innerTermResult.GetValueOrThrow();
         }
         catch
         {
-            return new None<IInternalTerm>();
+            return new None<ISimpleTerm>();
         }
 
-        return new Some<IInternalTerm>(new Structure("NEG", new List<IInternalTerm>() { innerTerm }));
+        return new Some<ISimpleTerm>(new Structure("NEG", new List<ISimpleTerm>() { innerTerm }));
     }
 }

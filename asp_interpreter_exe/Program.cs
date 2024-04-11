@@ -8,15 +8,12 @@ using QuikGraph;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
-using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Unification.Interfaces;
-using asp_interpreter_lib.Unification.MantelliMontanariUnificationAlgorithm;
+using asp_interpreter_lib.Unification.MartelliMontanariUnificationAlgorithm;
 using asp_interpreter_lib.ProgramToInternalProgramConversion;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
-using asp_interpreter_lib.SLDSolverClasses;
-using asp_interpreter_lib.ListExtensions;
-using asp_interpreter_lib.SLDSolverClasses.VariableRenamer;
+using asp_interpreter_lib.SLDSolverClasses.StandardSolver.VariableRenamer;
+using asp_interpreter_lib.SLDSolverClasses.StandardSolver;
+using asp_interpreter_lib.Unification.Robinson;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
@@ -49,8 +46,8 @@ if (!program.HasValue)
 }
 
 var prog = program.GetValueOrThrow();
-DualRuleConverter dualConverter = new(prog);
-var duals = dualConverter.GetDualRules(program.GetValueOrThrow().Statements);
+//DualRuleConverter dualConverter = new(prog);
+//var duals = dualConverter.GetDualRules(program.GetValueOrThrow().Statements);
 
 var graphBuilder = new CallGraphBuilder();
 var callGraph = graphBuilder.BuildCallGraph(program.GetValueOrThrow().Statements);
@@ -64,7 +61,21 @@ var renamer = new VariableToInternalVariableRenamer();
 var converter = new ProgramConverter();
 InternalAspProgram internalProgram = converter.Preprocess(prog);
 
-var solver = new SLDSolver(new MMUnificationAlgorithm(false));
+var solver = new SLDSolver( new RobinsonUnificationAlgorithm(false));
+solver.SolutionFound += (sender, e) =>
+{
+    Console.WriteLine("---------------------------------------------------------------------------");
+    Console.WriteLine("Solution found!");
+    foreach(var pair in e.Mapping)
+    {
+        Console.WriteLine($"{pair.Key} = {pair.Value}");
+    }
+
+    Console.WriteLine("---------------------------------------------------------------------------");
+};
+
+
+
 solver.Solve(internalProgram);
 
 
