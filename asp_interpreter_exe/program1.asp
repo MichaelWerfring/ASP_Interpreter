@@ -22,8 +22,9 @@ div(X, Y, Acc, Z) :- sub(X, Y, Z1), add(Acc, s(0), Acc1),  div(Z1, Y, Acc1, Z).
 c(a,b).
 c(b,c).
 c(c,d).
+c(d,e).
 
 con(X,Y) :- c(X,Y).
 con(X, Y) :- c(X,Z), con(Z,Y).
 
-calculate(s(s(0)), s(0), Y, s(s(0)))?.
+calculate(s(s(s(0))), Y, add, Z)?.

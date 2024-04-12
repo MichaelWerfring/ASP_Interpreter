@@ -1,6 +1,6 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.Types;
 using System.Text;
 
@@ -11,18 +11,18 @@ public class StatementConverter
     private NafLiteralConverter _nafConverter = new NafLiteralConverter();
     private ClassicalLiteralConverter _classicalLiteralConverter = new ClassicalLiteralConverter();
 
-    public IEnumerable<IInternalTerm> Convert(Statement statement)
+    public IEnumerable<ISimpleTerm> Convert(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
 
-        IInternalTerm convertedHead = ProcessHead(statement.Head);
+        ISimpleTerm convertedHead = ProcessHead(statement.Head);
 
         var convertedStatements = statement.Body.Literals.Select(_nafConverter.Convert);
 
         return convertedStatements.Prepend(convertedHead);
     }
 
-    private IInternalTerm ProcessHead(Head head)
+    private ISimpleTerm ProcessHead(Head head)
     {
         if (head.Literal == null)
         {

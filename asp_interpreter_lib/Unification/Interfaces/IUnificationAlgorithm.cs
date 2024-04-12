@@ -1,10 +1,9 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.InternalTerm.Terms;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 
-namespace asp_interpreter_lib.Unification.Interfaces
+namespace asp_interpreter_lib.Unification.Interfaces;
+
+public interface IUnificationAlgorithm
 {
-    public interface IUnificationAlgorithm
-    {
-        public IOption<Dictionary<Variable, IInternalTerm>> Unify(IEnumerable<(IInternalTerm, IInternalTerm)> equations);
-    }
+    public IOption<Dictionary<Variable, ISimpleTerm>> Unify(ISimpleTerm left, ISimpleTerm right);
 }
