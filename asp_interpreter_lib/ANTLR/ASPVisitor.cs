@@ -203,9 +203,31 @@ public interface IASPVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVariableTerm([NotNull] ASPParser.VariableTermContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.arithop"/>.
+	/// Visit a parse tree produced by the <c>plusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitArithop([NotNull] ASPParser.ArithopContext context);
+	Result VisitPlusOperation([NotNull] ASPParser.PlusOperationContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>minusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMinusOperation([NotNull] ASPParser.MinusOperationContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>timesOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTimesOperation([NotNull] ASPParser.TimesOperationContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>divOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDivOperation([NotNull] ASPParser.DivOperationContext context);
 }

@@ -22,15 +22,7 @@ public class TermToNumberConverter : TypeBaseVisitor<int>
 
     public override IOption<int> Visit(ArithmeticOperationTerm term)
     {
-        var result = term.Operation.Evaluate();
-        var number = result.Accept(this);
-
-        if (number.HasValue)
-        {
-            return new Some<int>(number.GetValueOrThrow());
-        }
-        
-        return new None<int>();
+        throw new NotImplementedException();
     }
 
     public override IOption<int> Visit(ParenthesizedTerm term)

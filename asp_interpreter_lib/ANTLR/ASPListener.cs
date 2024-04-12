@@ -321,13 +321,51 @@ public interface IASPListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVariableTerm([NotNull] ASPParser.VariableTermContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.arithop"/>.
+	/// Enter a parse tree produced by the <c>plusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterArithop([NotNull] ASPParser.ArithopContext context);
+	void EnterPlusOperation([NotNull] ASPParser.PlusOperationContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.arithop"/>.
+	/// Exit a parse tree produced by the <c>plusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitArithop([NotNull] ASPParser.ArithopContext context);
+	void ExitPlusOperation([NotNull] ASPParser.PlusOperationContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>minusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMinusOperation([NotNull] ASPParser.MinusOperationContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>minusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMinusOperation([NotNull] ASPParser.MinusOperationContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>timesOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTimesOperation([NotNull] ASPParser.TimesOperationContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>timesOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTimesOperation([NotNull] ASPParser.TimesOperationContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>divOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDivOperation([NotNull] ASPParser.DivOperationContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>divOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDivOperation([NotNull] ASPParser.DivOperationContext context);
 }

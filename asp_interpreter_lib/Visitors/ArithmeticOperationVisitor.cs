@@ -7,8 +7,24 @@ public class ArithmeticOperationVisitor(IErrorLogger errorLogger) : ASPBaseVisit
 {
     private IErrorLogger _errorLogger = errorLogger;
 
-    public override IOption<ArithmeticOperation> VisitArithop(ASPParser.ArithopContext context)
+
+    public override IOption<ArithmeticOperation> VisitPlusOperation(ASPParser.PlusOperationContext context)
     {
-        throw new NotImplementedException();
+        return new Some<ArithmeticOperation>(new Plus());
+    }
+
+    public override IOption<ArithmeticOperation> VisitMinusOperation(ASPParser.MinusOperationContext context)
+    {
+        return new Some<ArithmeticOperation>(new Minus());
+    }
+
+    public override IOption<ArithmeticOperation> VisitTimesOperation(ASPParser.TimesOperationContext context)
+    {
+        return new Some<ArithmeticOperation>(new Multiply());
+    }
+
+    public override IOption<ArithmeticOperation> VisitDivOperation(ASPParser.DivOperationContext context)
+    {
+        return new Some<ArithmeticOperation>(new Divide());
     }
 }

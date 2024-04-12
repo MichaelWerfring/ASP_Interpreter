@@ -95,8 +95,6 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
     public override IOption<Statement> Visit(ArithmeticOperationTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
-        term.Operation.Left.Accept(this);
-        term.Operation.Right.Accept(this);
         return new Some<Statement>(_statement);
     }
 

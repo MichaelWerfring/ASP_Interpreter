@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.ErrorHandling;
+﻿using System.Security.AccessControl;
+using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.Types.TypeVisitors;
@@ -17,7 +18,7 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 
     public override IOption<ITerm> Visit(ArithmeticOperationTerm term)
     {
-        return new Some<ITerm>(new ArithmeticOperationTerm(term.Operation));
+        return new Some<ITerm>(new ArithmeticOperationTerm(term.Left, term.Operation, term.Right));
     }
 
     public override IOption<ITerm> Visit(BasicTerm term)

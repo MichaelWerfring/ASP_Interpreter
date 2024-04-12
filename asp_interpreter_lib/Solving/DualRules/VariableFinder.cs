@@ -104,74 +104,22 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
 
     public override IOption<List<VariableTerm>> Visit(Plus plus)
     {
-        ArgumentNullException.ThrowIfNull(plus);
-        List<VariableTerm> variables = [];
-        
-        plus.Left.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-        
-        plus.Right.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-
-        return new Some<List<VariableTerm>>(variables);
+        return new Some<List<VariableTerm>>([]);
     }
 
     public override IOption<List<VariableTerm>> Visit(Minus minus)
     {
-        ArgumentNullException.ThrowIfNull(minus);
-        List<VariableTerm> variables = [];
-        
-        minus.Left.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-        
-        minus.Right.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-
-        return new Some<List<VariableTerm>>(variables);
+        return new Some<List<VariableTerm>>([]);
     }
 
     public override IOption<List<VariableTerm>> Visit(Multiply multiply)
     {
-        ArgumentNullException.ThrowIfNull(multiply);
-        List<VariableTerm> variables = [];
-        
-        multiply.Left.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-        
-        multiply.Right.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-
-        return new Some<List<VariableTerm>>(variables);
+        return new Some<List<VariableTerm>>([]);
     }
 
     public override IOption<List<VariableTerm>> Visit(Divide divide)
     {
-        ArgumentNullException.ThrowIfNull(divide);
-        List<VariableTerm> variables = [];
-        
-        divide.Left.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-        
-        divide.Right.Accept(this).IfHasValue(v =>
-        {
-            variables.AddRange(v);
-        });
-
-        return new Some<List<VariableTerm>>(variables);
+        return new Some<List<VariableTerm>>([]);
     }
 
     public override IOption<List<VariableTerm>> Visit(BinaryOperation binaryOperation)
@@ -241,7 +189,13 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     {
         ArgumentNullException.ThrowIfNull(arithmeticOperation);
 
-        return new Some<List<VariableTerm>>([]);
+        List<VariableTerm> variables = [];
+        variables.AddRange(arithmeticOperation.Left.Accept(this).
+            GetValueOrThrow("Cannot get variables from arithmetic operation!"));
+        variables.AddRange(arithmeticOperation.Right.Accept(this).
+            GetValueOrThrow("Cannot get variables from arithmetic operation!"));
+        
+        return new Some<List<VariableTerm>>(variables);
     }
 
     public override IOption<List<VariableTerm>> Visit(BasicTerm basicTerm)

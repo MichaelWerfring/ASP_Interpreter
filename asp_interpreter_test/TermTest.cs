@@ -37,7 +37,8 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnPlus()
     {
-        ITerm term = new ArithmeticOperationTerm(new Plus(new NumberTerm(1), new NumberTerm(1)));
+        //ITerm term = new ArithmeticOperationTerm(new Plus(new NumberTerm(1), new NumberTerm(1)));
+        ITerm term = new ArithmeticOperationTerm(new NumberTerm(1),new Plus(), new NumberTerm(1));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 2);
@@ -46,7 +47,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnMinus()
     {
-        ITerm term = new ArithmeticOperationTerm(new Minus(new NumberTerm(1), new NumberTerm(1)));
+        ITerm term = new ArithmeticOperationTerm(new NumberTerm(1),new Minus(), new NumberTerm(1));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 0);
@@ -55,7 +56,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnTimes()
     {
-        ITerm term = new ArithmeticOperationTerm(new Multiply(new NumberTerm(2), new NumberTerm(2)));
+        ITerm term = new ArithmeticOperationTerm(new NumberTerm(2),new Multiply(), new NumberTerm(2));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 4);
@@ -64,7 +65,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnDivide()
     {
-        ITerm term = new ArithmeticOperationTerm(new Divide(new NumberTerm(4), new NumberTerm(2)));
+        ITerm term = new ArithmeticOperationTerm(new NumberTerm(2),new Divide(), new NumberTerm(2));
         var result = term.Accept(_visitor);
         
         Assert.That(result.HasValue && result.GetValueOrThrow() == 2);

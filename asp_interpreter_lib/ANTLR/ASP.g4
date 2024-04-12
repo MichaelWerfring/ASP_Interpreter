@@ -42,10 +42,10 @@ term
     | term arithop term                     #arithmeticOperationTerm;
 
 arithop 
-    : PLUS
-    | MINUS
-    | TIMES
-    | DIV;
+    : PLUS                                  #plusOperation
+    | MINUS                                 #minusOperation
+    | TIMES                                 #timesOperation
+    | DIV                                   #divOperation;
 
 
 //escaping the " and then match everything except " 

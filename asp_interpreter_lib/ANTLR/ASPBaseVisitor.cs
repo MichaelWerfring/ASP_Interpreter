@@ -310,7 +310,8 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitVariableTerm([NotNull] ASPParser.VariableTermContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.arithop"/>.
+	/// Visit a parse tree produced by the <c>plusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -318,5 +319,38 @@ public partial class ASPBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitArithop([NotNull] ASPParser.ArithopContext context) { return VisitChildren(context); }
+	public virtual Result VisitPlusOperation([NotNull] ASPParser.PlusOperationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>minusOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMinusOperation([NotNull] ASPParser.MinusOperationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>timesOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTimesOperation([NotNull] ASPParser.TimesOperationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>divOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitDivOperation([NotNull] ASPParser.DivOperationContext context) { return VisitChildren(context); }
 }

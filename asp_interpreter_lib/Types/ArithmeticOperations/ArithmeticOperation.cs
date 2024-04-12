@@ -6,29 +6,7 @@ namespace asp_interpreter_lib.Types.ArithmeticOperations;
 
 public abstract class ArithmeticOperation
 {
-    private IVisitableType _left;
+    public abstract IOption<int> Evaluate(ITerm left, ITerm right);
     
-    private IVisitableType _right;
-    
-    protected ArithmeticOperation(IVisitableType left ,IVisitableType right)
-    {
-        Left = left;
-        Right = right;
-    }
-    
-    public abstract ITerm Evaluate();
-
-    public IVisitableType Left
-    {
-        get => _left;
-        private set => _left = value ?? throw new ArgumentNullException(nameof(Left));
-    }
-
-    public IVisitableType Right
-    {
-        get => _right;
-        private set => _right = value ?? throw new ArgumentNullException(nameof(Right));
-    }
-
     public abstract override string ToString();
 }

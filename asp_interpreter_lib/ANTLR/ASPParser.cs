@@ -1432,29 +1432,94 @@ public partial class ASPParser : Parser {
 	}
 
 	public partial class ArithopContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS() { return GetToken(ASPParser.PLUS, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS() { return GetToken(ASPParser.MINUS, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TIMES() { return GetToken(ASPParser.TIMES, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIV() { return GetToken(ASPParser.DIV, 0); }
 		public ArithopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_arithop; } }
+	 
+		public ArithopContext() { }
+		public virtual void CopyFrom(ArithopContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class TimesOperationContext : ArithopContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TIMES() { return GetToken(ASPParser.TIMES, 0); }
+		public TimesOperationContext(ArithopContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterArithop(this);
+			if (typedListener != null) typedListener.EnterTimesOperation(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitArithop(this);
+			if (typedListener != null) typedListener.ExitTimesOperation(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitArithop(this);
+			if (typedVisitor != null) return typedVisitor.VisitTimesOperation(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class MinusOperationContext : ArithopContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS() { return GetToken(ASPParser.MINUS, 0); }
+		public MinusOperationContext(ArithopContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IASPListener typedListener = listener as IASPListener;
+			if (typedListener != null) typedListener.EnterMinusOperation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IASPListener typedListener = listener as IASPListener;
+			if (typedListener != null) typedListener.ExitMinusOperation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitMinusOperation(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class PlusOperationContext : ArithopContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS() { return GetToken(ASPParser.PLUS, 0); }
+		public PlusOperationContext(ArithopContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IASPListener typedListener = listener as IASPListener;
+			if (typedListener != null) typedListener.EnterPlusOperation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IASPListener typedListener = listener as IASPListener;
+			if (typedListener != null) typedListener.ExitPlusOperation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPlusOperation(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class DivOperationContext : ArithopContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIV() { return GetToken(ASPParser.DIV, 0); }
+		public DivOperationContext(ArithopContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IASPListener typedListener = listener as IASPListener;
+			if (typedListener != null) typedListener.EnterDivOperation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IASPListener typedListener = listener as IASPListener;
+			if (typedListener != null) typedListener.ExitDivOperation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDivOperation(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -1463,19 +1528,44 @@ public partial class ASPParser : Parser {
 	public ArithopContext arithop() {
 		ArithopContext _localctx = new ArithopContext(Context, State);
 		EnterRule(_localctx, 26, RULE_arithop);
-		int _la;
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 137;
-			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 61440L) != 0)) ) {
-			ErrorHandler.RecoverInline(this);
-			}
-			else {
-				ErrorHandler.ReportMatch(this);
-			    Consume();
-			}
+			State = 141;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case PLUS:
+				_localctx = new PlusOperationContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 137;
+				Match(PLUS);
+				}
+				break;
+			case MINUS:
+				_localctx = new MinusOperationContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 138;
+				Match(MINUS);
+				}
+				break;
+			case TIMES:
+				_localctx = new TimesOperationContext(_localctx);
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 139;
+				Match(TIMES);
+				}
+				break;
+			case DIV:
+				_localctx = new DivOperationContext(_localctx);
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 140;
+				Match(DIV);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1503,7 +1593,7 @@ public partial class ASPParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,37,140,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,37,144,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,1,0,1,0,1,
 		0,1,1,1,1,1,1,1,2,5,2,36,8,2,10,2,12,2,39,9,2,1,3,1,3,3,3,43,8,3,1,3,1,
 		3,1,3,1,3,3,3,49,8,3,3,3,51,8,3,1,3,1,3,3,3,55,8,3,1,4,1,4,1,5,1,5,1,5,
@@ -1512,42 +1602,44 @@ public partial class ASPParser : Parser {
 		9,1,9,1,9,1,9,1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,101,8,10,1,11,1,
 		11,1,11,3,11,106,8,11,1,12,1,12,1,12,1,12,3,12,112,8,12,1,12,3,12,115,
 		8,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,3,12,127,8,12,1,
-		12,1,12,1,12,1,12,5,12,133,8,12,10,12,12,12,136,9,12,1,13,1,13,1,13,0,
-		1,24,14,0,2,4,6,8,10,12,14,16,18,20,22,24,26,0,1,1,0,12,15,153,0,28,1,
-		0,0,0,2,31,1,0,0,0,4,37,1,0,0,0,6,54,1,0,0,0,8,56,1,0,0,0,10,58,1,0,0,
-		0,12,66,1,0,0,0,14,76,1,0,0,0,16,79,1,0,0,0,18,89,1,0,0,0,20,100,1,0,0,
-		0,22,102,1,0,0,0,24,126,1,0,0,0,26,137,1,0,0,0,28,29,3,4,2,0,29,30,3,2,
-		1,0,30,1,1,0,0,0,31,32,3,16,8,0,32,33,5,6,0,0,33,3,1,0,0,0,34,36,3,6,3,
-		0,35,34,1,0,0,0,36,39,1,0,0,0,37,35,1,0,0,0,37,38,1,0,0,0,38,5,1,0,0,0,
-		39,37,1,0,0,0,40,42,5,11,0,0,41,43,3,10,5,0,42,41,1,0,0,0,42,43,1,0,0,
-		0,43,44,1,0,0,0,44,55,5,4,0,0,45,50,3,8,4,0,46,48,5,11,0,0,47,49,3,10,
-		5,0,48,47,1,0,0,0,48,49,1,0,0,0,49,51,1,0,0,0,50,46,1,0,0,0,50,51,1,0,
-		0,0,51,52,1,0,0,0,52,53,5,4,0,0,53,55,1,0,0,0,54,40,1,0,0,0,54,45,1,0,
-		0,0,55,7,1,0,0,0,56,57,3,16,8,0,57,9,1,0,0,0,58,63,3,14,7,0,59,60,5,5,
-		0,0,60,62,3,14,7,0,61,59,1,0,0,0,62,65,1,0,0,0,63,61,1,0,0,0,63,64,1,0,
-		0,0,64,11,1,0,0,0,65,63,1,0,0,0,66,69,3,14,7,0,67,68,5,5,0,0,68,70,3,12,
-		6,0,69,67,1,0,0,0,69,70,1,0,0,0,70,13,1,0,0,0,71,73,5,10,0,0,72,71,1,0,
-		0,0,72,73,1,0,0,0,73,74,1,0,0,0,74,77,3,16,8,0,75,77,3,18,9,0,76,72,1,
-		0,0,0,76,75,1,0,0,0,77,15,1,0,0,0,78,80,5,13,0,0,79,78,1,0,0,0,79,80,1,
-		0,0,0,80,81,1,0,0,0,81,87,5,30,0,0,82,84,5,17,0,0,83,85,3,22,11,0,84,83,
-		1,0,0,0,84,85,1,0,0,0,85,86,1,0,0,0,86,88,5,18,0,0,87,82,1,0,0,0,87,88,
-		1,0,0,0,88,17,1,0,0,0,89,90,3,24,12,0,90,91,3,20,10,0,91,92,3,24,12,0,
-		92,19,1,0,0,0,93,101,5,23,0,0,94,101,5,28,0,0,95,101,5,24,0,0,96,101,5,
-		25,0,0,97,101,5,26,0,0,98,101,5,27,0,0,99,101,5,29,0,0,100,93,1,0,0,0,
-		100,94,1,0,0,0,100,95,1,0,0,0,100,96,1,0,0,0,100,97,1,0,0,0,100,98,1,0,
-		0,0,100,99,1,0,0,0,101,21,1,0,0,0,102,105,3,24,12,0,103,104,5,5,0,0,104,
-		106,3,22,11,0,105,103,1,0,0,0,105,106,1,0,0,0,106,23,1,0,0,0,107,108,6,
-		12,-1,0,108,114,5,30,0,0,109,111,5,17,0,0,110,112,3,22,11,0,111,110,1,
-		0,0,0,111,112,1,0,0,0,112,113,1,0,0,0,113,115,5,18,0,0,114,109,1,0,0,0,
-		114,115,1,0,0,0,115,127,1,0,0,0,116,127,5,2,0,0,117,127,5,1,0,0,118,127,
-		5,31,0,0,119,127,5,3,0,0,120,121,5,17,0,0,121,122,3,24,12,0,122,123,5,
-		18,0,0,123,127,1,0,0,0,124,125,5,13,0,0,125,127,3,24,12,2,126,107,1,0,
-		0,0,126,116,1,0,0,0,126,117,1,0,0,0,126,118,1,0,0,0,126,119,1,0,0,0,126,
-		120,1,0,0,0,126,124,1,0,0,0,127,134,1,0,0,0,128,129,10,1,0,0,129,130,3,
-		26,13,0,130,131,3,24,12,2,131,133,1,0,0,0,132,128,1,0,0,0,133,136,1,0,
-		0,0,134,132,1,0,0,0,134,135,1,0,0,0,135,25,1,0,0,0,136,134,1,0,0,0,137,
-		138,7,0,0,0,138,27,1,0,0,0,18,37,42,48,50,54,63,69,72,76,79,84,87,100,
-		105,111,114,126,134
+		12,1,12,1,12,1,12,5,12,133,8,12,10,12,12,12,136,9,12,1,13,1,13,1,13,1,
+		13,3,13,142,8,13,1,13,0,1,24,14,0,2,4,6,8,10,12,14,16,18,20,22,24,26,0,
+		0,160,0,28,1,0,0,0,2,31,1,0,0,0,4,37,1,0,0,0,6,54,1,0,0,0,8,56,1,0,0,0,
+		10,58,1,0,0,0,12,66,1,0,0,0,14,76,1,0,0,0,16,79,1,0,0,0,18,89,1,0,0,0,
+		20,100,1,0,0,0,22,102,1,0,0,0,24,126,1,0,0,0,26,141,1,0,0,0,28,29,3,4,
+		2,0,29,30,3,2,1,0,30,1,1,0,0,0,31,32,3,16,8,0,32,33,5,6,0,0,33,3,1,0,0,
+		0,34,36,3,6,3,0,35,34,1,0,0,0,36,39,1,0,0,0,37,35,1,0,0,0,37,38,1,0,0,
+		0,38,5,1,0,0,0,39,37,1,0,0,0,40,42,5,11,0,0,41,43,3,10,5,0,42,41,1,0,0,
+		0,42,43,1,0,0,0,43,44,1,0,0,0,44,55,5,4,0,0,45,50,3,8,4,0,46,48,5,11,0,
+		0,47,49,3,10,5,0,48,47,1,0,0,0,48,49,1,0,0,0,49,51,1,0,0,0,50,46,1,0,0,
+		0,50,51,1,0,0,0,51,52,1,0,0,0,52,53,5,4,0,0,53,55,1,0,0,0,54,40,1,0,0,
+		0,54,45,1,0,0,0,55,7,1,0,0,0,56,57,3,16,8,0,57,9,1,0,0,0,58,63,3,14,7,
+		0,59,60,5,5,0,0,60,62,3,14,7,0,61,59,1,0,0,0,62,65,1,0,0,0,63,61,1,0,0,
+		0,63,64,1,0,0,0,64,11,1,0,0,0,65,63,1,0,0,0,66,69,3,14,7,0,67,68,5,5,0,
+		0,68,70,3,12,6,0,69,67,1,0,0,0,69,70,1,0,0,0,70,13,1,0,0,0,71,73,5,10,
+		0,0,72,71,1,0,0,0,72,73,1,0,0,0,73,74,1,0,0,0,74,77,3,16,8,0,75,77,3,18,
+		9,0,76,72,1,0,0,0,76,75,1,0,0,0,77,15,1,0,0,0,78,80,5,13,0,0,79,78,1,0,
+		0,0,79,80,1,0,0,0,80,81,1,0,0,0,81,87,5,30,0,0,82,84,5,17,0,0,83,85,3,
+		22,11,0,84,83,1,0,0,0,84,85,1,0,0,0,85,86,1,0,0,0,86,88,5,18,0,0,87,82,
+		1,0,0,0,87,88,1,0,0,0,88,17,1,0,0,0,89,90,3,24,12,0,90,91,3,20,10,0,91,
+		92,3,24,12,0,92,19,1,0,0,0,93,101,5,23,0,0,94,101,5,28,0,0,95,101,5,24,
+		0,0,96,101,5,25,0,0,97,101,5,26,0,0,98,101,5,27,0,0,99,101,5,29,0,0,100,
+		93,1,0,0,0,100,94,1,0,0,0,100,95,1,0,0,0,100,96,1,0,0,0,100,97,1,0,0,0,
+		100,98,1,0,0,0,100,99,1,0,0,0,101,21,1,0,0,0,102,105,3,24,12,0,103,104,
+		5,5,0,0,104,106,3,22,11,0,105,103,1,0,0,0,105,106,1,0,0,0,106,23,1,0,0,
+		0,107,108,6,12,-1,0,108,114,5,30,0,0,109,111,5,17,0,0,110,112,3,22,11,
+		0,111,110,1,0,0,0,111,112,1,0,0,0,112,113,1,0,0,0,113,115,5,18,0,0,114,
+		109,1,0,0,0,114,115,1,0,0,0,115,127,1,0,0,0,116,127,5,2,0,0,117,127,5,
+		1,0,0,118,127,5,31,0,0,119,127,5,3,0,0,120,121,5,17,0,0,121,122,3,24,12,
+		0,122,123,5,18,0,0,123,127,1,0,0,0,124,125,5,13,0,0,125,127,3,24,12,2,
+		126,107,1,0,0,0,126,116,1,0,0,0,126,117,1,0,0,0,126,118,1,0,0,0,126,119,
+		1,0,0,0,126,120,1,0,0,0,126,124,1,0,0,0,127,134,1,0,0,0,128,129,10,1,0,
+		0,129,130,3,26,13,0,130,131,3,24,12,2,131,133,1,0,0,0,132,128,1,0,0,0,
+		133,136,1,0,0,0,134,132,1,0,0,0,134,135,1,0,0,0,135,25,1,0,0,0,136,134,
+		1,0,0,0,137,142,5,12,0,0,138,142,5,13,0,0,139,142,5,14,0,0,140,142,5,15,
+		0,0,141,137,1,0,0,0,141,138,1,0,0,0,141,139,1,0,0,0,141,140,1,0,0,0,142,
+		27,1,0,0,0,19,37,42,48,50,54,63,69,72,76,79,84,87,100,105,111,114,126,
+		134,141
 	};
 
 	public static readonly ATN _ATN =
