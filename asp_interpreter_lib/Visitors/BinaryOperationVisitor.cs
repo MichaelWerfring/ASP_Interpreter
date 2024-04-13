@@ -14,9 +14,9 @@ public class BinaryOperationVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<I
         var left = context.term(0).Accept(new TermVisitor(_errorLogger));
         var right = context.term(1).Accept(new TermVisitor(_errorLogger));
         
-        op.IfHasNoValue(() => errorLogger.LogError("Cannot parse binary operator!", context));
-        left.IfHasNoValue(() => errorLogger.LogError("Cannot parse left term!", context));
-        right.IfHasNoValue(() => errorLogger.LogError("Cannot parse right term!", context));
+        op.IfHasNoValue(() => _errorLogger.LogError("Cannot parse binary operator!", context));
+        left.IfHasNoValue(() => _errorLogger.LogError("Cannot parse left term!", context));
+        right.IfHasNoValue(() => _errorLogger.LogError("Cannot parse right term!", context));
 
         if (!op.HasValue || !left.HasValue || !right.HasValue)
         {

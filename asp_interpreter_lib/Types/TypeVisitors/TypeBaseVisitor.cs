@@ -2,23 +2,23 @@
 using asp_interpreter_lib.Types.ArithmeticOperations;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Visitors;
 
 namespace asp_interpreter_lib.Types.TypeVisitors;
 
 public class TypeBaseVisitor<T> 
 {
     public virtual IOption<T> Visit(AspProgram _) => new None<T>();
+    
     public virtual IOption<T> Visit(Query _) => new None<T>();
     
     public virtual IOption<T> Visit(Statement _) => new None<T>();
     
-    public virtual IOption<T> Visit(Head _) => new None<T>();
+    public virtual IOption<T> Visit(Forall _) => new None<T>();
 
-    public virtual IOption<T> Visit(Body _) => new None<T>();
+    public virtual IOption<T> Visit(Literal _) => new None<T>();
     
-    public virtual IOption<T> Visit(NafLiteral _) => new None<T>();
-    
-    public virtual IOption<T> Visit(ClassicalLiteral _) => new None<T>();
+    public virtual IOption<T> Visit(BinaryOperation _) => new None<T>();
     
     public virtual IOption<T> Visit(Plus _) => new None<T>();
     
@@ -27,8 +27,6 @@ public class TypeBaseVisitor<T>
     public virtual IOption<T> Visit(Multiply _) => new None<T>();
     
     public virtual IOption<T> Visit(Divide _) => new None<T>();
-    
-    public virtual IOption<T> Visit(BinaryOperation _) => new None<T>();
     
     public virtual IOption<T> Visit(Disunification _) => new None<T>();
     
@@ -59,6 +57,8 @@ public class TypeBaseVisitor<T>
     public virtual IOption<T> Visit(NegatedTerm _) => new None<T>();
     
     public virtual IOption<T> Visit(ParenthesizedTerm _) => new None<T>();
-
-    public virtual IOption<T> Visit(Forall _) => new None<T>();
+    
+    public virtual IOption<T> Visit(RecursiveList _) => new None<T>();
+    
+    public virtual IOption<T> Visit(ConventionalList _) => new None<T>();
 }

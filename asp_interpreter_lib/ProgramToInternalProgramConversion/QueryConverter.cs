@@ -7,7 +7,7 @@ namespace asp_interpreter_lib.ProgramToInternalProgramConversion;
 
 public class QueryConverter
 {
-    private ClassicalLiteralConverter _converter = new ClassicalLiteralConverter();
+    private readonly LiteralConverter _converter = new LiteralConverter();
 
     public IEnumerable<ISimpleTerm> ProcessQuery(Query query)
     {

@@ -9,7 +9,7 @@ public class QueryVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Que
     
     public override IOption<Query> VisitQuery(ASPParser.QueryContext context)
     {
-        var literal = context.classical_literal().Accept(new ClassicalLiteralVisitor(_errorLogger));
+        var literal = context.literal().Accept(new LiteralVisitor(_errorLogger));
 
         if (!literal.HasValue)
         {

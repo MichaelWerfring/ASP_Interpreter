@@ -1,22 +1,19 @@
 grammar ASP;
 program : statements query;
-query : classical_literal QUERY_MARK;
+query : literal QUERY_MARK;
 
-//also allow empty programs
 statements : statement*;
 
 statement 
-    : CONS body? DOT 
-    | head (CONS body?)? DOT;
+    : CONS (goal (COMMA goal)*)? DOT 
+    | literal (CONS (goal (COMMA goal)*))? DOT;
 
-head: classical_literal;
-body : naf_literal (COMMA naf_literal)*;
+goal : 
+    literal
+    | binary_operation;
 
-naf_literals :  naf_literal (COMMA naf_literals)?;
-naf_literal : NAF? classical_literal | binary_operation;
-
-classical_literal : MINUS? ID (PAREN_OPEN terms? PAREN_CLOSE)?;
 binary_operation : term binary_operator term;
+literal : NAF? MINUS? ID (PAREN_OPEN terms? PAREN_CLOSE)?;
 
 binary_operator
     : EQUAL             #equalityOperation
@@ -39,7 +36,11 @@ term
     | ANONYMOUS_VARIABLE                    #anonymousVariableTerm
     | PAREN_OPEN term PAREN_CLOSE           #parenthesizedTerm
     | MINUS term                            #negatedTerm
+    | list                                  #listTerm
     | term arithop term                     #arithmeticOperationTerm;
+
+list: SQUARE_OPEN terms SQUARE_CLOSE       #conventionalList
+    | SQUARE_OPEN term OR term SQUARE_CLOSE #recursiveList;
 
 arithop 
     : PLUS                                  #plusOperation

@@ -50,7 +50,7 @@ namespace asp_interpreter_lib.OLONDetection
 
             foreach(var edge in cycle)
             {
-                if(edge.TransitionLiteral.IsNafNegated)
+                if(edge.TransitionLiteral.HasNafNegation)
                 {
                     count+=1;
                 }

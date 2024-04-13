@@ -15,7 +15,7 @@ public class CallGraphEdge : IEdge<Statement>
     (
         Statement source,
         Statement target,
-        NafLiteral transitionLiteral
+        Literal transitionLiteral
     )
     {
         ArgumentNullException.ThrowIfNull(source);
@@ -29,7 +29,7 @@ public class CallGraphEdge : IEdge<Statement>
 
     public Statement Source { get; private set; }
 
-    public NafLiteral TransitionLiteral { get; private set; }
+    public Literal TransitionLiteral { get; private set; }
 
     public Statement Target { get; private set; }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.OLONDetection.CallGraph;
 
@@ -31,11 +32,11 @@ public class CallGraphBuilder
 
         foreach (var statement in graph.Vertices)
         {
-            foreach (var nafLiteral in statement.Body.Literals)
+            foreach (var literal in statement.Body)
             {
-                var nafLiteralEdges = GetEdges(statement, nafLiteral, graph);
+                var literalEdges = GetEdges(statement, literal, graph);
 
-                graph.AddEdgeRange(nafLiteralEdges);
+                graph.AddEdgeRange(literalEdges);
             }
         }
 
@@ -50,22 +51,19 @@ public class CallGraphBuilder
     /// <param name="graph"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    private List<CallGraphEdge> GetEdges(Statement statement, NafLiteral nafLiteral, AdjacencyGraph<Statement, CallGraphEdge> graph)
+    private List<CallGraphEdge> GetEdges(Statement statement, Goal goal, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
-        if (!nafLiteral.IsClassicalLiteral)
-        {
-            throw new ArgumentException($"{nameof(nafLiteral)} must be a classical literal");
-        }
+        var literalConverter = new GoalToLiteralConverter();
+        var literal = goal.Accept(literalConverter).
+            GetValueOrThrow($"{nameof(goal)} must be a classical literal");
 
-        ClassicalLiteral classicalLiteral = nafLiteral.ClassicalLiteral;
-
-        List<Statement> matchingStatements = GetMatchingStatements(classicalLiteral, graph);
+        List<Statement> matchingStatements = GetMatchingStatements(literal, graph);
 
         List<CallGraphEdge> edges = new List<CallGraphEdge>();
 
         foreach (var currentStatement in matchingStatements)
         {
-            edges.Add(new CallGraphEdge(statement, currentStatement, nafLiteral));
+            edges.Add(new CallGraphEdge(statement, currentStatement, literal));
         }
 
         return edges;
@@ -77,22 +75,20 @@ public class CallGraphBuilder
     /// <param name="literal"></param>
     /// <param name="graph"></param>
     /// <returns>A list of matching statements.</returns>
-    private List<Statement> GetMatchingStatements(ClassicalLiteral literal, AdjacencyGraph<Statement, CallGraphEdge> graph)
+    private List<Statement> GetMatchingStatements(Literal literal, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
         var matches = new List<Statement>();
 
         foreach (Statement statement in graph.Vertices)
         {
-            Head currentHead = statement.Head;
-
-            ClassicalLiteral? currentLiteral = currentHead.Literal;
-
-            if (currentLiteral == null)
+            if (!statement.HasHead)
             {
                 continue;
             }
 
-            if (literal.Negated != currentLiteral.Negated)
+            Literal currentLiteral = statement.Head.GetValueOrThrow();
+
+            if (literal.HasStrongNegation != currentLiteral.HasStrongNegation)
             {
                 continue;
             }

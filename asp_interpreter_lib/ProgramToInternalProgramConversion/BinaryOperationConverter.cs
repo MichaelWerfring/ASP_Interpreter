@@ -3,7 +3,7 @@ using asp_interpreter_lib.Types.BinaryOperations;
 
 namespace asp_interpreter_lib.ProgramToInternalProgramConversion;
 
-public class BuiltInAtomConverter
+public class BinaryOperationConverter
 {
     private TermConverter _converter = new TermConverter();
 

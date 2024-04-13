@@ -131,4 +131,17 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
         
         return new Some<ITerm>(new VariableTerm(variable));
     }
+
+    public override IOption<ITerm> VisitListTerm(ASPParser.ListTermContext context)
+    {
+        var list =context.list().Accept(new ListVisitor(_errorLogger));
+
+        if (list == null|| !list.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse list!", context);
+            return new None<ITerm>();
+        }
+        
+        return new Some<ITerm>(list.GetValueOrThrow());
+    }
 }

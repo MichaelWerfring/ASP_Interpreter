@@ -3,6 +3,7 @@ using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using BasicTerm = asp_interpreter_lib.Types.Terms.BasicTerm;
 using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
 
@@ -50,15 +51,15 @@ public class DualRuleConverter
         {
             //Headless rules will be treated within nmr check
             if (!rule.HasHead) continue;
-
-            var head = (rule.Head.Literal.Identifier, rule.Head.Literal.Terms.Count);
+            var head = rule.Head.GetValueOrThrow("Headless rules must be treated by the NMR check!");
+            var signature = (head.Identifier, head.Terms.Count);
             
             var converted = ComputeHead(rule);
             
-            if (!disjunctions.TryAdd(head, [converted]))
+            if (!disjunctions.TryAdd(signature, [converted]))
             {
                 //disjunctions[head].Add(rule);
-                disjunctions[head].Add(converted);
+                disjunctions[signature].Add(converted);
             }
         }
 
@@ -77,7 +78,8 @@ public class DualRuleConverter
             var statements = disjunction.Value; 
             if (statements.Count == 1)
             {
-                statements[0].Head.IsDual = true;
+                statements[0].Head.
+                    GetValueOrThrow("Headless rules must be treated by the NMR check!").HasNafNegation = true;
 
                 var withForall = AddForall(statements[0], _variables);
                 if (withForall.Count > 0)
@@ -95,29 +97,28 @@ public class DualRuleConverter
             var newVariable = new VariableTerm(ASPExtensions.GenerateUniqeName("", _ruleNames, "dis"));
             
             var newStatement = new Statement();
-            var head = new Head(new ClassicalLiteral(
-                disjunction.Key.Item1,
-                false,
-                [newVariable]));
-            head.IsDual = true;
-            newStatement.AddHead(head);
+            newStatement.AddHead(
+                new Literal(disjunction.Key.Item1, true, false, [newVariable]));
             
             //For readability add the statement beforehand
             duals.Add(newStatement);
-            List<NafLiteral> newBody = [];
+            List<Goal> newBody = [];
 
             for (var i = 0; i < statements.Count; i++)
             {
                 var statement = statements[i];
+                var head = statement.Head
+                    .GetValueOrThrow("Headless statements must be treated by the NMR check!");
                 
                 string tempVariableId =
-                    ASPExtensions.GenerateUniqeName(statement.Head.Literal.Identifier, _ruleNames, "idis");
+                    ASPExtensions.GenerateUniqeName(head.Identifier, _ruleNames, "idis");
                 
-                statement.Head.Literal.Identifier = tempVariableId;
+                head.Identifier = tempVariableId;
                 
                 //newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, [newVariable]), true));
-                newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, [newVariable]), 
-                    true));
+                //newBody.Add(new NafLiteral(new ClassicalLiteral(tempVariableId, false, [newVariable]), 
+                //   true));
+                newBody.Add(new Literal(tempVariableId, true, false, [newVariable]));
 
                 var withForall = AddForall(statement, _variables);
                 if (withForall.Count > 0)
@@ -130,14 +131,17 @@ public class DualRuleConverter
                 GetDualRules(statement).ForEach(
                     s =>
                     {
-                        s.Head.Literal.Identifier = tempVariableId;
-                        s.Head.IsDual = true;
+                        s.Head.IfHasValue(h =>
+                        {
+                            h.Identifier = tempVariableId;
+                            h.HasNafNegation = true;
+                        });
                         duals.Add(s);
                     });
             }
 
 
-            newStatement.AddBody(new Body(newBody));
+            newStatement.AddBody(newBody);
         }
 
         return duals;
@@ -158,27 +162,29 @@ public class DualRuleConverter
         
         List<Statement> duals = [];
 
-        var negator = new TypeNegator(new BinaryOperatorNegator(), new TermCopyVisitor());
+        var negator = new GoalNegator(new LiteralCopyVisitor(new TermCopyVisitor()));
 
-        for (var i = 0; i < rule.Body.Literals.Count; i++)
+        for (var i = 0; i < rule.Body.Count; i++)
         {
             var dualStatement = new Statement();
             
             //Maybe set negated on the classical literal in the head 
             //to indicate a dual rule
-            rule.Head.IsDual = true;
-            dualStatement.AddHead(rule.Head);
+            //rule.Head.IsDual = true;
+            var head = rule.Head.GetValueOrThrow("Headless rules must be handled by the NMR check!");
+            head.HasNafNegation = true;
+            dualStatement.AddHead(head);
 
-            List<NafLiteral> dualBody = [];
+            List<Goal> dualBody = [];
             //add preceding
-            dualBody.AddRange(rule.Body.Literals[0..i]);
+            dualBody.AddRange(rule.Body[0..i]);
             
             //add negated
-            var goal = rule.Body.Literals[i];
-            var negated = negator.NegateNaf(goal);
+            var goal = rule.Body[i];
+            var negated = goal.Accept(negator).GetValueOrThrow("Cannot negate goal!");
             dualBody.Add(negated);
             
-            dualStatement.AddBody(new Body(dualBody));
+            dualStatement.AddBody(dualBody);
             
             duals.Add(dualStatement);
         }
@@ -188,17 +194,41 @@ public class DualRuleConverter
 
     private List<string> GetBodyVariables(Statement rule)
     {
-        var head = rule.Head
-            .Accept(_variableFinder)
-            .GetValueOrThrow("Cannot retrieve variables from head!")
-            .Select(v => v.Identifier);
-        
-        var body = rule.Body
-            .Accept(_variableFinder)
-            .GetValueOrThrow("Cannot retrieve variables from body!")
-            .Select(v => v.Identifier);
+        if (!rule.HasHead && rule.HasBody)
+        {
+            List<string> variables = [];
+            foreach (var goal in rule.Body)
+            {
+                variables.AddRange(goal.Accept(_variableFinder).
+                    GetValueOrThrow("Cannot retrieve variables from body!").
+                    Select(v => v.Identifier));
+            }
+            
+            return variables;
+        }
 
-        return body.Except(head).ToList();
+        if (rule.HasHead && !rule.HasBody)
+        {
+            return [];
+        }
+
+        if (rule.HasHead && rule.HasBody)
+        {
+            List<string> bodyVar = [];
+            foreach (var goal in rule.Body)
+            {
+                bodyVar.AddRange(goal.Accept(_variableFinder).
+                    GetValueOrThrow("Cannot retrieve variables from body!").
+                    Select(v => v.Identifier));
+            }
+
+            var headVar = rule.Head.GetValueOrThrow().Accept(_variableFinder).
+                GetValueOrThrow("Cannot retrieve variables from head!").Select(v => v.Identifier);
+            
+            return bodyVar.Except(headVar).ToList();
+        }
+        
+        return [];
     }
 
     public List<Statement> AddForall(Statement statement, HashSet<string> variablesInProgram)
@@ -224,50 +254,59 @@ public class DualRuleConverter
             GetValueOrThrow("Cannot retrieve copy of statement");
         
         List<Statement> duals = [];
+
+        var head = rule.Head.GetValueOrThrow();
         // 1) Compute Duals Normally but replace predicate in the head
         string newId = 
-            ASPExtensions.GenerateUniqeName(rule.Head.Literal.Identifier, variablesInProgram, "fa");
-        rule.Head.Literal.Identifier = newId;
+            ASPExtensions.GenerateUniqeName(head.Identifier, variablesInProgram, "fa");
+        string oldId = head.Identifier;
+        head.Identifier = newId;
         duals.AddRange(GetDualRules(rule));
+        
         
         // 2) Body Variables added to head of each dual
         
         foreach (var variable in bodyVariables)
         {
             //They share the same head
-            duals[0].Head.Literal.Terms.Add(new VariableTerm(variable));
+            duals[0].Head.IfHasValue(h => h.Terms.Add(new VariableTerm(variable)));
         }
         
         // 3) Create Clause with forall over the new Predicate
         Statement forall = new();
         
-        statement.Head.IsDual = true;
-        forall.AddHead(statement.Head);
-        NafLiteral innerGoal;
+        head.HasNafNegation = true;
+        forall.AddHead(head);
+        Literal innerGoal;
         //Made Disjunction
         if (duals.Count > 1)
         {
-            //Inner goal has to be negated 
-            innerGoal = new NafLiteral(new ClassicalLiteral(
-                    newId, false, duals[0].Head.Literal.Terms),
-                !duals[0].Head.Literal.Negated);
+            var dualHead = duals[0].Head.GetValueOrThrow();
+            innerGoal = new Literal(
+                newId,
+                dualHead.HasNafNegation,
+                dualHead.HasStrongNegation,
+                dualHead.Terms);
         }
         else
         {
-            innerGoal = new NafLiteral(new ClassicalLiteral(
-                    newId, false, duals[0].Head.Literal.Terms),
-                duals[0].Head.Literal.Negated);
+            var dualHead = duals[0].Head.GetValueOrThrow();
+            innerGoal = new Literal(
+                newId,
+                !dualHead.HasNafNegation,
+                dualHead.HasStrongNegation,
+                dualHead.Terms);
         }
         
         //append body with (nested) forall
-        forall.AddBody(new Body([NestForall(bodyVariables.ToList(), innerGoal)]));
+        forall.AddBody([NestForall(bodyVariables.ToList(), innerGoal)]);
         
         duals.Insert(0,forall);
-        
+        head.Identifier = oldId;
         return duals;
     }
 
-    private static NafLiteral NestForall(List<string> bodyVariables, NafLiteral innerGoal)
+    private static Goal NestForall(List<string> bodyVariables, Literal innerGoal)
     {
         if (bodyVariables.Count == 0)
         {
@@ -277,7 +316,7 @@ public class DualRuleConverter
         string v = bodyVariables[0];
         bodyVariables.RemoveAt(0);
 
-        NafLiteral result = NestForall(bodyVariables, innerGoal);
+        var result = NestForall(bodyVariables, innerGoal);
         
         //return new BasicTerm("forall", [ new VariableTerm(v), result]);
         var f = new Forall(new VariableTerm(v), result);

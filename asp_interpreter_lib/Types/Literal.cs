@@ -1,21 +1,26 @@
-﻿using asp_interpreter_lib.ListExtensions;
+﻿using System.Text;
+using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.ListExtensions;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
-using System.Text;
-using asp_interpreter_lib.ErrorHandling;
 
 namespace asp_interpreter_lib.Types;
 
-public class ClassicalLiteral : IVisitableType
+public class Literal : Goal
 {
     private List<ITerm> _terms;
     private string _identifier;
 
-    public ClassicalLiteral(string identifier, bool negated, List<ITerm> terms) 
+    public Literal(string identifier, bool hasNafNegation, bool hasStrongNegation, List<ITerm> terms) 
     {
         Identifier = identifier;
         Terms = terms;
-        Negated = negated;
+        HasStrongNegation = hasStrongNegation;
+        HasNafNegation = hasNafNegation;
+    }
+
+    public Literal()
+    {
     }
 
     public List<ITerm> Terms
@@ -25,7 +30,9 @@ public class ClassicalLiteral : IVisitableType
     }
 
     //Negated in this context means classical negation 
-    public bool Negated { get; private set; }
+    public bool HasStrongNegation { get; set; }
+    
+    public bool HasNafNegation { get; set; }
 
     public string Identifier
     {
@@ -46,7 +53,12 @@ public class ClassicalLiteral : IVisitableType
     {
         var builder = new StringBuilder();
 
-        if(Negated)
+        if(HasNafNegation)
+        {
+            builder.Append("not ");
+        }
+        
+        if(HasStrongNegation)
         {
             builder.Append('-');
         }
@@ -63,9 +75,9 @@ public class ClassicalLiteral : IVisitableType
         return builder.ToString();
     }
     
-    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
-        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+        ArgumentNullException.ThrowIfNull(visitor);
         return visitor.Visit(this);
     }
 }

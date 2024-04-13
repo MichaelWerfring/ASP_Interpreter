@@ -35,18 +35,44 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
     
     public override IOption<Statement> VisitStatement(ASPParser.StatementContext context)
     {
-        //Empty InternalStatement per default
-        //If InternalHead or InternalBody are found they will be added
         var statement = new Statement();
         
-        //In this case it is ok to ignore if head or body are null
-        //because the statement can exist without both
-        var head = context.head()?.Accept(new HeadVisitor(_errorLogger));
-        var body = context.body()?.Accept(new BodyVisitor(_errorLogger));
+        List<Goal> body = [];
+        LiteralVisitor literalVisitor = new(_errorLogger);
         
+        var head = context.literal()?.Accept(literalVisitor);
         head?.IfHasValue((value) => statement.AddHead(value));
-        body?.IfHasValue((value) => statement.AddBody(value));
         
+        BinaryOperationVisitor binaryOperationVisitor = new(_errorLogger);
+
+        var goals = context.goal();
+
+        if (goals == null)
+        {
+            //Just empty body
+            return new Some<Statement>(statement);
+        }
+        
+        foreach (var goal in goals)
+        {
+            var parsedGoal = goal.Accept(literalVisitor);
+
+            if (parsedGoal.HasValue)
+            {
+                body.Add(parsedGoal.GetValueOrThrow());
+                continue;
+            }
+            
+            goal.Accept(binaryOperationVisitor).IfHasValue(v => body.Add(v));
+        }
+
+        if (goals.Length != body.Count)
+        {
+            _errorLogger.LogError("Not all goals could be parsed correctly", context);
+            return new None<Statement>();
+        }
+        
+        statement.AddBody(body);
         return new Some<Statement>(statement);
     }
 }

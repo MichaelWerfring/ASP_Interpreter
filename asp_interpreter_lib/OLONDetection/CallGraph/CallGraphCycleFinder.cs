@@ -58,11 +58,14 @@ namespace asp_interpreter_lib.OLONDetection.CallGraph
         {
             if (!a.HasHead || !b.HasHead) throw new ArgumentException("Must both have heads");
 
-            if (a.Head.Literal == null || b.Head.Literal == null) throw new ArgumentException("Must both have literals in their heads!");
+            if (!a.HasHead || !b.HasHead) throw new ArgumentException("Must both have literals in their heads!");
 
-            if (a.Head.Literal.Identifier != b.Head.Literal.Identifier) return false;
+            var aHead = a.Head.GetValueOrThrow("Head must be present");
+            var bHead = b.Head.GetValueOrThrow("Head must be present");
+            
+            if (aHead.Identifier != bHead.Identifier) return false;
 
-            if(a.Head.Literal.Terms.Count != b.Head.Literal.Terms.Count) return false;
+            if(aHead.Terms.Count != bHead.Terms.Count) return false;
 
             return true;
         }

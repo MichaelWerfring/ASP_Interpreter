@@ -40,6 +40,7 @@ public class DualRuleTest
         
         var dualRuleConverter = new DualRuleConverter(program);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
+       
         Assert.That(duals.Count == 3 &&
                     duals[0].ToString() == "not a(X) :- not c(X)." &&
                     duals[1].ToString() == "not a(X) :- c(X), not d(X, 0)." &&
@@ -82,7 +83,7 @@ public class DualRuleTest
         
         var dualRuleConverter = new DualRuleConverter(program);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
-        
+            
         Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
                     duals[0].ToString() == "not q(X) :- forall(Y, fa0_q(X, Y))." && 
                     duals[1].ToString() == "not fa0_q(X, Y) :- p(X, Y).");
@@ -233,11 +234,18 @@ public class DualRuleTest
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(program);
-        var dual = dualRuleConverter.GetDualRules(program.Statements);   
+        var dual = dualRuleConverter.GetDualRules(program.Statements);
+
+        string d1 = dual[0].ToString();
+        string d2 =dual[1].ToString();
+        string d3 =dual[2].ToString();
         
-        Assert.That(dual.Count == 3 && 
-                    dual[0].ToString() == "not a(X) :- forall(Y, not fa0_a(X, Y))." &&
-                    dual[1].ToString() == "not fa0_a(X, Y) :- not -c(X)." &&
-                    dual[2].ToString() == "not fa0_a(X, Y) :- -c(X), not -b(X, Y).");
+        Assert.That(dual.Count == 3);
+        Assert.Multiple(() =>
+        {
+            Assert.That(d1 == "not a(X) :- forall(Y, not fa0_a(X, Y)).");
+            Assert.That(d2 == "not fa0_a(X, Y) :- not -c(X).");
+            Assert.That(d3 == "not fa0_a(X, Y) :- -c(X), not -b(X, Y).");
+        });
     }
 }

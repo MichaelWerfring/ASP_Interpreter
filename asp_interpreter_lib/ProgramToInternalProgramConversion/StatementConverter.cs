@@ -3,32 +3,40 @@ using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.Types;
 using System.Text;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.ProgramToInternalProgramConversion;
 
 public class StatementConverter
 {
-    private NafLiteralConverter _nafConverter = new NafLiteralConverter();
-    private ClassicalLiteralConverter _classicalLiteralConverter = new ClassicalLiteralConverter();
-
+    private LiteralConverter _literalConverter = new LiteralConverter();
+    private BinaryOperationConverter _binaryOperationConverter = new BinaryOperationConverter();
+    
+    private GoalToLiteralConverter _goalToLiteralConverter = new GoalToLiteralConverter();
+    private GoalToBinaryOperationConverter _goalToBinaryOperationConverter = new GoalToBinaryOperationConverter();
+    
     public IEnumerable<ISimpleTerm> Convert(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
 
-        ISimpleTerm convertedHead = ProcessHead(statement.Head);
+        ISimpleTerm convertedHead = _literalConverter.Convert(statement.Head.GetValueOrThrow());
+        
+        List<ISimpleTerm> convertedStatements = [];
+        //_converter.Convert(goal);
 
-        var convertedStatements = statement.Body.Literals.Select(_nafConverter.Convert);
-
-        return convertedStatements.Prepend(convertedHead);
-    }
-
-    private ISimpleTerm ProcessHead(Head head)
-    {
-        if (head.Literal == null)
+        foreach (var goal in statement.Body)
         {
-            throw new ArgumentException("Must always have a head.");
+            goal.Accept(_goalToLiteralConverter).IfHasValue(v =>
+            {
+                convertedStatements.Add(_literalConverter.Convert(v));
+            });
+            goal.Accept(_goalToBinaryOperationConverter).IfHasValue(v =>
+            {
+                convertedStatements.Add(_binaryOperationConverter.Convert(v));
+            });
+            //_converter.Convert(goal);
         }
 
-        return _classicalLiteralConverter.Convert(head.Literal);
+        return convertedStatements.Prepend(convertedHead);
     }
 }

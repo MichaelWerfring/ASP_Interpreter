@@ -7,7 +7,6 @@ public class ArithmeticOperationVisitor(IErrorLogger errorLogger) : ASPBaseVisit
 {
     private IErrorLogger _errorLogger = errorLogger;
 
-
     public override IOption<ArithmeticOperation> VisitPlusOperation(ASPParser.PlusOperationContext context)
     {
         return new Some<ArithmeticOperation>(new Plus());

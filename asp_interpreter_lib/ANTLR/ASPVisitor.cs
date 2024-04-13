@@ -56,41 +56,23 @@ public interface IASPVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStatement([NotNull] ASPParser.StatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.head"/>.
+	/// Visit a parse tree produced by <see cref="ASPParser.goal"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitHead([NotNull] ASPParser.HeadContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.body"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitBody([NotNull] ASPParser.BodyContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.naf_literals"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitNaf_literals([NotNull] ASPParser.Naf_literalsContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.naf_literal"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitNaf_literal([NotNull] ASPParser.Naf_literalContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.classical_literal"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitClassical_literal([NotNull] ASPParser.Classical_literalContext context);
+	Result VisitGoal([NotNull] ASPParser.GoalContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.binary_operation"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBinary_operation([NotNull] ASPParser.Binary_operationContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ASPParser.literal"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLiteral([NotNull] ASPParser.LiteralContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>equalityOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
@@ -202,6 +184,27 @@ public interface IASPVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitVariableTerm([NotNull] ASPParser.VariableTermContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>listTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitListTerm([NotNull] ASPParser.ListTermContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>conventionalList</c>
+	/// labeled alternative in <see cref="ASPParser.list"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitConventionalList([NotNull] ASPParser.ConventionalListContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>recursiveList</c>
+	/// labeled alternative in <see cref="ASPParser.list"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRecursiveList([NotNull] ASPParser.RecursiveListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>plusOperation</c>
 	/// labeled alternative in <see cref="ASPParser.arithop"/>.

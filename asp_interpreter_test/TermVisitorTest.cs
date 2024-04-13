@@ -15,7 +15,7 @@ public class TermVisitorTest
         string code = "a(X). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is VariableTerm &&
@@ -28,7 +28,7 @@ public class TermVisitorTest
         string code = "a(\"hallo\"). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is StringTerm &&
@@ -41,7 +41,7 @@ public class TermVisitorTest
         string code = "a(b, c). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
@@ -56,7 +56,7 @@ public class TermVisitorTest
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var converter = new TermToNumberConverter();
         
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         var term = literal?.Terms[0];
         var content = term?.Accept(converter);
         
@@ -70,7 +70,7 @@ public class TermVisitorTest
         string code = "a(1 + 2). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is ArithmeticOperationTerm &&
@@ -84,7 +84,7 @@ public class TermVisitorTest
         string code = "a(b, c(d, e)). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
@@ -98,7 +98,7 @@ public class TermVisitorTest
         string code = "a(1 + 2 * 3). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is ArithmeticOperationTerm &&
@@ -111,7 +111,7 @@ public class TermVisitorTest
         string code = "a((b)). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is BasicTerm &&
@@ -124,7 +124,7 @@ public class TermVisitorTest
         string code = "a(b,(c(d, e, f, g))). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
@@ -138,7 +138,7 @@ public class TermVisitorTest
         string code = "a(_). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is AnonymusVariableTerm &&
@@ -151,7 +151,7 @@ public class TermVisitorTest
         string code = "a(b, _). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is BasicTerm && literal.Terms[1] is AnonymusVariableTerm &&
@@ -165,7 +165,7 @@ public class TermVisitorTest
         string code = "a(b, c(d, _)). a?";
         var program = ASPExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
             literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
@@ -180,7 +180,7 @@ public class TermVisitorTest
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var converter = new TermToNumberConverter();
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         var term = literal?.Terms[0];
         var content = term?.Accept(converter);
         
@@ -195,7 +195,7 @@ public class TermVisitorTest
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var converter = new TermToNumberConverter();
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         var term = literal?.Terms[1];
         var content = term?.Accept(converter);
         
@@ -210,7 +210,7 @@ public class TermVisitorTest
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var converter = new TermToNumberConverter();
 
-        var literal = program.Statements[0].Head.Literal;
+        var literal = program.Statements[0].Head.GetValueOrThrow();
         var term = literal?.Terms[2];
         var content = term?.Accept(converter);
         

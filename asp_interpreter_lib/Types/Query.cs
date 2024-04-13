@@ -5,17 +5,22 @@ namespace asp_interpreter_lib.Types;
 
 public class Query
 {
-    private ClassicalLiteral _classicalLiteral;
+    private Literal _literal;
 
-    public Query(ClassicalLiteral classicalLiteral)
+    public Query(Literal literal)
     {
-        ClassicalLiteral = classicalLiteral;
+        if (literal.HasNafNegation)
+        {
+            throw new ArgumentException("Query cannot have NAF negation.");
+        }
+        
+        ClassicalLiteral = literal;
     }
 
-    public ClassicalLiteral ClassicalLiteral
+    public Literal ClassicalLiteral
     {
-        get => _classicalLiteral;
-        private set => _classicalLiteral = value ?? throw new ArgumentNullException(nameof(ClassicalLiteral));
+        get => _literal;
+        private set => _literal = value ?? throw new ArgumentNullException(nameof(ClassicalLiteral));
     }
 
     public override string ToString()

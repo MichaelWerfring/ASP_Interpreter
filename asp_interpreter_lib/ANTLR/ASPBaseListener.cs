@@ -84,65 +84,17 @@ public partial class ASPBaseListener : IASPListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitStatement([NotNull] ASPParser.StatementContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.head"/>.
+	/// Enter a parse tree produced by <see cref="ASPParser.goal"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterHead([NotNull] ASPParser.HeadContext context) { }
+	public virtual void EnterGoal([NotNull] ASPParser.GoalContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.head"/>.
+	/// Exit a parse tree produced by <see cref="ASPParser.goal"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitHead([NotNull] ASPParser.HeadContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.body"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterBody([NotNull] ASPParser.BodyContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.body"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitBody([NotNull] ASPParser.BodyContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.naf_literals"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterNaf_literals([NotNull] ASPParser.Naf_literalsContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.naf_literals"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitNaf_literals([NotNull] ASPParser.Naf_literalsContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.naf_literal"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterNaf_literal([NotNull] ASPParser.Naf_literalContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.naf_literal"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitNaf_literal([NotNull] ASPParser.Naf_literalContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ASPParser.classical_literal"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterClassical_literal([NotNull] ASPParser.Classical_literalContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ASPParser.classical_literal"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitClassical_literal([NotNull] ASPParser.Classical_literalContext context) { }
+	public virtual void ExitGoal([NotNull] ASPParser.GoalContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ASPParser.binary_operation"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -155,6 +107,18 @@ public partial class ASPBaseListener : IASPListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBinary_operation([NotNull] ASPParser.Binary_operationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ASPParser.literal"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLiteral([NotNull] ASPParser.LiteralContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ASPParser.literal"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLiteral([NotNull] ASPParser.LiteralContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>equalityOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
@@ -377,6 +341,48 @@ public partial class ASPBaseListener : IASPListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVariableTerm([NotNull] ASPParser.VariableTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>listTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterListTerm([NotNull] ASPParser.ListTermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>listTerm</c>
+	/// labeled alternative in <see cref="ASPParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitListTerm([NotNull] ASPParser.ListTermContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>conventionalList</c>
+	/// labeled alternative in <see cref="ASPParser.list"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterConventionalList([NotNull] ASPParser.ConventionalListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>conventionalList</c>
+	/// labeled alternative in <see cref="ASPParser.list"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitConventionalList([NotNull] ASPParser.ConventionalListContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>recursiveList</c>
+	/// labeled alternative in <see cref="ASPParser.list"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterRecursiveList([NotNull] ASPParser.RecursiveListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>recursiveList</c>
+	/// labeled alternative in <see cref="ASPParser.list"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitRecursiveList([NotNull] ASPParser.RecursiveListContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>plusOperation</c>
 	/// labeled alternative in <see cref="ASPParser.arithop"/>.

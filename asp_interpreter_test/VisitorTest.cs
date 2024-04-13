@@ -4,6 +4,7 @@ using asp_interpreter_lib;
 using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Visitors;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 
@@ -14,6 +15,8 @@ public class VisitorTest
     private string _graphCode;
     
     private MockErrorLogger _errorLogger = new();
+    
+    private GoalToLiteralConverter _goalToLiteralConverter = new();
     
     [SetUp]
     public void Setup()
@@ -104,13 +107,13 @@ public class VisitorTest
                    """;
         
         var program = ASPExtensions.GetProgram(code, _errorLogger);
-        var nafLiteral = program.Statements[0].Body?.Literals[0]; 
         
-        //First check inner part for classical negation
-        //Then outer part for NAF
-        Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: true } && 
-            !nafLiteral.IsNafNegated);
-        Assert.That(_errorLogger.Errors.Count == 0);
+        var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
+        Assert.That(_errorLogger.Errors.Count == 0 && literal.HasValue && literal.GetValueOrThrow() is 
+            { Identifier: "b",
+                HasStrongNegation: true,
+                HasNafNegation: false
+            });
     }
     
     [Test]
@@ -122,13 +125,12 @@ public class VisitorTest
                    """;
         
         var program = ASPExtensions.GetProgram(code, _errorLogger);
-        var nafLiteral = program.Statements[0].Body?.Literals[0]; 
-        
-        //First check inner part for classical negation
-        //Then outer part for NAF
-        Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: false } && 
-                    nafLiteral.IsNafNegated);
-        Assert.That(_errorLogger.Errors.Count == 0);
+        var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
+        Assert.That(_errorLogger.Errors.Count == 0 && literal.HasValue && literal.GetValueOrThrow() is 
+        { Identifier: "b",
+            HasStrongNegation: false,
+            HasNafNegation: true
+        });
     }
     
     [Test]
@@ -140,13 +142,12 @@ public class VisitorTest
                    """;
         
         var program = ASPExtensions.GetProgram(code, _errorLogger);
-        var nafLiteral = program.Statements[0].Body?.Literals[0]; 
-        
-        //First check inner part for classical negation
-        //Then outer part for NAF
-        Assert.That(nafLiteral?.ClassicalLiteral is { Identifier: "b", Negated: true } && 
-                    nafLiteral.IsNafNegated);
-        Assert.That(_errorLogger.Errors.Count == 0);
+        var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
+        Assert.That(_errorLogger.Errors.Count == 0 && literal.HasValue && literal.GetValueOrThrow() is 
+        { Identifier: "b",
+            HasStrongNegation: true,
+            HasNafNegation: true
+        });
     }
     
     [Test]
@@ -158,7 +159,7 @@ public class VisitorTest
                    a?
                    """;
         
-        Assert.Throws<NullReferenceException>(() => ASPExtensions.GetProgram(code, _errorLogger));
+        Assert.Throws<ArgumentException>(() => ASPExtensions.GetProgram(code, _errorLogger));
         Assert.That(_errorLogger.Errors.Count == 0);
     }
     
@@ -173,29 +174,41 @@ public class VisitorTest
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
+        var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
         Assert.That(
+            _errorLogger.Errors.Count == 0 &&
+            literal.HasValue &&
             statement.HasBody && 
-            !statement.HasHead &&
-            statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
-        Assert.That(_errorLogger.Errors.Count == 0);
+            !statement.HasHead&&
+            literal.GetValueOrThrow() is 
+        { Identifier: "b",
+            HasStrongNegation: false,
+            HasNafNegation: false
+        });
     }
     
     [Test]
     public void HandlesStatementWithoutRuleBodyCorrectly()
     {
         var code = """
-                   a :- .
+                   a.
                    a?
                    """;
         
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
+        var literal = statement.Head.GetValueOrThrow().Accept(_goalToLiteralConverter);
         Assert.That(
+            _errorLogger.Errors.Count == 0 &&
+            literal.HasValue &&
             !statement.HasBody && 
-            statement.HasHead &&
-            statement.Head.Literal is {Negated: false, Identifier: "a"});
-        Assert.That(_errorLogger.Errors.Count == 0);
+            statement.HasHead&&
+            literal.GetValueOrThrow() is 
+            { Identifier: "a",
+                HasStrongNegation: false,
+                HasNafNegation: false
+            });
     }
     
     [Test]
@@ -209,12 +222,23 @@ public class VisitorTest
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
+        var body = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
         Assert.That(
-            statement.HasBody && 
-            statement.HasHead &&
-            statement.Head.Literal is {Negated: false, Identifier: "a"} &&
-            statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
-        Assert.That(_errorLogger.Errors.Count == 0);
+            _errorLogger.Errors.Count == 0 &&
+            body.HasValue &&
+            statement.Head.HasValue && 
+            statement.Head.GetValueOrThrow() is
+                {
+                    Identifier: "a",
+                    HasStrongNegation: false,
+                    HasNafNegation: false
+                } &&
+            body.GetValueOrThrow() is 
+            { 
+                Identifier: "b",
+                HasStrongNegation: false,
+                HasNafNegation: false
+            });
     }
     
     [Test]
@@ -228,14 +252,23 @@ public class VisitorTest
         var program = ASPExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
+        var body = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
         Assert.That(
-            statement.HasBody && 
-            statement.HasHead &&
-            statement.Head != null &&
-            statement.Body != null && 
-            statement.Head.Literal is {Negated: true, Identifier: "a"} &&
-            statement.Body.Literals[0] is {IsNafNegated: false, ClassicalLiteral.Identifier: "b"});
-        Assert.That(_errorLogger.Errors.Count == 0);
+            _errorLogger.Errors.Count == 0 &&
+            body.HasValue &&
+            statement.Head.HasValue && 
+            statement.Head.GetValueOrThrow() is
+            {
+                Identifier: "a",
+                HasStrongNegation: true,
+                HasNafNegation: false
+            } &&
+            body.GetValueOrThrow() is 
+            { 
+                Identifier: "b",
+                HasStrongNegation: false,
+                HasNafNegation: false
+            });
     }
     
     [Test]
@@ -243,13 +276,14 @@ public class VisitorTest
     {
         AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
 
-        var headLiteral = program.Statements[6].Head?.Literal; 
+        var headLiteral = program.Statements[6].Head.GetValueOrThrow(); 
         var firstTerm = headLiteral.Terms[0] as VariableTerm;
         var secondTerm = headLiteral.Terms[1] as VariableTerm;
 
         Assert.That(
-            headLiteral is { Identifier: "separate", Negated: false, Terms.Count: 2 } &&
-            firstTerm.Identifier == "X" && secondTerm.Identifier == "Y");
+            headLiteral is
+                { Identifier: "separate", HasStrongNegation: false, HasNafNegation: false, Terms.Count: 2 } &&
+            firstTerm?.Identifier == "X" && secondTerm?.Identifier == "Y");
         Assert.That(_errorLogger.Errors.Count == 0);
     }
 
@@ -263,7 +297,7 @@ public class VisitorTest
         var secondTerm = queryLiteral.Terms[1] as BasicTerm;
 
         Assert.That(
-            queryLiteral is { Identifier: "edge", Negated: false, Terms.Count: 2 } &&
+            queryLiteral is { Identifier: "edge", HasStrongNegation: false, HasNafNegation:false, Terms.Count: 2 } &&
             firstTerm.Identifier == "X" && secondTerm.Identifier == "b");
         Assert.That(_errorLogger.Errors.Count == 0);
     }
@@ -274,15 +308,15 @@ public class VisitorTest
         AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
 
         var body = program.Statements[6].Body;
-        var firstLiteral = body.Literals[0];
-        var secondLiteral = body.Literals[1];
-        var thirdLiteral = body.Literals[2];
+        var firstLiteral = body[0].Accept(_goalToLiteralConverter).GetValueOrThrow();
+        var secondLiteral = body[1].Accept(_goalToLiteralConverter).GetValueOrThrow();
+        var thirdLiteral = body[2].Accept(_goalToLiteralConverter).GetValueOrThrow();
 
         Assert.That(
-            body.Literals.Count == 3 &&
-            firstLiteral.ClassicalLiteral.Identifier == "node" && !firstLiteral.ClassicalLiteral.Negated &&
-            secondLiteral.ClassicalLiteral.Identifier == "node" && !secondLiteral.ClassicalLiteral.Negated &&
-            thirdLiteral.IsNafNegated && thirdLiteral.ClassicalLiteral.Identifier == "edge");
+            body.Count == 3 &&
+            firstLiteral.Identifier == "node" && !firstLiteral.HasNafNegation &&
+            secondLiteral.Identifier == "node" && !secondLiteral.HasNafNegation &&
+            thirdLiteral.HasNafNegation && thirdLiteral.Identifier == "edge");
         Assert.That(_errorLogger.Errors.Count == 0);
     }
 
@@ -292,26 +326,26 @@ public class VisitorTest
         var program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
         
         var body = program.Statements[6].Body;
-        var firstLiteral = body.Literals[0];
-        var secondLiteral = body.Literals[1];
-        var thirdLiteral = body.Literals[2];
+        var firstLiteral = body[0].Accept(_goalToLiteralConverter).GetValueOrThrow();
+        var secondLiteral = body[1].Accept(_goalToLiteralConverter).GetValueOrThrow();
+        var thirdLiteral = body[2].Accept(_goalToLiteralConverter).GetValueOrThrow();
 
-        if (firstLiteral.ClassicalLiteral.Terms[0] is VariableTerm firstVarTerm)
+        if (firstLiteral.Terms[0] is VariableTerm firstVarTerm)
         {
             Assert.That(firstVarTerm.Identifier == "X");
         }
         
-        if (secondLiteral.ClassicalLiteral.Terms[0] is VariableTerm secondVarTerm)
+        if (secondLiteral.Terms[0] is VariableTerm secondVarTerm)
         {
             Assert.That(secondVarTerm.Identifier == "Y");
         }
         
-        if (thirdLiteral.ClassicalLiteral.Terms[0] is VariableTerm thirdVarTerm)
+        if (thirdLiteral.Terms[0] is VariableTerm thirdVarTerm)
         {
             Assert.That(thirdVarTerm.Identifier == "X");
         }
         
-        if (thirdLiteral.ClassicalLiteral.Terms[1] is VariableTerm fourthVarTerm)
+        if (thirdLiteral.Terms[1] is VariableTerm fourthVarTerm)
         {
             Assert.That(fourthVarTerm.Identifier == "Y");
         }

@@ -1,21 +1,21 @@
-﻿using System.Text;
-using asp_interpreter_lib.ErrorHandling;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 
-namespace asp_interpreter_lib.Types.Terms;
+namespace asp_interpreter_lib.Types;
 
-public class Forall : NafLiteral
+public class Forall : Goal
 {
     public VariableTerm VariableTerm { get; }
-    public NafLiteral Goal { get; }
+    public Goal Goal { get; }
 
-    public Forall(VariableTerm variableTerm, NafLiteral goal)
+    public Forall(VariableTerm variableTerm, Goal goal)
     {
         VariableTerm = variableTerm;
         Goal = goal;
     }
     
-    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor);
         return visitor.Visit(this);

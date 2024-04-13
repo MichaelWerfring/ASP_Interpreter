@@ -12,6 +12,8 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
 
     private readonly Statement _statement;
     
+    private readonly Literal _head;
+    
     private readonly HashSet<string> _variables;
 
     private readonly TermCopyVisitor _termCopyVisitor = new();
@@ -20,6 +22,7 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
     {
         _commonPrefix = commonPrefix;
         _statement = statement;
+        _head = statement.Head.GetValueOrThrow("Cannot rewrite headless statement!");
         _variables = new HashSet<string>();
         //var variableGetter = new VariableFinder();
         //var terms = statement.Accept(variableGetter).GetValueOrThrow("Cannot retrieve variables from program!");
@@ -31,30 +34,12 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
     {
         ArgumentNullException.ThrowIfNull(statement);
         
-        statement.Head.Accept(this);
+        statement.Head.IfHasValue(h => h.Accept(this));
 
         return new Some<Statement>(_statement);
     }
 
-    public override IOption<Statement> Visit(Head head)
-    {
-        ArgumentNullException.ThrowIfNull(head);
-        
-        head.Literal?.Accept(this);
-        
-        return new Some<Statement>(_statement);
-    }
-
-    public override IOption<Statement> Visit(NafLiteral nafLiteral)
-    {
-        ArgumentNullException.ThrowIfNull(nafLiteral);
-        
-        nafLiteral.ClassicalLiteral.Accept(this);
-        
-        return new Some<Statement>(_statement);
-    }
-
-    public override IOption<Statement> Visit(ClassicalLiteral classicalLiteral)
+    public override IOption<Statement> Visit(Literal classicalLiteral)
     {
         ArgumentNullException.ThrowIfNull(classicalLiteral);
 
@@ -86,8 +71,8 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
         term.Identifier = newVariable.Identifier;
             
         //Rewrite the body
-        _statement.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
-            term, new Equality(), oldTerm)));
+        _statement.Body.Insert(0,new BinaryOperation(
+            term, new Equality(), oldTerm));
         
         return new Some<Statement>(_statement);
     }
@@ -120,13 +105,18 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
                 
         //replace head
         //_statement.Head.Literal?.Terms[_statement.Head.Literal?.Terms.IndexOf(term)] = newHeadVariable;
-        int i = _statement.Head.Literal?.Terms.IndexOf(term) ?? 
-                throw new InvalidOperationException("The given term is not contained in the head!");
-        _statement.Head.Literal.Terms[i] = newHeadVariable;
+        int i = _head.Terms.IndexOf(term);
+        
+        if (i == -1)
+        {
+            throw new InvalidOperationException("The given term is not contained in the head!");
+        }
+         
+        _head.Terms[i] = newHeadVariable;
                 
         //replace body
-        _statement.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
-            newHeadVariable, new Equality(), term)));
+        _statement.Body.Insert(0,new BinaryOperation(
+            newHeadVariable, new Equality(), term));
         
         return new Some<Statement>(_statement);
     }
@@ -140,14 +130,18 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
             ASPExtensions.GenerateUniqeName(term.ToString() ?? "", _variables, _commonPrefix));
                 
         //replace head
-        //_statement.Head.Literal?.Terms[_statement.Head.Literal?.Terms.IndexOf(term)] = newHeadVariable;
-        int i = _statement.Head.Literal?.Terms.IndexOf(term) ?? 
-                throw new InvalidOperationException("The given term is not contained in the head!");
-        _statement.Head.Literal.Terms[i] = newHeadVariable;
+        int i = _head.Terms.IndexOf(term);
+        
+        if (i == -1)
+        {
+            throw new InvalidOperationException("The given term is not contained in the head!");
+        }
+        
+        _head.Terms[i] = newHeadVariable;
                 
         //replace body
-        _statement.Body.Literals.Insert(0,new NafLiteral(new BinaryOperation(
-            newHeadVariable, new Equality(), term)));
+        _statement.Body.Insert(0,new BinaryOperation(
+            newHeadVariable, new Equality(), term));
         
         return new Some<Statement>(_statement);
     }

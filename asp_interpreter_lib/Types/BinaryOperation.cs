@@ -1,9 +1,11 @@
 ﻿using asp_interpreter_lib.Types.Terms;
 using System.Data;
+using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Types.BinaryOperations;
 
-public class BinaryOperation
+public class BinaryOperation : Goal
 {
     private ITerm _left;
     private ITerm _right;
@@ -43,5 +45,11 @@ public class BinaryOperation
     public override string ToString()
     {
         return $"{Left.ToString()} {BinaryOperator.ToString()} {Right.ToString()}";
+    }
+
+    public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor);
+        return visitor.Visit(this);
     }
 }

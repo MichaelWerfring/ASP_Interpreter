@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Types;
 
 namespace asp_interpreter_test;
 
@@ -13,21 +14,10 @@ public class StatementsTest
     }
     
     [Test]
-    public void AddsEmptyHeadCorrectly()
-    {
-        var statement = new Statement();
-        var head = new Head();
-        
-        statement.AddHead(head);
-        
-        Assert.That(statement is { HasBody: false, HasHead: false});
-    }
-    
-    [Test]
     public void AddsEmptyBodyCorrectly()
     {
         var statement = new Statement();
-        var body = new Body([]);
+        List<Goal> body = [];
         
         statement.AddBody(body);
         
@@ -38,7 +28,7 @@ public class StatementsTest
     public void AddsHeadCorrectly()
     {
         var statement = new Statement();
-        var head = new Head(new ClassicalLiteral("a", false, []));
+        var head = new Literal("a", false,false, []);
         
         statement.AddHead(head);
         
@@ -49,9 +39,8 @@ public class StatementsTest
     public void AddsBodyCorrectly()
     {
         var statement = new Statement();
-        var literal = new ClassicalLiteral("b", false, []);
-        var nafLiteral = new NafLiteral(literal, true);
-        var body = new Body([nafLiteral]);
+        var literal = new Literal("b",true, false, []);
+        List<Goal> body = [literal];
         
         statement.AddBody(body);
         
@@ -62,10 +51,9 @@ public class StatementsTest
     public void AllowsAddingHeadAndBody()
     {
         var statement = new Statement();
-        var head = new Head(new ClassicalLiteral("a", false, []));
-        var literal = new ClassicalLiteral("b", false, []);
-        var nafLiteral = new NafLiteral(literal, true);
-        var body = new Body([nafLiteral]);
+        var head = new Literal("a", false,false, []);
+        var literal = new Literal("b", true,false, []);
+        List<Goal> body = [literal];
         
         statement.AddHead(head);
         statement.AddBody(body);
@@ -77,7 +65,7 @@ public class StatementsTest
     public void ThrowsExceptionWhenAddingHeadTwice()
     {
         var statement = new Statement();
-        var head = new Head(new ClassicalLiteral("a", false, []));
+        var head = new Literal("a", false,false, []);
         
         statement.AddHead(head);
         
@@ -88,9 +76,8 @@ public class StatementsTest
     public void ThrowsExceptionWhenAddingBodyTwice()
     {
         var statement = new Statement();
-        var literal = new ClassicalLiteral("b", false, []);
-        var nafLiteral = new NafLiteral(literal, true);
-        var body = new Body([nafLiteral]);
+        var literal = new Literal("b", true, false, []);
+        List<Goal> body = [literal];
         
         statement.AddBody(body);
         
