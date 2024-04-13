@@ -38,51 +38,25 @@ public class RuleNameFinder : TypeBaseVisitor<HashSet<string>>
 
         if (statement.HasHead)
         {
-            statement.Head.Accept(this).IfHasValue(v =>
-            {
-                ruleNames.UnionWith(v);
-            });
+            statement.Head.IfHasValue(h => h.Accept(this).
+                IfHasValue(v => ruleNames.UnionWith(v)));
         }
 
         if (statement.HasBody)
         {
-            statement.Body.Accept(this).IfHasValue(v =>
+            foreach (var literal in statement.Body)
             {
-                ruleNames.UnionWith(v);
-            });   
+                literal.Accept(this).IfHasValue(v =>
+                {
+                    ruleNames.UnionWith(v);
+                });
+            }
         }
 
         return new Some<HashSet<string>>(ruleNames);
     }
 
-    public override IOption<HashSet<string>> Visit(Head head)
-    {
-        ArgumentNullException.ThrowIfNull(head);
-        return head?.Literal?.Accept(this) ?? new Some<HashSet<string>>([]);
-    }
-
-    public override IOption<HashSet<string>> Visit(Body body)
-    {
-        ArgumentNullException.ThrowIfNull(body);
-        HashSet<string> ruleNames = [];
-        foreach (var literal in body.Literals)
-        {
-            literal.Accept(this).IfHasValue(v =>
-            {
-                ruleNames.UnionWith(v);
-            });
-        }
-
-        return new Some<HashSet<string>>(ruleNames);
-    }
-
-    public override IOption<HashSet<string>> Visit(NafLiteral nafLiteral)
-    {
-        ArgumentNullException.ThrowIfNull(nafLiteral);
-        return nafLiteral.ClassicalLiteral.Accept(this);
-    }
-
-    public override IOption<HashSet<string>> Visit(ClassicalLiteral classicalLiteral)
+    public override IOption<HashSet<string>> Visit(Literal classicalLiteral)
     {
         ArgumentNullException.ThrowIfNull(classicalLiteral);
         HashSet<string> ruleNames = [ classicalLiteral.Identifier ];
@@ -225,6 +199,33 @@ public class RuleNameFinder : TypeBaseVisitor<HashSet<string>>
         {
             ruleNames.UnionWith(v);
         });
+        
+        return new Some<HashSet<string>>(ruleNames);
+    }
+
+    public override IOption<HashSet<string>> Visit(RecursiveList list)
+    {
+        ArgumentNullException.ThrowIfNull(list);
+        HashSet<string> ruleNames = [];
+
+        list.Head.Accept(this).IfHasValue(h => ruleNames.UnionWith(h));
+        list.Tail.Accept(this).IfHasValue(t => ruleNames.UnionWith(t));
+        
+        return new Some<HashSet<string>>(ruleNames);
+    }
+
+    public override IOption<HashSet<string>> Visit(ConventionalList list)
+    {
+        ArgumentNullException.ThrowIfNull(list);
+        HashSet<string> ruleNames = [];
+        
+        foreach (var term in list.Terms)
+        {
+            term.Accept(this).IfHasValue(v =>
+            {
+                ruleNames.UnionWith(v);
+            });
+        }
         
         return new Some<HashSet<string>>(ruleNames);
     }

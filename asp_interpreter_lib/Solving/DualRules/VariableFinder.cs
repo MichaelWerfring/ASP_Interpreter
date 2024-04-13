@@ -43,51 +43,22 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
 
         if (statement.HasHead)
         {
-            statement.Head.Accept(this).IfHasValue(v =>
-            {
-                variables.AddRange(v);
-            });
+            statement.Head.GetValueOrThrow().Accept(this).
+                IfHasValue(v => variables.AddRange(v));
         }
 
         if (statement.HasBody)
         {
-            statement.Body.Accept(this).IfHasValue(v =>
+            foreach (var goal in statement.Body)
             {
-                variables.AddRange(v);
-            });   
+                goal.Accept(this).IfHasValue(v => variables.AddRange(v));
+            }
         }
 
         return new Some<List<VariableTerm>>(variables);
     }
 
-    public override IOption<List<VariableTerm>> Visit(Head head)
-    {
-        ArgumentNullException.ThrowIfNull(head);
-        return head.Literal?.Accept(this) ?? new Some<List<VariableTerm>>([]);
-    }
-
-    public override IOption<List<VariableTerm>> Visit(Body body)
-    {
-        ArgumentNullException.ThrowIfNull(body);
-        List<VariableTerm> variables = [];
-        foreach (var literal in body.Literals)
-        {
-            literal.Accept(this).IfHasValue(v =>
-            {
-                variables.AddRange(v);
-            });
-        }
-
-        return new Some<List<VariableTerm>>(variables);
-    }
-
-    public override IOption<List<VariableTerm>> Visit(NafLiteral nafLiteral)
-    {
-        ArgumentNullException.ThrowIfNull(nafLiteral);
-        return nafLiteral.ClassicalLiteral?.Accept(this) ?? new Some<List<VariableTerm>>([]);
-    }
-
-    public override IOption<List<VariableTerm>> Visit(ClassicalLiteral literal)
+    public override IOption<List<VariableTerm>> Visit(Literal literal)
     {
         ArgumentNullException.ThrowIfNull(literal);
         List<VariableTerm> variables = [];
@@ -244,6 +215,32 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
         {
             variables = v;
         });
+
+        return new Some<List<VariableTerm>>(variables);
+    }
+
+    public override IOption<List<VariableTerm>> Visit(RecursiveList list)
+    {
+        ArgumentNullException.ThrowIfNull(list);
+        List<VariableTerm> terms = [];
+
+        list.Head.Accept(this).IfHasValue(v => terms.AddRange(v));
+        list.Tail.Accept(this).IfHasValue(v => terms.AddRange(v));
+
+        return new Some<List<VariableTerm>>(terms);
+    }
+
+    public override IOption<List<VariableTerm>> Visit(ConventionalList list)
+    {
+        ArgumentNullException.ThrowIfNull(list);
+        List<VariableTerm> variables = [];
+        foreach (var term in list.Terms)
+        {
+            term.Accept(this).IfHasValue(v =>
+            {
+                variables.AddRange(v);
+            });
+        }
 
         return new Some<List<VariableTerm>>(variables);
     }
