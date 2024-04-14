@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.Solving.DualRules;
+﻿using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
@@ -9,6 +10,12 @@ using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
 
 namespace asp_interpreter_lib.Solving;
 
+public struct DualConverterOptions(string rewriteHeadPrefix, string forallPrefix)
+{
+    public string RewriteHeadPrefix { get; } = rewriteHeadPrefix;
+    public string ForallPrefix { get; } = forallPrefix;
+}
+
 public class DualRuleConverter
 {
     private readonly HashSet<string> _variables;
@@ -17,15 +24,16 @@ public class DualRuleConverter
     
     private readonly List<VariableTerm> _variableTerms;
     
-    private readonly VariableTermConverter _variableTermConverter;
-    
     private readonly VariableFinder _variableFinder;
+    
+    private readonly DualConverterOptions _options;
 
-    public DualRuleConverter(AspProgram program)
+    public DualRuleConverter(AspProgram program, DualConverterOptions options)
     {
         ArgumentNullException.ThrowIfNull(program);
+        ArgumentNullException.ThrowIfNull(options);
+        _options = options;
         _variables = new HashSet<string>();
-        _variableTermConverter = new VariableTermConverter();
         _ruleNames = program.Accept(new RuleNameFinder()).
             GetValueOrThrow("Cannot retrieve rule names from program!");
         _variableFinder = new VariableFinder();
@@ -38,7 +46,7 @@ public class DualRuleConverter
 
     public Statement ComputeHead(Statement rule)
     {
-        HeadRewriter rewriter = new HeadRewriter("rwh", rule);
+        HeadRewriter rewriter = new HeadRewriter(_options.RewriteHeadPrefix, rule);
         return rewriter.Visit(rule).GetValueOrThrow("Cannot rewrite head of rule!");
     }
 
@@ -258,7 +266,7 @@ public class DualRuleConverter
         var head = rule.Head.GetValueOrThrow();
         // 1) Compute Duals Normally but replace predicate in the head
         string newId = 
-            ASPExtensions.GenerateUniqeName(head.Identifier, variablesInProgram, "fa");
+            ASPExtensions.GenerateUniqeName(head.Identifier, variablesInProgram, _options.ForallPrefix);
         string oldId = head.Identifier;
         head.Identifier = newId;
         duals.AddRange(GetDualRules(rule));

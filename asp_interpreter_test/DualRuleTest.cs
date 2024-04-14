@@ -21,7 +21,7 @@ public class DualRuleTest
         var errorLogger = new MockErrorLogger();
         var program = ASPExtensions.GetProgram(code, errorLogger);
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
         Assert.That(duals[0].ToString(), Is.EqualTo("not a(X, b(rwh0_X, Y)) :- rwh0_X \\= X."));
@@ -38,7 +38,7 @@ public class DualRuleTest
         var errorLogger = new MockErrorLogger();
         var program = ASPExtensions.GetProgram(code, errorLogger);
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var duals = dualRuleConverter.GetDualRules(program.Statements);
        
         Assert.That(duals.Count == 3 &&
@@ -57,7 +57,7 @@ public class DualRuleTest
                       """;
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
         //not p(X, Y) :- q(X).
@@ -81,7 +81,7 @@ public class DualRuleTest
         var errorLogger = new MockErrorLogger();
         var program = ASPExtensions.GetProgram(code, errorLogger);
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var duals = dualRuleConverter.GetDualRules(program.Statements);
             
         Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
@@ -100,7 +100,7 @@ public class DualRuleTest
         var errorLogger = new MockErrorLogger();
         var program = ASPExtensions.GetProgram(code, errorLogger);
 
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var duals = dualRuleConverter.GetDualRules(program.Statements);
         
         Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
@@ -121,7 +121,7 @@ public class DualRuleTest
         var errorLogger = new MockErrorLogger();
         var program = ASPExtensions.GetProgram(code, errorLogger);
 
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var duals = dualRuleConverter.GetDualRules(program.Statements);
         
         Assert.That(errorLogger.Errors.Count == 0 && duals.Count == 5 &&
@@ -142,7 +142,7 @@ public class DualRuleTest
                       """;
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var duals = dualRuleConverter.GetDualRules(program.Statements);
         
         Assert.That(duals.Count == 0);
@@ -158,7 +158,7 @@ public class DualRuleTest
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var dual = dualRuleConverter.GetDualRules(program.Statements);   
         
         Assert.That(dual.Count == 1 && dual[0].ToString() == "not p(rwh0_3) :- rwh0_3 \\= 3.");
@@ -174,7 +174,7 @@ public class DualRuleTest
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var dual = dualRuleConverter.GetDualRules(program.Statements);
 
         Assert.That(dual.Count == 3 &&
@@ -193,7 +193,7 @@ public class DualRuleTest
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var dual = dualRuleConverter.GetDualRules(program.Statements);   
         
         Assert.That(dual.Count == 4 && 
@@ -213,7 +213,7 @@ public class DualRuleTest
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var dual = dualRuleConverter.GetDualRules(program.Statements);   
         
         Assert.That(dual.Count == 4 && 
@@ -233,7 +233,7 @@ public class DualRuleTest
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program);
+        var dualRuleConverter = new DualRuleConverter(program, new DualConverterOptions("rwh", "fa"));
         var dual = dualRuleConverter.GetDualRules(program.Statements);
 
         string d1 = dual[0].ToString();
