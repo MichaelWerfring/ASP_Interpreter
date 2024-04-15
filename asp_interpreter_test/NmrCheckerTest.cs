@@ -105,7 +105,7 @@ public class NmrCheckerTest
     }
 
     [Test]
-    public void NmrCheckWorksWithDualRulesAndForall()
+    public void NmrCheckWorksWithDualRules()
     {
         string code = """
                       p(X) :- q(X), not p(X).
@@ -116,5 +116,23 @@ public class NmrCheckerTest
         
         var subCheckRules = NmrChecker.GetSubCheckRules(program.Statements);
         
+        Assert.That(subCheckRules.Count == 3 &&
+                    subCheckRules[0].ToString() == "nmr_check :- forall(X, chk0_p(X))." &&
+                    subCheckRules[1].ToString() == "chk0_p(X) :- not q(X)." &&
+                    subCheckRules[2].ToString() == "chk0_p(X) :- q(X), p(X).");
+    }
+
+    [Test]
+    public void NmrCheckHandlesComplexRulesAndForall()
+    {
+        string code = """
+                      p(X) :- q(X, Y), not p(Y).
+
+                      p(a)?
+                      """;
+        var errorLogger = new MockErrorLogger();
+        var program = ASPExtensions.GetProgram(code, errorLogger);
+        
+        var subCheckRules = NmrChecker.GetSubCheckRules(program.Statements);
     }
 }

@@ -1,22 +1,27 @@
-﻿using asp_interpreter_lib.ErrorHandling;
+﻿using Antlr4.Runtime.Atn;
+using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Visitor;
-using asp_interpreter_lib.SLDSolverClasses.StandardSolver.VariableRenamer;
-using asp_interpreter_lib.Unification.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Reducer;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Arithmetics;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Comparison;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.General;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.List;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Negation;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.SASP;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Unification;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 
 namespace asp_interpreter_lib.Unification.Robinson;
 
-public class RobinsonUnifier : ISimpleTermArgsVisitor<ISimpleTerm>
+public class RobinsonUnifier
 {
     private SimpleTermComparer _comparer = new SimpleTermComparer();
     private VariableSubstituter _substituter = new VariableSubstituter();
     private SimpleTermContainsChecker _containsChecker = new SimpleTermContainsChecker();
+    private StructureReducer _structureReducer = new StructureReducer();
 
     private bool _doOccursCheck;
 
@@ -46,7 +51,67 @@ public class RobinsonUnifier : ISimpleTermArgsVisitor<ISimpleTerm>
         return new Some<Dictionary<Variable, ISimpleTerm>>(_substitution);
     }
 
-    public void Visit(Variable left, ISimpleTerm right)
+    private void TryUnify(ISimpleTerm left, ISimpleTerm right)
+    {
+        if (!_hasSucceded) { return; }
+
+        ISimpleTerm currentLeft = left;
+        ISimpleTerm currentRight = right;
+        if (left is Variable leftVar)
+        {
+            currentLeft = GetSubstitutionOrDefault(leftVar, _substitution);
+        }
+        if (right is Variable rightVar)
+        {
+            currentRight = GetSubstitutionOrDefault(rightVar, _substitution);
+        }
+
+        if (currentLeft is Variable variable)
+        {
+            TryUnifyVariableCase(variable, currentRight);
+        }
+        else if (currentLeft is IStructure structure)
+        {
+            TryUnifyStructureCase(structure, currentRight);
+        }
+        else
+        {
+            throw new ArgumentException
+            (
+                "The type hierarchy has been modified" +
+                " so that not every term is either a variable or a structure!",
+                nameof(currentLeft)
+            );
+        }
+    }
+
+    private void TryUnifyStructureCase(IStructure structure, ISimpleTerm other)
+    {
+        // if both are structures
+        if (other is IStructure b)
+        {
+            var reductionMaybe = _structureReducer.Reduce(structure, b);
+            if (!reductionMaybe.HasValue)
+            {
+                _hasSucceded = false;
+                return;
+            }
+
+            var reduction = reductionMaybe.GetValueOrThrow();
+
+            for (int i = 0; i < reduction.Lefts.Count(); i++)
+            {
+                TryUnify(reduction.Lefts.ElementAt(i), reduction.Rights.ElementAt(i));
+            }
+        }
+        // left is structure and right variable
+        else
+        {
+            TryUnify(other, structure);
+        }
+    }
+
+    private void TryUnifyVariableCase(Variable left, ISimpleTerm right)
     {
         // if both are variables and are equal
         if (_comparer.Equals(left, right))
@@ -70,57 +135,6 @@ public class RobinsonUnifier : ISimpleTermArgsVisitor<ISimpleTerm>
         }
     }
 
-    public void Visit(Structure left, ISimpleTerm right)
-    {
-        // if both are structures
-        if (right is Structure rightStruct)
-        {
-            if (left.Functor != rightStruct.Functor)
-            {
-                _hasSucceded = false;
-                return;
-            }
-
-            if (left.Children.Count() != rightStruct.Children.Count())
-            {
-                _hasSucceded = false;
-                return;
-            }
-
-            for (int i = 0; i < left.Children.Count(); i++)
-            {
-                TryUnify(left.Children.ElementAt(i), rightStruct.Children.ElementAt(i));
-            }
-        }
-        // left is structure and right variable
-        else
-        {
-            TryUnify(right, left);
-        }
-    }
-
-    private void TryUnify
-    (
-        ISimpleTerm left,
-        ISimpleTerm right
-    )
-    {
-        if (!_hasSucceded) { return; }
-
-        ISimpleTerm currentLeft = left;
-        ISimpleTerm currentRight = right;
-        if (left is Variable leftVar)
-        {
-            currentLeft = GetSubstitutionOrDefault(leftVar, _substitution);
-        }
-        if (right is Variable rightVar)
-        {
-            currentRight = GetSubstitutionOrDefault(rightVar, _substitution);
-        }
-
-        currentLeft.Accept(this, currentRight);
-    }
-
     private Dictionary<Variable, ISimpleTerm> ApplySubstitutionComposition
     (
         Dictionary<Variable, ISimpleTerm> oldSubstitution,
@@ -133,7 +147,11 @@ public class RobinsonUnifier : ISimpleTermArgsVisitor<ISimpleTerm>
                               .ToDictionary(new VariableComparer());
     }
 
-    private ISimpleTerm GetSubstitutionOrDefault(Variable variable, Dictionary<Variable, ISimpleTerm> substitution)
+    private ISimpleTerm GetSubstitutionOrDefault
+    (
+        Variable variable,
+        Dictionary<Variable, ISimpleTerm> substitution
+    )
     {
         ISimpleTerm? potentialSub;
 

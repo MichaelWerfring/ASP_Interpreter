@@ -89,7 +89,7 @@ public class DualRuleConverter
                 statements[0].Head.
                     GetValueOrThrow("Headless rules must be treated by the NMR check!").HasNafNegation = true;
 
-                var withForall = AddForall(statements[0], _variables);
+                var withForall = AddForall(statements[0]);
                 if (withForall.Count > 0)
                 {
                     duals.AddRange(withForall);
@@ -128,7 +128,7 @@ public class DualRuleConverter
                 //   true));
                 newBody.Add(new Literal(tempVariableId, true, false, [newVariable]));
 
-                var withForall = AddForall(statement, _variables);
+                var withForall = AddForall(statement);
                 if (withForall.Count > 0)
                 {
                     duals.AddRange(withForall);
@@ -239,10 +239,9 @@ public class DualRuleConverter
         return [];
     }
 
-    public List<Statement> AddForall(Statement statement, HashSet<string> variablesInProgram)
+    public List<Statement> AddForall(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
-        ArgumentNullException.ThrowIfNull(variablesInProgram);
         
         var bodyVariables = GetBodyVariables(statement);
 
@@ -266,7 +265,7 @@ public class DualRuleConverter
         var head = rule.Head.GetValueOrThrow();
         // 1) Compute Duals Normally but replace predicate in the head
         string newId = 
-            ASPExtensions.GenerateUniqeName(head.Identifier, variablesInProgram, _options.ForallPrefix);
+            ASPExtensions.GenerateUniqeName(head.Identifier, _variables, _options.ForallPrefix);
         string oldId = head.Identifier;
         head.Identifier = newId;
         duals.AddRange(GetDualRules(rule));
@@ -314,7 +313,7 @@ public class DualRuleConverter
         return duals;
     }
 
-    private static Goal NestForall(List<string> bodyVariables, Literal innerGoal)
+    public static Goal NestForall(List<string> bodyVariables, Literal innerGoal)
     {
         if (bodyVariables.Count == 0)
         {

@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.FileIO;
+using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
 
@@ -41,24 +42,79 @@ public class NmrChecker
         foreach (var dual in duals)
         {
             var head = dual.Head.GetValueOrThrow("Head is missing in dual rule");
-
-            //If it is not in the body of the nmr_check rule already add it
-            if (nmrCheckBody.Find(l => l.Terms.Count == head.Terms.Count
-                && l.Identifier == head.Identifier) == null)
-            {
-                nmrCheckBody.Add(head);
-            }
+            head.HasNafNegation = false;
             
+            nmrCheckBody.Add(head);
             subCheckRules.Add(dual);
         }
         
         Statement nmrCheck = new();
         nmrCheck.AddHead(new Literal("nmr_check", false, false, []));
         nmrCheck.AddBody([]);
-        
         nmrCheck.Body.AddRange(nmrCheckBody);
         subCheckRules.Insert(0, nmrCheck);
+        //AddForallToCheck(nmrCheck);
         return subCheckRules;
+    }
+
+    private static void AddForallToCheck(Statement statement)
+    {
+        //Variable are body variables implicitly
+        List<string> variables = [];
+        VariableFinder variableFinder = new();
+        foreach (var goal in statement.Body)
+        {
+            variables.AddRange(goal.Accept(variableFinder).
+                GetValueOrThrow("Cannot retrieve variables from body!").
+                Select(v => v.Identifier));
+        }
+
+        for (var i = 0; i < statement.Body.Count; i++)
+        {
+            var innerGoal = statement.Body[i];
+            var literal = innerGoal.Accept(_goalToLiteralConverter);
+
+            if (!literal.HasValue)
+            {
+                continue;
+            }
+
+            var forall = DualRuleConverter.NestForall(variables.ToList(), literal.GetValueOrThrow());
+            statement.Body[i] = forall;
+        }
+    }
+    
+    private static bool ContainsBodyVariables(Statement rule)
+    {
+        VariableFinder variableFinder = new();
+        List<string> bodyVariables = [];
+        if (!rule.HasHead && rule.HasBody)
+        {
+            return true;
+        }
+
+        if (rule.HasHead && !rule.HasBody)
+        {
+            return false;
+        }
+
+        if (rule.HasHead && rule.HasBody)
+        {
+            List<string> bodyVar = [];
+            foreach (var goal in rule.Body)
+            {
+                bodyVar.AddRange(goal.Accept(variableFinder).
+                    GetValueOrThrow("Cannot retrieve variables from body!").
+                    Select(v => v.Identifier));
+            }
+
+            var headVar = rule.Head.GetValueOrThrow().Accept(variableFinder).
+                GetValueOrThrow("Cannot retrieve variables from head!").Select(v => v.Identifier);
+            var bodyVars = bodyVar.Except(headVar).ToList();
+            return bodyVars.Count != 0;
+        }
+        
+        return false;
     }
     
     public static List<Statement> GetSubCheckRules1(List<Statement> olonRules)
