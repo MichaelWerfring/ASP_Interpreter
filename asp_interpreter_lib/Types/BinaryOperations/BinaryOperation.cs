@@ -33,12 +33,6 @@ public class BinaryOperation
         get => _binaryOperator;
         set => _binaryOperator = value ?? throw new ArgumentNullException(nameof(BinaryOperator));
     }
-
-    //Evaluate by delegating to the operator
-    public bool Evaluate()
-    {
-        return BinaryOperator.Evaluate(Left, Right);
-    }
     
     public override string ToString()
     {

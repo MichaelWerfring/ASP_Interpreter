@@ -11,7 +11,7 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
     //{
     //    InternalHead head = null;
     //    var headContext = context.head();
-    //    //Empty InternalStatement per default
+    //    //Nil InternalStatement per default
     //    //If InternalHead or InternalBody are found they will be added
     //    var statement = new InternalStatement();
     //    
@@ -35,7 +35,7 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
     
     public override IOption<Statement> VisitStatement(ASPParser.StatementContext context)
     {
-        //Empty InternalStatement per default
+        //Nil InternalStatement per default
         //If InternalHead or InternalBody are found they will be added
         var statement = new Statement();
         

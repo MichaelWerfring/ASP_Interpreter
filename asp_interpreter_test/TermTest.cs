@@ -37,7 +37,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterSucceedsOnPlus()
     {
-        //ITerm term = new ArithmeticOperationTerm(new Plus(new NumberTerm(1), new NumberTerm(1)));
+        //ITerm term = new ArithmeticOperationTerm(new Addition(new NumberTerm(1), new NumberTerm(1)));
         ITerm term = new ArithmeticOperationTerm(new NumberTerm(1),new Plus(), new NumberTerm(1));
         var result = term.Accept(_visitor);
         

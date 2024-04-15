@@ -42,6 +42,6 @@ public class ArithmeticOperationTerm : ITerm
 
     public override string ToString()
     {
-        return Operation.ToString();
+        return $"{_left} {_operation} {_right}";
     }
 }

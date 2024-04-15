@@ -5,12 +5,12 @@ namespace asp_interpreter_lib.Types;
 
 public class Statement: IVisitableType
 {
-    //Empty rule per default
+    //Nil rule per default
 
     public bool HasBody => Body.Literals.Count != 0;
     public bool HasHead => Head.HasValue;
     
-    //Empty InternalHead and InternalBody per default
+    //Nil InternalHead and InternalBody per default
     public Head Head { get; private set; } = new();
     public Body Body { get; private set; } = new([]);
 

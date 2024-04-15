@@ -54,7 +54,7 @@ public class CallGraphBuilder
     {
         if (!nafLiteral.IsClassicalLiteral)
         {
-            throw new ArgumentException($"{nameof(nafLiteral)} must be a classical literal");
+            return new List<CallGraphEdge>();
         }
 
         ClassicalLiteral classicalLiteral = nafLiteral.ClassicalLiteral;
