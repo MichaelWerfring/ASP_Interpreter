@@ -1,7 +1,9 @@
-﻿using asp_interpreter_lib.FileIO;
+﻿using System.Reflection.Metadata.Ecma335;
+using asp_interpreter_lib.FileIO;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 namespace asp_interpreter_lib.Solving.NMRCheck;
 
@@ -11,6 +13,13 @@ public class NmrChecker
 
     public static List<Statement> GetSubCheckRules(List<Statement> olonRules)
     {
+        // 1) append negation of OLON Rule to its body (If not already present)
+        // 2) generate dual for modified rule
+        // 3) assign unique head (e.g. chk0)
+        // 4) add modified duals to the NMR check goal and
+        //    use forall to handle variables (e.g. nmr_check :- forall(X, chk0(X)).
+        // ? headless rules have the forall applied when sub check is created (dual converter)
+        
         DualRuleConverter converter = new DualRuleConverter(new AspProgram(olonRules,
                 new Query(new Literal("dummy",
                     false,
@@ -19,42 +28,50 @@ public class NmrChecker
             new DualConverterOptions("rwh",
                 "fa"));
         
-        //Handle empty heads
-        List<string>headNames = [];
-        foreach (var olonRule in olonRules)
+        // 1) append negation of OLON Rule to its body (If not already present)
+        foreach (var rule in olonRules)
         {
-            string headName;
-            if (!olonRule.HasHead)
+            if (!rule.HasHead)
             {
-                headName = ASPExtensions.GenerateUniqeName(string.Empty, headNames, "chk");
-                olonRule.AddHead(new Literal(headName, false, false, []));
                 continue;
             }
             
-            headName = ASPExtensions.GenerateUniqeName(olonRule.Head.GetValueOrThrow().Identifier, headNames, "chk");
-            olonRule.Head.GetValueOrThrow().Identifier = headName;
+            var head = rule.Head.GetValueOrThrow("Could not parse head!");
+            var negatedHead = head.Accept(new LiteralCopyVisitor(
+                new TermCopyVisitor())).GetValueOrThrow("Could not parse negated head!");
+            negatedHead.HasNafNegation = !negatedHead.HasNafNegation;
+            
+            bool containsHead = rule.Body.Find(b => b.ToString() == negatedHead.ToString()) == null;
+
+            if (!containsHead)
+            {
+                rule.Body.Add(negatedHead);
+            }
         }
         
+        // 2) generate dual for modified rule
         var duals = converter.GetDualRules(olonRules);
         
-        List<Statement> subCheckRules = [];
+        
         List<Literal> nmrCheckBody = [];
-        foreach (var dual in duals)
+        // 3) assign unique head (e.g. chk0)
+        foreach (var rule in duals)
         {
-            var head = dual.Head.GetValueOrThrow("Head is missing in dual rule");
-            head.HasNafNegation = false;
+            var head = rule.Head.GetValueOrThrow("Could not parse head!");
+            head.Identifier = ASPExtensions.GenerateUniqeName(head.Identifier, new List<string>(), "chk");
             
-            nmrCheckBody.Add(head);
-            subCheckRules.Add(dual);
+            // 4) add modified duals to the NMR check goal and
+            if (nmrCheckBody.Find(b => b.ToString() == head.ToString()) == null)
+            {
+                nmrCheckBody.Add(head);   
+            }
         }
         
         Statement nmrCheck = new();
         nmrCheck.AddHead(new Literal("nmr_check", false, false, []));
         nmrCheck.AddBody([]);
         nmrCheck.Body.AddRange(nmrCheckBody);
-        subCheckRules.Insert(0, nmrCheck);
-        //AddForallToCheck(nmrCheck);
-        return subCheckRules;
+        return duals;
     }
 
     private static void AddForallToCheck(Statement statement)
@@ -82,39 +99,6 @@ public class NmrChecker
             var forall = DualRuleConverter.NestForall(variables.ToList(), literal.GetValueOrThrow());
             statement.Body[i] = forall;
         }
-    }
-    
-    private static bool ContainsBodyVariables(Statement rule)
-    {
-        VariableFinder variableFinder = new();
-        List<string> bodyVariables = [];
-        if (!rule.HasHead && rule.HasBody)
-        {
-            return true;
-        }
-
-        if (rule.HasHead && !rule.HasBody)
-        {
-            return false;
-        }
-
-        if (rule.HasHead && rule.HasBody)
-        {
-            List<string> bodyVar = [];
-            foreach (var goal in rule.Body)
-            {
-                bodyVar.AddRange(goal.Accept(variableFinder).
-                    GetValueOrThrow("Cannot retrieve variables from body!").
-                    Select(v => v.Identifier));
-            }
-
-            var headVar = rule.Head.GetValueOrThrow().Accept(variableFinder).
-                GetValueOrThrow("Cannot retrieve variables from head!").Select(v => v.Identifier);
-            var bodyVars = bodyVar.Except(headVar).ToList();
-            return bodyVars.Count != 0;
-        }
-        
-        return false;
     }
     
     public static List<Statement> GetSubCheckRules1(List<Statement> olonRules)
