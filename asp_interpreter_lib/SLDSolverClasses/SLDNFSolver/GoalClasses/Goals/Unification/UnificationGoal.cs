@@ -2,10 +2,11 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 using asp_interpreter_lib.Unification.Interfaces;
 
-namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
+namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.Unification;
 
 public class UnificationGoal : IGoal
 {
@@ -34,7 +35,7 @@ public class UnificationGoal : IGoal
         {
             throw new ArgumentException(nameof(state));
         }
-        if(evaluation.Children.Count() != 2) { throw new ArgumentException(nameof(state)); }
+        if (evaluation.Children.Count() != 2) { throw new ArgumentException(nameof(state)); }
 
         var substitutionMaybe = _algorithm.Unify(evaluation.Children.ElementAt(0), evaluation.Children.ElementAt(1));
 

@@ -1,19 +1,21 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
 
 namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
 
 public class NafGoal : IGoal
 {
-    private GoalResolver _resolver;
+    private FunctorTableRecord _functorTable;
 
-    public NafGoal(GoalMapper mapping)
+    public NafGoal(FunctorTableRecord functorTable)
     {
-        ArgumentNullException.ThrowIfNull(mapping);
+        ArgumentNullException.ThrowIfNull(functorTable);
 
-        _resolver = new GoalResolver(mapping);
+        _functorTable = functorTable;
     }
+
     public IEnumerable<SolverState> TrySatisfy(IDatabase database, SolverState state)
     {
         ArgumentNullException.ThrowIfNull(database);
@@ -35,7 +37,7 @@ public class NafGoal : IGoal
             throw new ArgumentException(nameof(state));
         }
 
-        var solver = new AdvancedSLDSolver(database, _resolver);
+        var solver = new AdvancedSLDSolver(database, _functorTable);
         bool foundSolution = false;
         solver.SolutionFound += ((_, _) => foundSolution = true);
 

@@ -1,29 +1,32 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 
-namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram;
+namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
 
 public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 {
-    public ISimpleTerm Convert(ITerm term)
+    private FunctorTableRecord _functorTable;
+
+    private OperatorConverter _operatorConverter;
+
+    public TermConverter(FunctorTableRecord functorTable)
+    {
+        ArgumentNullException.ThrowIfNull(functorTable, nameof(functorTable));
+
+        _functorTable = functorTable;
+        _operatorConverter = new OperatorConverter(functorTable);
+    }
+
+    public IOption<ISimpleTerm> Convert(ITerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        var result = term.Accept(this);
-        ISimpleTerm convertedTerm;
-        try
-        {
-            convertedTerm = result.GetValueOrThrow();
-        }
-        catch
-        {
-            throw new InvalidDataException($"{nameof(term)} contained unconvertable types.");
-        }
-
-        return convertedTerm;
+        return term.Accept(this);
     }
 
     public override IOption<ISimpleTerm> Visit(AnonymusVariableTerm _)
@@ -33,44 +36,37 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(ArithmeticOperationTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term);
+        var leftMaybe = term.Left.Accept(this);
+        if(!leftMaybe.HasValue) { return new None<ISimpleTerm>(); }
 
-        ArithmeticOperationConverter converter = new ArithmeticOperationConverter(term, this);
+        var rightMaybe = term.Right.Accept(this);
+        if (!rightMaybe.HasValue) { return new None<ISimpleTerm>(); }
 
-        return new Some<ISimpleTerm>(converter.Convert());
+        var functor = _operatorConverter.Convert(term.Operation);
+
+        var structure = new Structure(functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()], false);
+
+        return new Some<ISimpleTerm>(structure);
     }
 
     public override IOption<ISimpleTerm> Visit(BasicTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
-        var newChildren = new ISimpleTerm[term.Terms.Count];
-        for (int i = 0; i < term.Terms.Count; i++)
+        var newChildrenMaybes = term.Terms.Select((term) => term.Accept(this));
+        if(newChildrenMaybes.Any((maybe) => !maybe.HasValue)) 
         {
-            var result = term.Terms[i].Accept(this);
-            try
-            {
-                newChildren[i] = result.GetValueOrThrow();
-            }
-            catch
-            {
-                return new None<ISimpleTerm>();
-            }
+            return new None<ISimpleTerm>();
         }
-        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildren, false));
+
+        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildrenMaybes.Select((m)=> m.GetValueOrThrow()), false));
     }
 
     public override IOption<ISimpleTerm> Visit(ConventionalList term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
         return new Some<ISimpleTerm>(ConvertConventionalList(term.Terms));
     }
 
     public override IOption<ISimpleTerm> Visit(NegatedTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
         var innerTermResult = term.Term.Accept(this);
         ISimpleTerm innerTerm;
         try
@@ -82,24 +78,20 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
             return new None<ISimpleTerm>();
         }
 
-        throw new NotImplementedException();
+        return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(NumberTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
         return new Some<ISimpleTerm>(new Integer(term.Value));
     }
 
     public override IOption<ISimpleTerm> Visit(ParenthesizedTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
         var inner = term.Term.Accept(this);
         try
         {
-            return new Some<ISimpleTerm>(new Structure("parenthesis", [inner.GetValueOrThrow()], false));
+            return new Some<ISimpleTerm>(new Structure(_functorTable.Parenthesis, [inner.GetValueOrThrow()], false));
         }
         catch
         {
@@ -109,22 +101,16 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(RecursiveList term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
-        throw new NotImplementedException();
+        return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(StringTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
         return new Some<ISimpleTerm>(ConvertString(term.Value));
     }
 
     public override IOption<ISimpleTerm> Visit(VariableTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term);
-
         return new Some<ISimpleTerm>(new Variable(term.Identifier));
     }
 
@@ -132,13 +118,13 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
     {
         if (str.Equals(string.Empty))
         {
-            return new Structure("nil", [], false);
+            return new Structure(_functorTable.Nil, [], false);
         }
 
         var head = new Structure(str.First().ToString(), Enumerable.Empty<ISimpleTerm>(), false);
         var tail = ConvertString(new string(str.Skip(1).ToArray()));
 
-        return new Structure("list", [head, tail], false);
+        return new Structure(_functorTable.List, [head, tail], false);
     }
 
     private ISimpleTerm ConvertRecursiveList(RecursiveList term)
@@ -148,15 +134,8 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     private ISimpleTerm ConvertConventionalList(IEnumerable<ITerm> terms)
     {
-       if (terms.Count() == 0) { return new Structure("nil", [], false); }
+        if (terms.Count() == 0) { return new Structure(_functorTable.Nil, [], false); }
 
-        return new Structure("list", [ConvertConventionalList(terms.Skip(1))], false);
+        return new Structure(_functorTable.List, [ConvertConventionalList(terms.Skip(1))], false);
     }
-
-
-
-
-
-
-
 }

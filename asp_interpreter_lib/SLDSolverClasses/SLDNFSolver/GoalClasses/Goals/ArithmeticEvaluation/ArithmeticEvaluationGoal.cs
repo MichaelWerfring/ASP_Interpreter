@@ -42,7 +42,7 @@ public class ArithmeticEvaluationGoal : IGoal
             return [];
         }
 
-        if (evaluation.Children.ElementAt(1) is Variable leftVariable)
+        if (evaluation.Children.ElementAt(0) is Variable leftVariable)
         {
             Dictionary<Variable, ISimpleTerm> substitution = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
             {

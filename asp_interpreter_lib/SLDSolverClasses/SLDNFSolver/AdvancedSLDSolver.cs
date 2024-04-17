@@ -3,6 +3,7 @@ using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.Events;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
@@ -19,13 +20,13 @@ public class AdvancedSLDSolver
     private GoalResolver _goalSolver;
     private IDatabase _database;
 
-    public AdvancedSLDSolver(IDatabase database, GoalResolver goalSolver)
+    public AdvancedSLDSolver(IDatabase database, FunctorTableRecord specialFunctors)
     {
         ArgumentNullException.ThrowIfNull(database);
-        ArgumentNullException.ThrowIfNull(goalSolver);
+        ArgumentNullException.ThrowIfNull(specialFunctors);
 
         _database = database;
-        _goalSolver = goalSolver;
+        _goalSolver = new GoalResolver(specialFunctors);
     }
 
     public event EventHandler<SolutionFoundEventArgs>? SolutionFound;

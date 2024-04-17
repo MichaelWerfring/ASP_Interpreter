@@ -1,10 +1,11 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 using asp_interpreter_lib.Unification.Interfaces;
 
-namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
+namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.Unification;
 
 public class DatabaseUnificationGoal : IGoal
 {
