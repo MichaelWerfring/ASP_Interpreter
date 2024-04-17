@@ -85,7 +85,7 @@ public class DualRuleTest
         var duals = dualRuleConverter.GetDualRules(program.Statements);
             
         Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
-                    duals[0].ToString() == "not q(X) :- forall(Y, fa0_q(X, Y))." && 
+                    duals[0].ToString() == "not q(X) :- forall(Y, not fa0_q(X, Y))." && 
                     duals[1].ToString() == "not fa0_q(X, Y) :- p(X, Y).");
     }
 
@@ -104,7 +104,7 @@ public class DualRuleTest
         var duals = dualRuleConverter.GetDualRules(program.Statements);
         
         Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
-                    duals[0].ToString() == "not q(X) :- forall(Y, forall(Z, fa0_q(X, Y, Z)))." && 
+                    duals[0].ToString() == "not q(X) :- forall(Y, forall(Z, not fa0_q(X, Y, Z)))." && 
                     duals[1].ToString() == "not fa0_q(X, Y, Z) :- p(X, Y, Z).");
     }
     

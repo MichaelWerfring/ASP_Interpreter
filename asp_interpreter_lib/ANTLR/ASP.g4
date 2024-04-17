@@ -5,7 +5,7 @@ query : literal QUERY_MARK;
 statements : statement*;
 
 statement 
-    : CONS (goal (COMMA goal)*)? DOT 
+    : CONS goal (COMMA goal)* DOT 
     | literal (CONS (goal (COMMA goal)*))? DOT;
 
 goal : 

@@ -89,7 +89,7 @@ public class DualRuleConverter
                 statements[0].Head.
                     GetValueOrThrow("Headless rules must be treated by the NMR check!").HasNafNegation = true;
 
-                var withForall = AddForall(statements[0]);
+                var withForall = AddForall(statements[0], true);
                 if (withForall.Count > 0)
                 {
                     duals.AddRange(withForall);
@@ -128,7 +128,7 @@ public class DualRuleConverter
                 //   true));
                 newBody.Add(new Literal(tempVariableId, true, false, [newVariable]));
 
-                var withForall = AddForall(statement);
+                var withForall = AddForall(statement, true);
                 if (withForall.Count > 0)
                 {
                     duals.AddRange(withForall);
@@ -239,7 +239,7 @@ public class DualRuleConverter
         return [];
     }
 
-    public List<Statement> AddForall(Statement statement)
+    public List<Statement> AddForall(Statement statement, bool negateInnerTerm = false)
     {
         ArgumentNullException.ThrowIfNull(statement);
         
@@ -286,24 +286,12 @@ public class DualRuleConverter
         forall.AddHead(head);
         Literal innerGoal;
         //Made Disjunction
-        if (duals.Count > 1)
-        {
-            var dualHead = duals[0].Head.GetValueOrThrow();
-            innerGoal = new Literal(
-                newId,
-                dualHead.HasNafNegation,
-                dualHead.HasStrongNegation,
-                dualHead.Terms);
-        }
-        else
-        {
-            var dualHead = duals[0].Head.GetValueOrThrow();
-            innerGoal = new Literal(
-                newId,
-                !dualHead.HasNafNegation,
-                dualHead.HasStrongNegation,
-                dualHead.Terms);
-        }
+        var dualHead = duals[0].Head.GetValueOrThrow();
+        innerGoal = new Literal(
+            newId,
+            negateInnerTerm,
+            dualHead.HasStrongNegation,
+            dualHead.Terms);
         
         //append body with (nested) forall
         forall.AddBody([NestForall(bodyVariables.ToList(), innerGoal)]);
