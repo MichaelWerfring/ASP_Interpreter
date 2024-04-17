@@ -26,7 +26,7 @@ public class NmrChecker
                     false,
                     []))),
             new DualConverterOptions("rwh",
-                "fa"));
+                "fa"), false);
         
         // 1) append negation of OLON Rule to its body (If not already present)
         foreach (var rule in olonRules)
@@ -41,7 +41,7 @@ public class NmrChecker
                 new TermCopyVisitor())).GetValueOrThrow("Could not parse negated head!");
             negatedHead.HasNafNegation = !negatedHead.HasNafNegation;
             
-            bool containsHead = rule.Body.Find(b => b.ToString() == negatedHead.ToString()) == null;
+            bool containsHead = rule.Body.Find(b => b.ToString() == negatedHead.ToString()) != null;
 
             if (!containsHead)
             {
@@ -52,25 +52,40 @@ public class NmrChecker
         // 2) generate dual for modified rule
         var duals = converter.GetDualRules(olonRules);
         
-        
         List<Literal> nmrCheckBody = [];
         // 3) assign unique head (e.g. chk0)
-        foreach (var rule in duals)
+        for (var i = 0; i < duals.Count; i++)
         {
+            var rule = duals[i];
             var head = rule.Head.GetValueOrThrow("Could not parse head!");
-            head.Identifier = ASPExtensions.GenerateUniqeName(head.Identifier, new List<string>(), "chk");
-            
+            head = new Literal(
+                ASPExtensions.GenerateUniqeName(head.Identifier, new List<string>(), "chk"),
+                false,
+                head.HasStrongNegation,
+                head.Terms
+            );
+            Statement newStatement = new();
+            newStatement.AddHead(head);
+            newStatement.AddBody(rule.Body);
+            duals[i] = newStatement;
+
             // 4) add modified duals to the NMR check goal and
             if (nmrCheckBody.Find(b => b.ToString() == head.ToString()) == null)
             {
-                nmrCheckBody.Add(head);   
+                nmrCheckBody.Add(head);
             }
         }
-        
+
         Statement nmrCheck = new();
         nmrCheck.AddHead(new Literal("nmr_check", false, false, []));
         nmrCheck.AddBody([]);
         nmrCheck.Body.AddRange(nmrCheckBody);
+        
+        //just for readability add nmr_check to the beginning
+        duals.Insert(0, nmrCheck);
+        //Quantify variable in nmr_check
+        
+        
         return duals;
     }
 

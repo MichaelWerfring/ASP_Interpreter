@@ -28,10 +28,16 @@ public class DualRuleConverter
     
     private readonly DualConverterOptions _options;
 
-    public DualRuleConverter(AspProgram program, DualConverterOptions options)
+    private bool _negateInnerForall;
+    
+    public DualRuleConverter(
+        AspProgram program,
+        DualConverterOptions options,
+        bool negateInnerForall = true)
     {
         ArgumentNullException.ThrowIfNull(program);
         ArgumentNullException.ThrowIfNull(options);
+        _negateInnerForall = negateInnerForall;
         _options = options;
         _variables = new HashSet<string>();
         _ruleNames = program.Accept(new RuleNameFinder()).
@@ -89,7 +95,7 @@ public class DualRuleConverter
                 statements[0].Head.
                     GetValueOrThrow("Headless rules must be treated by the NMR check!").HasNafNegation = true;
 
-                var withForall = AddForall(statements[0], true);
+                var withForall = AddForall(statements[0]);
                 if (withForall.Count > 0)
                 {
                     duals.AddRange(withForall);
@@ -128,7 +134,7 @@ public class DualRuleConverter
                 //   true));
                 newBody.Add(new Literal(tempVariableId, true, false, [newVariable]));
 
-                var withForall = AddForall(statement, true);
+                var withForall = AddForall(statement);
                 if (withForall.Count > 0)
                 {
                     duals.AddRange(withForall);
@@ -239,7 +245,7 @@ public class DualRuleConverter
         return [];
     }
 
-    public List<Statement> AddForall(Statement statement, bool negateInnerTerm = false)
+    public List<Statement> AddForall(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
         
@@ -289,7 +295,7 @@ public class DualRuleConverter
         var dualHead = duals[0].Head.GetValueOrThrow();
         innerGoal = new Literal(
             newId,
-            negateInnerTerm,
+            _negateInnerForall,
             dualHead.HasStrongNegation,
             dualHead.Terms);
         
