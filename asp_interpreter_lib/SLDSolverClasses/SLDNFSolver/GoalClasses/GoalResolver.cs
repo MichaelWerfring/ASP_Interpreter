@@ -1,5 +1,5 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
+using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.Comparison;

@@ -1,6 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 
-namespace asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
+namespace asp_interpreter_lib.InternalProgramClasses.Database;
 
 public class StandardDatabase : IDatabase
 {
@@ -9,7 +9,7 @@ public class StandardDatabase : IDatabase
     public StandardDatabase(IEnumerable<IEnumerable<ISimpleTerm>> clauses)
     {
         ArgumentNullException.ThrowIfNull(clauses);
-        if (clauses.Any( (clause) => clause == null || clause.Count() < 1 ))
+        if (clauses.Any((clause) => clause == null || clause.Count() < 1))
         {
             throw new ArgumentException("Must not contain null clauses, or clauses with not at least one term");
         }
@@ -19,6 +19,6 @@ public class StandardDatabase : IDatabase
 
     public IEnumerable<IEnumerable<ISimpleTerm>> GetMatchingClauses(ISimpleTerm term)
     {
-       return _clauses;
+        return _clauses;
     }
 }

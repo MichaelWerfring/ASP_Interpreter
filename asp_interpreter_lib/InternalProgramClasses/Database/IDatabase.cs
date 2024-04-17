@@ -1,6 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 
-namespace asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
+namespace asp_interpreter_lib.InternalProgramClasses.Database;
 
 public interface IDatabase
 {

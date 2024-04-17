@@ -101,7 +101,9 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(RecursiveList term)
     {
-        return new None<ISimpleTerm>();
+        var convertedList = ConvertRecursiveList(term);
+
+        return new Some<ISimpleTerm>(convertedList);
     }
 
     public override IOption<ISimpleTerm> Visit(StringTerm term)
@@ -129,13 +131,22 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     private ISimpleTerm ConvertRecursiveList(RecursiveList term)
     {
-        throw new NotImplementedException();
+        var leftMaybe = term.Head.Accept(this);
+        if (!leftMaybe.HasValue) throw new ArgumentException(nameof(term));
+
+        var rightMaybe = term.Tail.Accept(this);
+        if (!rightMaybe.HasValue) throw new ArgumentException(nameof(term));
+
+        return new Structure(_functorTable.List, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()], false);
     }
 
     private ISimpleTerm ConvertConventionalList(IEnumerable<ITerm> terms)
     {
         if (terms.Count() == 0) { return new Structure(_functorTable.Nil, [], false); }
 
-        return new Structure(_functorTable.List, [ConvertConventionalList(terms.Skip(1))], false);
+        var headMaybe = terms.ElementAt(0).Accept(this);
+        if (!headMaybe.HasValue) { throw new ArgumentException(nameof(terms)); }
+
+        return new Structure(_functorTable.List, [headMaybe.GetValueOrThrow() ,ConvertConventionalList(terms.Skip(1))], false);
     }
 }

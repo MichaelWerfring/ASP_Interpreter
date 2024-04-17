@@ -1,13 +1,4 @@
-f(X) :- X is 1.
+append(nil, L, L).
+append([H | T], L ,[H|T1]) :- append(T,L, T1).
 
-f(X) :- X = 2.
-f(X) :- X is 3, X \= 5.
-
-f(X) :- X is 4, X < 5.
-f(X) :- X is 5, X <= 5.
-f(X) :- X is 6, X > 5.
-f(X) :- X is 7, X >= 5.
-
-f(X) :- not g(X).
-
-f(X)?.
+append(X, Y, [1,2,3,4,5])?.
