@@ -61,8 +61,8 @@ public class NmrCheckerTest
     {
         string code = """
                       p(X) :- r(X), not p(X).
-                      p(X) :- not q(X), not p(X).
-                      p(X) :- q(X), r(X), not p(X).
+                      q(X) :- not q(X), not p(X).
+                      r(X) :- q(X), r(X), not p(X).
                       p(a)?
                       """;
         var errorLogger = new MockErrorLogger();
