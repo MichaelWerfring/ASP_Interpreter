@@ -1,4 +1,4 @@
-// Generated from c://Users//micha//Desktop//4_Semester//Logikprogrammierung//ASP_Interpreter//asp_interpreter_lib//ANTLR//ASP.g4 by ANTLR 4.13.1
+// Generated from d:/FH/Semester 4/Logikprogrammierung ILV/SASP-Projekt/ASP_Interpreter/asp_interpreter_lib/ANTLR/ASP.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -47,55 +47,15 @@ public interface ASPListener extends ParseTreeListener {
 	 */
 	void exitStatement(ASPParser.StatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ASPParser#head}.
+	 * Enter a parse tree produced by {@link ASPParser#goal}.
 	 * @param ctx the parse tree
 	 */
-	void enterHead(ASPParser.HeadContext ctx);
+	void enterGoal(ASPParser.GoalContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ASPParser#head}.
+	 * Exit a parse tree produced by {@link ASPParser#goal}.
 	 * @param ctx the parse tree
 	 */
-	void exitHead(ASPParser.HeadContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ASPParser#body}.
-	 * @param ctx the parse tree
-	 */
-	void enterBody(ASPParser.BodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ASPParser#body}.
-	 * @param ctx the parse tree
-	 */
-	void exitBody(ASPParser.BodyContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ASPParser#naf_literals}.
-	 * @param ctx the parse tree
-	 */
-	void enterNaf_literals(ASPParser.Naf_literalsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ASPParser#naf_literals}.
-	 * @param ctx the parse tree
-	 */
-	void exitNaf_literals(ASPParser.Naf_literalsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ASPParser#naf_literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterNaf_literal(ASPParser.Naf_literalContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ASPParser#naf_literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitNaf_literal(ASPParser.Naf_literalContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ASPParser#classical_literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassical_literal(ASPParser.Classical_literalContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ASPParser#classical_literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassical_literal(ASPParser.Classical_literalContext ctx);
+	void exitGoal(ASPParser.GoalContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ASPParser#binary_operation}.
 	 * @param ctx the parse tree
@@ -106,6 +66,16 @@ public interface ASPListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBinary_operation(ASPParser.Binary_operationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ASPParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteral(ASPParser.LiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ASPParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteral(ASPParser.LiteralContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code equalityOperation}
 	 * labeled alternative in {@link ASPParser#binary_operator}.
@@ -178,6 +148,18 @@ public interface ASPListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitGreaterOrEqOperation(ASPParser.GreaterOrEqOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code isOperation}
+	 * labeled alternative in {@link ASPParser#binary_operator}.
+	 * @param ctx the parse tree
+	 */
+	void enterIsOperation(ASPParser.IsOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code isOperation}
+	 * labeled alternative in {@link ASPParser#binary_operator}.
+	 * @param ctx the parse tree
+	 */
+	void exitIsOperation(ASPParser.IsOperationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ASPParser#terms}.
 	 * @param ctx the parse tree
@@ -285,13 +267,87 @@ public interface ASPListener extends ParseTreeListener {
 	 */
 	void exitVariableTerm(ASPParser.VariableTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ASPParser#arithop}.
+	 * Enter a parse tree produced by the {@code listTerm}
+	 * labeled alternative in {@link ASPParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void enterArithop(ASPParser.ArithopContext ctx);
+	void enterListTerm(ASPParser.ListTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ASPParser#arithop}.
+	 * Exit a parse tree produced by the {@code listTerm}
+	 * labeled alternative in {@link ASPParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void exitArithop(ASPParser.ArithopContext ctx);
+	void exitListTerm(ASPParser.ListTermContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code conventionalList}
+	 * labeled alternative in {@link ASPParser#list}.
+	 * @param ctx the parse tree
+	 */
+	void enterConventionalList(ASPParser.ConventionalListContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code conventionalList}
+	 * labeled alternative in {@link ASPParser#list}.
+	 * @param ctx the parse tree
+	 */
+	void exitConventionalList(ASPParser.ConventionalListContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code recursiveList}
+	 * labeled alternative in {@link ASPParser#list}.
+	 * @param ctx the parse tree
+	 */
+	void enterRecursiveList(ASPParser.RecursiveListContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code recursiveList}
+	 * labeled alternative in {@link ASPParser#list}.
+	 * @param ctx the parse tree
+	 */
+	void exitRecursiveList(ASPParser.RecursiveListContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code plusOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void enterPlusOperation(ASPParser.PlusOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code plusOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void exitPlusOperation(ASPParser.PlusOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code minusOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void enterMinusOperation(ASPParser.MinusOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code minusOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void exitMinusOperation(ASPParser.MinusOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code timesOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void enterTimesOperation(ASPParser.TimesOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code timesOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void exitTimesOperation(ASPParser.TimesOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code divOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void enterDivOperation(ASPParser.DivOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code divOperation}
+	 * labeled alternative in {@link ASPParser#arithop}.
+	 * @param ctx the parse tree
+	 */
+	void exitDivOperation(ASPParser.DivOperationContext ctx);
 }

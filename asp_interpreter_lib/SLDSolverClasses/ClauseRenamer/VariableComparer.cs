@@ -1,4 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

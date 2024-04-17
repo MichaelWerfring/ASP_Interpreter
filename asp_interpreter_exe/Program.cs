@@ -9,14 +9,10 @@ using asp_interpreter_lib.Types;
 using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.SLDSolverClasses.StandardSolver;
-using asp_interpreter_lib.Unification.Robinson;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram;
-using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
@@ -34,7 +30,6 @@ if (!result.Success)
 {
     throw new ArgumentException(result.Message);
 }
-
 
 var inputStream = new AntlrInputStream(result.Content);
 var lexer = new ASPLexer(inputStream);
@@ -60,14 +55,12 @@ PrintAll(program.GetValueOrThrow(), callGraph);
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 Console.WriteLine("---------------------------------------------------------------------------");
 
-var renamer = new ClauseVariableRenamer();
-
-var converter = new ProgramConverter();
+var functorTable = new FunctorTableRecord();
+var converter = new ProgramConverter(functorTable);
 InternalAspProgram internalProgram = converter.Convert(prog);
 
 IDatabase database = new StandardDatabase(internalProgram.Statements);
-
-var solver = new AdvancedSLDSolver(database, new GoalResolver(new GoalMapper()));
+var solver = new AdvancedSLDSolver(database, functorTable);
 solver.SolutionFound += (sender, e) =>
 {
     Console.WriteLine("---------------------------------------------------------------------------");
@@ -82,6 +75,7 @@ solver.SolutionFound += (sender, e) =>
 
 solver.Solve(internalProgram.Query);
 
+Console.WriteLine("---------------------------------------------------------------------------");
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void PrintAll(AspProgram program, AdjacencyGraph<Statement, CallGraphEdge?> callGraph)

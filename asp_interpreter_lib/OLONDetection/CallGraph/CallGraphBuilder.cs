@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using asp_interpreter_lib.Types.TypeVisitors;
+using System.Dynamic;
+using asp_interpreter_lib.Types.BinaryOperations;
 
 namespace asp_interpreter_lib.OLONDetection.CallGraph;
 
@@ -34,6 +36,11 @@ public class CallGraphBuilder
         {
             foreach (var literal in statement.Body)
             {
+                if(literal is not Literal)
+                {
+                    continue;
+                }
+
                 var literalEdges = GetEdges(statement, literal, graph);
 
                 graph.AddEdgeRange(literalEdges);

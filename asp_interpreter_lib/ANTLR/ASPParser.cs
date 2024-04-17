@@ -431,7 +431,7 @@ public partial class ASPParser : Parser {
 			IASPListener typedListener = listener as IASPListener;
 			if (typedListener != null) typedListener.ExitGoal(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
+
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitGoal(this);

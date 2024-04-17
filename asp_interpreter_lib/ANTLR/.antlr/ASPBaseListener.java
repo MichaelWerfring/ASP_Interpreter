@@ -1,4 +1,4 @@
-// Generated from c://Users//micha//Desktop//4_Semester//Logikprogrammierung//ASP_Interpreter//asp_interpreter_lib//ANTLR//ASP.g4 by ANTLR 4.13.1
+// Generated from d:/FH/Semester 4/Logikprogrammierung ILV/SASP-Projekt/ASP_Interpreter/asp_interpreter_lib/ANTLR/ASP.g4 by ANTLR 4.13.1
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -64,61 +64,13 @@ public class ASPBaseListener implements ASPListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterHead(ASPParser.HeadContext ctx) { }
+	@Override public void enterGoal(ASPParser.GoalContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitHead(ASPParser.HeadContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBody(ASPParser.BodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBody(ASPParser.BodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterNaf_literals(ASPParser.Naf_literalsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNaf_literals(ASPParser.Naf_literalsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterNaf_literal(ASPParser.Naf_literalContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNaf_literal(ASPParser.Naf_literalContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterClassical_literal(ASPParser.Classical_literalContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassical_literal(ASPParser.Classical_literalContext ctx) { }
+	@Override public void exitGoal(ASPParser.GoalContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -131,6 +83,18 @@ public class ASPBaseListener implements ASPListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBinary_operation(ASPParser.Binary_operationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLiteral(ASPParser.LiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLiteral(ASPParser.LiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -203,6 +167,18 @@ public class ASPBaseListener implements ASPListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitGreaterOrEqOperation(ASPParser.GreaterOrEqOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIsOperation(ASPParser.IsOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIsOperation(ASPParser.IsOperationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -316,13 +292,85 @@ public class ASPBaseListener implements ASPListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArithop(ASPParser.ArithopContext ctx) { }
+	@Override public void enterListTerm(ASPParser.ListTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArithop(ASPParser.ArithopContext ctx) { }
+	@Override public void exitListTerm(ASPParser.ListTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConventionalList(ASPParser.ConventionalListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConventionalList(ASPParser.ConventionalListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRecursiveList(ASPParser.RecursiveListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRecursiveList(ASPParser.RecursiveListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPlusOperation(ASPParser.PlusOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPlusOperation(ASPParser.PlusOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMinusOperation(ASPParser.MinusOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMinusOperation(ASPParser.MinusOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTimesOperation(ASPParser.TimesOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTimesOperation(ASPParser.TimesOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDivOperation(ASPParser.DivOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDivOperation(ASPParser.DivOperationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
