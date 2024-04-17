@@ -52,10 +52,13 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
             //Just empty body
             return new Some<Statement>(statement);
         }
-        
+
+        var goalVisitor = new GoalVisitor(_errorLogger);
+
         foreach (var goal in goals)
         {
-            var parsedGoal = goal.Accept(literalVisitor);
+
+            var parsedGoal = goal.Accept(goalVisitor);
 
             if (parsedGoal.HasValue)
             {

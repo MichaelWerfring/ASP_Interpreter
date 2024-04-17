@@ -1,9 +1,7 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
+﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
-using asp_interpreter_lib.Unification.Interfaces;
 
 namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication;
 
@@ -11,11 +9,11 @@ public class GoalResolver
 {
     private GoalMapper _goalmapper;
 
-    public GoalResolver(GoalMapper goalMapper)
+    public GoalResolver(GoalMapper goalmapper)
     {
-        ArgumentNullException.ThrowIfNull(goalMapper, nameof(goalMapper));
+        ArgumentNullException.ThrowIfNull(goalmapper);
 
-        _goalmapper = goalMapper;
+        _goalmapper = goalmapper;
     }
 
     public IEnumerable<SolverState> Solve(SolverState state, IDatabase database)
@@ -30,12 +28,16 @@ public class GoalResolver
         ISimpleTerm goalTerm = state.CurrentGoals.First();
 
         var goal = _goalmapper.GetGoal(goalTerm);
-
-        var branches = goal.TrySatisfy(database, state);
-        
-        foreach (var resolution in branches)
+        if (!goal.HasValue)
         {
-            yield return resolution;
+            yield break;
         }
+
+        var branches = goal.GetValueOrThrow().TrySatisfy(database, state);
+
+        foreach(var branch in branches)
+        {
+            yield return branch;
+        };
     }
 }

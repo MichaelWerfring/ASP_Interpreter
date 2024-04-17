@@ -17,6 +17,8 @@ using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals.ArithmeticEvaluation;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
@@ -60,14 +62,26 @@ PrintAll(program.GetValueOrThrow(), callGraph);
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 Console.WriteLine("---------------------------------------------------------------------------");
 
-var renamer = new ClauseVariableRenamer();
-
 var converter = new ProgramConverter();
 InternalAspProgram internalProgram = converter.Convert(prog);
 
 IDatabase database = new StandardDatabase(internalProgram.Statements);
 
-var solver = new AdvancedSLDSolver(database, new GoalResolver(new GoalMapper()));
+
+var mapping = new Dictionary<(string, int), IGoal>()
+{
+    {("is", 2), new ArithmeticEvaluationGoal() },
+    {("=",2), new UnificationGoal(new RobinsonUnificationAlgorithm(false)) },
+    {("\\=",2), new DisunificationGoal(new RobinsonUnificationAlgorithm(false)) },
+};
+
+var goalMapper = new GoalMapper(mapping);
+
+var resolver = new GoalResolver(goalMapper);
+
+var nafGoal = new NafGoal(goalMapper);
+
+var solver = new AdvancedSLDSolver(database, resolver);
 solver.SolutionFound += (sender, e) =>
 {
     Console.WriteLine("---------------------------------------------------------------------------");

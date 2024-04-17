@@ -1,9 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Arithmetics;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Negation;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
-using asp_interpreter_lib.Unification.Robinson;
 
 namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
 
@@ -11,13 +8,12 @@ public class NafGoal : IGoal
 {
     private GoalResolver _resolver;
 
-    public NafGoal(GoalResolver goalResolver)
+    public NafGoal(GoalMapper mapping)
     {
-        ArgumentNullException.ThrowIfNull(goalResolver);
+        ArgumentNullException.ThrowIfNull(mapping);
 
-        _resolver = goalResolver;
+        _resolver = new GoalResolver(mapping);
     }
-
     public IEnumerable<SolverState> TrySatisfy(IDatabase database, SolverState state)
     {
         ArgumentNullException.ThrowIfNull(database);
@@ -25,21 +21,25 @@ public class NafGoal : IGoal
 
         if (state.CurrentGoals.Count() < 1) { throw new ArgumentException(nameof(state)); }
 
-        Naf term;
+        Structure naf;
         try
         {
-            term = (Naf)state.CurrentGoals.First();
+            naf = (Structure)state.CurrentGoals.First();
         }
         catch
         {
-            throw new ArgumentException("Must be a naf term!");
+            throw new ArgumentException("Must be a structure.");
+        }
+        if (naf.Children.Count() != 1)
+        {
+            throw new ArgumentException(nameof(state));
         }
 
         var solver = new AdvancedSLDSolver(database, _resolver);
         bool foundSolution = false;
         solver.SolutionFound += ((_, _) => foundSolution = true);
 
-        solver.Solve([term.Term]);
+        solver.Solve([naf.Children.ElementAt(0)]);
 
         if (foundSolution)
         {

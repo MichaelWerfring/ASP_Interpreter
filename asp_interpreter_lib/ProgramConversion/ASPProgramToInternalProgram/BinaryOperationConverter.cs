@@ -1,5 +1,4 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.General;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram;
 using asp_interpreter_lib.Types.BinaryOperations;
@@ -17,6 +16,6 @@ public class BinaryOperationConverter
         var left = _converter.Convert(binaryOperation.Left);
         var right = _converter.Convert(binaryOperation.Right);
 
-        return new Structure(binaryOperation.BinaryOperator!.ToString(), new List<ISimpleTerm>() { left, right });
+        return new Structure(binaryOperation.BinaryOperator.ToString()!, new List<ISimpleTerm>() { left, right }, false);
     }
 }

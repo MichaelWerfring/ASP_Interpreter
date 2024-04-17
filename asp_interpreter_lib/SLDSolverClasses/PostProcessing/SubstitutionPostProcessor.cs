@@ -1,4 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 
@@ -14,11 +14,22 @@ internal class SubstitutionPostProcessor
 
         var queryVars = variableToTermMapping.Keys.Where((variable) => !variable.Identifier.StartsWith('#'));
 
-        var mappingWithoutInternals = new Dictionary<Variable, ISimpleTerm>(new VariableComparer());
+        var mappingWithoutInternalsOnLeft = new Dictionary<Variable, ISimpleTerm>(new VariableComparer());
         foreach (var variable in queryVars)
         {
             var term = _mappingBuilder.BuildTerm(variable, variableToTermMapping);
-            mappingWithoutInternals.Add(variable, term);
+            mappingWithoutInternalsOnLeft.Add(variable, term);
+        }
+
+        var mappingWithoutInternals = new Dictionary<Variable, ISimpleTerm>(new VariableComparer());
+        foreach(var pair in mappingWithoutInternalsOnLeft)
+        {
+            if (pair.Value is Variable rightVar && rightVar.Identifier.StartsWith('#'))
+            {
+                continue;
+            }
+
+            mappingWithoutInternals.Add(pair.Key, pair.Value);
         }
 
         return mappingWithoutInternals;

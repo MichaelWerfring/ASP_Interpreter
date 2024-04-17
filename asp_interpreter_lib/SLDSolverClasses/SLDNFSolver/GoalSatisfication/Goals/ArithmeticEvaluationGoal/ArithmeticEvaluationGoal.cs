@@ -1,8 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Arithmetics;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Unification;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 
@@ -19,18 +17,21 @@ public class ArithmeticEvaluationGoal : IGoal
         ArgumentNullException.ThrowIfNull(state);
 
         if (state.CurrentGoals.Count() < 1) { throw new ArgumentException(nameof(state)); }
-
-        Evaluation evaluation;
+        Structure evaluation;
         try
         {
-            evaluation = (Evaluation)state.CurrentGoals.First();
+            evaluation = (Structure)state.CurrentGoals.First();
         }
         catch
         {
-            throw new ArgumentException("Must be an evaluation term!");
+            throw new ArgumentException("Must be a structure.");
+        }
+        if(evaluation.Children.Count() != 2)
+        {
+            throw new ArgumentException(nameof(state));
         }
 
-        var rightEvaluationMaybe = _evaluator.Evaluate(evaluation.Right);
+        var rightEvaluationMaybe = _evaluator.Evaluate(evaluation.Children.ElementAt(1));
         int rightEvaluation;
         try
         {
@@ -41,7 +42,7 @@ public class ArithmeticEvaluationGoal : IGoal
             return [];
         }
 
-        if (evaluation.Left is Variable leftVariable)
+        if (evaluation.Children.ElementAt(1) is Variable leftVariable)
         {
             Dictionary<Variable, ISimpleTerm> substitution = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
             {
@@ -60,7 +61,7 @@ public class ArithmeticEvaluationGoal : IGoal
                 )
             ];
         }
-        else if(evaluation.Left is Integer leftInt)
+        else if(evaluation.Children.ElementAt(0) is Integer leftInt)
         {
             if (leftInt.Value != rightEvaluation)
             {

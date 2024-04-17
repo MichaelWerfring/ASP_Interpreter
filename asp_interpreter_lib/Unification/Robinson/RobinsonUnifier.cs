@@ -1,16 +1,6 @@
-﻿using Antlr4.Runtime.Atn;
-using asp_interpreter_lib.ErrorHandling;
+﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Reducer;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Arithmetics;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Comparison;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.General;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.List;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Negation;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.SASP;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Unification;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 
@@ -21,7 +11,7 @@ public class RobinsonUnifier
     private SimpleTermComparer _comparer = new SimpleTermComparer();
     private VariableSubstituter _substituter = new VariableSubstituter();
     private SimpleTermContainsChecker _containsChecker = new SimpleTermContainsChecker();
-    private StructureReducer _structureReducer = new StructureReducer();
+    private StructureReducer _reducer = new StructureReducer();
 
     private bool _doOccursCheck;
 
@@ -90,7 +80,7 @@ public class RobinsonUnifier
         // if both are structures
         if (other is IStructure b)
         {
-            var reductionMaybe = _structureReducer.Reduce(structure, b);
+            var reductionMaybe = _reducer.TryReduce(structure, b);
             if (!reductionMaybe.HasValue)
             {
                 _hasSucceded = false;
@@ -99,10 +89,11 @@ public class RobinsonUnifier
 
             var reduction = reductionMaybe.GetValueOrThrow();
 
-            for (int i = 0; i < reduction.Lefts.Count(); i++)
+            foreach(var pair in reduction)
             {
-                TryUnify(reduction.Lefts.ElementAt(i), reduction.Rights.ElementAt(i));
+                TryUnify(pair.Item1, pair.Item2);
             }
+
         }
         // left is structure and right variable
         else

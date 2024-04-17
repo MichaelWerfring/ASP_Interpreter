@@ -1,10 +1,11 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.SLDSolverClasses.Events;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
 using asp_interpreter_lib.SLDSolverClasses.SubstitutionPostProcessing;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
@@ -15,8 +16,8 @@ public class AdvancedSLDSolver
 {
     private SubstitutionPostProcessor _postProcessor = new SubstitutionPostProcessor();
 
-    private IDatabase _database;
     private GoalResolver _goalSolver;
+    private IDatabase _database;
 
     public AdvancedSLDSolver(IDatabase database, GoalResolver goalSolver)
     {

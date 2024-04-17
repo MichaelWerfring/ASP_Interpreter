@@ -1,5 +1,5 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Arithmetics;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.Types.ArithmeticOperations;
 using asp_interpreter_lib.Types.Terms;
@@ -33,7 +33,7 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram
             var left = _converter.Convert(_term.Left);
             var right = _converter.Convert(_term.Right);
 
-            return new Some<ISimpleTerm>(new Division(left, right));
+            return new Some<ISimpleTerm>(new Structure("/", [left, right], false));
         }
 
         public override IOption<ISimpleTerm> Visit(Minus minus)
@@ -41,7 +41,7 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram
             var left = _converter.Convert(_term.Left);
             var right = _converter.Convert(_term.Right);
 
-            return new Some<ISimpleTerm>(new Subtraction(left, right));
+            return new Some<ISimpleTerm>(new Structure("+", [left, right], false));
         }
 
         public override IOption<ISimpleTerm> Visit(Plus plus)
@@ -49,7 +49,7 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram
             var left = _converter.Convert(_term.Left);
             var right = _converter.Convert(_term.Right);
 
-            return new Some<ISimpleTerm>(new Addition(left, right));
+            return new Some<ISimpleTerm>(new Structure("-", [left, right], false));
         }
 
         public override IOption<ISimpleTerm> Visit(Multiply multiply)
@@ -57,7 +57,7 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram
             var left = _converter.Convert(_term.Left);
             var right = _converter.Convert(_term.Right);
 
-            return new Some<ISimpleTerm>(new Multiplication(left, right));
+            return new Some<ISimpleTerm>(new Structure("*", [left, right], false));
         }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Arithmetics;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.General;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Negation;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
@@ -12,8 +8,6 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram;
 
 public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 {
-    private StringTermConverter _stringConverter = new StringTermConverter();
-
     public ISimpleTerm Convert(ITerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -35,13 +29,6 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
     public override IOption<ISimpleTerm> Visit(AnonymusVariableTerm _)
     {
         return new None<ISimpleTerm>();
-    }
-
-    public override IOption<ISimpleTerm> Visit(VariableTerm term)
-    {
-        ArgumentNullException.ThrowIfNull(term);
-
-        return new Some<ISimpleTerm>(new Variable(term.Identifier));
     }
 
     public override IOption<ISimpleTerm> Visit(ArithmeticOperationTerm term)
@@ -70,21 +57,14 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
                 return new None<ISimpleTerm>();
             }
         }
-        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildren));
+        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildren, false));
     }
 
-    public override IOption<ISimpleTerm> Visit(StringTerm term)
+    public override IOption<ISimpleTerm> Visit(ConventionalList term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        return new Some<ISimpleTerm>(_stringConverter.Convert(term));
-    }
-
-    public override IOption<ISimpleTerm> Visit(NumberTerm term)
-    {
-        ArgumentNullException.ThrowIfNull(term);
-
-        return new Some<ISimpleTerm>(new Integer(term.Value));
+        return new Some<ISimpleTerm>(ConvertConventionalList(term.Terms));
     }
 
     public override IOption<ISimpleTerm> Visit(NegatedTerm term)
@@ -102,7 +82,14 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
             return new None<ISimpleTerm>();
         }
 
-        return new Some<ISimpleTerm>(new ClassicalNegation(innerTerm));
+        throw new NotImplementedException();
+    }
+
+    public override IOption<ISimpleTerm> Visit(NumberTerm term)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+
+        return new Some<ISimpleTerm>(new Integer(term.Value));
     }
 
     public override IOption<ISimpleTerm> Visit(ParenthesizedTerm term)
@@ -112,11 +99,64 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         var inner = term.Term.Accept(this);
         try
         {
-            return new Some<ISimpleTerm>(new Parenthesis(inner.GetValueOrThrow()));
+            return new Some<ISimpleTerm>(new Structure("parenthesis", [inner.GetValueOrThrow()], false));
         }
         catch
         {
             return new None<ISimpleTerm>();
         }
     }
+
+    public override IOption<ISimpleTerm> Visit(RecursiveList term)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+
+        throw new NotImplementedException();
+    }
+
+    public override IOption<ISimpleTerm> Visit(StringTerm term)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+
+        return new Some<ISimpleTerm>(ConvertString(term.Value));
+    }
+
+    public override IOption<ISimpleTerm> Visit(VariableTerm term)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+
+        return new Some<ISimpleTerm>(new Variable(term.Identifier));
+    }
+
+    private ISimpleTerm ConvertString(string str)
+    {
+        if (str.Equals(string.Empty))
+        {
+            return new Structure("nil", [], false);
+        }
+
+        var head = new Structure(str.First().ToString(), Enumerable.Empty<ISimpleTerm>(), false);
+        var tail = ConvertString(new string(str.Skip(1).ToArray()));
+
+        return new Structure("list", [head, tail], false);
+    }
+
+    private ISimpleTerm ConvertRecursiveList(RecursiveList term)
+    {
+        throw new NotImplementedException();
+    }
+
+    private ISimpleTerm ConvertConventionalList(IEnumerable<ITerm> terms)
+    {
+       if (terms.Count() == 0) { return new Structure("nil", [], false); }
+
+        return new Structure("list", [ConvertConventionalList(terms.Skip(1))], false);
+    }
+
+
+
+
+
+
+
 }

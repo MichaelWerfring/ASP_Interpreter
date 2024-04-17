@@ -1,21 +1,16 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Unification;
+namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 
-public class UnificationStructure : IStructure
+public class Variable : ISimpleTerm
 {
-    public UnificationStructure(ISimpleTerm left, ISimpleTerm right)
+    public Variable(string identifier)
     {
-        ArgumentNullException.ThrowIfNull(left, nameof(left));
-        ArgumentNullException.ThrowIfNull(right, nameof(right));
-
-        Left = left;
-        Right = right;
+        ArgumentException.ThrowIfNullOrWhiteSpace(identifier);
+        Identifier = identifier;
     }
 
-    public ISimpleTerm Left { get; }
-
-    public ISimpleTerm Right { get; }
+    public string Identifier { get; }
 
     public void Accept(ISimpleTermVisitor visitor)
     {
@@ -39,6 +34,6 @@ public class UnificationStructure : IStructure
 
     public override string ToString()
     {
-        return $"=({Left}, {Right})";
+        return Identifier;
     }
 }

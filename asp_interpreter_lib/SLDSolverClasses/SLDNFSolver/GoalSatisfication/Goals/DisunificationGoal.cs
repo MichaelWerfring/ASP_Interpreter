@@ -1,6 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Unification;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.Unification.Interfaces;
 
@@ -24,17 +23,21 @@ public class DisunificationGoal : IGoal
 
         if (state.CurrentGoals.Count() < 1) { throw new ArgumentException(nameof(state)); }
 
-        DisunificationStructure evaluation;
+        Structure disunification;
         try
         {
-            evaluation = (DisunificationStructure)state.CurrentGoals.First();
+            disunification = (Structure)state.CurrentGoals.First();
         }
         catch
         {
-            throw new ArgumentException("Must be a disunification term!");
+            throw new ArgumentException("Must be a structure.");
+        }
+        if (disunification.Children.Count() != 2)
+        {
+            throw new ArgumentException(nameof(state));
         }
 
-        var substitutionMaybe = _algorithm.Unify(evaluation.Left, evaluation.Right);
+        var substitutionMaybe = _algorithm.Unify(disunification.Children.ElementAt(0), disunification.Children.ElementAt(1));
 
         Dictionary<Variable, ISimpleTerm> substitution;
         try

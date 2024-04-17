@@ -1,8 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Arithmetics;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures.Unification;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 using asp_interpreter_lib.Unification.Interfaces;
@@ -27,18 +25,18 @@ public class UnificationGoal : IGoal
         ArgumentNullException.ThrowIfNull(state);
 
         if (state.CurrentGoals.Count() < 1) { throw new ArgumentException(nameof(state)); }
-
-        UnificationStructure evaluation;
+        Structure evaluation;
         try
         {
-            evaluation = (UnificationStructure)state.CurrentGoals.First();
+            evaluation = (Structure)state.CurrentGoals.First();
         }
         catch
         {
-            throw new ArgumentException("Must be a unification term!");
+            throw new ArgumentException(nameof(state));
         }
+        if(evaluation.Children.Count() != 2) { throw new ArgumentException(nameof(state)); }
 
-        var substitutionMaybe = _algorithm.Unify(evaluation.Left, evaluation.Right);
+        var substitutionMaybe = _algorithm.Unify(evaluation.Children.ElementAt(0), evaluation.Children.ElementAt(1));
 
         Dictionary<Variable, ISimpleTerm> substitution;
         try
