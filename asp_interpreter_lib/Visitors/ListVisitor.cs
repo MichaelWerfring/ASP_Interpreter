@@ -9,7 +9,14 @@ public class ListVisitor(IErrorLogger errorLogger): ASPBaseVisitor<IOption<ListT
     
     public override IOption<ListTerm> VisitConventionalList(ASPParser.ConventionalListContext context)
     {
-        var terms = context.terms().Accept(new TermsVisitor(_errorLogger));
+        var innerList = context.terms();
+
+        if (innerList == null)
+        {
+            return new Some<ListTerm>(new ConventionalList([]));
+        }
+        
+        var terms = innerList.Accept(new TermsVisitor(_errorLogger));
         
         if(!terms.HasValue)
         {

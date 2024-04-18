@@ -39,7 +39,7 @@ term
     | list                                  #listTerm
     | term arithop term                     #arithmeticOperationTerm;
 
-list: SQUARE_OPEN terms SQUARE_CLOSE       #conventionalList
+list: SQUARE_OPEN terms? SQUARE_CLOSE       #conventionalList
     | SQUARE_OPEN term OR term SQUARE_CLOSE #recursiveList;
 
 arithop 
