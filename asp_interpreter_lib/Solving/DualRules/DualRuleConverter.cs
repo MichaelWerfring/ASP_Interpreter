@@ -10,12 +10,6 @@ using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
 
 namespace asp_interpreter_lib.Solving;
 
-public struct DualConverterOptions(string rewriteHeadPrefix, string forallPrefix)
-{
-    public string RewriteHeadPrefix { get; } = rewriteHeadPrefix;
-    public string ForallPrefix { get; } = forallPrefix;
-}
-
 public class DualRuleConverter
 {
     private readonly HashSet<string> _variables;
@@ -26,13 +20,13 @@ public class DualRuleConverter
     
     private readonly VariableFinder _variableFinder;
     
-    private readonly DualConverterOptions _options;
+    private readonly PrefixOptions _options;
 
     private bool _negateInnerForall;
     
     public DualRuleConverter(
         AspProgram program,
-        DualConverterOptions options,
+        PrefixOptions options,
         bool negateInnerForall = true)
     {
         ArgumentNullException.ThrowIfNull(program);
@@ -167,7 +161,7 @@ public class DualRuleConverter
 
         var copier = new StatementCopyVisitor();
         Statement rule = stmt.Accept(copier).GetValueOrThrow("Cannot copy given statement!");
-
+        
         if (!stmt.HasBody)
         {
             //return GetDualRules([ComputeHead(stmt)]);
@@ -245,11 +239,11 @@ public class DualRuleConverter
         return [];
     }
 
-    public List<Statement> AddForall(Statement statement)
+    public List<Statement> AddForall(Statement rule)
     {
-        ArgumentNullException.ThrowIfNull(statement);
+        ArgumentNullException.ThrowIfNull(rule);
         
-        var bodyVariables = GetBodyVariables(statement);
+        var bodyVariables = GetBodyVariables(rule);
 
         if (bodyVariables.Count == 0)
         {
@@ -257,14 +251,14 @@ public class DualRuleConverter
         }
 
         //Headless statements are treated by the NMR Check
-        if (!statement.HasHead)
+        if (!rule.HasHead)
         {
-            return [statement];
+            return [rule];
         }
         
         //Copy the statement before
-        Statement rule = statement.Accept(new StatementCopyVisitor()).
-            GetValueOrThrow("Cannot retrieve copy of statement");
+        //Statement rule = statement.Accept(new StatementCopyVisitor()).
+        //    GetValueOrThrow("Cannot retrieve copy of statement");
         
         List<Statement> duals = [];
 
@@ -291,7 +285,6 @@ public class DualRuleConverter
         head.HasNafNegation = true;
         forall.AddHead(head);
         Literal innerGoal;
-        //Made Disjunction
         var dualHead = duals[0].Head.GetValueOrThrow();
         innerGoal = new Literal(
             newId,
@@ -301,6 +294,7 @@ public class DualRuleConverter
         
         //append body with (nested) forall
         forall.AddBody([NestForall(bodyVariables.ToList(), innerGoal)]);
+        
         
         duals.Insert(0,forall);
         head.Identifier = oldId;
