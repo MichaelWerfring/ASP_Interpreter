@@ -25,7 +25,7 @@ public record FunctorTableRecord
 
     // list
     public string List { get; init; } = "#cons";
-    public string Nil { get; init; } = "#nil";
+    public string Nil { get; init; } = "nil";
 
     // sasp
     public string Forall { get; init; } = "#forall";

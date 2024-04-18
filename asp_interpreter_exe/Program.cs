@@ -10,9 +10,9 @@ using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
-using asp_interpreter_lib.InternalProgramClasses.InternalProgram.Database;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.InternalProgramClasses.Database;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();

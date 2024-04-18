@@ -23,13 +23,14 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
     public InternalAspProgram Convert(AspProgram prog)
     {
-        var clauses = prog.Statements.Select(ConvertStatement);
+        var clauses = prog.Statements.Select(ConvertStatement).ToList();
 
         var queryMaybe = prog.Query.ClassicalLiteral.Accept(_goalConverter);
         if(!queryMaybe.HasValue)
         {
             throw new ArgumentException("Could not convert head!");
         }
+
 
         return new InternalAspProgram(clauses, [queryMaybe.GetValueOrThrow()]);
     }
