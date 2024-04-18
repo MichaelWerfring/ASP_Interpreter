@@ -24,10 +24,8 @@ using var host = builder.Build();
 //    throw new ArgumentException("Please provide a source file!");
 //}
 
-var result =
-    FileReader.ReadFile(
-        "C:\\Users\\micha\\FH WN\\4_Semester\\Logikprogrammierung\\ASP_Interpreter\\asp_interpreter_exe\\program1.asp");
-//var result = FileReader.ReadFile(args[0]);
+
+var result = FileReader.ReadFile(args[0]);
 
 if (!result.Success)
 {

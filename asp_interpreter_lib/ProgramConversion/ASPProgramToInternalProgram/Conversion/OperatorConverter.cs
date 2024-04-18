@@ -90,5 +90,10 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conv
         {
             return new Some<string>(_functorTable.LessThan);
         }
+
+        public override IOption<string> Visit(Power op)
+        {
+            return new Some<string>(_functorTable.Power);
+        }
     }
 }

@@ -1,11 +1,21 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals.ArithmeticEvaluation;
 
 public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 {
+    private FunctorTableRecord _functorTable;
+
+    public ArithmeticEvaluator(FunctorTableRecord functorTable)
+    {
+        ArgumentNullException.ThrowIfNull(functorTable);
+
+        _functorTable = functorTable;
+    }
+
     public IOption<int> Evaluate(ISimpleTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -21,7 +31,7 @@ public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
     // automatic failure cases
     public IOption<int> Visit(Structure structure)
     {
-        if(structure.IsNegated) return new Some<int>(0);
+        if(structure.IsNegated) return new None<int>();
 
         if(structure.Children.Count() != 2) return new None<int>();
 
@@ -36,21 +46,26 @@ public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
         {
             return new None<int>();
         }
-        if(structure.Functor == "+")
+
+        if(structure.Functor == _functorTable.Addition)
         {
             return new Some<int>(leftVal + rightVal);
         }
-        else if (structure.Functor == "*")
+        else if (structure.Functor == _functorTable.Multiplication)
         {
             return new Some<int>(leftVal * rightVal);
         }
-        else if (structure.Functor == "/" && rightVal != 0)
+        else if (structure.Functor == _functorTable.Division && rightVal != 0)
         {
             return new Some<int>(leftVal / rightVal);
         }
-        else if (structure.Functor == "-")
+        else if (structure.Functor == _functorTable.Subtraction)
         {
             return new Some<int>(leftVal - rightVal);
+        }
+        else if (structure.Functor == _functorTable.Power)
+        {
+            return new Some<int>(Convert.ToInt32(Math.Pow(leftVal, rightVal)));
         }
 
         return new None<int>();

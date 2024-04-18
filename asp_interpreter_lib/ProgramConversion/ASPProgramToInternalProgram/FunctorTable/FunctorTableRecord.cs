@@ -8,6 +8,8 @@ public record FunctorTableRecord
     public string Subtraction { get; init; } = "-";
     public string Multiplication { get; init; } = "*";
     public string Division { get; init; } = "/";
+    public string Power { get; init; } = "**";
+
     public string Parenthesis { get; init; } = "_";
 
     // number comparison

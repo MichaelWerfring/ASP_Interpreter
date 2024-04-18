@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/ANTLR/ASP.g4 by ANTLR 4.13.1
+// Generated from ASP.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -374,4 +374,16 @@ public interface IASPListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitDivOperation([NotNull] ASPParser.DivOperationContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>powerOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPowerOperation([NotNull] ASPParser.PowerOperationContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>powerOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPowerOperation([NotNull] ASPParser.PowerOperationContext context);
 }
