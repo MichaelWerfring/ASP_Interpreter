@@ -26,4 +26,9 @@ public class ArithmeticOperationVisitor(IErrorLogger errorLogger) : ASPBaseVisit
     {
         return new Some<ArithmeticOperation>(new Divide());
     }
+    
+    public override IOption<ArithmeticOperation> VisitDivOperation(ASPParser.PowerOperation context)
+    {
+        return new Some<ArithmeticOperation>(new Divide());
+    }
 }

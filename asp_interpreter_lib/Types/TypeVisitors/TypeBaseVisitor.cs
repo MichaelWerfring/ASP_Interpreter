@@ -28,6 +28,8 @@ public class TypeBaseVisitor<T>
     
     public virtual IOption<T> Visit(Divide _) => new None<T>();
     
+    public virtual IOption<T> Visit(Power _) => new None<T>();
+    
     public virtual IOption<T> Visit(Disunification _) => new None<T>();
     
     public virtual IOption<T> Visit(Equality _) => new None<T>();

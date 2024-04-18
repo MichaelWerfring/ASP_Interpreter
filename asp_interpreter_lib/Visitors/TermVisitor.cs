@@ -134,7 +134,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
 
     public override IOption<ITerm> VisitListTerm(ASPParser.ListTermContext context)
     {
-        var list =context.list().Accept(new ListVisitor(_errorLogger));
+        var list =context.list().Accept(this);
 
         if (list == null|| !list.HasValue)
         {
@@ -143,5 +143,45 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
         }
         
         return new Some<ITerm>(list.GetValueOrThrow());
+    }
+    
+    public override IOption<ITerm> VisitConventionalList(ASPParser.ConventionalListContext context)
+    {
+        var innerList = context.terms();
+
+        if (innerList == null)
+        {
+            return new Some<ITerm>(new ConventionalList([]));
+        }
+        
+        var terms = innerList.Accept(new TermsVisitor(_errorLogger));
+        
+        if(!terms.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse list terms!", context);
+            return new None<ITerm>();
+        }
+        
+        return new Some<ITerm>(new ConventionalList(terms.GetValueOrThrow()));
+    }
+
+    public override IOption<ITerm> VisitRecursiveList(ASPParser.RecursiveListContext context)
+    {
+        var head = context.term(0).Accept(new TermVisitor(_errorLogger));
+        var tail = context.term(1).Accept(new TermVisitor(_errorLogger));
+
+        if (!head.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse head term!", context);
+            return new None<ITerm>();
+        }
+        
+        if (!tail.HasValue)
+        {
+            _errorLogger.LogError("Cannot parse tail term!", context);
+            return new None<ITerm>();
+        }
+        
+        return new Some<ITerm>(new RecursiveList(head.GetValueOrThrow(), tail.GetValueOrThrow()));
     }
 }

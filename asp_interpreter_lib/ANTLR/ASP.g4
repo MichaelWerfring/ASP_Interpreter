@@ -46,7 +46,8 @@ arithop
     : PLUS                                  #plusOperation
     | MINUS                                 #minusOperation
     | TIMES                                 #timesOperation
-    | DIV                                   #divOperation;
+    | DIV                                   #divOperation
+    | POW                                   #powerOperation;
 
 
 //escaping the " and then match everything except " 
@@ -64,6 +65,7 @@ CONS : ':-';
 PLUS : '+';
 MINUS : '-';
 TIMES : '*';
+POW : '**';
 DIV : '/';
 AT : '@';
 PAREN_OPEN : '(';
