@@ -12,6 +12,6 @@ public class Power : ArithmeticOperation
 
     public override string ToString()
     {
-        return $"/";
+        return $"**";
     }
 }

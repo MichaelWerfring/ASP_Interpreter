@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals.ArithmeticEvaluation;
 
@@ -7,7 +8,14 @@ namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.Com
 
 public class SmallerThanGoal : IGoal
 {
-    private ArithmeticEvaluator _evaluator = new ArithmeticEvaluator();
+    private ArithmeticEvaluator _evaluator;
+
+    public SmallerThanGoal(FunctorTableRecord functorTable)
+    {
+        ArgumentNullException.ThrowIfNull(functorTable);
+
+        _evaluator = new ArithmeticEvaluator(functorTable);
+    }
 
     public IEnumerable<SolverState> TrySatisfy(IDatabase database, SolverState state)
     {

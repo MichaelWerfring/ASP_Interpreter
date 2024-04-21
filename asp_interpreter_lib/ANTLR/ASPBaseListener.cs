@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/ANTLR/ASP.g4 by ANTLR 4.13.1
+// Generated from ASP.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -439,6 +439,20 @@ public partial class ASPBaseListener : IASPListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitDivOperation([NotNull] ASPParser.DivOperationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>powerOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPowerOperation([NotNull] ASPParser.PowerOperationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>powerOperation</c>
+	/// labeled alternative in <see cref="ASPParser.arithop"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPowerOperation([NotNull] ASPParser.PowerOperationContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

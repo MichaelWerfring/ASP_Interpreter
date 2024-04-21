@@ -22,12 +22,12 @@ public class GoalResolver
 
         var dict = new Dictionary<(string, int), IGoal>()
         {
-            {(specialFunctors.ArithmeticEvaluation, 2), new ArithmeticEvaluationGoal() },
+            {(specialFunctors.ArithmeticEvaluation, 2), new ArithmeticEvaluationGoal(specialFunctors) },
 
-            {(specialFunctors.GreaterOrEqualThan, 2), new GreaterThanOrEqualGoal() },
-            {(specialFunctors.GreaterThan, 2), new GreaterThanGoal() },
-            {(specialFunctors.LessOrEqualThan, 2), new SmallerThanOrEqualGoal() },
-            {(specialFunctors.LessThan, 2), new SmallerThanGoal() },
+            {(specialFunctors.GreaterOrEqualThan, 2), new GreaterThanOrEqualGoal(specialFunctors) },
+            {(specialFunctors.GreaterThan, 2), new GreaterThanGoal(specialFunctors) },
+            {(specialFunctors.LessOrEqualThan, 2), new SmallerThanOrEqualGoal(specialFunctors) },
+            {(specialFunctors.LessThan, 2), new SmallerThanGoal(specialFunctors) },
 
             {(specialFunctors.Disunification, 2), new DisunificationGoal(new RobinsonUnificationAlgorithm(false)) },
             {(specialFunctors.Unification, 2), new UnificationGoal(new RobinsonUnificationAlgorithm(false)) },

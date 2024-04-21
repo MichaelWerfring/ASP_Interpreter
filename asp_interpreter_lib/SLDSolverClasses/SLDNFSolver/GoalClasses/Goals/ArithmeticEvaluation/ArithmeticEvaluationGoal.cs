@@ -2,6 +2,7 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
 
 namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals.ArithmeticEvaluation;
@@ -9,7 +10,14 @@ namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goa
 public class ArithmeticEvaluationGoal : IGoal
 {
     private VariableSubstituter _substituter = new VariableSubstituter();
-    private ArithmeticEvaluator _evaluator = new ArithmeticEvaluator();
+    private ArithmeticEvaluator _evaluator;
+
+    public ArithmeticEvaluationGoal(FunctorTableRecord functorTable)
+    {
+        ArgumentNullException.ThrowIfNull(functorTable);
+
+        _evaluator = new ArithmeticEvaluator(functorTable);
+    }
 
     public IEnumerable<SolverState> TrySatisfy(IDatabase database, SolverState state)
     {
