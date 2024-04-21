@@ -68,7 +68,7 @@ static void Show(AspProgram program, string code)
     
     Console.WriteLine("Duals:");
     Console.WriteLine("---------------------------------------------------------------------------");
-    var prefixes = new PrefixOptions("rwh", "fa", "eh", "chk");
+    var prefixes = new PrefixOptions("rwh", "fa", "eh", "chk", "dis");
     DualRuleConverter dualConverter = new(program,
         prefixes,
         true);

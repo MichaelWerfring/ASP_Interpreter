@@ -102,7 +102,7 @@ public class DualRuleConverter
                 continue;
             }
             
-            var newVariable = new VariableTerm(ASPExtensions.GenerateUniqeName("", _ruleNames, "dis"));
+            var newVariable = new VariableTerm(ASPExtensions.GenerateUniqeName("", _ruleNames, _options.DisjunctionPrefix));
             
             var newStatement = new Statement();
             newStatement.AddHead(

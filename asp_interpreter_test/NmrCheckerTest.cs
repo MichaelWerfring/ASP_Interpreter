@@ -6,9 +6,7 @@ namespace asp_interpreter_test;
 
 public class NmrCheckerTest
 {
-    private readonly PrefixOptions _prefixes = new PrefixOptions(
-        "rwh", "fa", "eh", "chk_");
-    
+    private readonly PrefixOptions _prefixes = ASPExtensions.CommonPrefixes;
     
     [Test]
     public void NmrCheckHandlesBasicProgram()

@@ -11,8 +11,7 @@ namespace asp_interpreter_test;
 
 public class DualRuleTest
 {
-    private readonly PrefixOptions _prefixes = new PrefixOptions(
-        "rwh", "fa", "eh", "chk");
+    private readonly PrefixOptions _prefixes = ASPExtensions.CommonPrefixes;
     
     [Test]
     public void TransformHeadHandlesCompoundTerms()

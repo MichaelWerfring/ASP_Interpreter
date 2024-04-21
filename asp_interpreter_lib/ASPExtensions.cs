@@ -8,6 +8,11 @@ namespace asp_interpreter_lib;
 
 public static class ASPExtensions
 {
+    private static PrefixOptions _commonPrefixes = new PrefixOptions(
+        "rwh", "fa", "eh", "chk", "dis");
+    
+    public static PrefixOptions CommonPrefixes { get; } = _commonPrefixes;
+    
     // Helper method to get a program from a given code
     public static AspProgram GetProgram(string code, IErrorLogger logger)
     {
