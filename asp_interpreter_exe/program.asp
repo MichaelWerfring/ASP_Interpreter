@@ -1,3 +1,4 @@
-﻿t(A, A, B,B, A). 
+﻿p(0).
+p(X) :- q(X,Y), not p(X).
 
-t?
+p(X)?

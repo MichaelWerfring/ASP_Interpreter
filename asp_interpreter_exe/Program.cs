@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Antlr4.Runtime;
+using asp_interpreter_lib;
 using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.FileIO;
 using asp_interpreter_lib.Visitors;
@@ -13,21 +14,22 @@ using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.InternalProgramClasses.Database;
+using asp_interpreter_lib.Solving;
+using asp_interpreter_lib.Solving.NMRCheck;
+using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
 builder.Services.AddTransient<ProgramVisitor>();
 using var host = builder.Build();
 
-//if(args.Length != 1)
-//{
-//    throw new ArgumentException("Please provide a source file!");
-//}
+if(args.Length != 1)
+{
+    throw new ArgumentException("Please provide a source file!");
+}
 
-var result =
-    FileReader.ReadFile(
-        "C:\\Users\\micha\\FH WN\\4_Semester\\Logikprogrammierung\\ASP_Interpreter\\asp_interpreter_exe\\program1.asp");
-//var result = FileReader.ReadFile(args[0]);
+var result = FileReader.ReadFile(args[0]);
 
 if (!result.Success)
 {
@@ -48,38 +50,72 @@ if (!program.HasValue)
 }
 
 var prog = program.GetValueOrThrow();
-//DualRuleConverter dualConverter = new(prog);
-//var duals = dualConverter.GetDualRules(program.GetValueOrThrow().Statements);
 
-var graphBuilder = new CallGraphBuilder();
-var callGraph = graphBuilder.BuildCallGraph(program.GetValueOrThrow().Statements);
-PrintAll(program.GetValueOrThrow(), callGraph);
+Show(prog, result.Content);
+Console.ReadKey();
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-Console.WriteLine("---------------------------------------------------------------------------");
 
-var functorTable = new FunctorTableRecord();
-var converter = new ProgramConverter(functorTable);
-InternalAspProgram internalProgram = converter.Convert(prog);
-
-IDatabase database = new StandardDatabase(internalProgram.Statements);
-var solver = new AdvancedSLDSolver(database, functorTable);
-solver.SolutionFound += (sender, e) =>
+static void Show(AspProgram program, string code)
 {
+    Console.WriteLine("Program:");
     Console.WriteLine("---------------------------------------------------------------------------");
-    Console.WriteLine("Solution found!");
-    foreach(var pair in e.Mapping)
+    Console.WriteLine(program.ToString());
+    Console.WriteLine("---------------------------------------------------------------------------");
+    
+    Console.WriteLine("Press any key to display dual program...");
+    Console.WriteLine("\n\n\n");
+    Console.ReadKey();
+    
+    Console.WriteLine("Duals:");
+    Console.WriteLine("---------------------------------------------------------------------------");
+    var prefixes = new PrefixOptions("rwh", "fa", "eh", "chk");
+    DualRuleConverter dualConverter = new(program,
+        prefixes,
+        true);
+    var duals = dualConverter.GetDualRules(CopyProgram(code).Statements);
+    foreach (var dual in duals)
     {
-        Console.WriteLine($"{pair.Key} = {pair.Value}");
+        Console.WriteLine(dual);
     }
-
     Console.WriteLine("---------------------------------------------------------------------------");
-};
+    
+    Console.WriteLine("Press any key to show OLON rules...");
+    Console.WriteLine("\n\n\n");
+    Console.ReadKey();
+    
+    Console.WriteLine("OLON Rules:");
+    Console.WriteLine("---------------------------------------------------------------------------");
+    //var graphBuilder = new CallGraphBuilder();
+    //var callGraph = graphBuilder.BuildCallGraph(program.Statements);
+    //PrintAll(program, callGraph);
+    List<Statement> olonRules = new OLONRulesFilterer().FilterOlonRules(program.Statements);
+    foreach (var rule in olonRules)
+    {
+        Console.WriteLine(rule.ToString());
+    }
+    
+    Console.WriteLine("---------------------------------------------------------------------------");
+    
+    Console.WriteLine("Press any key to show NMR-Check...");
+    Console.WriteLine("\n\n\n");
+    Console.ReadKey();
+    
+    Console.WriteLine("NMR- Check:");
+    Console.WriteLine("---------------------------------------------------------------------------");
+    NmrChecker checker = new(prefixes);
+    var nmrCheck = checker.GetSubCheckRules(olonRules);
+    
+    foreach (var rule in nmrCheck)
+    {
+        Console.WriteLine(rule.ToString());
+    }
+    Console.WriteLine("---------------------------------------------------------------------------");
+}
 
-solver.Solve(internalProgram.Query);
-
-Console.WriteLine("---------------------------------------------------------------------------");
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+static AspProgram CopyProgram(string program)
+{
+    return ASPExtensions.GetProgram(program, new ConsoleErrorLogger());
+}
 
 static void PrintAll(AspProgram program, AdjacencyGraph<Statement, CallGraphEdge?> callGraph)
 {
