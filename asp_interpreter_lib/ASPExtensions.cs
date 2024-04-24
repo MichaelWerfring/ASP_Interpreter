@@ -9,7 +9,7 @@ namespace asp_interpreter_lib;
 public static class ASPExtensions
 {
     private static PrefixOptions _commonPrefixes = new PrefixOptions(
-        "rwh", "fa", "eh", "chk", "dis");
+        "rwh_", "fa_", "eh_", "chk", "not_", "V");
     
     public static PrefixOptions CommonPrefixes { get; } = _commonPrefixes;
     
@@ -30,7 +30,7 @@ public static class ASPExtensions
         return program.GetValueOrThrow();
     }
     
-    public static string GenerateUniqeName(string currentName, HashSet<string> variables, string prefix)
+    public static string GenerateUniqeName(string currentName, HashSet<string> variables, string prefix, bool useUnderline = true)
     {
         ArgumentNullException.ThrowIfNull(variables);
         
@@ -41,9 +41,10 @@ public static class ASPExtensions
         
         int count = 0;
         string newVariable;
+
         do
         {
-            newVariable= prefix + count + "_" + currentName;
+            newVariable= prefix + count + (useUnderline ? "_" : "") + currentName;
             count++;
         } while (variables.Contains(newVariable));
         
@@ -51,7 +52,7 @@ public static class ASPExtensions
         return newVariable;
     }
     
-    public static string GenerateUniqeName(string currentName, List<string> variables, string prefix)
+    public static string GenerateUniqeName(string currentName, List<string> variables, string prefix, bool useUnderline = true)
     {
         ArgumentNullException.ThrowIfNull(variables);
         
@@ -59,7 +60,7 @@ public static class ASPExtensions
         string newVariable;
         do
         {
-            newVariable= prefix + count + "_" + currentName;
+            newVariable= prefix + count + (useUnderline ? "_" : "") + currentName;
             count++;
         } while (variables.Contains(newVariable));
         

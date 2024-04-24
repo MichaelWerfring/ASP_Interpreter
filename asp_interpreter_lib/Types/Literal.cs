@@ -26,7 +26,7 @@ public class Literal : Goal
     public List<ITerm> Terms
     {
         get => _terms;
-        private set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
+        set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
     }
 
     //Negated in this context means classical negation 

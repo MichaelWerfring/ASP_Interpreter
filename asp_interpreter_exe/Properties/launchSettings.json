@@ -1,8 +1,7 @@
 {
   "profiles": {
     "asp_interpreter_exe": {
-      "commandName": "Project",
-      "commandLineArgs": "\"D:\\FH\\Semester 4\\Logikprogrammierung ILV\\SASP-Projekt\\ASP_Interpreter\\asp_interpreter_exe\\program1.asp\""
+      "commandName": "Project"
     }
   }
 }

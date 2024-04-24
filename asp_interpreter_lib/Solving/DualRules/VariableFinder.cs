@@ -8,7 +8,7 @@ using asp_interpreter_lib.Types.TypeVisitors;
 
 namespace asp_interpreter_lib.Solving.DualRules;
 
-public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
+public class VariableFinder() : TypeBaseVisitor<List<VariableTerm>>
 {
     public override IOption<List<VariableTerm>> Visit(AspProgram program)
     {
@@ -54,7 +54,7 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
                 goal.Accept(this).IfHasValue(v => variables.AddRange(v));
             }
         }
-
+        
         return new Some<List<VariableTerm>>(variables);
     }
 

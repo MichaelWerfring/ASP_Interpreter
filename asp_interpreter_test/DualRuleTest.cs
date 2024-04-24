@@ -14,240 +14,199 @@ public class DualRuleTest
     private readonly PrefixOptions _prefixes = ASPExtensions.CommonPrefixes;
     
     [Test]
-    public void TransformHeadHandlesCompoundTerms()
+    public void ToDisjunctionHandlesTwoGoals()
     {
         string code = """
-                      a(X, b(X, Y)) :- c(X, Y).
-                      a? 
-                      """;
-        var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
-        
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var duals = dualRuleConverter.GetDualRules(program.Statements);
-
-        Assert.That(duals[0].ToString(), Is.EqualTo("not a(X, b(rwh0_X, Y)) :- rwh0_X \\= X."));
-        Assert.That(duals[1].ToString(), Is.EqualTo("not a(X, b(rwh0_X, Y)) :- rwh0_X = X, not c(X, Y)."));
-    }
-
-    [Test]
-    public void ForallIgnoresNonVariableTerms()
-    {
-        string code = """
-                      a(X) :- c(X), d(X, 0), e(1).
-                      a?
-                      """;
-        var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
-        
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var duals = dualRuleConverter.GetDualRules(program.Statements);
-       
-        Assert.That(duals.Count == 3 &&
-                    duals[0].ToString() == "not a(X) :- not c(X)." &&
-                    duals[1].ToString() == "not a(X) :- c(X), not d(X, 0)." &&
-                    duals[2].ToString() == "not a(X) :- c(X), d(X, 0), not e(1).");
-    }
-
-    [Test]
-    public void GetDualRulesForStatementReturnsCorrectDualRules()
-    {
-        //p(X, Y) :- not q(X), t(Y, Y).
-        string code = """
-                      p(X, Y) :- not q(X), t(Y, Y).
+                      a(X, Y) :- c(X), not b(X, Y).
                       p?
                       """;
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var duals = dualRuleConverter.GetDualRules(program.Statements);
-
-        //not p(X, Y) :- q(X).
-        string firstDual = duals[0].ToString();
         
-        //not p(X, Y) :- not q(X), not t(Y, Y).
-        string secondDual = duals[1].ToString();
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
         
-        Assert.That(firstDual == "not p(X, Y) :- q(X)." && 
-                    secondDual == "not p(X, Y) :- not q(X), not t(Y, Y).");
-    }
-
-    [Test]
-    public void ForallTreatsSingleBodyVariableCorrectly()
-    {
-        string code = """
-                      q(X) :- not p(X, Y).
-                      q?
-                      """;
-
-        var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
-        
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var duals = dualRuleConverter.GetDualRules(program.Statements);
-            
-        Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
-                    duals[0].ToString() == "not q(X) :- forall(Y, not fa0_q(X, Y))." && 
-                    duals[1].ToString() == "not fa0_q(X, Y) :- p(X, Y).");
-    }
-
-    [Test]
-    public void ForallTreatsMultipleBodyVariablesCorrectly()
-    {
-        string code = """
-                      q(X) :- not p(X, Y, Z).
-                      q?
-                      """;
-
-        var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
-
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var duals = dualRuleConverter.GetDualRules(program.Statements);
-        
-        Assert.That(duals.Count == 2 && errorLogger.Errors.Count == 0 &&
-                    duals[0].ToString() == "not q(X) :- forall(Y, forall(Z, not fa0_q(X, Y, Z)))." && 
-                    duals[1].ToString() == "not fa0_q(X, Y, Z) :- p(X, Y, Z).");
+        Assert.That(dual.Count == 2);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == "not_a(X, Y) :- not c(X).");
+            Assert.That(dual[1].ToString() == "not_a(X, Y) :- c(X), b(X, Y).");
+        });
     }
     
     [Test]
-    public void TestComplexConversion ()
+    public void ToDisjunctionHandlesLiteralsAndBinaryOperations()
     {
         string code = """
-                      p(0).
-                      p(X) :- q(X), not t(X, Y).
-                      p?
-                      """;
-
-
-        var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
-
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var duals = dualRuleConverter.GetDualRules(program.Statements);
-        
-        Assert.That(errorLogger.Errors.Count == 0 && duals.Count == 5 &&
-                    duals[0].ToString() == "not p(dis0_) :- not idis0_p(dis0_), not idis1_p(dis0_)." &&
-                    duals[1].ToString() == "not idis0_p(rwh0_0) :- rwh0_0 \\= 0." &&
-                    duals[2].ToString() == "not idis1_p(X) :- forall(Y, not fa0_idis1_p(X, Y))." &&
-                    duals[3].ToString() == "not fa0_idis1_p(X, Y) :- not q(X)." &&
-                    duals[4].ToString() == "not fa0_idis1_p(X, Y) :- q(X), t(X, Y).");
-
-    }
-
-    [Test]
-    public void GetDualsSkipsEmptyHeads()
-    {
-        string code = """
-                      :- q(X).
+                      a(X, Y) :- not b(X), Y = 4.
                       p?
                       """;
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var duals = dualRuleConverter.GetDualRules(program.Statements);
         
-        Assert.That(duals.Count == 0);
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
+        
+        Assert.That(dual.Count == 2);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == "not_a(X, Y) :- b(X).");
+            Assert.That(dual[1].ToString() == "not_a(X, Y) :- not b(X), Y \\= 4.");
+        });
     }
     
     [Test]
-    public void GetDualsHandlesEmptyBody()
+    public void ToDisjunctionDoesNotAlterClassicalNegation()
     {
         string code = """
-                      p(3).
+                      a(X, Y) :- not -b(X), Y = 4, -c(Y), d(X, Y).
                       p?
                       """;
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var dual = dualRuleConverter.GetDualRules(program.Statements);   
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
         
-        Assert.That(dual.Count == 1 && dual[0].ToString() == "not p(rwh0_3) :- rwh0_3 \\= 3.");
-    }
-
-    [Test]
-    public void GetDualsHandlesMultipleBodyVariablesInMultipleLiterals()
-    {
-        string code = """
-                      a(X) :- b(X, Y), c(Z).
-                      p?
-                      """;
-
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
-        
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var dual = dualRuleConverter.GetDualRules(program.Statements);
-
-        Assert.That(dual.Count == 3 &&
-                    dual[0].ToString() == "not a(X) :- forall(Y, forall(Z, not fa0_a(X, Y, Z)))." &&
-                    dual[1].ToString() == "not fa0_a(X, Y, Z) :- not b(X, Y)." &&
-                    dual[2].ToString() == "not fa0_a(X, Y, Z) :- b(X, Y), not c(Z).");
+        Assert.That(dual.Count == 4);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == "not_a(X, Y) :- -b(X).");
+            Assert.That(dual[1].ToString() == "not_a(X, Y) :- not -b(X), Y \\= 4.");
+            Assert.That(dual[2].ToString() == "not_a(X, Y) :- not -b(X), Y = 4, not -c(Y).");
+            Assert.That(dual[3].ToString() == "not_a(X, Y) :- not -b(X), Y = 4, -c(Y), not d(X, Y).");
+        });
     }
     
     [Test]
-    public void GetDualsHandlesMultipleBodyVariablesInMultipleLiteralsAndWithoutHead()
+    public void ToDisjunctionIgnoresEmptyHeads()
     {
         string code = """
-                      a :- b(X), b(Y), b(Z).
+                      :- not b(X), c(Y), not d(X, Y).
                       p?
                       """;
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var dual = dualRuleConverter.GetDualRules(program.Statements);   
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
         
-        Assert.That(dual.Count == 4 && 
-                    dual[0].ToString() == "not a :- forall(X, forall(Y, forall(Z, not fa0_a(X, Y, Z))))." &&
-                    dual[1].ToString() == "not fa0_a(X, Y, Z) :- not b(X)." &&
-                    dual[2].ToString() == "not fa0_a(X, Y, Z) :- b(X), not b(Y)." &&
-                    dual[3].ToString() == "not fa0_a(X, Y, Z) :- b(X), b(Y), not b(Z).");
-    }
-
-    [Test]
-    public void GetDualsWorksOnSeveralLiteralsWithSameVariable()
-    {
-        string code = """
-                      a :- b(X), c(X), d(X).
-                      p?
-                      """;
-
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
-        
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var dual = dualRuleConverter.GetDualRules(program.Statements);   
-        
-        Assert.That(dual.Count == 4 && 
-                    dual[0].ToString() == "not a :- forall(X, not fa0_a(X))." &&
-                    dual[1].ToString() == "not fa0_a(X) :- not b(X)." &&
-                    dual[2].ToString() == "not fa0_a(X) :- b(X), not c(X)." &&
-                    dual[3].ToString() == "not fa0_a(X) :- b(X), c(X), not d(X).");
+        Assert.That(dual.Count == 1);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == ":- not b(X), c(Y), not d(X, Y).");
+        });
     }
     
     [Test]
-    public void GetDualsDoesNotRemoveClassicalNegationWhenAppendingForall()
+    public void ToDisjunctionAppliesForallOnPositiveLiteral()
     {
         string code = """
-                      a(X) :- -c(X), -b(X, Y).
+                      a(X) :- not b(X), d(X, Y).
                       p?
                       """;
 
         var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
         
-        var dualRuleConverter = new DualRuleConverter(program, _prefixes);
-        var dual = dualRuleConverter.GetDualRules(program.Statements);
-
-        string d1 = dual[0].ToString();
-        string d2 =dual[1].ToString();
-        string d3 =dual[2].ToString();
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
         
         Assert.That(dual.Count == 3);
         Assert.Multiple(() =>
         {
-            Assert.That(d1 == "not a(X) :- forall(Y, not fa0_a(X, Y)).");
-            Assert.That(d2 == "not fa0_a(X, Y) :- not -c(X).");
-            Assert.That(d3 == "not fa0_a(X, Y) :- -c(X), not -b(X, Y).");
+            Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
+            Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
+            Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), not d(X, Y).");
+        });
+    }
+    
+    [Test]
+    public void ToDisjunctionAppliesForallOnNegativeLiteral()
+    {
+        string code = """
+                      a(X) :- not b(X), not d(X, Y).
+                      p?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
+        
+        Assert.That(dual.Count == 3);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
+            Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
+            Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), d(X, Y).");
+        });
+    }
+    
+    [Test]
+    public void ToDisjunctionAppliesForallOnBinaryOperation()
+    {
+        string code = """
+                      a(X) :- not b(X), Y = 4.
+                      p?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
+        
+        Assert.That(dual.Count == 3);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
+            Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
+            Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), Y \\= 4.");
+        });
+    }
+    
+    [Test]
+    public void ForallDoesNotAlterClassicalNegation()
+    {
+        string code = """
+                      a(X) :- not b(X), -c(Y), not -d(X, Y).
+                      p?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
+        
+        Assert.That(dual.Count == 4);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
+            Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
+            Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), not -c(Y).");
+            Assert.That(dual[3].ToString() == "fa_a(X, Y) :- not b(X), -c(Y), -d(X, Y).");
+        });
+    }
+    
+    [Test]
+    public void ForallHandlesMultipleBodyVariables()
+    {
+        string code = """
+                      a(X) :- not b(X), Y = 4, c(X, Y, Z).
+                      p?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
+        
+        Assert.That(dual.Count == 4);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, forall(Z, fa_a(X, Y, Z))).");
+            Assert.That(dual[1].ToString() == "fa_a(X, Y, Z) :- b(X).");
+            Assert.That(dual[2].ToString() == "fa_a(X, Y, Z) :- not b(X), Y \\= 4.");
+            Assert.That(dual[3].ToString() == "fa_a(X, Y, Z) :- not b(X), Y = 4, not c(X, Y, Z).");
         });
     }
 }

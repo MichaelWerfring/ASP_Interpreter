@@ -5,12 +5,18 @@ public class PrefixOptions(
     string forallPrefix,
     string emptyHeadPrefix,
     string checkPrefix,
-    string disjunctionPrefix)
+    string dualPrefix,
+    string variablePrefix)
 {
     public string RewriteHeadPrefix { get; } = rewriteHeadPrefix;
+    
     public string ForallPrefix { get; } = forallPrefix;
+    
     public string EmptyHeadPrefix { get; } = emptyHeadPrefix;
+    
     public string CheckPrefix { get; } = checkPrefix;
     
-    public string DisjunctionPrefix { get; } = disjunctionPrefix;
+    public string DualPrefix { get; } = dualPrefix;
+    
+    public string VariablePrefix { get; } = variablePrefix;
 }

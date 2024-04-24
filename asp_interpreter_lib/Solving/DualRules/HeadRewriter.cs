@@ -8,8 +8,8 @@ namespace asp_interpreter_lib.Solving.DualRules;
 
 public class HeadRewriter : TypeBaseVisitor<Statement>
 {
-    private readonly string _commonPrefix;
-
+    private readonly PrefixOptions _options;
+    
     private readonly Statement _statement;
     
     private readonly Literal _head;
@@ -18,9 +18,9 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
 
     private readonly TermCopyVisitor _termCopyVisitor = new();
     
-    public HeadRewriter(string commonPrefix, Statement statement)
+    public HeadRewriter(PrefixOptions options, Statement statement)
     {
-        _commonPrefix = commonPrefix;
+        _options = options;
         _statement = statement;
         _head = statement.Head.GetValueOrThrow("Cannot rewrite headless statement!");
         _variables = new HashSet<string>();
@@ -61,8 +61,13 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
             return new Some<Statement>(_statement);    
         }
         
+        //var newVariable = new VariableTerm(term.Identifier);
         var newVariable = new VariableTerm(
-            ASPExtensions.GenerateUniqeName(term.Identifier, _variables, _commonPrefix));
+            ASPExtensions.GenerateUniqeName(
+                term.Identifier,
+                _variables,
+                _options.VariablePrefix,
+                false));
 
         var oldTerm = term.Accept(_termCopyVisitor).GetValueOrThrow("Cannot copy term!");
         
@@ -98,11 +103,17 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
     public override IOption<Statement> Visit(StringTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
-        
+
         //Accept ToString/Null values for now
+        //var newHeadVariable = new VariableTerm(
+        //    ASPExtensions.GenerateUniqeName(term.ToString() ?? "", _variables, _commonPrefix));
         var newHeadVariable = new VariableTerm(
-            ASPExtensions.GenerateUniqeName(term.ToString() ?? "", _variables, _commonPrefix));
-                
+            ASPExtensions.GenerateUniqeName(
+                string.Empty,
+                _variables, 
+                _options.VariablePrefix,
+                false));
+
         //replace head
         //_statement.Head.Literal?.Terms[_statement.Head.Literal?.Terms.IndexOf(term)] = newHeadVariable;
         int i = _head.Terms.IndexOf(term);
@@ -127,8 +138,12 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
         
         //Accept ToString/Null values for now
         var newHeadVariable = new VariableTerm(
-            ASPExtensions.GenerateUniqeName(term.ToString() ?? "", _variables, _commonPrefix));
-                
+            ASPExtensions.GenerateUniqeName(
+                string.Empty,
+                _variables, 
+                _options.VariablePrefix,
+                false));   
+        
         //replace head
         int i = _head.Terms.IndexOf(term);
         
