@@ -22,4 +22,10 @@
       <PackageReference Include="QuikGraph.Graphviz" Version="2.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="program1.asp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

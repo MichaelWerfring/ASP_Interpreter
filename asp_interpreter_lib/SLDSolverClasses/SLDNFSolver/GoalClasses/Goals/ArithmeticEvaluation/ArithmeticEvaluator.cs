@@ -28,11 +28,8 @@ public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
         return new Some<int>(integer.Value);
     }
 
-    // automatic failure cases
     public IOption<int> Visit(Structure structure)
     {
-        if(structure.IsNegated) return new None<int>();
-
         if(structure.Children.Count() != 2) return new None<int>();
 
         int leftVal;

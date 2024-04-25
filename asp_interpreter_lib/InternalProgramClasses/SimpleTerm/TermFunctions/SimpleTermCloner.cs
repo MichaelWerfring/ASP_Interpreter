@@ -25,7 +25,7 @@ public class SimpleTermCloner : ISimpleTermVisitor<ISimpleTerm>
             copiedChildren.Add(child.Accept(this));
         }
 
-        return new Structure(term.Functor.GetCopy(), copiedChildren, term.IsNegated);
+        return new Structure(term.Functor.GetCopy(), copiedChildren);
     }
 
     public ISimpleTerm Visit(Integer integer)

@@ -32,7 +32,7 @@ internal class TermFromMappingBuilder : ISimpleTermArgsVisitor<ISimpleTerm, Dict
             newChildren[i] = term.Children.ElementAt(i).Accept(this, mapping);
         }
 
-        return new Structure(term.Functor.GetCopy(), newChildren, term.IsNegated);
+        return new Structure(term.Functor.GetCopy(), newChildren);
     }
 
     public ISimpleTerm Visit(Integer term, Dictionary<Variable, ISimpleTerm> mapping)

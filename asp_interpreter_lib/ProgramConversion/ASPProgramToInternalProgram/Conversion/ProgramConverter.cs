@@ -9,38 +9,41 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapp
 
 public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 {
-    private GoalConverter _goalConverter;
+    private FunctorTableRecord _record;
 
     public ProgramConverter(FunctorTableRecord functorTable)
     {
         ArgumentNullException.ThrowIfNull(functorTable);
 
-        _goalConverter = new GoalConverter(functorTable);
+        _record = functorTable;
     }
 
     public InternalAspProgram Convert(AspProgram prog)
     {
         var clauses = prog.Statements.Select(ConvertStatement).ToList();
 
-        var queryMaybe = prog.Query.ClassicalLiteral.Accept(_goalConverter);
-        if(!queryMaybe.HasValue)
+        var goalConverterForQuery = new GoalConverter(_record);
+
+        var queryMaybe = prog.Query.ClassicalLiteral.Accept(goalConverterForQuery);
+        if (!queryMaybe.HasValue)
         {
             throw new ArgumentException("Could not convert head!");
         }
-
 
         return new InternalAspProgram(clauses, [queryMaybe.GetValueOrThrow()]);
     }
 
     private IEnumerable<ISimpleTerm> ConvertStatement(Statement statement)
     {
+        var converter = new GoalConverter(_record);
+
         var list = new List<ISimpleTerm>();
 
         if(statement.HasHead)
         {
             var head = statement.Head.GetValueOrThrow();
 
-            var convertedHeadMaybe = _goalConverter.Convert(head);
+            var convertedHeadMaybe = converter.Convert(head);
             if (!convertedHeadMaybe.HasValue)
             {
                 throw new Exception("Could not convert head!");
@@ -51,7 +54,7 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
         foreach (var goal in statement.Body)
         {
-            var convertedGoalMaybe = _goalConverter.Convert(goal);
+            var convertedGoalMaybe = converter.Convert(goal);
             if (!convertedGoalMaybe.HasValue)
             {
                 throw new Exception("Could not convert goal!");
