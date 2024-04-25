@@ -1,9 +1,9 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 
-namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals.ArithmeticEvaluation;
+namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.ArithmeticEvaluation;
 
 public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 {

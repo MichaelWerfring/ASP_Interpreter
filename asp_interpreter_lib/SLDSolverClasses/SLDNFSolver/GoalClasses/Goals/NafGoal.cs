@@ -1,9 +1,8 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
 
-namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
+namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals;
 
 public class NafGoal : IGoal
 {

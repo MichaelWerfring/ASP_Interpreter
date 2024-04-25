@@ -2,14 +2,12 @@
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 using asp_interpreter_lib.SLDSolverClasses.Events;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
-using asp_interpreter_lib.SLDSolverClasses.SubstitutionPostProcessing;
-using asp_interpreter_lib.SLDSolverClasses.VariableRenaming;
+using asp_interpreter_lib.SLDSolverClasses.PostProcessing;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses;
 
 namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
 

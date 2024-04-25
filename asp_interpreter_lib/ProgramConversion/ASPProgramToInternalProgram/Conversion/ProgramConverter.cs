@@ -1,11 +1,10 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
 
-namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
+namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
 public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 {

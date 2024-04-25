@@ -1,13 +1,12 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals.ArithmeticEvaluation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.ArithmeticEvaluation;
 
 namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.Comparison;
 

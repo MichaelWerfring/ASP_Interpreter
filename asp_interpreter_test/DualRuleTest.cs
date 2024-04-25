@@ -1,6 +1,7 @@
 ﻿using System.Xml.Linq;
 using asp_interpreter_lib;
 using asp_interpreter_lib.Solving;
+using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
@@ -230,7 +231,6 @@ public class DualRuleTest
         });
     }
     
-    
     [Test]
     public void ForallSkipsFacts()
     {
@@ -300,6 +300,54 @@ public class DualRuleTest
         
         Assert.That(statement.ToString() == "a(V0) :- V0 = b.");
     }
+
+    [Test]
+    public void ComputeHeadHandlesHandlesNegatedTerm()
+    {
+        string code = """
+                      a(-4).
+                      a?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
+        
+        Assert.That(statement.ToString() == "a(V0) :- V0 = -4."); 
+    }
+
+    [Test]
+    public void ComputeHeadHandlesHandlesCompoundTerm()
+    {
+        string code = """
+                      a(b(2, X, X, -3, (4), c)).
+                      a?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
+        
+        Assert.That(statement.ToString() == "a(b(V0, X, V1, V2, V3, V4)) :- V4 = c, V3 = 4, V2 = -3, V1 = X, V0 = 2."); 
+    }
+    
+    [Test]
+    public void ComputeHeadHandlesHandlesParenthesisedTerm()
+    {
+        string code = """
+                      a(((4))).
+                      a?
+                      """;
+
+        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
+        
+        Assert.That(statement.ToString() == "a(V0) :- V0 = 4."); 
+    }
     
     [Test]
     public void TestComplexConversion ()
@@ -327,7 +375,6 @@ public class DualRuleTest
             Assert.That(duals[4].ToString() == "fa_p2(X, Y) :- q(X), t(X, Y).");
         });
     }
-    
     
     [Test]
     public void ComplexConversionDoesNotAlterClassicalNegation()

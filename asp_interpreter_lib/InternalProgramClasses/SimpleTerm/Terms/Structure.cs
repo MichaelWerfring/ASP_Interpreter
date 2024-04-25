@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
-using asp_interpreter_lib.ListExtensions;
+﻿using asp_interpreter_lib.ListExtensions;
 using System.Text;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 

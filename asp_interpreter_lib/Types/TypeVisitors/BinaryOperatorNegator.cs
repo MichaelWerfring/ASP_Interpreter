@@ -1,8 +1,7 @@
 ﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types.BinaryOperations;
-using asp_interpreter_lib.Types.TypeVisitors;
 
-namespace asp_interpreter_lib.Solving;
+namespace asp_interpreter_lib.Types.TypeVisitors;
 
 public class BinaryOperatorNegator : TypeBaseVisitor<BinaryOperator>
 {

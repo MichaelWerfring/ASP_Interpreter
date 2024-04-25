@@ -11,7 +11,6 @@ using asp_interpreter_lib.OLONDetection.CallGraph;
 using asp_interpreter_lib.OLONDetection;
 using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.Solving;
@@ -19,6 +18,8 @@ using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using Antlr4.Runtime.Misc;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+using asp_interpreter_lib.Solving.DualRules;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();

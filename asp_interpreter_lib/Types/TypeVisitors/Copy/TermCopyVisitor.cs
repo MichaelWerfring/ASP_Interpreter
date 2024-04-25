@@ -1,8 +1,7 @@
-﻿using System.Security.AccessControl;
-using asp_interpreter_lib.ErrorHandling;
+﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types.Terms;
 
-namespace asp_interpreter_lib.Types.TypeVisitors;
+namespace asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 {

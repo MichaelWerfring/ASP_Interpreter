@@ -1,12 +1,7 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 
-namespace asp_interpreter_lib.SLDSolverClasses.VariableRenaming
+namespace asp_interpreter_lib.SLDSolverClasses.ClauseRenamer
 {
     public class VariableComparer : IEqualityComparer<Variable>
     {

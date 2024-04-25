@@ -1,16 +1,14 @@
-﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+﻿using asp_interpreter_lib.InternalProgramClasses.Database;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.GoalMapping;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals;
+using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.ArithmeticEvaluation;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.Comparison;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses.Goals.Unification;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.GoalMapping;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication.Goals.ArithmeticEvaluation;
-using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Unification.Robinson;
 
-namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalSatisfication;
+namespace asp_interpreter_lib.SLDSolverClasses.SLDNFSolver.GoalClasses;
 
 public class GoalResolver
 {

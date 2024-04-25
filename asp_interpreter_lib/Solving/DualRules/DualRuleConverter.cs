@@ -1,21 +1,10 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using System.Diagnostics.SymbolStore;
-using System.Reflection.Emit;
-using System.Reflection.Metadata.Ecma335;
-using Antlr4.Runtime.Tree.Xpath;
-using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.Solving.DualRules;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.BinaryOperations;
+﻿using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
-using BasicTerm = asp_interpreter_lib.Types.Terms.BasicTerm;
-using GoalNegator = asp_interpreter_lib.Solving.DualRules.GoalNegator;
 using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
 
-namespace asp_interpreter_lib.Solving;
+namespace asp_interpreter_lib.Solving.DualRules;
 
 public class DualRuleConverter
 {
@@ -37,8 +26,8 @@ public class DualRuleConverter
 
     public Statement ComputeHead(Statement rule)
     {
-        HeadRewriter rewriter = new HeadRewriter(_options, rule);
-        return rewriter.Visit(rule).GetValueOrThrow("Cannot rewrite head of rule!");
+        HeadVariableEliminator rewriter = new HeadVariableEliminator(_options, rule);
+        return rewriter.Rewrite(rule);
     }
 
     private Dictionary<(string,int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)

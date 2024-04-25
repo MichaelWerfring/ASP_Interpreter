@@ -1,14 +1,11 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types.ArithmeticOperations;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
 
-namespace asp_interpreter_lib.Solving.DualRules;
+namespace asp_interpreter_lib.Types.TypeVisitors;
 
-public class VariableFinder() : TypeBaseVisitor<List<VariableTerm>>
+public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
 {
     public override IOption<List<VariableTerm>> Visit(AspProgram program)
     {

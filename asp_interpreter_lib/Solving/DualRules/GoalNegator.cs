@@ -3,6 +3,7 @@ using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 namespace asp_interpreter_lib.Solving.DualRules;
 
