@@ -67,7 +67,7 @@ public class DualRuleConverter
         return disjunctions;
     }
 
-    public List<Statement> GetDualRules(List<Statement> rules,bool appendPrefix = true)
+    public List<Statement> GetDualRules(IEnumerable<Statement> rules,bool appendPrefix = true)
     {
         List<Statement> duals = [];
         
