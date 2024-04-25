@@ -37,7 +37,7 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Dictionar
             newChildren[i] = term.Children.ElementAt(i).Accept(this, mapping);
         }
 
-        return new Structure(term.Functor.ToString(), newChildren, term.IsNegated);
+        return new Structure(term.Functor.ToString(), newChildren);
     }
 
     public ISimpleTerm Visit(Integer integer, Dictionary<Variable, ISimpleTerm> arguments)

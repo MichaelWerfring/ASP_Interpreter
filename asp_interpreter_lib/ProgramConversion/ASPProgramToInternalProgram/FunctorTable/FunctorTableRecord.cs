@@ -3,7 +3,7 @@
 public record FunctorTableRecord
 {
     // arithmetic
-    public string ArithmeticEvaluation { get; init; } = "is";
+    public string ArithmeticEvaluation { get; init; } = "_is";
     public string Addition { get; init; } = "+";
     public string Subtraction { get; init; } = "-";
     public string Multiplication { get; init; } = "*";
@@ -22,13 +22,16 @@ public record FunctorTableRecord
     public string Unification { get; init; } = "=";
     public string Disunification { get; init; } = "\\=";
 
-    // naf
-    public string NegationAsFailure { get; init; } = "#not";
+    // negation
+    public string NegationAsFailure { get; init; } = "_not";
+    public string ClassicalNegation { get; init; } = "_neg";
 
     // list
-    public string List { get; init; } = "#cons";
-    public string Nil { get; init; } = "nil";
+    public string List { get; init; } = "_cons";
+    public string Nil { get; init; } = "_nil";
 
     // sasp
-    public string Forall { get; init; } = "#forall";
+    public string Forall { get; init; } = "_forall";
+
+    public string AnonymusVariable { get; init; } = "_anonVar";
 }

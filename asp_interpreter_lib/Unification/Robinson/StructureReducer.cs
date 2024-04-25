@@ -30,8 +30,6 @@ public class StructureReducer : ISimpleTermArgsVisitor<IOption<IEnumerable<(ISim
         (
             basicTerm.Functor != b.Functor  
             ||
-            basicTerm.IsNegated != b.IsNegated 
-            || 
             basicTerm.Children.Count() != b.Children.Count()
         )
         {

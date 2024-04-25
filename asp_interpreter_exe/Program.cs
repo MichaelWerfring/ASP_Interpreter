@@ -18,18 +18,19 @@ using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using Antlr4.Runtime.Misc;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
 builder.Services.AddTransient<ProgramVisitor>();
 using var host = builder.Build();
 
-if(args.Length != 1)
-{
-    throw new ArgumentException("Please provide a source file!");
-}
+//if(args.Length != 1)
+//{
+//    throw new ArgumentException("Please provide a source file!");
+//}
 
-var result = FileReader.ReadFile(args[0]);
+var result = FileReader.ReadFile("program1.asp");
 
 if (!result.Success)
 {
@@ -51,9 +52,31 @@ if (!program.HasValue)
 
 var prog = program.GetValueOrThrow();
 
-Show(prog, result.Content);
-Console.ReadKey();
+// ----------------------------------------------------------------------------------------------------------------
 
+var record = new FunctorTableRecord();
+var converter = new ProgramConverter(record);
+
+var convertedProgram = converter.Convert(prog);
+Console.WriteLine(convertedProgram.ToString());
+
+var db = new StandardDatabase(convertedProgram.Statements);
+
+// ----------------------------------------------------------------------------------------------------------------
+
+
+var solver = new AdvancedSLDSolver(db, record);
+solver.SolutionFound += (_, sol) =>
+{
+    Console.WriteLine("Solution found!");
+    Console.WriteLine("----------------------------------------");
+    foreach (var pair in sol.Mapping)
+    {
+        Console.WriteLine($"{pair.Key} = {pair.Value}");
+    }
+    Console.WriteLine("----------------------------------------");
+};
+solver.Solve(convertedProgram.Query);
 
 static void Show(AspProgram program, string code)
 {
@@ -68,8 +91,10 @@ static void Show(AspProgram program, string code)
     
     Console.WriteLine("Duals:");
     Console.WriteLine("---------------------------------------------------------------------------");
-    
-    DualRuleConverter dualConverter = new(ASPExtensions.CommonPrefixes);
+    var prefixes = new PrefixOptions("rwh", "fa", "eh", "chk", "dis", "var");
+    DualRuleConverter dualConverter = new(
+        prefixes,
+        true);
     var duals = dualConverter.GetDualRules(CopyProgram(code).Statements);
     foreach (var dual in duals)
     {
@@ -100,7 +125,7 @@ static void Show(AspProgram program, string code)
     
     Console.WriteLine("NMR- Check:");
     Console.WriteLine("---------------------------------------------------------------------------");
-    NmrChecker checker = new(ASPExtensions.CommonPrefixes);
+    NmrChecker checker = new(prefixes);
     var nmrCheck = checker.GetSubCheckRules(olonRules);
     
     foreach (var rule in nmrCheck)

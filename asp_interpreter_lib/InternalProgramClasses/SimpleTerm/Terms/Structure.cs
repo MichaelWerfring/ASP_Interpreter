@@ -6,21 +6,18 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 
 public class Structure : IStructure
 {
-    public Structure(string functor, IEnumerable<ISimpleTerm> children, bool isNegated)
+    public Structure(string functor, IEnumerable<ISimpleTerm> children)
     {
         ArgumentException.ThrowIfNullOrEmpty(functor);
         ArgumentNullException.ThrowIfNull(children);
 
         Functor = functor;
         Children = children;
-        IsNegated = isNegated;
     }
 
     public string Functor { get; }
 
     public IEnumerable<ISimpleTerm> Children { get; }
-
-    public bool IsNegated { get; }
 
     public void Accept(ISimpleTermVisitor visitor)
     {

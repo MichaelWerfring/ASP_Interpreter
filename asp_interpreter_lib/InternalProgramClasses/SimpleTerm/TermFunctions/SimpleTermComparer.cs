@@ -56,11 +56,6 @@ public class SimpleTermComparer : ISimpleTermArgsVisitor<bool, ISimpleTerm>, IEq
             return false;
         }
 
-        if(a.IsNegated != bStruct.IsNegated)
-        {
-            return false;
-        }
-
         for (int i = 0; i < a.Children.Count(); i++)
         {
 

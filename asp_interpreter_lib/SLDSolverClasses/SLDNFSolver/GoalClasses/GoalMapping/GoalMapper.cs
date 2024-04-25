@@ -33,11 +33,6 @@ public class GoalMapper: ISimpleTermVisitor<IOption<IGoal>>
 
     public IOption<IGoal> Visit(Structure basicTerm)
     {
-        if (basicTerm.IsNegated)
-        {
-            return new Some<IGoal>(new DatabaseUnificationGoal(new RobinsonUnificationAlgorithm(false)));
-        }
-
         IGoal goal;
         _mapping.TryGetValue( (basicTerm.Functor, basicTerm.Children.Count()),out goal);
         if (goal == null)

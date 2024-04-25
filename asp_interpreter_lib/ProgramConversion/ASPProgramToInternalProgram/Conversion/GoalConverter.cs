@@ -48,25 +48,28 @@ public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
             return new None<ISimpleTerm>();
         }
 
-        var convertedStruct = new Structure(_functorTable.Forall, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()], false);
+        var convertedStruct = new Structure(_functorTable.Forall, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
         return new Some<ISimpleTerm>(convertedStruct);
     }
 
     public override IOption<ISimpleTerm> Visit(Literal goal)
     {
-        var childrenMaybes = goal.Terms.Select(_termConverter.Convert);
-
-        if (childrenMaybes.Any( (maybe) => !maybe.HasValue)) { return new None<ISimpleTerm>(); }
+        var children = goal.Terms.Select(_termConverter.Convert);
 
         var convertedTerm = new Structure(
                                             goal.Identifier.GetCopy(),
-                                            childrenMaybes.Select((maybe) => maybe.GetValueOrThrow()),
-                                            goal.HasStrongNegation
+                                            children.ToList()
                                          );
-        if(goal.HasNafNegation)
+
+        if (goal.HasStrongNegation)
         {
-            convertedTerm = new Structure(_functorTable.NegationAsFailure, [convertedTerm], false);
+            convertedTerm = new Structure(_functorTable.ClassicalNegation, [convertedTerm]);
+        }
+
+        if (goal.HasNafNegation)
+        {
+            convertedTerm = new Structure(_functorTable.NegationAsFailure, [convertedTerm]);
         }
 
         return new Some<ISimpleTerm>(convertedTerm);
@@ -82,7 +85,7 @@ public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
 
         var functor = _operatorConverter.Convert(goal.BinaryOperator);
 
-        var convertedStructure = new Structure(functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()], false);
+        var convertedStructure = new Structure(functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
         return new Some<ISimpleTerm>(convertedStructure);       
     }
