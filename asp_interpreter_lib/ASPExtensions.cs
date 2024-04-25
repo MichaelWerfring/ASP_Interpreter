@@ -9,7 +9,7 @@ namespace asp_interpreter_lib;
 public static class ASPExtensions
 {
     private static PrefixOptions _commonPrefixes = new PrefixOptions(
-        "rwh_", "fa_", "eh_", "chk", "not_", "V");
+        "rwh_", "fa_", "eh", "chk_", "not_", "V");
     
     public static PrefixOptions CommonPrefixes { get; } = _commonPrefixes;
     

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
 using System.Reflection.Emit;
 using System.Reflection.Metadata.Ecma335;
@@ -40,17 +41,19 @@ public class DualRuleConverter
         return rewriter.Visit(rule).GetValueOrThrow("Cannot rewrite head of rule!");
     }
 
-    private Dictionary<(string,int), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
+    private Dictionary<(string,int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
     {
         //heads mapped to all bodies occuring in the program
-        Dictionary<(string,int), List<Statement>> disjunctions = [];
+        Dictionary<(string, int, bool), List<Statement>> disjunctions = [];
         
         foreach (var rule in rules)
         {
             //Headless rules will be treated within nmr check
             if (!rule.HasHead) continue;
             var head = rule.Head.GetValueOrThrow("Headless rules must be treated by the NMR check!");
-            var signature = (head.Identifier, head.Terms.Count);
+            
+            var signature = (head.Identifier, head.Terms.Count, head.HasStrongNegation);
+            //var signature = ((head.HasStrongNegation ? "-" : "") + head.Identifier, head.Terms.Count);
             
             var converted = ComputeHead(rule);
             
@@ -60,25 +63,25 @@ public class DualRuleConverter
                 disjunctions[signature].Add(converted);
             }
         }
-
+        
         return disjunctions;
     }
 
-    public List<Statement> GetDualRules(List<Statement> rules)
+    public List<Statement> GetDualRules(List<Statement> rules,bool appendPrefix = true)
     {
         List<Statement> duals = [];
         
         var disjunctions = PreprocessRules(rules.Select(ComputeHead));
         foreach (var disjunction in disjunctions)
         {
-            duals.AddRange(ToConjunction(disjunction));
+            duals.AddRange(ToConjunction(disjunction, appendPrefix));
         }
 
         return duals;
     }
 
     private IEnumerable<Statement> ToConjunction(
-        KeyValuePair<(string, int), List<Statement>> disjunction, 
+        KeyValuePair<(string, int, bool), List<Statement>> disjunction, 
         bool appendPrefix = true)
     {
         List<Statement> duals = [];
@@ -88,7 +91,7 @@ public class DualRuleConverter
         wrapper.AddHead(new Literal(
             (appendPrefix ? _options.DualPrefix : "") + disjunction.Key.Item1,
             false,
-            false,
+            disjunction.Key.Item3,
             GenerateVariables(disjunction.Key.Item2)
             ));
 

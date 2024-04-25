@@ -396,4 +396,87 @@ public class DualRuleTest
             Assert.That(duals[10].ToString()== "not_flies(X) :- bird(X), ab(X).");
         });
     }
+
+    [Test]
+    public void GeneratesDualsForClassicalNegationSeparately()
+    {
+        string code = """
+                      p(X) :- not q(X), r(X).
+                      -p(X) :- s(X), not t(X).
+                      p(4)?
+                      """;
+        
+        var errorLogger = new MockErrorLogger();
+        var program = ASPExtensions.GetProgram(code, errorLogger);
+
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var duals = dualRuleConverter.GetDualRules(program.Statements);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 4);
+            Assert.That(duals[0].ToString() == "not_p(X) :- q(X).");
+            Assert.That(duals[1].ToString() == "not_p(X) :- not q(X), not r(X).");
+            Assert.That(duals[2].ToString() == "-not_p(X) :- not s(X).");
+            Assert.That(duals[3].ToString() == "-not_p(X) :- s(X), t(X).");
+        });
+    }
+    
+    [Test]
+    public void ComplexConversionHandlesClassicalNegationInHead()
+    {
+        string code = """
+                      penguin(sam).
+                      wounded_bird(john).
+                      bird(tweety).
+                      
+                      bird(X) :- penguin(X).
+                      bird(X) :- wounded_bird(X).
+                      
+                      ab(X) :- penguin(X).
+                      ab(X) :- wounded_bird(X).
+                      
+                      flies(X) :- bird(X), not ab(X).
+                      
+                      -flies(X) :- ab(X).
+                      -flies(X) :- -bird(X).
+                      
+                      -wounded_bird(X) :- not wounded_bird(X).
+                      -penguin(X) :- not penguin(X).
+                      -ab(X) :- not ab(X).
+                      -bird(X) :- not bird(X).
+                      
+                      flies(sam)?
+                      """;
+        
+        var errorLogger = new MockErrorLogger();
+        var program = ASPExtensions.GetProgram(code, errorLogger);
+
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var duals = dualRuleConverter.GetDualRules(program.Statements);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 18);
+            Assert.That(duals[0].ToString() == "not_penguin(V0) :- V0 \\= sam.");
+            Assert.That(duals[1].ToString() == "not_wounded_bird(V0) :- V0 \\= john.");
+            Assert.That(duals[2].ToString() == "not_bird(V1) :- not_bird1(V1), not_bird2(V1), not_bird3(V1).");
+            Assert.That(duals[3].ToString() == "not_bird1(V0) :- V0 \\= tweety.");
+            Assert.That(duals[4].ToString() == "not_bird2(X) :- not penguin(X).");
+            Assert.That(duals[5].ToString() == "not_bird3(X) :- not wounded_bird(X).");
+            Assert.That(duals[6].ToString() == "not_ab(V1) :- not_ab1(V1), not_ab2(V1).");
+            Assert.That(duals[7].ToString() == "not_ab1(X) :- not penguin(X).");
+            Assert.That(duals[8].ToString() == "not_ab2(X) :- not wounded_bird(X).");
+            Assert.That(duals[9].ToString() == "not_flies(X) :- not bird(X).");
+            Assert.That(duals[10].ToString()== "not_flies(X) :- bird(X), ab(X).");
+            Assert.That(duals[11].ToString()== "-not_flies(V1) :- -not_flies1(V1), -not_flies2(V1).");
+            Assert.That(duals[12].ToString()== "-not_flies1(X) :- not ab(X).");
+            Assert.That(duals[13].ToString()== "-not_flies2(X) :- not -bird(X).");
+            Assert.That(duals[14].ToString()== "-not_wounded_bird(X) :- wounded_bird(X).");
+            Assert.That(duals[15].ToString()== "-not_penguin(X) :- penguin(X).");
+            Assert.That(duals[16].ToString()== "-not_ab(X) :- ab(X).");
+            Assert.That(duals[17].ToString()== "-not_bird(X) :- bird(X).");
+        });
+        
+    }
 }

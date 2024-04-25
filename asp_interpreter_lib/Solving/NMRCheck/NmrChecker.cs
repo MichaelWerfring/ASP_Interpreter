@@ -51,7 +51,7 @@ public class NmrChecker(PrefixOptions options)
         }
         
         // 2) generate dual for modified rule
-        var duals = converter.GetDualRules(olonRules);
+        var duals = converter.GetDualRules(olonRules, false);
         
         List<Literal> nmrCheckBody = [];
         // 3) assign unique head (e.g. chk0)
