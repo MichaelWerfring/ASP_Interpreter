@@ -78,27 +78,25 @@ public class DualRuleConverter
     }
 
     private IEnumerable<Statement> ToConjunction(
-        KeyValuePair<(string, int), List<Statement>> disjunction)
+        KeyValuePair<(string, int), List<Statement>> disjunction, 
+        bool appendPrefix = true)
     {
         List<Statement> duals = [];
 
         // 1) generate new rule at top (named like input)
-        // 2) rename old rule heads 
-        // 3) add heads to body of new rule
-        // 4) generate duals for old rules
-        // 5) add duals to list
-        
-        // a(X, Y) :- c(X), b(Y).
-        // a(A, B) :- d(B, A). 
-
-        // 1) generate new rule at top (named like input)
         Statement wrapper = new();
         wrapper.AddHead(new Literal(
-            disjunction.Key.Item1,
+            (appendPrefix ? _options.DualPrefix : "") + disjunction.Key.Item1,
             false,
             false,
             GenerateVariables(disjunction.Key.Item2)
             ));
+
+        //If there is just one statement its not a disjunction
+        if (disjunction.Value.Count == 1)
+        {
+            return ToDisjunction(disjunction.Value[0]);
+        }
         
         List<Goal> wrapperBody = [];
         
@@ -107,10 +105,19 @@ public class DualRuleConverter
             // 2) rename old rule heads
             var goal = disjunction.Value[i];
             var head = goal.Head.GetValueOrThrow();
-            head.Identifier = head.Identifier + i + 1;
+            head.Identifier += (i + 1);
             
             // 3) add heads to body of new rule
-            wrapperBody.Add(head);            
+            
+            // 3.1 insert variables from head into body goals
+            var copy = goal.Head.GetValueOrThrow().Accept(new LiteralCopyVisitor(new TermCopyVisitor()))
+                .GetValueOrThrow("Cannot copy rule!");
+            copy.Identifier = (appendPrefix ? _options.DualPrefix : "") + copy.Identifier;
+            copy.Terms.Clear();
+            copy.Terms.AddRange(wrapper.Head.GetValueOrThrow().Terms);
+            
+            wrapperBody.Add(copy);
+            
             
             // 4) generate duals for old rules
             // 5) add duals to list
@@ -128,7 +135,7 @@ public class DualRuleConverter
         List<ITerm> vars = [];
         for (int i = 0; i < number ; i++)
         {
-            vars.Add(new VariableTerm("V" + i + 1));
+            vars.Add(new VariableTerm("V" + (i + 1)));
         }
 
         return vars;
@@ -136,10 +143,6 @@ public class DualRuleConverter
     
     public IEnumerable<Statement> ToDisjunction(Statement rule, bool appendPrefix = true)
     {
-        // if headless just skip
-        // check if forall is applicable if yes apply
-        // foreach part in body negate and add perceeding
-        
         if (!rule.HasHead)
         {
             return [rule];
@@ -229,7 +232,7 @@ public class DualRuleConverter
         var bodyVariables = GetBodyVariables(rule);
 
         //Headless statements are treated by the NMR Check
-        if (!rule.HasHead || !rule.HasBody ||bodyVariables.Count == 0)
+        if (!rule.HasHead || bodyVariables.Count == 0)
         {
             return [rule];
         }

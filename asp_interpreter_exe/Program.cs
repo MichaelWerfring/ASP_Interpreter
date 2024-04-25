@@ -68,10 +68,8 @@ static void Show(AspProgram program, string code)
     
     Console.WriteLine("Duals:");
     Console.WriteLine("---------------------------------------------------------------------------");
-    var prefixes = new PrefixOptions("rwh", "fa", "eh", "chk", "dis");
-    DualRuleConverter dualConverter = new(program,
-        prefixes,
-        true);
+    
+    DualRuleConverter dualConverter = new(ASPExtensions.CommonPrefixes);
     var duals = dualConverter.GetDualRules(CopyProgram(code).Statements);
     foreach (var dual in duals)
     {
@@ -102,7 +100,7 @@ static void Show(AspProgram program, string code)
     
     Console.WriteLine("NMR- Check:");
     Console.WriteLine("---------------------------------------------------------------------------");
-    NmrChecker checker = new(prefixes);
+    NmrChecker checker = new(ASPExtensions.CommonPrefixes);
     var nmrCheck = checker.GetSubCheckRules(olonRules);
     
     foreach (var rule in nmrCheck)

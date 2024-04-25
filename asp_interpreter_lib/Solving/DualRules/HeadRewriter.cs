@@ -17,6 +17,8 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
     private readonly HashSet<string> _variables;
 
     private readonly TermCopyVisitor _termCopyVisitor = new();
+
+    private int _counter;
     
     public HeadRewriter(PrefixOptions options, Statement statement)
     {
@@ -27,6 +29,7 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
         //var variableGetter = new VariableFinder();
         //var terms = statement.Accept(variableGetter).GetValueOrThrow("Cannot retrieve variables from program!");
         //terms.ForEach(t => _variables.Add(t.Identifier));
+        _counter = 0;
     }
 
 
@@ -61,14 +64,8 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
             return new Some<Statement>(_statement);    
         }
         
-        //var newVariable = new VariableTerm(term.Identifier);
-        var newVariable = new VariableTerm(
-            ASPExtensions.GenerateUniqeName(
-                term.Identifier,
-                _variables,
-                _options.VariablePrefix,
-                false));
-
+        var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
+        
         var oldTerm = term.Accept(_termCopyVisitor).GetValueOrThrow("Cannot copy term!");
         
         
@@ -96,6 +93,20 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
         {
             child.Accept(this);
         }
+
+        if (term.Terms.Count == 0)
+        {
+            var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
+            int i = _head.Terms.IndexOf(term);
+            if (i == -1)
+            {
+                throw new InvalidOperationException("The given term is not contained in the head!");
+            }
+         
+            _head.Terms[i] = newVariable;
+            _statement.Body.Insert(0,new BinaryOperation(
+                newVariable, new Equality(), term));
+        }
         
         return new Some<Statement>(_statement);
     }
@@ -103,16 +114,8 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
     public override IOption<Statement> Visit(StringTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
-
-        //Accept ToString/Null values for now
-        //var newHeadVariable = new VariableTerm(
-        //    ASPExtensions.GenerateUniqeName(term.ToString() ?? "", _variables, _commonPrefix));
-        var newHeadVariable = new VariableTerm(
-            ASPExtensions.GenerateUniqeName(
-                string.Empty,
-                _variables, 
-                _options.VariablePrefix,
-                false));
+        
+        var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
 
         //replace head
         //_statement.Head.Literal?.Terms[_statement.Head.Literal?.Terms.IndexOf(term)] = newHeadVariable;
@@ -123,11 +126,11 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
             throw new InvalidOperationException("The given term is not contained in the head!");
         }
          
-        _head.Terms[i] = newHeadVariable;
+        _head.Terms[i] = newVariable;
                 
         //replace body
         _statement.Body.Insert(0,new BinaryOperation(
-            newHeadVariable, new Equality(), term));
+            newVariable, new Equality(), term));
         
         return new Some<Statement>(_statement);
     }
@@ -136,27 +139,22 @@ public class HeadRewriter : TypeBaseVisitor<Statement>
     {
         ArgumentNullException.ThrowIfNull(term);
         
-        //Accept ToString/Null values for now
-        var newHeadVariable = new VariableTerm(
-            ASPExtensions.GenerateUniqeName(
-                string.Empty,
-                _variables, 
-                _options.VariablePrefix,
-                false));   
-        
+        var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
+
         //replace head
+        //_statement.Head.Literal?.Terms[_statement.Head.Literal?.Terms.IndexOf(term)] = newHeadVariable;
         int i = _head.Terms.IndexOf(term);
         
         if (i == -1)
         {
             throw new InvalidOperationException("The given term is not contained in the head!");
         }
-        
-        _head.Terms[i] = newHeadVariable;
+         
+        _head.Terms[i] = newVariable;
                 
         //replace body
         _statement.Body.Insert(0,new BinaryOperation(
-            newHeadVariable, new Equality(), term));
+            newVariable, new Equality(), term));
         
         return new Some<Statement>(_statement);
     }
