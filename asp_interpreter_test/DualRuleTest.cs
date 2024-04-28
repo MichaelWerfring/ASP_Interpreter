@@ -5,6 +5,7 @@ using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Util;
 using NuGet.Frameworks;
 using Is = NUnit.Framework.Is;
 
@@ -12,7 +13,7 @@ namespace asp_interpreter_test;
 
 public class DualRuleTest
 {
-    private readonly PrefixOptions _prefixes = ASPExtensions.CommonPrefixes;
+    private readonly PrefixOptions _prefixes = AspExtensions.CommonPrefixes;
     
     [Test]
     public void ToDisjunctionHandlesTwoGoals()
@@ -22,7 +23,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -43,7 +44,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -64,7 +65,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -87,7 +88,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -107,7 +108,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -129,7 +130,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -151,7 +152,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -173,7 +174,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -196,7 +197,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
@@ -219,7 +220,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.AddForall(program.Statements[0]).ToList();
@@ -240,7 +241,7 @@ public class DualRuleTest
                       p?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var dual = dualRuleConverter.AddForall(program.Statements[0]).ToList();
@@ -261,7 +262,7 @@ public class DualRuleTest
                       a?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
@@ -277,7 +278,7 @@ public class DualRuleTest
                       a?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
@@ -293,7 +294,7 @@ public class DualRuleTest
                       a?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
@@ -309,7 +310,7 @@ public class DualRuleTest
                       a?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
@@ -325,7 +326,7 @@ public class DualRuleTest
                       a?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
@@ -341,12 +342,44 @@ public class DualRuleTest
                       a?
                       """;
 
-        var program = ASPExtensions.GetProgram(code, new MockErrorLogger());
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
         
         Assert.That(statement.ToString() == "a(V0) :- V0 = 4."); 
+    }
+    
+    [Test]
+    public void ComputeHeadHandlesRecursiveLists()
+    {
+        string code = """
+                      p([X|T]) :- q(X), p(T).
+                      p?
+                      """;
+
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
+        
+        Assert.That(statement.ToString() == "p(V0) :- V0 = [X|T], q(X), p(T).");
+    }
+    
+    [Test]
+    public void ComputeHeadHandlesConventionalLists()
+    {
+        string code = """
+                      p([X,Y,Z]) :- q(X), r(Y), s(Z).
+                      p?
+                      """;
+
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
+        
+        Assert.That(statement.ToString() == "p(V0) :- V0 = [X, Y, Z], q(X), r(Y), s(Z).");
     }
     
     [Test]
@@ -360,7 +393,7 @@ public class DualRuleTest
 
 
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
@@ -387,7 +420,7 @@ public class DualRuleTest
 
 
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
@@ -422,7 +455,7 @@ public class DualRuleTest
                       """;
         
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
@@ -454,7 +487,7 @@ public class DualRuleTest
                       """;
         
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
@@ -497,7 +530,7 @@ public class DualRuleTest
                       """;
         
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
@@ -524,6 +557,52 @@ public class DualRuleTest
             Assert.That(duals[16].ToString()== "-not_ab(X) :- ab(X).");
             Assert.That(duals[17].ToString()== "-not_bird(X) :- bird(X).");
         });
+    }
+    
+    [Test]
+    public void TreatsRecursiveListInHeadWithForall()
+    {
+        string code = """
+                      p([X|T]) :- q(X), p(T).
+                      p?
+                      """;
+
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
         
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var duals = dualRuleConverter.GetDualRules(program.Statements);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 4);
+            Assert.That(duals[0].ToString() == "not_p(V0) :- forall(X, forall(T, fa_p(V0, X, T))).");
+            Assert.That(duals[1].ToString() == "fa_p(V0, X, T) :- V0 \\= [X| T].");
+            Assert.That(duals[2].ToString() == "fa_p(V0, X, T) :- V0 = [X| T], not q(X).");
+            Assert.That(duals[3].ToString() == "fa_p(V0, X, T) :- V0 = [X| T], q(X), not p(T).");
+        });
+    }
+    
+    [Test]
+    public void TreatsConventionalListInHeadWithForall()
+    {
+        string code = """
+                      p([X, Y, Z]) :- q(X), r(Y), s(Z).
+                      p?
+                      """;
+
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var duals = dualRuleConverter.GetDualRules(program.Statements);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 5);
+            Assert.That(duals[0].ToString() == "not_p(V0) :- forall(X, forall(Y, forall(Z, fa_p(V0, X, Y, Z)))).");
+            Assert.That(duals[1].ToString() == "fa_p(V0, X, Y, Z) :- V0 \\= [X, Y, Z].");
+            Assert.That(duals[2].ToString() == "fa_p(V0, X, Y, Z) :- V0 = [X, Y, Z], not q(X).");
+            Assert.That(duals[3].ToString() == "fa_p(V0, X, Y, Z) :- V0 = [X, Y, Z], q(X), not r(Y).");
+            Assert.That(duals[4].ToString() == "fa_p(V0, X, Y, Z) :- V0 = [X, Y, Z], q(X), r(Y), not s(Z).");
+        });
     }
 }
