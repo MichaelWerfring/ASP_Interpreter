@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace asp_interpreter_lib.FileIO;
+﻿namespace asp_interpreter_lib.Util;
 
 public static class FileReader
 {

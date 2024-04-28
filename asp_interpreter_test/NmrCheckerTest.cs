@@ -1,12 +1,13 @@
 ﻿using asp_interpreter_lib;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.NMRCheck;
+using asp_interpreter_lib.Util;
 
 namespace asp_interpreter_test;
 
 public class NmrCheckerTest
 {
-    private readonly PrefixOptions _prefixes = ASPExtensions.CommonPrefixes;
+    private readonly PrefixOptions _prefixes = AspExtensions.CommonPrefixes;
     
     [Test]
     public void NmrCheckHandlesBasicProgram()
@@ -16,7 +17,7 @@ public class NmrCheckerTest
                       p(a)?
                       """;
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var checker = new NmrChecker(_prefixes);    
         var subCheckRules = checker.GetSubCheckRules(program.Statements);
         
@@ -34,7 +35,7 @@ public class NmrCheckerTest
                       p(a)?
                       """;
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var checker = new NmrChecker(_prefixes);    
         var subCheckRules = checker.GetSubCheckRules(program.Statements);
         
@@ -53,7 +54,7 @@ public class NmrCheckerTest
                       p(a)?
                       """;
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var checker = new NmrChecker(_prefixes);    
         var subCheckRules = checker.GetSubCheckRules(program.Statements);
         
@@ -74,7 +75,7 @@ public class NmrCheckerTest
                       p(a)?
                       """;
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var checker = new NmrChecker(_prefixes);    
         var subCheckRules = checker.GetSubCheckRules(program.Statements);
         
@@ -94,7 +95,7 @@ public class NmrCheckerTest
                       p(a)?
                       """;
         var errorLogger = new MockErrorLogger();
-        var program = ASPExtensions.GetProgram(code, errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var checker = new NmrChecker(_prefixes);    
         var subCheckRules = checker.GetSubCheckRules(program.Statements);
         

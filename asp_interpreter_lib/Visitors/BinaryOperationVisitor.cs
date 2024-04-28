@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
-using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 

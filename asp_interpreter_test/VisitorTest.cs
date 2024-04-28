@@ -1,10 +1,11 @@
 ﻿using System.Xml.Schema;
 using Antlr4.Runtime;
 using asp_interpreter_lib;
-using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Util;
+using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Visitors;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 
@@ -106,7 +107,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = ASPExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, _errorLogger);
         
         var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
         Assert.That(_errorLogger.Errors.Count == 0 && literal.HasValue && literal.GetValueOrThrow() is 
@@ -124,7 +125,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = ASPExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, _errorLogger);
         var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
         Assert.That(_errorLogger.Errors.Count == 0 && literal.HasValue && literal.GetValueOrThrow() is 
         { Identifier: "b",
@@ -141,7 +142,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = ASPExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, _errorLogger);
         var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
         Assert.That(_errorLogger.Errors.Count == 0 && literal.HasValue && literal.GetValueOrThrow() is 
         { Identifier: "b",
@@ -159,7 +160,7 @@ public class VisitorTest
                    a?
                    """;
         
-        Assert.Throws<ArgumentException>(() => ASPExtensions.GetProgram(code, _errorLogger));
+        Assert.Throws<ArgumentException>(() => AspExtensions.GetProgram(code, _errorLogger));
         Assert.That(_errorLogger.Errors.Count == 0);
     }
     
@@ -171,7 +172,7 @@ public class VisitorTest
                    b?
                    """;
         
-        var program = ASPExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         var literal = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
@@ -195,7 +196,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = ASPExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         var literal = statement.Head.GetValueOrThrow().Accept(_goalToLiteralConverter);
@@ -219,7 +220,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = ASPExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         var body = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
@@ -249,7 +250,7 @@ public class VisitorTest
                    a?
                    """;
         
-        var program = ASPExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, _errorLogger);
         var statement = program.Statements[0];
         
         var body = program.Statements[0].Body[0].Accept(_goalToLiteralConverter);
@@ -274,7 +275,7 @@ public class VisitorTest
     [Test]
     public void HandlesTermsInHeadCorrectly()
     {
-        AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
+        AspProgram program = AspExtensions.GetProgram(_graphCode, _errorLogger);
 
         var headLiteral = program.Statements[6].Head.GetValueOrThrow(); 
         var firstTerm = headLiteral.Terms[0] as VariableTerm;
@@ -290,7 +291,7 @@ public class VisitorTest
     [Test]
     public void HandlesLiteralInQueryCorrectly()
     {
-        AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
+        AspProgram program = AspExtensions.GetProgram(_graphCode, _errorLogger);
 
         var queryLiteral = program.Query?.ClassicalLiteral;
         var firstTerm = queryLiteral.Terms[0] as VariableTerm;
@@ -305,7 +306,7 @@ public class VisitorTest
     [Test]
     public void HandlesBodyLiteralsCorrectly()
     {
-        AspProgram program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
+        AspProgram program = AspExtensions.GetProgram(_graphCode, _errorLogger);
 
         var body = program.Statements[6].Body;
         var firstLiteral = body[0].Accept(_goalToLiteralConverter).GetValueOrThrow();
@@ -323,7 +324,7 @@ public class VisitorTest
     [Test]
     public void HandlesBodyTermsCorrectly()
     {
-        var program = ASPExtensions.GetProgram(_graphCode, _errorLogger);
+        var program = AspExtensions.GetProgram(_graphCode, _errorLogger);
         
         var body = program.Statements[6].Body;
         var firstLiteral = body[0].Accept(_goalToLiteralConverter).GetValueOrThrow();

@@ -1,21 +1,17 @@
-﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Solving.DualRules;
 
 //returns the term to be used at the occuring position (or same as before if no change)
 //and a goal to be added to the body (else its none)
-public class HeadVariableEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
+public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
 {
     private readonly PrefixOptions _options;
-    
-    private readonly Statement _statement;
-    
-    private readonly Literal _head;
     
     private readonly HashSet<string> _variables;
 
@@ -23,13 +19,11 @@ public class HeadVariableEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
 
     private int _counter;
     
-    public HeadVariableEliminator(PrefixOptions options, Statement statement)
+    public HeadAtomEliminator(PrefixOptions options, Statement statement)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(statement);
         _options = options;
-        _statement = statement;
-        _head = statement.Head.GetValueOrThrow("Cannot rewrite headless statement!");
         _variables = new HashSet<string>();
         _counter = 0;
     }
@@ -142,5 +136,25 @@ public class HeadVariableEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
     {
         ArgumentNullException.ThrowIfNull(term);
         return term.Term.Accept(this);
+    }
+
+    public override IOption<(ITerm, List<Goal>)> Visit(RecursiveList term)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+        
+        var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
+        var body = new BinaryOperation(newVariable, new Equality(), term);
+
+        return new Some<(ITerm, List<Goal>)>((newVariable, [body]));
+    }
+
+    public override IOption<(ITerm, List<Goal>)> Visit(ConventionalList term)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+        
+        var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
+        var body = new BinaryOperation(newVariable, new Equality(), term);
+
+        return new Some<(ITerm, List<Goal>)>((newVariable, [body]));
     }
 }

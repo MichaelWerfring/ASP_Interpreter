@@ -1,4 +1,4 @@
-namespace asp_interpreter_lib.FileIO;
+namespace asp_interpreter_lib.Util;
 
 public class FileReadResult
 {

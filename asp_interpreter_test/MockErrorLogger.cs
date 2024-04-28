@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 using Antlr4.Runtime;
-using asp_interpreter_lib.ErrorHandling;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_test;
 

@@ -1,4 +1,4 @@
-﻿namespace asp_interpreter_lib.ErrorHandling;
+﻿namespace asp_interpreter_lib.Util.ErrorHandling;
 
 public class None<T> : IOption<T>
 {

@@ -26,7 +26,7 @@ public class DualRuleConverter
 
     public Statement ComputeHead(Statement rule)
     {
-        HeadVariableEliminator rewriter = new HeadVariableEliminator(_options, rule);
+        HeadAtomEliminator rewriter = new HeadAtomEliminator(_options, rule);
         return rewriter.Rewrite(rule);
     }
 
