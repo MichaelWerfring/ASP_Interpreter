@@ -30,7 +30,7 @@ public static class AspExtensions
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var visitor = new ProgramVisitor(logger);
+        var visitor = new ProgramVisitor();
         var program = visitor.VisitProgram(context); 
         
         return program.GetValueOrThrow();

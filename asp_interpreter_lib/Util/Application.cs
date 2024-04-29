@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.OLONDetection;
 using asp_interpreter_lib.OLONDetection.CallGraph;
@@ -10,35 +9,29 @@ using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Visitors;
+using Microsoft.Extensions.Logging;
 using QuikGraph;
 
-namespace asp_interpreter_exe;
+namespace asp_interpreter_lib.Util;
 
-public class ConsoleApplication(IErrorLogger errorLogger, ProgramVisitor visitor)
+public class ApplicationOptions
 {
-    private IErrorLogger _errorLogger = errorLogger;
+
+}
+
+public class Application(
+    ILogger<Application> logger,
+    ProgramVisitor programVisitor)
+{
+    private ILogger<Application> _logger = logger;
     
-    private readonly ProgramVisitor _visitor = visitor;
+    private readonly ProgramVisitor _programVisitor = programVisitor;
 
-    public void Run(string[] args)
+    public void Run()
     {
-        if (args.Length != 1)
-        {
-            throw new ArgumentException("Please provide a source file!");
-        }
-
-        var result = FileReader.ReadFile(args[0]);
-
-        if (!result.Success)
-        {
-            throw new ArgumentException(result.Message);
-        }
-
-        var program = GetProgram(result.Content);
-        Show(program, result.Content);
+        
     }
 
     private AspProgram GetProgram(string code)
@@ -48,7 +41,7 @@ public class ConsoleApplication(IErrorLogger errorLogger, ProgramVisitor visitor
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var program = _visitor.VisitProgram(context);
+        var program = _programVisitor.VisitProgram(context);
 
         if (!program.HasValue)
         {

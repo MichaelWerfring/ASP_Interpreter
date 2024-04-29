@@ -50,7 +50,7 @@ public class VisitorTest
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var visitor = new ProgramVisitor(logger);
+        var visitor = new ProgramVisitor();
         var program = GetOptionalProgram(code, logger);
         
         //Count at least 1 error for empty program
@@ -361,7 +361,7 @@ public class VisitorTest
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var visitor = new ProgramVisitor(logger);
+        var visitor = new ProgramVisitor();
         return visitor.VisitProgram(context);
     }
 }

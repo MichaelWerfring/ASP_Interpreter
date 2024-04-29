@@ -363,7 +363,7 @@ public class DualRuleTest
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
         
-        Assert.That(statement.ToString() == "p(V0) :- V0 = [X|T], q(X), p(T).");
+        Assert.That(statement.ToString() == "p(V0) :- V0 = [X| T], q(X), p(T).");
     }
     
     [Test]
@@ -400,12 +400,14 @@ public class DualRuleTest
         
         Assert.Multiple(() =>
         {
-            Assert.That(duals.Count == 5);
+            Assert.That(duals.Count == 7);
             Assert.That(duals[0].ToString() == "not_p(V1) :- not_p1(V1), not_p2(V1).");
             Assert.That(duals[1].ToString() == "not_p1(V0) :- V0 \\= 0.");
             Assert.That(duals[2].ToString() == "not_p2(X) :- forall(Y, fa_p2(X, Y)).");
             Assert.That(duals[3].ToString() == "fa_p2(X, Y) :- not q(X).");
             Assert.That(duals[4].ToString() == "fa_p2(X, Y) :- q(X), t(X, Y).");
+            Assert.That(duals[5].ToString() == "not_q(X).");
+            Assert.That(duals[6].ToString() == "not_t(X, Y).");
         });
     }
     
@@ -427,12 +429,14 @@ public class DualRuleTest
         
         Assert.Multiple(() =>
         {
-            Assert.That(duals.Count == 5);
+            Assert.That(duals.Count == 7);
             Assert.That(duals[0].ToString() == "not_p(V1) :- not_p1(V1), not_p2(V1).");
             Assert.That(duals[1].ToString() == "not_p1(V0) :- V0 \\= 0.");
             Assert.That(duals[2].ToString() == "not_p2(X) :- forall(Y, fa_p2(X, Y)).");
             Assert.That(duals[3].ToString() == "fa_p2(X, Y) :- not -q(X).");
             Assert.That(duals[4].ToString() == "fa_p2(X, Y) :- -q(X), -t(X, Y).");
+            Assert.That(duals[5].ToString() == "-not_q(X).");
+            Assert.That(duals[6].ToString() == "-not_t(X, Y).");
         });
     }
 
@@ -494,11 +498,15 @@ public class DualRuleTest
         
         Assert.Multiple(() =>
         {
-            Assert.That(duals.Count == 4);
+            Assert.That(duals.Count == 8);
             Assert.That(duals[0].ToString() == "not_p(X) :- q(X).");
             Assert.That(duals[1].ToString() == "not_p(X) :- not q(X), not r(X).");
             Assert.That(duals[2].ToString() == "-not_p(X) :- not s(X).");
             Assert.That(duals[3].ToString() == "-not_p(X) :- s(X), t(X).");
+            Assert.That(duals[4].ToString() == "not_q(X).");
+            Assert.That(duals[5].ToString() == "not_r(X).");
+            Assert.That(duals[6].ToString() == "not_s(X).");
+            Assert.That(duals[7].ToString() == "not_t(X).");
         });
     }
     
@@ -574,17 +582,18 @@ public class DualRuleTest
         
         Assert.Multiple(() =>
         {
-            Assert.That(duals.Count == 4);
+            Assert.That(duals.Count == 5);
             Assert.That(duals[0].ToString() == "not_p(V0) :- forall(X, forall(T, fa_p(V0, X, T))).");
             Assert.That(duals[1].ToString() == "fa_p(V0, X, T) :- V0 \\= [X| T].");
             Assert.That(duals[2].ToString() == "fa_p(V0, X, T) :- V0 = [X| T], not q(X).");
             Assert.That(duals[3].ToString() == "fa_p(V0, X, T) :- V0 = [X| T], q(X), not p(T).");
+            Assert.That(duals[4].ToString() == "not_q(X).");
         });
     }
     
     [Test]
     public void TreatsConventionalListInHeadWithForall()
-    {
+    { 
         string code = """
                       p([X, Y, Z]) :- q(X), r(Y), s(Z).
                       p?
@@ -597,12 +606,67 @@ public class DualRuleTest
         
         Assert.Multiple(() =>
         {
-            Assert.That(duals.Count == 5);
+            Assert.That(duals.Count == 8);
             Assert.That(duals[0].ToString() == "not_p(V0) :- forall(X, forall(Y, forall(Z, fa_p(V0, X, Y, Z)))).");
             Assert.That(duals[1].ToString() == "fa_p(V0, X, Y, Z) :- V0 \\= [X, Y, Z].");
             Assert.That(duals[2].ToString() == "fa_p(V0, X, Y, Z) :- V0 = [X, Y, Z], not q(X).");
             Assert.That(duals[3].ToString() == "fa_p(V0, X, Y, Z) :- V0 = [X, Y, Z], q(X), not r(Y).");
             Assert.That(duals[4].ToString() == "fa_p(V0, X, Y, Z) :- V0 = [X, Y, Z], q(X), r(Y), not s(Z).");
+            Assert.That(duals[5].ToString() == "not_q(X).");
+            Assert.That(duals[6].ToString() == "not_r(Y).");
+            Assert.That(duals[7].ToString() == "not_s(Z).");
         });
+    }
+    
+    [Test]
+    public void DualRuleConversionHandlesAtoms()
+    {
+        string code = """
+                      -p.
+                      p :- -p.
+                      p?
+                      """;
+
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
+        
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var duals = dualRuleConverter.GetDualRules(program.Statements);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 2);
+            Assert.That(duals[0].ToString() == "-not_p.");
+            Assert.That(duals[1].ToString() == "not_p :- not -p.");
+        });
+    }
+
+    [Test]
+    public void DualRuleConverterPutsGoalsOnlyInBodyIntoFacts()
+    {
+        string code = """
+                      p :- s.
+                      p :- not q.
+                      q :- not p.
+                      r :- p.
+                      p?
+                      """;
+
+        var program = AspExtensions.GetProgram(code, new MockErrorLogger());
+
+        var dualRuleConverter = new DualRuleConverter(_prefixes);
+        var duals = dualRuleConverter.GetDualRules(program.Statements);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 6);
+            Assert.That(duals[0].ToString() == "not_p :- not_p1, not_p2.");
+            Assert.That(duals[1].ToString() == "not_p1 :- not s.");
+            Assert.That(duals[2].ToString() == "not_p2 :- q.");
+            Assert.That(duals[3].ToString() == "not_q :- p.");
+            Assert.That(duals[4].ToString() == "not_r :- not p.");
+            Assert.That(duals[5].ToString() == "not_s.");
+        });
+
+
     }
 }

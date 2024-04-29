@@ -1,34 +1,80 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Antlr4.Runtime;
-using asp_interpreter_lib;
 using asp_interpreter_lib.Visitors;
-using QuikGraph;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.OLONDetection.CallGraph;
-using asp_interpreter_lib.OLONDetection;
-using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Solving.NMRCheck;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Types.TypeVisitors.Copy;
-using Antlr4.Runtime.Misc;
-using asp_interpreter_exe;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
-using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using asp_interpreter_exe;
+using System;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddTransient<IErrorLogger, ConsoleErrorLogger>();
 builder.Services.AddTransient<ProgramVisitor>();
-builder.Services.AddSingleton<PrefixOptions>(new PrefixOptions(
-    "rwh_", "fa_", "eh", "chk_", "not_", "V"));
-using var host = builder.Build();
+builder.Services.AddSingleton(new PrefixOptions(
+    "rwh_", 
+    "fa_",
+    "eh",
+    "chk_",
+    "not_",
+    "V"));
 
-ConsoleApplication app = new ConsoleApplication(
-    null ,null);
-app.Run(args);
+builder.Services.AddTransient<Application>();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+builder.Services.AddSingleton<Logger<Application>>();
+
+
+var conf = GetConfig(args);
+
+if (conf.Help)
+{
+    DisplayHelp();
+    return; 
+}
+
+builder.Services.AddSingleton(conf);
+var host = builder.Build();
+host.Services.GetRequiredService<Application>().Run();
+
+ProgramConfig GetConfig(string[] args)
+{
+    var switchMappings = new Dictionary<string, string>()
+           {
+               { "-l", "log-level" },
+               { "-p", "path" },
+               { "-h", "help" },
+               { "--log-level", "log-level" },
+               { "--path", "path" },
+               { "--help", "help" }
+           };
+
+    builder.Configuration.AddCommandLine(args, switchMappings);
+
+    bool help = builder.Configuration["help"] != null;
+
+    string path = builder.Configuration["path"];
+
+    int logLevel;
+
+    if (!int.TryParse(builder.Configuration["log-level"] ?? "3", out logLevel)
+        || logLevel < 0 || logLevel > 4)
+    {
+        Console.WriteLine($"The specified log level {builder.Configuration["log-level"]} " +
+            $"was not valid therefore 3 has been set as a defaul value!");
+    }
+
+    if(string.IsNullOrEmpty(path))
+    {
+        Console.WriteLine("Please provide a valid Path!");
+        return new ProgramConfig(" ", true);
+    }
+
+    return new ProgramConfig(path, help, logLevel);
+}
+
+void DisplayHelp()
+{
+    Console.WriteLine("How to use: ");
+}

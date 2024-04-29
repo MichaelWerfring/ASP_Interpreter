@@ -2,6 +2,7 @@
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using System.Net.Sockets;
 using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
 
 namespace asp_interpreter_lib.Solving.DualRules;
@@ -56,15 +57,61 @@ public class DualRuleConverter
         return disjunctions;
     }
 
+    private IEnumerable<Statement> GetRulesOnlyAppearingInBody(List<Statement> rules, bool appendPrefix = true)
+    {
+        HashSet<(string, int, bool)> heads = [];
+
+        //First find all heads
+        foreach (var rule in rules)
+        {
+            rule.Head.IfHasValue(h => heads.Add(
+                (h.Identifier, h.Terms.Count, h.HasStrongNegation)));
+        }
+
+        var literalVisitor = new GoalToLiteralConverter();
+
+        List<Statement> statements = [];
+
+        for (int i = 0; i < rules.Count; i++)
+        {
+            Statement rule = rules[i];
+
+            foreach (var goal in rule.Body)
+            {
+                var literal = goal.Accept(literalVisitor);
+                if (!literal.HasValue) continue;
+
+                var actual = literal.GetValueOrThrow();
+                if (heads.Contains(
+                    (actual.Identifier, actual.Terms.Count, actual.HasStrongNegation))) continue;
+
+                Statement newStatement = new();
+                newStatement.AddHead(new Literal(
+                 (appendPrefix ? _options.DualPrefix : "") + actual.Identifier,
+                false,
+                actual.HasStrongNegation,
+                actual.Terms));
+
+                statements.Add(newStatement);
+            }
+        }
+
+        return statements;
+    }
+
     public List<Statement> GetDualRules(IEnumerable<Statement> rules,bool appendPrefix = true)
     {
         List<Statement> duals = [];
-        
-        var disjunctions = PreprocessRules(rules.Select(ComputeHead));
+
+        var headComputed = rules.Select(ComputeHead).ToList();
+        var t = GetRulesOnlyAppearingInBody(headComputed);
+        var disjunctions = PreprocessRules(headComputed);
         foreach (var disjunction in disjunctions)
         {
             duals.AddRange(ToConjunction(disjunction, appendPrefix));
         }
+
+        duals.AddRange(t);
 
         return duals;
     }
@@ -142,6 +189,22 @@ public class DualRuleConverter
 
         List<Statement> duals = [];
         var head = rule.Head.GetValueOrThrow();
+
+        //If it is a fact, just add the prefix
+        if (!rule.HasBody)
+        {
+            var newHead = new Literal(
+                 (appendPrefix ? _options.DualPrefix : "") + head.Identifier,
+                false,
+                head.HasStrongNegation,
+                head.Terms);
+
+            var newFact = new Statement();
+            newFact.AddHead(newHead);
+            duals.Add(newFact);
+            return duals;
+        }
+
         bool forallApplicable = GetBodyVariables(rule).Count != 0;
         
         
@@ -157,7 +220,7 @@ public class DualRuleConverter
             var dualGoal = GoalNegator.Negate(goal);
             
             var newHead = new Literal(
-                 (appendPrefix? "not_" : "") + head.Identifier,
+                 (appendPrefix? _options.DualPrefix : "") + head.Identifier,
                 false,
                 head.HasStrongNegation,
                 head.Terms);

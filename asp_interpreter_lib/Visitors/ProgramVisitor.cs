@@ -3,10 +3,11 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class ProgramVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<AspProgram>>
+public class ProgramVisitor() : ASPBaseVisitor<IOption<AspProgram>>
 {
-    private IErrorLogger _errorLogger = errorLogger;
-    
+    //private IErrorLogger _errorLogger = errorLogger;
+    private IErrorLogger _errorLogger = new ConsoleErrorLogger();
+
     public override IOption<AspProgram> VisitProgram(ASPParser.ProgramContext context)
     {
         //Try getting the query

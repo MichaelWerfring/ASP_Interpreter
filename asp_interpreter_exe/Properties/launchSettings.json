@@ -1,7 +1,8 @@
 {
   "profiles": {
     "asp_interpreter_exe": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--log-level 3 -p /test/saser.asp"
     }
   }
 }
