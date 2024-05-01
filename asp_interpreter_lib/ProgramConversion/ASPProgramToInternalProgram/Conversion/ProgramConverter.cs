@@ -3,22 +3,29 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
 public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 {
+    private readonly ILogger _logger;
+
     private FunctorTableRecord _record;
 
-    public ProgramConverter(FunctorTableRecord functorTable)
+    public ProgramConverter(FunctorTableRecord functorTable, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(functorTable);
+        ArgumentNullException.ThrowIfNull(logger);
 
         _record = functorTable;
+        _logger = logger;
     }
 
     public InternalAspProgram Convert(AspProgram prog)
     {
+        _logger.LogTrace("Converting to internal program structure...");
+
         var clauses = prog.Statements.Select(ConvertStatement).ToList();
 
         var goalConverterForQuery = new GoalConverter(_record);

@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Util.ErrorHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,19 @@ using System.Threading.Tasks;
 
 namespace asp_interpreter_lib.Preprocessing.OLONDetection
 {
-    public class OLONRulesFilterer
+    public class OLONRulesFilterer(ILogger logger)
     {
+        private readonly ILogger _logger = logger ??
+            throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+
+        private CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
+
+        private CallGraphCycleFinder _cycleFinder = new CallGraphCycleFinder(logger);
+        
         public List<Statement> FilterOlonRules(List<Statement> rules)
         {
             ArgumentNullException.ThrowIfNull(rules, nameof(rules));
+            _logger.LogInfo("Filtering OLON rules...");
 
             List<Statement> filteredStatements = new List<Statement>();
 
@@ -37,12 +46,9 @@ namespace asp_interpreter_lib.Preprocessing.OLONDetection
                 }
             }
 
+            filteredStatements.ForEach(s => _logger.LogDebug(s.ToString()));
             return filteredStatements;
         }
-
-        private CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
-
-        private CallGraphCycleFinder _cycleFinder = new CallGraphCycleFinder();
 
         private int CountNegations(List<CallGraphEdge> cycle)
         {

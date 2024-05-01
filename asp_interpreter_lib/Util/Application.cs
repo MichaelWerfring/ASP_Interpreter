@@ -44,7 +44,7 @@ public class Application(
         var dual = dualGenerator.GetDualRules(program.Statements);
 
         //OLON
-        List<Statement> olonRules = new OLONRulesFilterer().FilterOlonRules(program.Statements);
+        List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
 
         //NMR 
         var nmrChecker = new NmrChecker(prefixes, _logger);
@@ -124,7 +124,7 @@ public class Application(
 
         Console.WriteLine("OLON Rules:");
         Console.WriteLine("---------------------------------------------------------------------------");
-        List<Statement> olonRules = new OLONRulesFilterer().FilterOlonRules(program.Statements);
+        List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
         foreach (var rule in olonRules)
         {
             Console.WriteLine(rule.ToString());
@@ -188,7 +188,7 @@ public class Application(
         Console.WriteLine("Cycles:");
         Console.WriteLine("---------------------------------------------------------------------------");
 
-        var cycleFinder = new CallGraphCycleFinder();
+        var cycleFinder = new CallGraphCycleFinder(_logger);
         var vertexToCycleMapping = cycleFinder.FindAllCycles(callGraph);
 
         foreach (var vertex in vertexToCycleMapping.Keys)
@@ -205,7 +205,7 @@ public class Application(
             Console.WriteLine("---------------------------------------------------------------------------");
         }
 
-        var olonRulesFilterer = new OLONRulesFilterer();
+        var olonRulesFilterer = new OLONRulesFilterer(_logger);
         var olonRules = olonRulesFilterer.FilterOlonRules(program.Statements);
 
         Console.WriteLine("OLON rules:");

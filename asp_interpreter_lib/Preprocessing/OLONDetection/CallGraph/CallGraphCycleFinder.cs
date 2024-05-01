@@ -1,10 +1,6 @@
 ﻿using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Util.ErrorHandling;
 using QuikGraph;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph
 {
@@ -12,11 +8,15 @@ namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph
     /// A class for finding simple cycles in a call graph,
     /// in the sense that no rule head must be passed through more than once.
     /// </summary>
-    public class CallGraphCycleFinder
+    public class CallGraphCycleFinder(ILogger logger)
     {
+        private readonly ILogger _logger = logger ??
+            throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+
         public Dictionary<Statement, List<List<CallGraphEdge>>> FindAllCycles(AdjacencyGraph<Statement, CallGraphEdge> graph)
         {
             ArgumentNullException.ThrowIfNull(graph);
+            _logger.LogTrace("Looking for cyles in graph...");
 
             var vertexToCycleMapping = new Dictionary<Statement, List<List<CallGraphEdge>>>();
 
