@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.OLONDetection.CallGraph
+namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph
 {
     public static class CycleStringifier
     {

@@ -354,7 +354,7 @@ public class VisitorTest
         Assert.That(_errorLogger.Errors.Count == 0);
     }
     
-    private IOption<AspProgram> GetOptionalProgram(string code, IErrorLogger logger)
+    private IOption<AspProgram> GetOptionalProgram(string code, ILogger logger)
     {
         var inputStream = new AntlrInputStream(code);
         var lexer = new ASPLexer(inputStream);

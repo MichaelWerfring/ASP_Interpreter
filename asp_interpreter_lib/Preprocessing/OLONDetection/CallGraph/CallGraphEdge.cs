@@ -3,7 +3,7 @@ using asp_interpreter_lib.Types.Terms;
 using QuikGraph;
 using System.Text;
 
-namespace asp_interpreter_lib.OLONDetection.CallGraph;
+namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 
 /// <summary>
 /// Represents an edge in a call graph.

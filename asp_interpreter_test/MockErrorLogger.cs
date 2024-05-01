@@ -10,7 +10,7 @@ public struct Error
     public ParserRuleContext Context { get; set; }
 }
 
-public class MockErrorLogger : IErrorLogger
+public class MockErrorLogger : ILogger
 {
     private List<Error> _errors = [];
 

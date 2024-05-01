@@ -1,7 +1,8 @@
 ﻿using Antlr4.Runtime;
+using asp_interpreter_exe;
 using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.OLONDetection;
-using asp_interpreter_lib.OLONDetection.CallGraph;
+using asp_interpreter_lib.Preprocessing.OLONDetection;
+using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
@@ -11,27 +12,68 @@ using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Visitors;
-using Microsoft.Extensions.Logging;
 using QuikGraph;
+using QuikGraph.Algorithms;
 
 namespace asp_interpreter_lib.Util;
 
-public class ApplicationOptions
-{
-
-}
-
 public class Application(
-    ILogger<Application> logger,
-    ProgramVisitor programVisitor)
+    ILogger logger,
+    ProgramVisitor programVisitor, 
+    ProgramConfig config)
 {
-    private ILogger<Application> _logger = logger;
-    
+    private readonly ILogger _logger = logger;
+
     private readonly ProgramVisitor _programVisitor = programVisitor;
+
+    private readonly ProgramConfig config = config;
+
+    private readonly PrefixOptions prefixes = new("rwh", "fa", "eh", "chk", "dis", "var");
 
     public void Run()
     {
-        
+        //Read
+        var code = FileReader.ReadFile(config.Path, _logger);
+        if (code == null) return;
+
+        //Program
+        var program = GetProgram(code);
+
+        //Dual
+        var dualGenerator = new DualRuleConverter(prefixes, _logger);
+        var dual = dualGenerator.GetDualRules(program.Statements);
+
+        //OLON
+        List<Statement> olonRules = new OLONRulesFilterer().FilterOlonRules(program.Statements);
+
+        //NMR 
+        var nmrChecker = new NmrChecker(prefixes, _logger);
+        var subcheck = nmrChecker.GetSubCheckRules(olonRules);
+
+        //Interactive if needed else just solve
+        if (!config.Interactive)
+        {
+            if (!program.Query.HasValue)
+            {
+                _logger.LogError("The program has no query given, either specify one in the file or use interactive mode.");
+            }
+
+            //Solve and show answer...
+            return;
+        }
+
+        //If a query is specified in the file it will be ignored in this case
+        while (true)
+        {
+            Console.Write("?-");
+            string input = Console.ReadLine();
+
+            if (input == "exit") return;
+
+            // 1) parse query 
+            // 2) solve existing program with new query 
+            // 3) show answer
+        }
     }
 
     private AspProgram GetProgram(string code)
@@ -67,7 +109,7 @@ public class Application(
         var prefixes = new PrefixOptions("rwh", "fa", "eh", "chk", "dis", "var");
         DualRuleConverter dualConverter = new(
             prefixes,
-            true);
+            new ConsoleLogger(ErrorHandling.LogLevel.None));
         var duals = dualConverter.GetDualRules(CopyProgram(code).Statements);
         foreach (var dual in duals)
         {
@@ -82,9 +124,6 @@ public class Application(
 
         Console.WriteLine("OLON Rules:");
         Console.WriteLine("---------------------------------------------------------------------------");
-        //var graphBuilder = new CallGraphBuilder();
-        //var callGraph = graphBuilder.BuildCallGraph(program.Statements);
-        //PrintAll(program, callGraph);
         List<Statement> olonRules = new OLONRulesFilterer().FilterOlonRules(program.Statements);
         foreach (var rule in olonRules)
         {
@@ -99,7 +138,7 @@ public class Application(
 
         Console.WriteLine("NMR- Check:");
         Console.WriteLine("---------------------------------------------------------------------------");
-        NmrChecker checker = new(prefixes);
+        NmrChecker checker = new(prefixes, new ConsoleLogger(ErrorHandling.LogLevel.None));
         var nmrCheck = checker.GetSubCheckRules(olonRules);
 
         foreach (var rule in nmrCheck)
@@ -178,8 +217,8 @@ public class Application(
         }
     }
 
-    private AspProgram CopyProgram(string program)
+    private static AspProgram CopyProgram(string program)
     {
-        return AspExtensions.GetProgram(program, new ConsoleErrorLogger());
+        return AspExtensions.GetProgram(program, new ConsoleLogger(ErrorHandling.LogLevel.Error));
     }
 }

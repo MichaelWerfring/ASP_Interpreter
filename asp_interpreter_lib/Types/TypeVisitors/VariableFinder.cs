@@ -19,7 +19,7 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
             });
         }
 
-        program.Query.ClassicalLiteral.Accept(this).IfHasValue(v =>
+        program.Query.GetValueOrThrow("Inable to parse query!").Accept(this).IfHasValue(v =>
         {
             variableTerms.AddRange(v);
         });

@@ -3,10 +3,11 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class BinaryOperatorVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<BinaryOperator>>
+public class BinaryOperatorVisitor(ILogger logger) : ASPBaseVisitor<IOption<BinaryOperator>>
 {
-    private IErrorLogger _errorLogger = errorLogger;
-    
+    private readonly ILogger _logger = logger ??
+        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+
     public override IOption<BinaryOperator> VisitEqualityOperation(ASPParser.EqualityOperationContext context)
     {
         return new Some<BinaryOperator>(new Equality());

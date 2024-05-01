@@ -3,47 +3,22 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Statement>>
+public class StatementVisitor(ILogger logger) : ASPBaseVisitor<IOption<Statement>>
 {
-    private IErrorLogger _errorLogger = errorLogger;
-    
-    //public override IOption<InternalStatement> VisitStatement(ASPParser.StatementContext context)
-    //{
-    //    InternalHead head = null;
-    //    var headContext = context.head();
-    //    //Empty InternalStatement per default
-    //    //If InternalHead or InternalBody are found they will be added
-    //    var statement = new InternalStatement();
-    //    
-    //    if (headContext != null)
-    //    {
-    //        head = headContext.Accept(new HeadVisitor(_errorLogger));
-    //        statement.AddHead(head);
-    //    }
-    //    
-    //    InternalBody body = null;
-    //    var bodyContext = context.body();
-    //    
-    //    if (bodyContext != null)
-    //    {
-    //        body = bodyContext.Accept(new BodyVisitor(_errorLogger));
-    //        statement.AddBody(body);
-    //    }
-    //    
-    //    return statement;
-    //}
-    
+    private readonly ILogger _logger = logger ??
+        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+
     public override IOption<Statement> VisitStatement(ASPParser.StatementContext context)
     {
         var statement = new Statement();
         
         List<Goal> body = [];
-        LiteralVisitor literalVisitor = new(_errorLogger);
+        LiteralVisitor literalVisitor = new(_logger);
         
         var head = context.literal()?.Accept(literalVisitor);
         head?.IfHasValue((value) => statement.AddHead(value));
         
-        BinaryOperationVisitor binaryOperationVisitor = new(_errorLogger);
+        BinaryOperationVisitor binaryOperationVisitor = new(_logger);
 
         var goals = context.goal();
 
@@ -53,7 +28,7 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
             return new Some<Statement>(statement);
         }
 
-        var goalVisitor = new GoalVisitor(_errorLogger);
+        var goalVisitor = new GoalVisitor(_logger);
 
         foreach (var goal in goals)
         {
@@ -71,7 +46,7 @@ public class StatementVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption
 
         if (goals.Length != body.Count)
         {
-            _errorLogger.LogError("Not all goals could be parsed correctly", context);
+            _logger.LogError("Not all goals could be parsed correctly", context);
             return new None<Statement>();
         }
         

@@ -23,7 +23,7 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
         var goalConverterForQuery = new GoalConverter(_record);
 
-        var queryMaybe = prog.Query.ClassicalLiteral.Accept(goalConverterForQuery);
+        var queryMaybe = prog.Query.GetValueOrThrow("Cannot parse Query!").Accept(goalConverterForQuery);
         if (!queryMaybe.HasValue)
         {
             throw new ArgumentException("Could not convert head!");

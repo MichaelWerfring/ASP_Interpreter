@@ -1,38 +1,28 @@
-﻿namespace asp_interpreter_lib.Util;
+﻿using asp_interpreter_lib.Util.ErrorHandling;
+
+namespace asp_interpreter_lib.Util;
 
 public static class FileReader
 {
-    public static FileReadResult ReadFile(string path)
+    public static string? ReadFile(string path, ILogger logger)
     {
-        FileReadResult result;
-
         try
         {
-            var text = File.ReadAllText(path);
-            result = new FileReadResult(text, true, "Success");
+            return File.ReadAllText(path);
         }
         catch (FileNotFoundException)
         {
-            result = new FileReadResult(
-                string.Empty,
-                false, 
-                "File not found: " + path);
+            logger.LogError("File not Found: " + path);
         }
         catch (UnauthorizedAccessException)
         {
-            result = new FileReadResult(
-                string.Empty,
-                false, 
-                "Access denied: " + path);
+            logger.LogError("Access denied: " + path);
         }
         catch (IOException e)
         {
-            result = new FileReadResult(
-                string.Empty,
-                false, 
-                "Error reading file: " + e.Message);
+            logger.LogError("Unable to read file: " + e.Message);
         }
         
-        return result; 
+        return null; 
     }
 }

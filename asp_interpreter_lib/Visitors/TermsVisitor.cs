@@ -3,12 +3,13 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class TermsVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<List<ITerm>>>
+public class TermsVisitor(ILogger logger) : ASPBaseVisitor<IOption<List<ITerm>>>
 {
 
-    private IErrorLogger _errorLogger = errorLogger;
-    
-    private TermVisitor _termVisitor = new TermVisitor(errorLogger);
+    private readonly ILogger _logger = logger ??
+        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+
+    private readonly TermVisitor _termVisitor = new(logger);
     
     public override IOption<List<ITerm>> VisitTerms(ASPParser.TermsContext context)
     {
@@ -18,7 +19,7 @@ public class TermsVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Lis
         if (!singleTerm.HasValue)
         {
             //This should never happen but if it does its a severe fail
-            _errorLogger.LogError("Cannot parse value of compound term!", context);
+            _logger.LogError("Cannot parse value of compound term!", context);
             return new None<List<ITerm>>();
         }
         
@@ -32,7 +33,7 @@ public class TermsVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<Lis
         
         if (!terms.HasValue)
         {
-            _errorLogger.LogError("Cannot parse value of compound term!", context);
+            _logger.LogError("Cannot parse value of compound term!", context);
             return new None<List<ITerm>>();
         }
 

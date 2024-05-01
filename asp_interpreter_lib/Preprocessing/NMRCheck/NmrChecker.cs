@@ -4,21 +4,28 @@ using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Solving.NMRCheck;
 
-public class NmrChecker(PrefixOptions options)
+public class NmrChecker(PrefixOptions options, ILogger logger)
 {
-    private readonly PrefixOptions _options = options;
-    
+    private readonly PrefixOptions _options = options ?? 
+        throw new ArgumentNullException(nameof(options), "The given argument must not be null!");
+
+    private readonly ILogger _logger = logger ?? 
+        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+
     private static readonly GoalToLiteralConverter _goalToLiteralConverter = new();
 
     public List<Statement> GetSubCheckRules(List<Statement> olonRules)
     {
         ArgumentNullException.ThrowIfNull(olonRules);
-        
+
+        _logger.LogInfo("Generating NMR check...");
         if (olonRules.Count == 0)
         {
+            _logger.LogDebug("Finished generation because no OLON rules found in program.");
             return olonRules;
         }
         
@@ -26,7 +33,8 @@ public class NmrChecker(PrefixOptions options)
         List<Statement> preprocessedRules = PreprocessRules(olonRules);
         
         // 2) generate dual for modified rule
-        DualRuleConverter converter = new DualRuleConverter(_options);
+        // dummy logger is enough because we do not want to log twice
+        DualRuleConverter converter = new DualRuleConverter(_options, _logger.GetDummy());
         var tempOlonRules = 
             olonRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow());
         var duals = converter.GetDualRules(tempOlonRules);
@@ -40,7 +48,10 @@ public class NmrChecker(PrefixOptions options)
         AddForallToCheck(nmrCheck);
         
         duals.Insert(0, nmrCheck);
-        
+
+        _logger.LogDebug("NMR check for programm: ");
+        duals.ForEach(d => _logger.LogDebug(d.ToString()));
+
         return duals;
     }
 

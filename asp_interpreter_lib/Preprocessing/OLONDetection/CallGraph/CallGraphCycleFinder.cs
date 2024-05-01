@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.OLONDetection.CallGraph
+namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph
 {
     /// <summary>
     /// A class for finding simple cycles in a call graph,
@@ -61,10 +61,10 @@ namespace asp_interpreter_lib.OLONDetection.CallGraph
 
             var aHead = a.Head.GetValueOrThrow("Head must be present");
             var bHead = b.Head.GetValueOrThrow("Head must be present");
-            
+
             if (aHead.Identifier != bHead.Identifier) return false;
 
-            if(aHead.Terms.Count != bHead.Terms.Count) return false;
+            if (aHead.Terms.Count != bHead.Terms.Count) return false;
 
             return true;
         }

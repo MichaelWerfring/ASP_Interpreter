@@ -2,7 +2,7 @@
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
-using System.Net.Sockets;
+using asp_interpreter_lib.Util.ErrorHandling;
 using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
 
 namespace asp_interpreter_lib.Solving.DualRules;
@@ -13,29 +13,34 @@ public class DualRuleConverter
     
     private readonly PrefixOptions _options;
 
-    private bool _negateInnerForall;
-    
-    public DualRuleConverter(PrefixOptions options,bool negateInnerForall = true)
+    private readonly ILogger _logger;
+
+    public DualRuleConverter(
+        PrefixOptions options,
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(options);
-        
-        _negateInnerForall = negateInnerForall;
+        ArgumentNullException.ThrowIfNull(logger);
+
         _options = options;
+        _logger = logger;
         _variableFinder = new VariableFinder();
-        _negateInnerForall = negateInnerForall;
     }
 
     public Statement ComputeHead(Statement rule)
     {
-        HeadAtomEliminator rewriter = new HeadAtomEliminator(_options, rule);
-        return rewriter.Rewrite(rule);
+        HeadAtomEliminator rewriter = new(_options, rule);
+        var statement = rewriter.Rewrite(rule); 
+        _logger.LogTrace("Rewrite head from: " +  rule.ToString() + " to: " + statement.ToString());
+        return statement;
     }
 
     private Dictionary<(string,int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
     {
         //heads mapped to all bodies occuring in the program
         Dictionary<(string, int, bool), List<Statement>> disjunctions = [];
-        
+        _logger.LogTrace("Started preprocessing for dual rules.");
+
         foreach (var rule in rules)
         {
             //Headless rules will be treated within nmr check
@@ -43,21 +48,23 @@ public class DualRuleConverter
             var head = rule.Head.GetValueOrThrow("Headless rules must be treated by the NMR check!");
             
             var signature = (head.Identifier, head.Terms.Count, head.HasStrongNegation);
-            //var signature = ((head.HasStrongNegation ? "-" : "") + head.Identifier, head.Terms.Count);
             
             var converted = ComputeHead(rule);
             
             if (!disjunctions.TryAdd(signature, [converted]))
             {
-                //disjunctions[head].Add(rule);
                 disjunctions[signature].Add(converted);
+                _logger.LogTrace("Disjunction found: " + 
+                    signature.HasStrongNegation + 
+                    signature.Identifier + "/" + signature.Count);
             }
         }
-        
+
+        _logger.LogTrace("Finished preprocessing for dual rules.");
         return disjunctions;
     }
 
-    private IEnumerable<Statement> GetRulesOnlyAppearingInBody(List<Statement> rules, bool appendPrefix = true)
+    private IEnumerable<Statement> GetGoalsOnlyAppearingInBody(List<Statement> rules, bool appendPrefix = true)
     {
         HashSet<(string, int, bool)> heads = [];
 
@@ -92,6 +99,7 @@ public class DualRuleConverter
                 actual.HasStrongNegation,
                 actual.Terms));
 
+                _logger.LogTrace("No Head found for: " + actual.ToString() + " generated: " + newStatement.ToString());
                 statements.Add(newStatement);
             }
         }
@@ -101,10 +109,12 @@ public class DualRuleConverter
 
     public List<Statement> GetDualRules(IEnumerable<Statement> rules,bool appendPrefix = true)
     {
+        _logger.LogInfo("Generating dual rules...");
+
         List<Statement> duals = [];
 
         var headComputed = rules.Select(ComputeHead).ToList();
-        var t = GetRulesOnlyAppearingInBody(headComputed);
+        var t = GetGoalsOnlyAppearingInBody(headComputed);
         var disjunctions = PreprocessRules(headComputed);
         foreach (var disjunction in disjunctions)
         {
@@ -112,6 +122,9 @@ public class DualRuleConverter
         }
 
         duals.AddRange(t);
+
+        _logger.LogDebug("The dual rules for program: ");
+        duals.ForEach(d => _logger.LogDebug(d.ToString()));
 
         return duals;
     }
@@ -174,7 +187,7 @@ public class DualRuleConverter
         List<ITerm> vars = [];
         for (int i = 0; i < number ; i++)
         {
-            vars.Add(new VariableTerm("V" + (i + 1)));
+            vars.Add(new VariableTerm(_options.VariablePrefix + (i + 1)));
         }
 
         return vars;
@@ -319,7 +332,7 @@ public class DualRuleConverter
         
         //append body with (nested) forall
         rule.Body.Clear();
-        rule.Body.AddRange(([NestForall(bodyVariables.ToList(), innerGoal)]));
+        rule.Body.AddRange(([NestForall([.. bodyVariables], innerGoal)]));
 
         // prefix like dual
         rule.Head.GetValueOrThrow().Identifier =_options.DualPrefix + rule.Head.GetValueOrThrow().Identifier; 
@@ -340,10 +353,7 @@ public class DualRuleConverter
         bodyVariables.RemoveAt(0);
 
         var result = NestForall(bodyVariables, innerGoal);
-        
-        //return new BasicTerm("forall", [ new VariableTerm(v), result]);
-        var f = new Forall(new VariableTerm(v), result);
-        string s = f.ToString();
-        return f;
+
+        return new Forall(new VariableTerm(v), result);
     }
 }

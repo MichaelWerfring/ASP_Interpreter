@@ -9,7 +9,7 @@ namespace asp_interpreter_lib.Util;
 
 public static class AspExtensions
 {
-    private static PrefixOptions _commonPrefixes = new PrefixOptions(
+    private static readonly PrefixOptions _commonPrefixes = new(
         "rwh_", 
         "fa_",
         "eh",
@@ -20,7 +20,7 @@ public static class AspExtensions
     public static PrefixOptions CommonPrefixes { get; } = _commonPrefixes;
     
     // Helper method to get a program from a given code
-    public static AspProgram GetProgram(string code, IErrorLogger logger)
+    public static AspProgram GetProgram(string code, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(code);
         ArgumentNullException.ThrowIfNull(logger);
@@ -30,7 +30,7 @@ public static class AspExtensions
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var visitor = new ProgramVisitor();
+        var visitor = new ProgramVisitor(logger);
         var program = visitor.VisitProgram(context); 
         
         return program.GetValueOrThrow();
@@ -66,7 +66,7 @@ public static class AspExtensions
             sb.Append($"{list[i].ToString()}, ");
         }
 
-        sb.Append($"{list[list.Count - 1].ToString()}");
+        sb.Append($"{list[^1].ToString()}");
 
         return sb.ToString();
     }

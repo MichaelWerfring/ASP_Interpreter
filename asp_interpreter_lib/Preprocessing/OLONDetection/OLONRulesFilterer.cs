@@ -1,4 +1,4 @@
-﻿using asp_interpreter_lib.OLONDetection.CallGraph;
+﻿using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 using asp_interpreter_lib.Types;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.OLONDetection
+namespace asp_interpreter_lib.Preprocessing.OLONDetection
 {
     public class OLONRulesFilterer
     {
@@ -48,11 +48,11 @@ namespace asp_interpreter_lib.OLONDetection
         {
             int count = 0;
 
-            foreach(var edge in cycle)
+            foreach (var edge in cycle)
             {
-                if(edge.TransitionLiteral.HasNafNegation)
+                if (edge.TransitionLiteral.HasNafNegation)
                 {
-                    count+=1;
+                    count += 1;
                 }
             }
 

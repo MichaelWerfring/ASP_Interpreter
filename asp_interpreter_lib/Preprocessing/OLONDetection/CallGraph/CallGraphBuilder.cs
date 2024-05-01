@@ -9,7 +9,7 @@ using asp_interpreter_lib.Types.TypeVisitors;
 using System.Dynamic;
 using asp_interpreter_lib.Types.BinaryOperations;
 
-namespace asp_interpreter_lib.OLONDetection.CallGraph;
+namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 
 public class CallGraphBuilder
 {
@@ -36,7 +36,7 @@ public class CallGraphBuilder
         {
             foreach (var literal in statement.Body)
             {
-                if(literal is not Literal)
+                if (literal is not Literal)
                 {
                     continue;
                 }

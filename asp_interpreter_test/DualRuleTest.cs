@@ -542,7 +542,8 @@ public class DualRuleTest
 
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
-        
+
+        //Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 18);
@@ -603,7 +604,8 @@ public class DualRuleTest
         
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
-        
+    
+        //Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 8);
@@ -656,6 +658,7 @@ public class DualRuleTest
         var dualRuleConverter = new DualRuleConverter(_prefixes);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
+        //Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 6);

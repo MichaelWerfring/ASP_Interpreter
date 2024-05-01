@@ -2,7 +2,7 @@
   "profiles": {
     "asp_interpreter_exe": {
       "commandName": "Project",
-      "commandLineArgs": "--log-level 3 -p /test/saser.asp"
+      "commandLineArgs": "--log-level 0 -p C:\\Users\\micha\\Desktop\\4_Semester\\Logikprogrammierung\\ASP_Interpreter\\asp_interpreter_exe\\program.asp --interactive"
     }
   }
 }
