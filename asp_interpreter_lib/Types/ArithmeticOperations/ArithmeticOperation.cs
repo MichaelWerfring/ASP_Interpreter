@@ -6,6 +6,8 @@ namespace asp_interpreter_lib.Types.ArithmeticOperations;
 
 public abstract class ArithmeticOperation
 {
+    public abstract int Evaluate(int l, int r);
+
     public abstract IOption<T> Accept<T>(TypeBaseVisitor<T> visitor);
 
     public abstract override string ToString();

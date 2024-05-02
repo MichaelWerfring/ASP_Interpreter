@@ -5,6 +5,11 @@ namespace asp_interpreter_lib.Types.ArithmeticOperations;
 
 public class Plus : ArithmeticOperation
 {
+    public override int Evaluate(int l, int r)
+    {
+        return l + r;
+    }
+
     public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         return visitor.Visit(this);

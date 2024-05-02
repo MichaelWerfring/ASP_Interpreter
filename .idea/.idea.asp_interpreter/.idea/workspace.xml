@@ -11,12 +11,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_exe/ProgramConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/ConsoleApplication.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Util/ConsoleApplication.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/asp_interpreter_exe.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/asp_interpreter_exe.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/asp_interpreter_lib.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/asp_interpreter_lib.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.g4" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.g4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.interp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPBaseVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPBaseVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/ArithmeticOperation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/ArithmeticOperation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Divide.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Divide.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Minus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Minus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Multiply.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Multiply.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Plus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Plus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Power.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ArithmeticOperations/Power.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/Query.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Query.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TermToNumberConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TermToNumberConverter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/VariableFinder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/VariableFinder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Util/Application.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Util/Application.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ProgramVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ProgramVisitor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRuleTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRuleTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/MockErrorLogger.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/TermTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/TermTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/TermVisitorTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/TermVisitorTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/VisitorTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/VisitorTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,6 +245,9 @@
       <workItem from="1714380588959" duration="296000" />
       <workItem from="1714380908907" duration="61000" />
       <workItem from="1714380994221" duration="77000" />
+      <workItem from="1714663732999" duration="516000" />
+      <workItem from="1714668091253" duration="56000" />
+      <workItem from="1714668393685" duration="780000" />
     </task>
     <task id="LOCAL-00003" summary="#21 - Added IS as BinaryOperator">
       <option name="closed" value="true" />
@@ -628,12 +651,30 @@
     <option name="coveragePercentColumnWidth" value="75" />
     <option name="sortOrder" value="ASCENDING" />
     <option name="sortedColumn" value="2" />
-    <option name="symbolColumnWidth" value="75" />
+    <option name="symbolColumnWidth" value="227" />
     <coverage-tree-state>
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 43% 2235/3937" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="asp_interpreter_lib 35% 2230/3448" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="asp_interpreter_lib 35% 2230/3448" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="asp_interpreter_lib 36% 2205/3423" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="asp_interpreter_lib 35% 2230/3448" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="asp_interpreter_lib 36% 2205/3423" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Util 19% 256/316" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
       </expand>
       <select />
@@ -701,7 +742,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/asp_interpreter_test/VisitorTest.cs</url>
-          <line>256</line>
+          <line>253</line>
           <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_test\VisitorTest.cs" containingFunctionPresentation="Method 'HandlesStatementWithRuleBodyAndNegatedHeadCorrectly'" />
           <option name="timeStamp" value="134" />
         </line-breakpoint>

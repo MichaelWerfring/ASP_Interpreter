@@ -88,8 +88,7 @@ internal class Program
                 throw new InvalidOperationException("The parameter for the argument is not contained in the provided array!");
             }
 
-            LogLevel logLevel;
-            if (!Enum.TryParse(args[i + 1], out logLevel))
+            if (!Enum.TryParse(args[i + 1], out LogLevel logLevel))
             {
                 logger.LogInfo($"The specified log level {args[i + 1]} " +
                     $"was not valid therefore Error(3) has been set as a defaul value!");

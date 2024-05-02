@@ -5,6 +5,16 @@ namespace asp_interpreter_lib.Types.ArithmeticOperations;
 
 public class Divide : ArithmeticOperation
 {
+    public override int Evaluate(int l, int r)
+    {
+        if(r == 0)
+        {
+            throw new DivideByZeroException();
+        }
+
+        return l /r ;
+    }
+
     public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         return visitor.Visit(this);

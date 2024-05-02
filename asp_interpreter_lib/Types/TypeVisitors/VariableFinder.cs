@@ -30,7 +30,7 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     public override IOption<List<VariableTerm>> Visit(Query query)
     {
         ArgumentNullException.ThrowIfNull(query);
-        return query.ClassicalLiteral.Accept(this);
+        return query.Literal.Accept(this);
     }
 
     public override IOption<List<VariableTerm>> Visit(Statement statement)
