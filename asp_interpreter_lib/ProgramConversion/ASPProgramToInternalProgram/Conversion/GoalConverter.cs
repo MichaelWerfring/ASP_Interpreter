@@ -1,12 +1,12 @@
-﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.TypeVisitors;
 using System.Text;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.Util;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 

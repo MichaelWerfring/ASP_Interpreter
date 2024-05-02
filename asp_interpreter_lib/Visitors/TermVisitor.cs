@@ -1,19 +1,20 @@
-﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.Types.Terms;
+﻿using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITerm>>
+public class TermVisitor(ILogger logger) : ASPBaseVisitor<IOption<ITerm>>
 {
-    private IErrorLogger _errorLogger = errorLogger;
-    
+    private readonly ILogger _logger = logger ??
+        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+
     public override IOption<ITerm> VisitNegatedTerm(ASPParser.NegatedTermContext context)
     {
         var baseTerm = context.term().Accept(this);
 
         if (!baseTerm.HasValue)
         {
-            _errorLogger.LogError("Cannot parse inner term!", context);
+            _logger.LogError("Cannot parse inner term!", context);
             return new None<ITerm>();
         }
 
@@ -26,7 +27,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
 
         if (text == null)
         {
-            _errorLogger.LogError("The string term must have a text!", context);
+            _logger.LogError("The string term must have a text!", context);
             return new None<ITerm>();
         }
 
@@ -39,7 +40,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
 
         if (id == null)
         {
-            _errorLogger.LogError("The term must have an identifier!", context);
+            _logger.LogError("The term must have an identifier!", context);
             return new None<ITerm>();
         }
 
@@ -51,11 +52,11 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
             return new Some<ITerm>(new BasicTerm(id, []));
         }
         
-        var innerTerms = terms.Accept(new TermsVisitor(errorLogger));
+        var innerTerms = terms.Accept(new TermsVisitor(_logger));
 
         if (innerTerms == null || !innerTerms.HasValue)
         {
-            _errorLogger.LogError("Cannot parse inner terms!", context);
+            _logger.LogError("Cannot parse inner terms!", context);
             return new None<ITerm>();
         }
         
@@ -66,11 +67,11 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
     {
         var left = context.term(0).Accept(this);
         var right = context.term(1).Accept(this);
-        var operation = context.arithop().Accept(new ArithmeticOperationVisitor(_errorLogger));
+        var operation = context.arithop().Accept(new ArithmeticOperationVisitor(_logger));
         
         if (!left.HasValue || !right.HasValue || !operation.HasValue)
         {
-            _errorLogger.LogError("Cannot parse arithmetic operation!", context);
+            _logger.LogError("Cannot parse arithmetic operation!", context);
             return new None<ITerm>();
         }        
         
@@ -86,7 +87,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
         
         if (!baseTerm.HasValue)
         {
-            _errorLogger.LogError("Cannot parse inner term!", context);
+            _logger.LogError("Cannot parse inner term!", context);
             return new None<ITerm>();
         }
 
@@ -104,7 +105,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
         
         if (textNumber == null)
         {
-            _errorLogger.LogError("Cannot find number!", context);
+            _logger.LogError("Cannot find number!", context);
             return new None<ITerm>();
         }
         
@@ -112,7 +113,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
 
         if (!isValid)
         {
-            _errorLogger.LogError("Term cannot be converted to number!", context);
+            _logger.LogError("Term cannot be converted to number!", context);
             return new None<ITerm>();
         }
         
@@ -125,7 +126,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
 
         if (variable == null)
         {
-            _errorLogger.LogError("Cannot parse name of the variable!", context);
+            _logger.LogError("Cannot parse name of the variable!", context);
             return new None<ITerm>();
         }
         
@@ -138,7 +139,7 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
 
         if (list == null|| !list.HasValue)
         {
-            _errorLogger.LogError("Cannot parse list!", context);
+            _logger.LogError("Cannot parse list!", context);
             return new None<ITerm>();
         }
         
@@ -154,11 +155,11 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
             return new Some<ITerm>(new ConventionalList([]));
         }
         
-        var terms = innerList.Accept(new TermsVisitor(_errorLogger));
+        var terms = innerList.Accept(new TermsVisitor(_logger));
         
         if(!terms.HasValue)
         {
-            _errorLogger.LogError("Cannot parse list terms!", context);
+            _logger.LogError("Cannot parse list terms!", context);
             return new None<ITerm>();
         }
         
@@ -167,18 +168,18 @@ public class TermVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ITer
 
     public override IOption<ITerm> VisitRecursiveList(ASPParser.RecursiveListContext context)
     {
-        var head = context.term(0).Accept(new TermVisitor(_errorLogger));
-        var tail = context.term(1).Accept(new TermVisitor(_errorLogger));
+        var head = context.term(0).Accept(new TermVisitor(_logger));
+        var tail = context.term(1).Accept(new TermVisitor(_logger));
 
         if (!head.HasValue)
         {
-            _errorLogger.LogError("Cannot parse head term!", context);
+            _logger.LogError("Cannot parse head term!", context);
             return new None<ITerm>();
         }
         
         if (!tail.HasValue)
         {
-            _errorLogger.LogError("Cannot parse tail term!", context);
+            _logger.LogError("Cannot parse tail term!", context);
             return new None<ITerm>();
         }
         

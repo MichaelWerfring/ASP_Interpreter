@@ -1,9 +1,7 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
-using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver;
-using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals;
 using asp_interpreter_lib.Unification.Basic.Interfaces;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.Unification;
 

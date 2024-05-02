@@ -1,7 +1,8 @@
-﻿using asp_interpreter_lib.ErrorHandling;
+﻿
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
@@ -20,7 +21,8 @@ public class GoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSldSolve
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        return term.Accept(this);
+        throw new NotImplementedException();
+        //return term.Accept(this);
     }
 
     public IOption<ICoSLDGoal> Visit(Variable variableTerm)
@@ -30,13 +32,12 @@ public class GoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSldSolve
 
     public IOption<ICoSLDGoal> Visit(Structure basicTerm)
     {
+
+        throw new NotImplementedException();
         IGoalBuilder? goalBuilder;
         _mapping.TryGetValue((basicTerm.Functor, basicTerm.Children.Count()), out goalBuilder);
 
-        if(goalBuilder != null)
-        {
-            goalBuilder.BuildGoal()      
-        }
+
 
     }
 

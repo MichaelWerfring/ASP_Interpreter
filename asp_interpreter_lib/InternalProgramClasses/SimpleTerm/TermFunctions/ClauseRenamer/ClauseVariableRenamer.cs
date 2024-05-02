@@ -1,7 +1,11 @@
+
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.ClauseRenamer;
+
+
 
 public class ClauseVariableRenamer
 {
@@ -12,7 +16,7 @@ public class ClauseVariableRenamer
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        var clauseVariables = clause
+        var clauseVariables = clause          
             .Select(_variableNameExtractor.GetVariableNames)
             .Aggregate((varSetA, varSetB) =>
             {

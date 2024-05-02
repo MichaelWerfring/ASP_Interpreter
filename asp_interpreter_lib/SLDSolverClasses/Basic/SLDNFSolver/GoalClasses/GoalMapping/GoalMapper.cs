@@ -1,9 +1,9 @@
-﻿using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals;
 using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.Unification;
 using asp_interpreter_lib.Unification.Basic.Robinson;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.GoalMapping;
 
@@ -32,7 +32,7 @@ public class GoalMapper : ISimpleTermVisitor<IOption<IGoal>>
 
     public IOption<IGoal> Visit(Structure basicTerm)
     {
-        IGoal goal;
+        IGoal? goal;
         _mapping.TryGetValue((basicTerm.Functor, basicTerm.Children.Count()), out goal);
         if (goal == null)
         {

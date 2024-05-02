@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Unification.Basic.Interfaces;
 

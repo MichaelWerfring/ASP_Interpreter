@@ -1,9 +1,9 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.Unification.Basic.Robinson;
-using asp_interpreter_lib.ErrorHandling.Either;
 using asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.Util.ErrorHandling.Either;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 

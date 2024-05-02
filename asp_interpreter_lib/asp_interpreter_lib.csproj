@@ -8,7 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0-preview.2.24128.5" />
     <PackageReference Include="QuikGraph" Version="2.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ErrorHandling\" />
   </ItemGroup>
 
 </Project>

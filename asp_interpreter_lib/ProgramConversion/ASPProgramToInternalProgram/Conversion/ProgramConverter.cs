@@ -1,30 +1,36 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Mapping;
+namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
 public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 {
+    private readonly ILogger _logger;
+
     private FunctorTableRecord _record;
 
-    public ProgramConverter(FunctorTableRecord functorTable)
+    public ProgramConverter(FunctorTableRecord functorTable, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(functorTable);
+        ArgumentNullException.ThrowIfNull(logger);
 
         _record = functorTable;
+        _logger = logger;
     }
 
     public InternalAspProgram Convert(AspProgram prog)
     {
+        _logger.LogTrace("Converting to internal program structure...");
+
         var clauses = prog.Statements.Select(ConvertStatement).ToList();
 
         var goalConverterForQuery = new GoalConverter(_record);
 
-        var queryMaybe = prog.Query.ClassicalLiteral.Accept(goalConverterForQuery);
+        var queryMaybe = prog.Query.GetValueOrThrow("Cannot parse Query!").Accept(goalConverterForQuery);
         if (!queryMaybe.HasValue)
         {
             throw new ArgumentException("Could not convert head!");

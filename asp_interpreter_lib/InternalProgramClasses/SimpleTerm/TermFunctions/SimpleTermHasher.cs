@@ -1,11 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
-using asp_interpreter_lib.Types.Terms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 

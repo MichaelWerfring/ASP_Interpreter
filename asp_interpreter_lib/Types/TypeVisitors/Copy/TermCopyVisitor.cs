@@ -1,8 +1,8 @@
-﻿using System.Security.AccessControl;
-using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.Types.Terms;
+﻿using asp_interpreter_lib.Types.Terms;
+using asp_interpreter_lib.Util;
+using asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.TypeVisitors;
+namespace asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 {
@@ -56,5 +56,30 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
         var innerTerm = term.Accept(this);
         return new Some<ITerm>(new ParenthesizedTerm(
             innerTerm.GetValueOrThrow("The inner term cannot be copied!")));
+    }
+
+    public override IOption<ITerm> Visit(RecursiveList term)
+    {
+        ITerm head = term.Head.Accept(this).
+            GetValueOrThrow("The left term cannot be copied!");
+        
+        ITerm tail = term.Tail.Accept(this).
+            GetValueOrThrow("The right term cannot be copied!");
+        
+        return new Some<ITerm>(new RecursiveList(head, tail));
+    }
+
+    public override IOption<ITerm> Visit(ConventionalList term)
+    {
+        
+        List<ITerm> children = [];
+
+        term.Terms.ForEach(t =>
+        {
+            children.Add(t.Accept(this).GetValueOrThrow("" +
+                                                        "The child term cannot be parsed!")); 
+        });
+
+        return new Some<ITerm>(new ConventionalList(children));
     }
 }

@@ -2,7 +2,7 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.ClauseRenamer;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.SLDSolverClasses.Basic.Events;
 using asp_interpreter_lib.SLDSolverClasses.Basic.PostProcessing;
 using asp_interpreter_lib.Unification.Basic.Interfaces;

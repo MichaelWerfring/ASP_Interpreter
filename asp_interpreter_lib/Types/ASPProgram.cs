@@ -1,15 +1,15 @@
 ﻿using System.Text;
-using asp_interpreter_lib.ErrorHandling;
 using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Types;
 
 public class AspProgram : IVisitableType
 {
     private List<Statement> _statements;
-    private Query _query;
+    private IOption<Query> _query;
 
-    public AspProgram(List<Statement> statements, Query query)
+    public AspProgram(List<Statement> statements, IOption<Query> query)
     {
         Statements = statements;
         Query = query;
@@ -21,7 +21,7 @@ public class AspProgram : IVisitableType
         private set => _statements = value ?? throw new ArgumentNullException(nameof(Statements));
     }
 
-    public Query Query
+    public IOption<Query> Query
     {
         get => _query;
         private set => _query = value ?? throw new ArgumentNullException(nameof(Query));

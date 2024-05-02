@@ -1,12 +1,9 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
-using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
+﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Unification.Constructive.Unification;
 using asp_interpreter_lib.Unification.Constructive;
 using asp_interpreter_lib.Unification.Constructive.Disunification;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;

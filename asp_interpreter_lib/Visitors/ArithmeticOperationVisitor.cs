@@ -1,11 +1,12 @@
-﻿using asp_interpreter_lib.ErrorHandling;
-using asp_interpreter_lib.Types.ArithmeticOperations;
+﻿using asp_interpreter_lib.Types.ArithmeticOperations;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class ArithmeticOperationVisitor(IErrorLogger errorLogger) : ASPBaseVisitor<IOption<ArithmeticOperation>>
+public class ArithmeticOperationVisitor(ILogger logger) : ASPBaseVisitor<IOption<ArithmeticOperation>>
 {
-    private IErrorLogger _errorLogger = errorLogger;
+    private readonly ILogger _logger = logger ??
+        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
     public override IOption<ArithmeticOperation> VisitPlusOperation(ASPParser.PlusOperationContext context)
     {

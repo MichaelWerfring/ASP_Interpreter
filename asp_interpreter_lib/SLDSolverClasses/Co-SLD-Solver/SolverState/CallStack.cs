@@ -1,5 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Visitor;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
