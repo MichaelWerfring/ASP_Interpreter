@@ -6,6 +6,8 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 public class SimpleTermComparer : ISimpleTermArgsVisitor<bool, ISimpleTerm>, IEqualityComparer<ISimpleTerm>
 {
+    private SimpleTermHasher _hasher = new SimpleTermHasher();
+
     public bool Equals(ISimpleTerm? x, ISimpleTerm? y)
     {
         ArgumentNullException.ThrowIfNull(x);
@@ -16,7 +18,7 @@ public class SimpleTermComparer : ISimpleTermArgsVisitor<bool, ISimpleTerm>, IEq
 
     public int GetHashCode([DisallowNull] ISimpleTerm obj)
     {
-        return obj.GetHashCode();
+        return _hasher.Hash(obj);
     }
 
     public bool Visit(Variable a, ISimpleTerm b)
