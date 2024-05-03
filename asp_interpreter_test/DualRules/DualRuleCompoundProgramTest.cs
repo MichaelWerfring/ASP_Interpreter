@@ -88,8 +88,9 @@ namespace asp_interpreter_test.DualRules
             var program = AspExtensions.GetProgram(code, _logger);
             var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
             var duals = dualRuleConverter.GetDualRules(program.Statements);
-
-            //Solution was verified with s(CASP)
+            
+            //The output of this test has is based 
+            //on the original s(CASP) implementation
             Assert.Multiple(() =>
             {
                 Assert.That(_logger.ErrorMessages.Count == 0);
@@ -134,6 +135,9 @@ namespace asp_interpreter_test.DualRules
 
             var duals = dualRuleConverter.GetDualRules(program.Statements);
 
+            
+            //The output of this test has is based 
+            //on the original s(CASP) implementation
             Assert.Multiple(() =>
             {
                 Assert.That(_logger.ErrorMessages.Count == 0);
@@ -250,7 +254,6 @@ namespace asp_interpreter_test.DualRules
                       p(X) :- not q(X).
                       q(X) :- not p(X).
                       r(X) :- X \= 3, X \= 4, q(X).
-                      p(X), r(Y)?
                       """;
 
             var program = AspExtensions.GetProgram(code, _logger);
@@ -258,11 +261,16 @@ namespace asp_interpreter_test.DualRules
 
             var duals = dualRuleConverter.GetDualRules(program.Statements);
 
+            //Verified by s(CASP) implementation
             Assert.Multiple(() =>
             {
                 Assert.That(_logger.ErrorMessages.Count == 0);
-                Assert.That(duals.Count == 1);
-                Assert.That(duals[0].ToString() == "");
+                Assert.That(duals.Count == 5);
+                Assert.That(duals[0].ToString() == "not_p(X) :- q(X).");
+                Assert.That(duals[1].ToString() == "not_q(X) :- p(X).");
+                Assert.That(duals[2].ToString() == "not_r(X) :- X = 3.");
+                Assert.That(duals[3].ToString() == "not_r(X) :- X \\= 3, X = 4.");
+                Assert.That(duals[4].ToString() == "not_r(X) :- X \\= 3, X \\= 4, not q(X).");
             });
         }
 
@@ -280,12 +288,19 @@ namespace asp_interpreter_test.DualRules
             var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
 
             var duals = dualRuleConverter.GetDualRules(program.Statements);
-
+            
+            //Verified by s(CASP)
             Assert.Multiple(() =>
             {
                 Assert.That(_logger.ErrorMessages.Count == 0);
-                Assert.That(duals.Count == 1);
-                Assert.That(duals[0].ToString() == "");
+                Assert.That(duals.Count == 7);
+                Assert.That(duals[0].ToString() == "not_member(V1, V2) :- not_member1(V1, V2), not_member2(V1, V2).");
+                Assert.That(duals[1].ToString() == "not_member1(X, V0) :- forall(T, fa_member1(X, V0, T)).");
+                Assert.That(duals[2].ToString() == "fa_member1(X, V0, T) :- V0 \\= [X| T].");
+                Assert.That(duals[3].ToString() == "not_member2(X, V0) :- forall(Y, forall(T, fa_member2(X, V0, Y, T))).");
+                Assert.That(duals[4].ToString() == "fa_member2(X, V0, Y, T) :- V0 \\= [Y| T].");
+                Assert.That(duals[5].ToString() == "fa_member2(X, V0, Y, T) :- V0 = [Y| T], X = Y.");
+                Assert.That(duals[6].ToString() == "fa_member2(X, V0, Y, T) :- V0 = [Y| T], X \\= Y, not member(X, T).");
             });
         }
 
