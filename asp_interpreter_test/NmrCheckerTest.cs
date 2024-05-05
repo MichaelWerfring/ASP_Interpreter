@@ -22,13 +22,13 @@ public class NmrCheckerTest
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);    
 
-        var subCheckRules = checker.GetSubCheckRules(program.Statements);
+        var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
 
         Assert.That(subCheckRules.Count == 4 &&
-                    subCheckRules[0].ToString() == "nmr_check :- forall(X, chk_not_p(X))." &&
-                    subCheckRules[1].ToString() == "chk_not_p(X) :- not q(X)." &&
-                    subCheckRules[2].ToString() == "chk_not_p(X) :- q(X), p(X)." &&
-                    subCheckRules[3].ToString() == "chk_not_q(X).");
+                    subCheckRules[0].ToString() == "nmr_check :- forall(X, not chk_p(X))." &&
+                    subCheckRules[1].ToString() == "not chk_p(X) :- not q(X)." &&
+                    subCheckRules[2].ToString() == "not chk_p(X) :- q(X), p(X)." &&
+                    subCheckRules[3].ToString() == "not chk_q(X).");
     }
     
     [Test]
@@ -40,13 +40,13 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
-        var subCheckRules = checker.GetSubCheckRules(program.Statements);
+        var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
         
         Assert.That(subCheckRules.Count == 4 &&
-                    subCheckRules[0].ToString() == "nmr_check :- chk_not_eh0." &&
-                    subCheckRules[1].ToString() == "chk_not_eh0 :- forall(X, chk_fa_eh0(X))." &&
-                    subCheckRules[2].ToString() == "chk_fa_eh0(X) :- r(X)." &&
-                    subCheckRules[3].ToString() == "chk_not_r(X).");
+                    subCheckRules[0].ToString() == "nmr_check :- not chk_eh0." &&
+                    subCheckRules[1].ToString() == "not chk_eh0 :- forall(X, not chk_fa_eh0(X))." &&
+                    subCheckRules[2].ToString() == "not chk_fa_eh0(X) :- r(X)." &&
+                    subCheckRules[3].ToString() == "not chk_r(X).");
 
     }
     
@@ -60,16 +60,16 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
-        var subCheckRules = checker.GetSubCheckRules(program.Statements);
+        var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
         
         Assert.That(subCheckRules.Count == 7 &&
-                    subCheckRules[0].ToString() == "nmr_check :- forall(X, chk_not_p(X)), chk_not_eh0." &&
-                    subCheckRules[1].ToString() == "chk_not_p(X) :- not q(X)." &&
-                    subCheckRules[2].ToString() == "chk_not_p(X) :- q(X), p(X)." &&
-                    subCheckRules[3].ToString() == "chk_not_eh0 :- forall(X, chk_fa_eh0(X))." &&
-                    subCheckRules[4].ToString() == "chk_fa_eh0(X) :- r(X)."&&
-                    subCheckRules[5].ToString() == "chk_not_q(X)." &&
-                    subCheckRules[6].ToString() == "chk_not_r(X).");
+                    subCheckRules[0].ToString() == "nmr_check :- forall(X, not chk_p(X)), not chk_eh0." &&
+                    subCheckRules[1].ToString() == "not chk_p(X) :- not q(X)." &&
+                    subCheckRules[2].ToString() == "not chk_p(X) :- q(X), p(X)." &&
+                    subCheckRules[3].ToString() == "not chk_eh0 :- forall(X, not chk_fa_eh0(X))." &&
+                    subCheckRules[4].ToString() == "not chk_fa_eh0(X) :- r(X)."&&
+                    subCheckRules[5].ToString() == "not chk_q(X)." &&
+                    subCheckRules[6].ToString() == "not chk_r(X).");
     }
     
     [Test]
@@ -82,16 +82,16 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
-        var subCheckRules = checker.GetSubCheckRules(program.Statements);
+        var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
         
         Assert.That(subCheckRules.Count ==7 &&
-                    subCheckRules[0].ToString() == "nmr_check :- chk_not_eh0, forall(X, chk_not_p(X))." &&
-                    subCheckRules[1].ToString() == "chk_not_eh0 :- forall(X, chk_fa_eh0(X))." &&
-                    subCheckRules[2].ToString() == "chk_fa_eh0(X) :- s(1, X)." &&
-                    subCheckRules[3].ToString() == "chk_not_p(X) :- not q(X)." &&
-                    subCheckRules[4].ToString() == "chk_not_p(X) :- q(X), p(X)." &&
-                    subCheckRules[5].ToString() == "chk_not_s(1, X)." &&
-                    subCheckRules[6].ToString() == "chk_not_q(X).");
+                    subCheckRules[0].ToString() == "nmr_check :- not chk_eh0, forall(X, not chk_p(X))." &&
+                    subCheckRules[1].ToString() == "not chk_eh0 :- forall(X, not chk_fa_eh0(X))." &&
+                    subCheckRules[2].ToString() == "not chk_fa_eh0(X) :- s(1, X)." &&
+                    subCheckRules[3].ToString() == "not chk_p(X) :- not q(X)." &&
+                    subCheckRules[4].ToString() == "not chk_p(X) :- q(X), p(X)." &&
+                    subCheckRules[5].ToString() == "not chk_s(1, X)." &&
+                    subCheckRules[6].ToString() == "not chk_q(X).");
     }
 
     [Test]
@@ -103,15 +103,15 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
-        var subCheckRules = checker.GetSubCheckRules(program.Statements);
+        var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
         
         Assert.That(subCheckRules.Count == 6 &&
-                    subCheckRules[0].ToString() == "nmr_check :- forall(X, chk_not_p(X))." &&
-                    subCheckRules[1].ToString() == "chk_not_p(X) :- forall(Y, chk_fa_p(X, Y))." &&
-                    subCheckRules[2].ToString() == "chk_fa_p(X, Y) :- not q(X, Y)." &&
-                    subCheckRules[3].ToString() == "chk_fa_p(X, Y) :- q(X, Y), p(Y)." &&
-                    subCheckRules[4].ToString() == "chk_fa_p(X, Y) :- q(X, Y), not p(Y), p(X)." &&
-                    subCheckRules[5].ToString() == "chk_not_q(X, Y).");
+                    subCheckRules[0].ToString() == "nmr_check :- forall(X, not chk_p(X))." &&
+                    subCheckRules[1].ToString() == "not chk_p(X) :- forall(Y, not chk_fa_p(X, Y))." &&
+                    subCheckRules[2].ToString() == "not chk_fa_p(X, Y) :- not q(X, Y)." &&
+                    subCheckRules[3].ToString() == "not chk_fa_p(X, Y) :- q(X, Y), p(Y)." &&
+                    subCheckRules[4].ToString() == "not chk_fa_p(X, Y) :- q(X, Y), not p(Y), p(X)." &&
+                    subCheckRules[5].ToString() == "not chk_q(X, Y).");
 
     }
 }

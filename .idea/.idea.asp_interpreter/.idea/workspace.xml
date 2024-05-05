@@ -10,15 +10,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TermToBasicTermConverter.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleWithoutNotInNameCompoundProgramTest.cs" afterDir="false" />
+    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="#62 added the notAsName parameter to the dual rule generator constructor">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/DualRuleConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/DualRuleConverter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/GoalNegator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/GoalNegator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/Statement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Statement.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/ITermVisitor.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/NMRCheck/NmrChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/NMRCheck/NmrChecker.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +54,7 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/09190d4d899c4e68827ef2ee0d8f96282ee00/e1/4ec167d8/AbstractParseTreeVisitor`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46a322d26154b982566e1817203e5452c91223f93b0e392d9c5b4806696fdc1/Assert.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -230,15 +226,7 @@
       <workItem from="1714668393685" duration="780000" />
       <workItem from="1714771911401" duration="1314000" />
       <workItem from="1714897682137" duration="7251000" />
-      <workItem from="1714906684210" duration="3339000" />
-    </task>
-    <task id="LOCAL-00004" summary="#21 - Regenerated Parser and Lexer to Handle IsOperation">
-      <option name="closed" value="true" />
-      <created>1711805711254</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1711805711254</updated>
+      <workItem from="1714906684210" duration="4552000" />
     </task>
     <task id="LOCAL-00005" summary="#21 - Merged feature into main">
       <option name="closed" value="true" />
@@ -624,7 +612,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714773224207</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="#62 added the notAsName parameter to the dual rule generator constructor">
+      <option name="closed" value="true" />
+      <created>1714920228237</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1714920228238</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -693,7 +689,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="#22 - Added lists to be treated as terms" />
     <MESSAGE value="#44 - Refactoring of Type Hierarchy" />
     <MESSAGE value="#44 - Changed NMR Checker to work with new Literal" />
     <MESSAGE value="#43 - Rebuilt NMR Check based on Dual Rules" />
@@ -718,7 +713,8 @@
     <MESSAGE value="#56 - Added Lists aus non-variable terms when rewriting heads" />
     <MESSAGE value="#57 - added tests with Lists in Head of rule" />
     <MESSAGE value="#31 - Testing of Dual Rules" />
-    <option name="LAST_COMMIT_MESSAGE" value="#31 - Testing of Dual Rules" />
+    <MESSAGE value="#62 added the notAsName parameter to the dual rule generator constructor" />
+    <option name="LAST_COMMIT_MESSAGE" value="#62 added the notAsName parameter to the dual rule generator constructor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

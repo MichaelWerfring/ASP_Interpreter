@@ -18,7 +18,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
 
     private static readonly GoalToLiteralConverter _goalToLiteralConverter = new();
 
-    public List<Statement> GetSubCheckRules(List<Statement> olonRules)
+    public List<Statement> GetSubCheckRules(List<Statement> olonRules, bool notAsName = true)
     {
         ArgumentNullException.ThrowIfNull(olonRules);
 
@@ -34,17 +34,17 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         
         // 2) generate dual for modified rule
         // dummy logger is enough because we do not want to log twice
-        DualRuleConverter converter = new DualRuleConverter(_options, _logger.GetDummy());
+        DualRuleConverter converter = new DualRuleConverter(_options, _logger.GetDummy(), notAsName);
         var tempOlonRules = 
-            olonRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow());
-        var duals = converter.GetDualRules(tempOlonRules);
+            preprocessedRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow());
+        var duals = converter.GetDualRules(tempOlonRules, notAsName);
         
         // 3) assign unique head (e.g. chk0)
         duals.ForEach(d => 
             d.Head.GetValueOrThrow().Identifier = _options.CheckPrefix + d.Head.GetValueOrThrow().Identifier);
         
         
-        Statement nmrCheck = GetCheckForDuals(olonRules);
+        Statement nmrCheck = GetCheckForDuals(preprocessedRules, notAsName);
         AddForallToCheck(nmrCheck);
         
         duals.Insert(0, nmrCheck);
@@ -55,7 +55,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         return duals;
     }
 
-    private Statement GetCheckForDuals(List<Statement>olonRules)
+    private Statement GetCheckForDuals(List<Statement> olonRules, bool notAsName = true)
     {
         Statement nmrCheck = new();
         nmrCheck.AddHead(new Literal("nmr_check", false, false, []));
@@ -71,7 +71,8 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         foreach (var rule in distinctOlon)
         {
             var head = rule.Head.GetValueOrThrow();
-            head.Identifier = _options.CheckPrefix + _options.DualPrefix + head.Identifier;
+            head.Identifier = _options.CheckPrefix + (notAsName ? _options.DualPrefix : "") + head.Identifier;
+            head.HasNafNegation = !notAsName;
             nmrBody.Add(head);
         }
         
