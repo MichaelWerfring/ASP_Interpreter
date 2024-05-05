@@ -17,7 +17,7 @@ public class GoalNegator
     
     private static TermCopyVisitor _termCopyVisitor = new();
     
-    public static Goal Negate(Goal goal)
+    public static Goal Negate(Goal goal, bool notAsName = true)
     {
         var literal = goal.Accept(_literalConverter);
         
@@ -29,7 +29,7 @@ public class GoalNegator
             var terms =
                 actualLiteral.Terms.Select(t=> t.Accept(_termCopyVisitor).
                     GetValueOrThrow("Failed to parse term!")).ToList();
-                
+
             return new Literal(
                 actualLiteral.Identifier.ToString(),
                 !actualLiteral.HasNafNegation,
@@ -50,5 +50,4 @@ public class GoalNegator
         
         return newBinaryOperation;
     }
-    
 }

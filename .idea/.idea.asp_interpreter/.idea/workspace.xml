@@ -11,7 +11,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TermToBasicTermConverter.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleWithoutNotInNameCompoundProgramTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/DualRuleConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/DualRuleConverter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/GoalNegator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/GoalNegator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/Statement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Statement.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/ITermVisitor.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -53,9 +59,7 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/09190d4d899c4e68827ef2ee0d8f96282ee00/e1/4ec167d8/AbstractParseTreeVisitor`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46a322d26154b982566e1817203e5452c91223f93b0e392d9c5b4806696fdc1/Assert.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/Types/Terms/AnonymusVariableTerm.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRuleTest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRuleTest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -75,7 +79,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;.NET Project.asp_interpreter_exe.executor&quot;: &quot;Debug&quot;,
+    &quot;.NET Project.asp_interpreter_exe.executor&quot;: &quot;Run&quot;,
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -224,15 +228,9 @@
       <workItem from="1714663732999" duration="516000" />
       <workItem from="1714668091253" duration="56000" />
       <workItem from="1714668393685" duration="780000" />
-      <workItem from="1714771911401" duration="1118000" />
-    </task>
-    <task id="LOCAL-00003" summary="#21 - Added IS as BinaryOperator">
-      <option name="closed" value="true" />
-      <created>1711805616435</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1711805616435</updated>
+      <workItem from="1714771911401" duration="1314000" />
+      <workItem from="1714897682137" duration="7251000" />
+      <workItem from="1714906684210" duration="3339000" />
     </task>
     <task id="LOCAL-00004" summary="#21 - Regenerated Parser and Lexer to Handle IsOperation">
       <option name="closed" value="true" />
@@ -618,7 +616,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714300719304</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="#31 - Testing of Dual Rules">
+      <option name="closed" value="true" />
+      <created>1714773224206</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1714773224207</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -687,7 +693,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="#18 - Changed ArithmeticOperation.cs to be able to evaluate by handing over two terms" />
     <MESSAGE value="#22 - Added lists to be treated as terms" />
     <MESSAGE value="#44 - Refactoring of Type Hierarchy" />
     <MESSAGE value="#44 - Changed NMR Checker to work with new Literal" />
@@ -712,7 +717,8 @@
     <MESSAGE value="#41 - Namespace fixing and Additional Testing and Refactoring of Head Variable Eliminator" />
     <MESSAGE value="#56 - Added Lists aus non-variable terms when rewriting heads" />
     <MESSAGE value="#57 - added tests with Lists in Head of rule" />
-    <option name="LAST_COMMIT_MESSAGE" value="#57 - added tests with Lists in Head of rule" />
+    <MESSAGE value="#31 - Testing of Dual Rules" />
+    <option name="LAST_COMMIT_MESSAGE" value="#31 - Testing of Dual Rules" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -722,19 +728,6 @@
           <line>253</line>
           <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_test\VisitorTest.cs" containingFunctionPresentation="Method 'HandlesStatementWithRuleBodyAndNegatedHeadCorrectly'" />
           <option name="timeStamp" value="134" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs</url>
-          <line>302</line>
-          <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_test\DualRules\DualRuleCompoundProgramTest.cs" containingFunctionPresentation="Lambda expression inside Method 'MemberTest'">
-            <startOffsets>
-              <option value="13589" />
-            </startOffsets>
-            <endOffsets>
-              <option value="13590" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="136" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

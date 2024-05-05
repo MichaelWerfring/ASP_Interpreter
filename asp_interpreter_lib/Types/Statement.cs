@@ -10,7 +10,7 @@ public class Statement: IVisitableType
     public bool HasHead => Head.HasValue;
     
     //Empty per default
-    public IOption<Literal> Head { get; private set; } = new None<Literal>();
+    public IOption<Literal> Head { get; set; } = new None<Literal>();
     public List<Goal> Body { get; private set; } = new([]);
 
     public void AddHead(Literal head)
