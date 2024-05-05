@@ -14,9 +14,9 @@ namespace asp_interpreter_lib.Preprocessing.OLONDetection
         private readonly ILogger _logger = logger ??
             throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
-        private CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
+        private readonly CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
 
-        private CallGraphCycleFinder _cycleFinder = new CallGraphCycleFinder(logger);
+        private readonly CallGraphCycleFinder _cycleFinder = new CallGraphCycleFinder(logger);
         
         public List<Statement> FilterOlonRules(List<Statement> rules)
         {

@@ -1,15 +1,15 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
 
 public class VariableMappingCopier : IVariableBindingVisitor<IVariableBinding>
 {
-    private SimpleTermCloner _cloner = new SimpleTermCloner();
-
     /// <summary>
     /// Performs a deep copy of the mapping.
     /// </summary>
@@ -21,21 +21,25 @@ public class VariableMappingCopier : IVariableBindingVisitor<IVariableBinding>
 
         var dict = mapping.Mapping
             .Select(pair => (new Variable(pair.Key.Identifier.GetCopy()), pair.Value.Accept(this)))
-            .ToDictionary( new VariableComparer());
+            .ToDictionary(new VariableComparer());
 
-        return new VariableMapping(dict);
+        var immutableBuilder = 
+            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(new VariableComparer());
+        immutableBuilder.AddRange(dict);
+
+        return new VariableMapping(immutableBuilder.ToImmutable());
     }
 
     public IVariableBinding Visit(ProhibitedValuesBinding binding)
     {
         return new ProhibitedValuesBinding
         (
-            binding.ProhibitedValues.Select(_cloner.Clone).ToHashSet(new SimpleTermComparer())
+            binding.ProhibitedValues.Select(x => x.Clone()).ToImmutableHashSet(new SimpleTermEqualityComparer())
         );
     }
 
     public IVariableBinding Visit(TermBinding binding)
     {
-        return new TermBinding(_cloner.Clone(binding.Term));
+        return new TermBinding(binding.Term.Clone());
     }
 }

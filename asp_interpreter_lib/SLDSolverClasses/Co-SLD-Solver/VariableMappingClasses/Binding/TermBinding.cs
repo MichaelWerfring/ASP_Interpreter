@@ -33,9 +33,4 @@ public class TermBinding : IVariableBinding
     {
         return visitor.Visit(this, arguments);
     }
-
-    public override string ToString()
-    {
-        return Term.ToString();
-    }
 }

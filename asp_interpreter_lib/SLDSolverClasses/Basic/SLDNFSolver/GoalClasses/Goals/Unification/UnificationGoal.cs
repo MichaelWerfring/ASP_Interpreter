@@ -1,15 +1,16 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.Unification.Basic.Interfaces;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.Unification;
 
 public class UnificationGoal : IGoal
 {
     private IUnificationAlgorithm _algorithm;
-    private VariableSubstituter _substituter = new VariableSubstituter();
 
     public UnificationGoal(IUnificationAlgorithm unificationAlgorithm)
     {
@@ -47,7 +48,7 @@ public class UnificationGoal : IGoal
             return [];
         }
 
-        var newGoals = state.CurrentGoals.Skip(1).Select((term) => _substituter.Substitute(term, substitution));
+        var newGoals = state.CurrentGoals.Skip(1).Select((term) => term.Substitute(substitution));
 
         return
         [

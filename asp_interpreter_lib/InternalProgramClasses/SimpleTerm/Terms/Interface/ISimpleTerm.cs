@@ -10,4 +10,6 @@ public interface ISimpleTerm
 
     public TResult Accept<TResult, TArgs>(ISimpleTermArgsVisitor<TResult, TArgs> visitor, TArgs arguments);
 
+    public abstract string ToString();
+
 }

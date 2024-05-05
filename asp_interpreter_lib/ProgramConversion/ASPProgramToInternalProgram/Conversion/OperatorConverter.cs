@@ -8,7 +8,7 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conv
 
 public class OperatorConverter : TypeBaseVisitor<string>
 {
-    private FunctorTableRecord _functorTable;
+    private readonly FunctorTableRecord _functorTable;
 
     public OperatorConverter(FunctorTableRecord functorTable)
     {

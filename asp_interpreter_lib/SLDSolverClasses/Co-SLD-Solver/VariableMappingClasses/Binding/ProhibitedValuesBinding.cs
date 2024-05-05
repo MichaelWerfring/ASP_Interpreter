@@ -1,28 +1,20 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 
 public class ProhibitedValuesBinding : IVariableBinding
 {
-    public ProhibitedValuesBinding(HashSet<ISimpleTerm> prohibitedValuesSet)
+    public ProhibitedValuesBinding(IImmutableSet<ISimpleTerm> prohibitedValuesSet)
     {
         ArgumentNullException.ThrowIfNull(prohibitedValuesSet, nameof(prohibitedValuesSet));
-        if (prohibitedValuesSet.Comparer is not SimpleTermComparer)
-        {
-            throw new ArgumentException($"Comparer must be of type {typeof(SimpleTermComparer)}");
-        }
+
 
         ProhibitedValues = prohibitedValuesSet;
     }
 
-    public HashSet<ISimpleTerm> ProhibitedValues { get; }
+    public IImmutableSet<ISimpleTerm> ProhibitedValues { get; }
 
     // visitor
     public void Accept(IVariableBindingVisitor visitor)

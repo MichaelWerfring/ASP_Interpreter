@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
@@ -11,16 +11,12 @@ namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 /// </summary>
 public class VariableMapping
 {
-    public VariableMapping(Dictionary<Variable, IVariableBinding> mapping)
+    public VariableMapping(IImmutableDictionary<Variable, IVariableBinding> mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
-        if(mapping.Comparer is not VariableComparer)
-        {
-            throw new ArgumentException($"Comparer must be of type {typeof(VariableComparer)}");
-        }
 
         Mapping = mapping;
     }
 
-    public Dictionary<Variable, IVariableBinding> Mapping { get; }
+    public IImmutableDictionary<Variable, IVariableBinding> Mapping { get; }
 }

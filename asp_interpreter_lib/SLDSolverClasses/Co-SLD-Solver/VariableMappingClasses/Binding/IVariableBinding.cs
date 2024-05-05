@@ -2,11 +2,11 @@
 
 public interface IVariableBinding
 {
-    void Accept(IVariableBindingVisitor visitor);
+    public void Accept(IVariableBindingVisitor visitor);
 
-    T Accept<T>(IVariableBindingVisitor<T> visitor);
+    public T Accept<T>(IVariableBindingVisitor<T> visitor);
 
-    void Accept<TArgs>(IVariableBindingArgumentVisitor<TArgs> visitor, TArgs arguments);
+    public void Accept<TArgs>(IVariableBindingArgumentVisitor<TArgs> visitor, TArgs arguments);
 
-    TResult Accept<TResult, TArgs>(IVariableBindingArgumentVisitor<TResult,TArgs> visitor, TArgs arguments);
+    public TResult Accept<TResult, TArgs>(IVariableBindingArgumentVisitor<TResult,TArgs> visitor, TArgs arguments);
 }

@@ -1,13 +1,13 @@
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
 using asp_interpreter_lib.Unification.Basic.Interfaces;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 
 namespace asp_interpreter_lib.Unification.Basic.Robinson;
 
 public class RobinsonUnificationAlgorithm : IUnificationAlgorithm
 {
-    private bool _doOccursCheck;
+    private readonly bool _doOccursCheck;
 
     public RobinsonUnificationAlgorithm(bool doOccursCheck)
     {

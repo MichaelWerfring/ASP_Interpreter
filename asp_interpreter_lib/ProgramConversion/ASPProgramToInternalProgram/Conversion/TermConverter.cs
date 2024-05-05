@@ -1,21 +1,23 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Util.ErrorHandling;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
 public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 {
+    private readonly FunctorTableRecord _functorTable;
+
+    private readonly OperatorConverter _operatorConverter;
+
+    private readonly NegatedTermConverter _negatedTermConverter;
+
     private int _nextAnonymousVariableIndex = 0;
-
-    private FunctorTableRecord _functorTable;
-
-    private OperatorConverter _operatorConverter;
-
-    private NegatedTermConverter _negatedTermConverter;
 
     public TermConverter(FunctorTableRecord functorTable)
     {
@@ -64,7 +66,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
             return new None<ISimpleTerm>();
         }
 
-        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildrenMaybes.Select((m)=> m.GetValueOrThrow())));
+        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildrenMaybes.Select((m)=> m.GetValueOrThrow()).ToImmutableList()));
     }
 
     public override IOption<ISimpleTerm> Visit(ConventionalList term)
@@ -121,7 +123,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
             return new Structure(_functorTable.Nil, []);
         }
 
-        var head = new Structure(str.First().ToString(), Enumerable.Empty<ISimpleTerm>());
+        var head = new Structure(str.First().ToString(), ImmutableList.Create<ISimpleTerm>());
         var tail = ConvertString(new string(str.Skip(1).ToArray()));
 
         return new Structure(_functorTable.List, [head, tail]);

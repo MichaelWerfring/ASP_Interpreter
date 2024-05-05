@@ -1,15 +1,15 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.ClauseRenamer;
 using asp_interpreter_lib.Unification.Basic.Interfaces;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.Unification;
 
 public class DatabaseUnificationGoal : IGoal
 {
     private ClauseVariableRenamer _variableRenamer = new ClauseVariableRenamer();
-    private VariableSubstituter _substituter = new VariableSubstituter();
 
     private IUnificationAlgorithm _algorithm;
 
@@ -43,7 +43,7 @@ public class DatabaseUnificationGoal : IGoal
             var newMapping = state.CurrentSubstitution.Union(substitution).ToDictionary(new VariableComparer());
 
             var nextGoals = renamedClauseResult.RenamedClause.Skip(1).Concat(state.CurrentGoals.Skip(1));
-            var substitutedGoals = nextGoals.Select((term) => _substituter.Substitute(term, newMapping));
+            var substitutedGoals = nextGoals.Select((term) => term.Substitute(newMapping));
 
             yield return new SolverState(substitutedGoals, newMapping, renamedClauseResult.NextInternalIndex);
         }

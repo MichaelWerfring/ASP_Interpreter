@@ -1,31 +1,28 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.Unification.Basic.Robinson;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.Unification.Constructive.Target;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.Unification.StructureReducers;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 public class ConstructiveUnifier
 {
-    // functions
-    private SimpleTermCloner _cloner = new SimpleTermCloner();
-    private SimpleTermComparer _comparer = new SimpleTermComparer();
-    private SimpleTermContainsChecker _containsChecker = new SimpleTermContainsChecker();
-    private VariableSubstituter _substituter = new VariableSubstituter();
-    private ConstructiveVariableSubstitutor _maybeSubstitutor = new ConstructiveVariableSubstitutor();
-    private StructureReducer _reducer = new StructureReducer();
+    private readonly ConstructiveVariableSubstitutor _maybeSubstitutor = new ConstructiveVariableSubstitutor();
+    private readonly StructureReducer _reducer = new StructureReducer();
 
-    // input by constructor
-    private bool _doOccursCheck;
-    private ISimpleTerm _left;
-    private ISimpleTerm _right;
+    private readonly bool _doOccursCheck;
+    private readonly ISimpleTerm _left;
+    private readonly ISimpleTerm _right;
+
     private VariableMapping _mapping;
-
-    // indicates failure : assumed to be successful until proven otherwise
     private bool _hasSucceded;
 
     public ConstructiveUnifier(bool doOccursCheck, ConstructiveTarget target)
@@ -44,13 +41,13 @@ public class ConstructiveUnifier
             ProhibitedValuesBinding copiedProhibitedValues = new ProhibitedValuesBinding
             (
                 pair.Value.ProhibitedValues
-                                    .Select(_cloner.Clone)
-                                    .ToHashSet(new SimpleTermComparer())
+                                    .Select(x => x.Clone())
+                                    .ToImmutableHashSet(new SimpleTermEqualityComparer())
             );
 
             copiedDict.Add(new Variable(pair.Key.Identifier.GetCopy()), copiedProhibitedValues);
         }
-        _mapping = new VariableMapping(copiedDict);
+        _mapping = new VariableMapping(copiedDict.ToImmutableDictionary(new VariableComparer()));
         //
 
         _hasSucceded = true;
@@ -131,13 +128,13 @@ public class ConstructiveUnifier
     private void TryUnifyVariableCase(Variable left, ISimpleTerm right)
     {
         // if both are variables and equal, do nothing
-        if (_comparer.Equals(left, right))
+        if (left.IsEqualTo(right))
         {
             return;
         }
 
         // do occurs check if asked for
-        if (_doOccursCheck && _containsChecker.LeftContainsRight(right, left))
+        if (_doOccursCheck && right.Contains(left))
         {
             _hasSucceded = false;
             return;
@@ -151,7 +148,7 @@ public class ConstructiveUnifier
 
         // check if right is in prohibited value list of left: if yes, then fail.
         var prohibitedValuesOfLeft = (ProhibitedValuesBinding)_mapping.Mapping[left];
-        if (prohibitedValuesOfLeft.ProhibitedValues.Contains(right, _comparer))
+        if (prohibitedValuesOfLeft.ProhibitedValues.Contains(right))
         {
             _hasSucceded = false;
             return;
@@ -166,9 +163,16 @@ public class ConstructiveUnifier
         ProhibitedValuesBinding leftVals = (ProhibitedValuesBinding)_mapping.Mapping[left];
         ProhibitedValuesBinding rightVals = (ProhibitedValuesBinding)_mapping.Mapping[right];
 
-        var union = leftVals.ProhibitedValues.Union(rightVals.ProhibitedValues, new SimpleTermComparer());
+        var union = leftVals.ProhibitedValues.Union(rightVals.ProhibitedValues, new SimpleTermEqualityComparer());
 
-        _mapping.Mapping[right] = new ProhibitedValuesBinding(union.ToHashSet(new SimpleTermComparer()));
+        _mapping = new VariableMapping
+        (
+            _mapping.Mapping.SetItem
+            (
+                right, 
+                new ProhibitedValuesBinding(union.ToImmutableHashSet(new SimpleTermEqualityComparer()))
+            )
+        );
     }
 
     private VariableMapping ApplySubstitutionComposition(VariableMapping oldMapping, Variable var, ISimpleTerm term)
@@ -182,7 +186,7 @@ public class ConstructiveUnifier
         {
             if (pair.Value is TermBinding binding)
             {
-                return (pair.Key, new TermBinding(_substituter.Substitute(binding.Term, dict)));
+                return (pair.Key, new TermBinding(binding.Term.Substitute(dict)));
             }
             else
             {
@@ -193,6 +197,6 @@ public class ConstructiveUnifier
 
         newMapping[var] = new TermBinding(term);
 
-        return new VariableMapping(newMapping);
+        return new VariableMapping(newMapping.ToImmutableDictionary(new VariableComparer()));
     }
 }

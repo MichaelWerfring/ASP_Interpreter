@@ -1,35 +1,21 @@
-﻿
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class CoSldSolverState
 {
-    public CoSldSolverState
-    (
-        CallStack currentStack,
-        CoinductiveHypothesisSet currentSet,
-        VariableMapping currentMapping,
-        IEnumerable<ISimpleTerm> currentGoals
-    )
+    public CoSldSolverState(IImmutableList<ISimpleTerm> currentGoals, SolutionState solutionState)
     {
-        ArgumentNullException.ThrowIfNull(currentStack, nameof(currentStack));
-        ArgumentNullException.ThrowIfNull(currentSet, nameof(currentSet));
-        ArgumentNullException.ThrowIfNull(currentMapping, nameof(currentMapping));
         ArgumentNullException.ThrowIfNull(currentGoals, nameof(currentGoals));
+        ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
 
-        CurrentStack = currentStack;
-        CurrentSet = currentSet;
-        CurrentMapping = currentMapping;
-        CurrentGoals = currentGoals;
+        SolutionState = solutionState;
+        CurrentGoals = currentGoals;      
     }
 
-    public CallStack CurrentStack { get; }
+    public IImmutableList<ISimpleTerm> CurrentGoals { get; }
 
-    public CoinductiveHypothesisSet CurrentSet { get; }
-
-    public VariableMapping CurrentMapping { get; }
-
-    public IEnumerable<ISimpleTerm> CurrentGoals { get; }
+    public SolutionState SolutionState { get; }
 }

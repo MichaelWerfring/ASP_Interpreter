@@ -1,18 +1,18 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.Unification.StructureReducers;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Unification.Basic.Robinson;
 
 public class RobinsonUnifier
 {
-    private SimpleTermComparer _comparer = new SimpleTermComparer();
-    private VariableSubstituter _substituter = new VariableSubstituter();
-    private SimpleTermContainsChecker _containsChecker = new SimpleTermContainsChecker();
-    private StructureReducer _reducer = new StructureReducer();
+    private readonly StructureReducer _reducer = new StructureReducer();
 
-    private bool _doOccursCheck;
+    private readonly bool _doOccursCheck;
 
     private Dictionary<Variable, ISimpleTerm> _substitution;
     private bool _hasSucceded;
@@ -104,12 +104,12 @@ public class RobinsonUnifier
     private void TryUnifyVariableCase(Variable left, ISimpleTerm right)
     {
         // if both are variables and are equal
-        if (_comparer.Equals(left, right))
+        if (left.IsEqualTo(right))
         {
             return;
         }
         // now we know that left is variable : do occurs check if necessary
-        else if (_doOccursCheck && _containsChecker.LeftContainsRight(right, left))
+        else if (_doOccursCheck && right.Contains(left))
         {
             _hasSucceded = false;
             return;
@@ -117,7 +117,7 @@ public class RobinsonUnifier
         // now do substitution composition
         else
         {
-            var newDict = new Dictionary<Variable, ISimpleTerm>(new InternalProgramClasses.SimpleTerm.TermFunctions.VariableComparer())
+            var newDict = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
             {
                 { left, right }
             };
@@ -131,7 +131,7 @@ public class RobinsonUnifier
         Dictionary<Variable, ISimpleTerm> substitution
     )
     {
-        return oldSubstitution.Select(keyValuePair => (keyValuePair.Key, _substituter.Substitute(keyValuePair.Value, substitution)))
+        return oldSubstitution.Select(keyValuePair => (keyValuePair.Key, keyValuePair.Value.Substitute(substitution)))
                               .ToDictionary(new VariableComparer())
                               .Union(substitution)
                               .ToDictionary(new VariableComparer());

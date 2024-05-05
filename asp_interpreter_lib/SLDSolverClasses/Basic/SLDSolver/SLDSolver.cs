@@ -1,10 +1,11 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.ClauseRenamer;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Basic.Events;
 using asp_interpreter_lib.SLDSolverClasses.Basic.PostProcessing;
+using asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 using asp_interpreter_lib.Unification.Basic.Interfaces;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDSolver;
@@ -12,7 +13,6 @@ namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDSolver;
 public class SLDSolver
 {
     private ClauseVariableRenamer _variableRenamer = new ClauseVariableRenamer();
-    private VariableSubstituter _substituter = new VariableSubstituter();
 
     private SubstitutionPostProcessor _postProcessor = new SubstitutionPostProcessor();
 
@@ -64,7 +64,7 @@ public class SLDSolver
             var newMapping = mapping.Union(substitution).ToDictionary(new VariableComparer());
 
             var nextGoals = renamedClauseResult.RenamedClause.Skip(1).Concat(goals.Skip(1));
-            var substitutedGoals = nextGoals.Select((term) => _substituter.Substitute(term, newMapping));
+            var substitutedGoals = nextGoals.Select((term) => term.Substitute(newMapping));
 
             Resolve(substitutedGoals, clauses, newMapping, renamedClauseResult.NextInternalIndex);
         }

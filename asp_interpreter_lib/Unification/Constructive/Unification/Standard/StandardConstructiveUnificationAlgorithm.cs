@@ -1,11 +1,12 @@
 ﻿using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 public class StandardConstructiveUnificationAlgorithm : IConstructiveUnificationAlgorithm
 {
-    private bool _doOccursCheck;
+    private readonly bool _doOccursCheck;
 
     public StandardConstructiveUnificationAlgorithm(bool doOccursCheck)
     {
