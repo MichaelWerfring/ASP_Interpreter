@@ -5,7 +5,7 @@ using asp_interpreter_lib.Preprocessing.OLONDetection;
 using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.SLDSolverClasses.SLDNFSolver;
+using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Solving.NMRCheck;

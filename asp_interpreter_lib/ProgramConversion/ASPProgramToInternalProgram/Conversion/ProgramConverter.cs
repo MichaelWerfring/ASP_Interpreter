@@ -11,7 +11,7 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 {
     private readonly ILogger _logger;
 
-    private FunctorTableRecord _record;
+    private readonly FunctorTableRecord _record;
 
     public ProgramConverter(FunctorTableRecord functorTable, ILogger logger)
     {
@@ -28,15 +28,21 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
         var clauses = prog.Statements.Select(ConvertStatement).ToList();
 
-        var goalConverterForQuery = new GoalConverter(_record);
-
-        var queryMaybe = prog.Query.GetValueOrThrow("Cannot parse Query!").Accept(goalConverterForQuery);
+        var queryMaybe = prog.Query;
         if (!queryMaybe.HasValue)
         {
-            throw new ArgumentException("Could not convert head!");
+            throw new ArgumentException("No query found!");
         }
 
-        return new InternalAspProgram(clauses, [queryMaybe.GetValueOrThrow()]);
+        var goalConverterForQuery = new GoalConverter(_record);
+
+        var convertedQueryMaybe = goalConverterForQuery.Convert(queryMaybe.GetValueOrThrow().Literal);
+        if (!convertedQueryMaybe.HasValue)
+        {
+            throw new ArgumentException("Could not convert query!");
+        }
+
+        return new InternalAspProgram(clauses, [convertedQueryMaybe.GetValueOrThrow()]);
     }
 
     private IEnumerable<ISimpleTerm> ConvertStatement(Statement statement)

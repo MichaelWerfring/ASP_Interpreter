@@ -119,7 +119,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
     private static void AddForallToCheck(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
-        //Variable are body variables implicitly
+        //Variables are body variables implicitly
         List<string> variables = [];
         VariableFinder variableFinder = new();
         foreach (var goal in statement.Body)

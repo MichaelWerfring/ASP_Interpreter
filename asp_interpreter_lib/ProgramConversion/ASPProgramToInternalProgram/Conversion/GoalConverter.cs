@@ -7,16 +7,18 @@ using System.Text;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
 public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
 {
-    private FunctorTableRecord _functorTable;
+    private readonly FunctorTableRecord _functorTable;
 
-    private TermConverter _termConverter;
+    private readonly TermConverter _termConverter;
 
-    private OperatorConverter _operatorConverter;
+    private readonly OperatorConverter _operatorConverter;
 
     public GoalConverter(FunctorTableRecord functorTable)
     {
@@ -59,7 +61,7 @@ public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
 
         var convertedTerm = new Structure(
                                             goal.Identifier.GetCopy(),
-                                            children.ToList()
+                                            children.ToImmutableList()
                                          );
 
         if (goal.HasStrongNegation)

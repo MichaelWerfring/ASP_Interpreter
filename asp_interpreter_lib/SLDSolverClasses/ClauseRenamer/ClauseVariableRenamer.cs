@@ -1,33 +1,30 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 
 public class ClauseVariableRenamer
 {
-    private VariableExtractor _variableNameExtractor = new VariableExtractor();
-    private VariableSubstituter _variableSubstituter = new VariableSubstituter();
+    private VariableComparer _comparer = new VariableComparer();
 
     public RenamingResult RenameVariables(IEnumerable<ISimpleTerm> clause, int currentInternalIndex)
     {
         ArgumentNullException.ThrowIfNull(clause);
 
         var clauseVariables = clause
-            .Select(_variableNameExtractor.GetVariableNames)
-            .Aggregate((varSetA, varSetB) =>
-            {
-                return varSetA.Union(varSetB, new VariableComparer()).ToHashSet();
-            });
+            .SelectMany(x => x.ExtractVariables())
+            .ToHashSet(_comparer);
 
-        var varsToNewVarsMapping = new Dictionary<Variable, ISimpleTerm>(new VariableComparer());
+        var varsToNewVarsMapping = new Dictionary<Variable, ISimpleTerm>(_comparer);
         foreach (var variable in clauseVariables)
         {
             varsToNewVarsMapping.Add(variable, new Variable($"#VAR{currentInternalIndex}"));
             currentInternalIndex += 1;
         }
 
-        return new RenamingResult(clause.Select((term) => _variableSubstituter.Substitute(term, varsToNewVarsMapping)), currentInternalIndex);
+        return new RenamingResult(clause.Select((term) => term.Substitute(varsToNewVarsMapping)).ToImmutableList(), currentInternalIndex);
     }
 
 }
