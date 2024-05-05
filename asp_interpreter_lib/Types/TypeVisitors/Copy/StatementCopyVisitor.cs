@@ -5,14 +5,16 @@ namespace asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 public class StatementCopyVisitor : TypeBaseVisitor<Statement>
 {
-    private readonly BinaryOperationVisitor _binaryOperationVisitor;
+    //private readonly BinaryOperationVisitor _binaryOperationVisitor;
     private readonly LiteralCopyVisitor _literalCopyVisitor;
+
+    private readonly GoalCopyVisitor _goalCopyVisitor;
 
     public StatementCopyVisitor()
     {
         var termCopyVisitor = new TermCopyVisitor();
         _literalCopyVisitor = new LiteralCopyVisitor(termCopyVisitor);
-        _binaryOperationVisitor = new BinaryOperationVisitor(termCopyVisitor);
+        _goalCopyVisitor = new GoalCopyVisitor(termCopyVisitor);
     }
     
     public override IOption<Statement> Visit(Statement statement)
@@ -28,10 +30,7 @@ public class StatementCopyVisitor : TypeBaseVisitor<Statement>
         List<Goal> body = [];
         foreach (var goal in statement.Body)
         {
-            goal.Accept(_literalCopyVisitor).IfHasValue(
-                literal => body.Add(literal));
-            goal.Accept(_binaryOperationVisitor).IfHasValue(
-                binaryOperation => body.Add(binaryOperation));
+            goal.Accept(_goalCopyVisitor).IfHasValue(g => body.Add(g));
         }
 
         if (body.Count != statement.Body.Count)

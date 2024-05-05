@@ -16,9 +16,9 @@ public class TypeBaseVisitor<T>
     
     public virtual IOption<T> Visit(Forall _) => new None<T>();
 
-    public virtual IOption<T> Visit(Literal _) => new None<T>();
+    public virtual IOption<T> Visit(Literal goal) => new None<T>();
     
-    public virtual IOption<T> Visit(BinaryOperation _) => new None<T>();
+    public virtual IOption<T> Visit(BinaryOperation goal) => new None<T>();
     
     public virtual IOption<T> Visit(Plus _) => new None<T>();
     

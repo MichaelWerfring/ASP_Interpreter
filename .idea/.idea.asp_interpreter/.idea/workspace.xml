@@ -10,10 +10,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="#62 added the notAsName parameter to the dual rule generator constructor">
+    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/Copy/GoalCopyVisitor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/NMRCheck/NmrChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/NMRCheck/NmrChecker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/Copy/StatementCopyVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/Copy/StatementCopyVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TypeBaseVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TypeBaseVisitor.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +55,7 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/09190d4d899c4e68827ef2ee0d8f96282ee00/e1/4ec167d8/AbstractParseTreeVisitor`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46a322d26154b982566e1817203e5452c91223f93b0e392d9c5b4806696fdc1/Assert.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/Preprocessing/NMRCheck/NmrChecker.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -226,15 +228,9 @@
       <workItem from="1714668393685" duration="780000" />
       <workItem from="1714771911401" duration="1314000" />
       <workItem from="1714897682137" duration="7251000" />
-      <workItem from="1714906684210" duration="4552000" />
-    </task>
-    <task id="LOCAL-00005" summary="#21 - Merged feature into main">
-      <option name="closed" value="true" />
-      <created>1711805885993</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1711805885993</updated>
+      <workItem from="1714906684210" duration="4776000" />
+      <workItem from="1714921575797" duration="55000" />
+      <workItem from="1714934813337" duration="873000" />
     </task>
     <task id="LOCAL-00006" summary="#30 - Implemented Visitor Pattern within every Type">
       <option name="closed" value="true" />
@@ -620,7 +616,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714920228238</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="#62 - Added flag for identifying Duals">
+      <option name="closed" value="true" />
+      <created>1714921441305</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1714921441305</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -689,7 +693,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="#44 - Refactoring of Type Hierarchy" />
     <MESSAGE value="#44 - Changed NMR Checker to work with new Literal" />
     <MESSAGE value="#43 - Rebuilt NMR Check based on Dual Rules" />
     <MESSAGE value="#44 - Merge after refactoring of types classes" />
@@ -714,7 +717,8 @@
     <MESSAGE value="#57 - added tests with Lists in Head of rule" />
     <MESSAGE value="#31 - Testing of Dual Rules" />
     <MESSAGE value="#62 added the notAsName parameter to the dual rule generator constructor" />
-    <option name="LAST_COMMIT_MESSAGE" value="#62 added the notAsName parameter to the dual rule generator constructor" />
+    <MESSAGE value="#62 - Added flag for identifying Duals" />
+    <option name="LAST_COMMIT_MESSAGE" value="#62 - Added flag for identifying Duals" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -724,6 +728,19 @@
           <line>253</line>
           <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_test\VisitorTest.cs" containingFunctionPresentation="Method 'HandlesStatementWithRuleBodyAndNegatedHeadCorrectly'" />
           <option name="timeStamp" value="134" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs</url>
+          <line>269</line>
+          <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_test\DualRules\DualRuleCompoundProgramTest.cs" containingFunctionPresentation="Method 'HanoiTest'">
+            <startOffsets>
+              <option value="13954" />
+            </startOffsets>
+            <endOffsets>
+              <option value="14171" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="151" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
