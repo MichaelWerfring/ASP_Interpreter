@@ -8,7 +8,7 @@ namespace asp_interpreter_test;
 
 public class TermVisitorTest
 {
-    private readonly ILogger _errorLogger = new ConsoleLogger();
+    private readonly ILogger _errorLogger = new ConsoleLogger(LogLevel.Error);
     
     [Test]
     public void ParseVariableTerm()

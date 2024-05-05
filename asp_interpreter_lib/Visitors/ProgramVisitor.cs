@@ -13,12 +13,14 @@ public class ProgramVisitor(ILogger logger) : ASPBaseVisitor<IOption<AspProgram>
         _logger.LogInfo("Parsing program...");
 
         //Try getting the query
-        var query = context.query().Accept(new QueryVisitor(_logger));
 
-        if (!query.HasValue)
+        var query = context.query()?.Accept(new QueryVisitor(_logger));
+
+        //Program does not need a query
+        if (query == null)
         {
-            _logger.LogError("Failed to parse query", context);
-            return new None<AspProgram>();
+            _logger.LogInfo("Program has been specifed without a query.");
+            query = new None<Query>();
         }
         
         //Parse the Statements
@@ -28,7 +30,7 @@ public class ProgramVisitor(ILogger logger) : ASPBaseVisitor<IOption<AspProgram>
         {
             //Its still possible to have a query without any statements
             //The error message is just for clarification
-            _logger.LogError("Could not parse any statements!", context);
+            _logger.LogInfo("Program has been specifed without any statement.");
             return new Some<AspProgram>(new AspProgram([], query));
         }
         

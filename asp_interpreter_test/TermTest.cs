@@ -31,7 +31,7 @@ public class TermTest
     {
         ITerm term = new VariableTerm("a");
         
-        Assert.Throws<NotImplementedException>(() => term.Accept(_visitor));
+        Assert.That(!term.Accept(_visitor).HasValue);
     }
     
     [Test]
@@ -68,7 +68,7 @@ public class TermTest
         ITerm term = new ArithmeticOperationTerm(new NumberTerm(2),new Divide(), new NumberTerm(2));
         var result = term.Accept(_visitor);
         
-        Assert.That(result.HasValue && result.GetValueOrThrow() == 2);
+        Assert.That(result.HasValue && result.GetValueOrThrow() == 1);
     }
     
     [Test]

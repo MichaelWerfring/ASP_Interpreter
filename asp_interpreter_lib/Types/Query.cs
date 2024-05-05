@@ -14,18 +14,18 @@ public class Query
             throw new ArgumentException("Query cannot have NAF negation.");
         }
         
-        ClassicalLiteral = literal;
+        Literal = literal;
     }
 
-    public Literal ClassicalLiteral
+    public Literal Literal
     {
         get => _literal;
-        private set => _literal = value ?? throw new ArgumentNullException(nameof(ClassicalLiteral));
+        private set => _literal = value ?? throw new ArgumentNullException(nameof(Literal));
     }
 
     public override string ToString()
     {
-        return $"?- {ClassicalLiteral.ToString()}.";
+        return $"?- {Literal.ToString()}.";
     }
     
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)

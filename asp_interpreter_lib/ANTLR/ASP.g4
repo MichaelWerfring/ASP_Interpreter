@@ -1,5 +1,5 @@
 grammar ASP;
-program : statements query;
+program : statements query?;
 query : literal QUERY_MARK;
 
 statements : statement*;
@@ -51,7 +51,7 @@ arithop
 
 
 //escaping the " and then match everything except " 
-STRING : '"'([^"]|'"')*'"';
+STRING : '"' ~[\\"]+ '"';
 NUMBER :  [0] | [1-9][0-9]*;
 ANONYMOUS_VARIABLE : '_';
 DOT : '.';

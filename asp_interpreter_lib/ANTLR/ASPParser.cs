@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from ASP.g4 by ANTLR 4.13.1
+// Generated from C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/ANTLR/ASP.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -110,16 +110,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_program; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterProgram(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitProgram(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitProgram(this);
@@ -131,13 +121,22 @@ public partial class ASPParser : Parser {
 	public ProgramContext program() {
 		ProgramContext _localctx = new ProgramContext(Context, State);
 		EnterRule(_localctx, 0, RULE_program);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 24;
 			statements();
-			State = 25;
-			query();
+			State = 26;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2147492864L) != 0)) {
+				{
+				State = 25;
+				query();
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -162,16 +161,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_query; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterQuery(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitQuery(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitQuery(this);
@@ -186,9 +175,9 @@ public partial class ASPParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 27;
-			literal();
 			State = 28;
+			literal();
+			State = 29;
 			Match(QUERY_MARK);
 			}
 		}
@@ -216,16 +205,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_statements; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterStatements(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitStatements(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitStatements(this);
@@ -241,21 +220,21 @@ public partial class ASPParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 33;
+			State = 34;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,0,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,1,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 30;
+					State = 31;
 					statement();
 					}
 					} 
 				}
-				State = 35;
+				State = 36;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,0,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,1,Context);
 			}
 			}
 		}
@@ -292,16 +271,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_statement; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterStatement(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitStatement(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitStatement(this);
@@ -315,33 +284,33 @@ public partial class ASPParser : Parser {
 		EnterRule(_localctx, 6, RULE_statement);
 		int _la;
 		try {
-			State = 61;
+			State = 62;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CONS:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 36;
-				Match(CONS);
 				State = 37;
+				Match(CONS);
+				State = 38;
 				goal();
-				State = 42;
+				State = 43;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					State = 38;
-					Match(COMMA);
 					State = 39;
+					Match(COMMA);
+					State = 40;
 					goal();
 					}
 					}
-					State = 44;
+					State = 45;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 45;
+				State = 46;
 				Match(DOT);
 				}
 				break;
@@ -350,31 +319,31 @@ public partial class ASPParser : Parser {
 			case ID:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 47;
+				State = 48;
 				literal();
-				State = 57;
+				State = 58;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==CONS) {
 					{
-					State = 48;
+					State = 49;
 					Match(CONS);
 					{
-					State = 49;
+					State = 50;
 					goal();
-					State = 54;
+					State = 55;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						State = 50;
-						Match(COMMA);
 						State = 51;
+						Match(COMMA);
+						State = 52;
 						goal();
 						}
 						}
-						State = 56;
+						State = 57;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
@@ -382,7 +351,7 @@ public partial class ASPParser : Parser {
 					}
 				}
 
-				State = 59;
+				State = 60;
 				Match(DOT);
 				}
 				break;
@@ -414,16 +383,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_goal; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterGoal(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitGoal(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitGoal(this);
@@ -436,20 +395,20 @@ public partial class ASPParser : Parser {
 		GoalContext _localctx = new GoalContext(Context, State);
 		EnterRule(_localctx, 8, RULE_goal);
 		try {
-			State = 65;
+			State = 66;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 63;
+				State = 64;
 				literal();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 64;
+				State = 65;
 				binary_operation();
 				}
 				break;
@@ -482,16 +441,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_binary_operation; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterBinary_operation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitBinary_operation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitBinary_operation(this);
@@ -506,11 +455,11 @@ public partial class ASPParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 67;
-			term(0);
 			State = 68;
-			binary_operator();
+			term(0);
 			State = 69;
+			binary_operator();
+			State = 70;
 			term(0);
 			}
 		}
@@ -540,16 +489,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_literal; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterLiteral(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitLiteral(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitLiteral(this);
@@ -565,46 +504,46 @@ public partial class ASPParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 72;
+			State = 73;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NAF) {
 				{
-				State = 71;
+				State = 72;
 				Match(NAF);
 				}
 			}
 
-			State = 75;
+			State = 76;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==MINUS) {
 				{
-				State = 74;
+				State = 75;
 				Match(MINUS);
 				}
 			}
 
-			State = 77;
+			State = 78;
 			Match(ID);
-			State = 83;
+			State = 84;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==PAREN_OPEN) {
 				{
-				State = 78;
+				State = 79;
 				Match(PAREN_OPEN);
-				State = 80;
+				State = 81;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6443769870L) != 0)) {
 					{
-					State = 79;
+					State = 80;
 					terms();
 					}
 				}
 
-				State = 82;
+				State = 83;
 				Match(PAREN_CLOSE);
 				}
 			}
@@ -638,16 +577,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LESS_OR_EQ() { return GetToken(ASPParser.LESS_OR_EQ, 0); }
 		public LessOrEqOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterLessOrEqOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitLessOrEqOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitLessOrEqOperation(this);
@@ -657,16 +586,6 @@ public partial class ASPParser : Parser {
 	public partial class GreaterOrEqOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GREATER_OR_EQ() { return GetToken(ASPParser.GREATER_OR_EQ, 0); }
 		public GreaterOrEqOperationContext(Binary_operatorContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterGreaterOrEqOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitGreaterOrEqOperation(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -678,16 +597,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IS() { return GetToken(ASPParser.IS, 0); }
 		public IsOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterIsOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitIsOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitIsOperation(this);
@@ -697,16 +606,6 @@ public partial class ASPParser : Parser {
 	public partial class DisunificationOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DISUNIFICATION() { return GetToken(ASPParser.DISUNIFICATION, 0); }
 		public DisunificationOperationContext(Binary_operatorContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterDisunificationOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitDisunificationOperation(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -718,16 +617,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LESS() { return GetToken(ASPParser.LESS, 0); }
 		public LessOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterLessOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitLessOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitLessOperation(this);
@@ -738,16 +627,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GREATER() { return GetToken(ASPParser.GREATER, 0); }
 		public GreaterOperationContext(Binary_operatorContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterGreaterOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitGreaterOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitGreaterOperation(this);
@@ -757,16 +636,6 @@ public partial class ASPParser : Parser {
 	public partial class EqualityOperationContext : Binary_operatorContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUAL() { return GetToken(ASPParser.EQUAL, 0); }
 		public EqualityOperationContext(Binary_operatorContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterEqualityOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitEqualityOperation(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -780,14 +649,14 @@ public partial class ASPParser : Parser {
 		Binary_operatorContext _localctx = new Binary_operatorContext(Context, State);
 		EnterRule(_localctx, 14, RULE_binary_operator);
 		try {
-			State = 92;
+			State = 93;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case EQUAL:
 				_localctx = new EqualityOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 85;
+				State = 86;
 				Match(EQUAL);
 				}
 				break;
@@ -795,7 +664,7 @@ public partial class ASPParser : Parser {
 				_localctx = new DisunificationOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 86;
+				State = 87;
 				Match(DISUNIFICATION);
 				}
 				break;
@@ -803,7 +672,7 @@ public partial class ASPParser : Parser {
 				_localctx = new LessOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 87;
+				State = 88;
 				Match(LESS);
 				}
 				break;
@@ -811,7 +680,7 @@ public partial class ASPParser : Parser {
 				_localctx = new GreaterOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 88;
+				State = 89;
 				Match(GREATER);
 				}
 				break;
@@ -819,7 +688,7 @@ public partial class ASPParser : Parser {
 				_localctx = new LessOrEqOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 89;
+				State = 90;
 				Match(LESS_OR_EQ);
 				}
 				break;
@@ -827,7 +696,7 @@ public partial class ASPParser : Parser {
 				_localctx = new GreaterOrEqOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 90;
+				State = 91;
 				Match(GREATER_OR_EQ);
 				}
 				break;
@@ -835,7 +704,7 @@ public partial class ASPParser : Parser {
 				_localctx = new IsOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 91;
+				State = 92;
 				Match(IS);
 				}
 				break;
@@ -868,16 +737,6 @@ public partial class ASPParser : Parser {
 		}
 		public override int RuleIndex { get { return RULE_terms; } }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterTerms(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitTerms(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitTerms(this);
@@ -893,16 +752,16 @@ public partial class ASPParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 94;
+			State = 95;
 			term(0);
-			State = 97;
+			State = 98;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==COMMA) {
 				{
-				State = 95;
-				Match(COMMA);
 				State = 96;
+				Match(COMMA);
+				State = 97;
 				terms();
 				}
 			}
@@ -939,16 +798,6 @@ public partial class ASPParser : Parser {
 		}
 		public NegatedTermContext(TermContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterNegatedTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitNegatedTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitNegatedTerm(this);
@@ -958,16 +807,6 @@ public partial class ASPParser : Parser {
 	public partial class StringTermContext : TermContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(ASPParser.STRING, 0); }
 		public StringTermContext(TermContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterStringTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitStringTerm(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -983,16 +822,6 @@ public partial class ASPParser : Parser {
 			return GetRuleContext<TermsContext>(0);
 		}
 		public BasicTermContext(TermContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterBasicTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitBasicTerm(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -1012,16 +841,6 @@ public partial class ASPParser : Parser {
 		}
 		public ArithmeticOperationTermContext(TermContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterArithmeticOperationTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitArithmeticOperationTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitArithmeticOperationTerm(this);
@@ -1036,16 +855,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PAREN_CLOSE() { return GetToken(ASPParser.PAREN_CLOSE, 0); }
 		public ParenthesizedTermContext(TermContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterParenthesizedTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitParenthesizedTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitParenthesizedTerm(this);
@@ -1055,16 +864,6 @@ public partial class ASPParser : Parser {
 	public partial class AnonymousVariableTermContext : TermContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ANONYMOUS_VARIABLE() { return GetToken(ASPParser.ANONYMOUS_VARIABLE, 0); }
 		public AnonymousVariableTermContext(TermContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterAnonymousVariableTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitAnonymousVariableTerm(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -1076,16 +875,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NUMBER() { return GetToken(ASPParser.NUMBER, 0); }
 		public NumberTermContext(TermContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterNumberTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitNumberTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitNumberTerm(this);
@@ -1095,16 +884,6 @@ public partial class ASPParser : Parser {
 	public partial class VariableTermContext : TermContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode VARIABLE() { return GetToken(ASPParser.VARIABLE, 0); }
 		public VariableTermContext(TermContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterVariableTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitVariableTerm(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -1117,16 +896,6 @@ public partial class ASPParser : Parser {
 			return GetRuleContext<ListContext>(0);
 		}
 		public ListTermContext(TermContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterListTerm(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitListTerm(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -1152,7 +921,7 @@ public partial class ASPParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 119;
+			State = 120;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case ID:
@@ -1161,26 +930,26 @@ public partial class ASPParser : Parser {
 				Context = _localctx;
 				_prevctx = _localctx;
 
-				State = 100;
+				State = 101;
 				Match(ID);
-				State = 106;
+				State = 107;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,13,Context) ) {
+				switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 				case 1:
 					{
-					State = 101;
+					State = 102;
 					Match(PAREN_OPEN);
-					State = 103;
+					State = 104;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6443769870L) != 0)) {
 						{
-						State = 102;
+						State = 103;
 						terms();
 						}
 					}
 
-					State = 105;
+					State = 106;
 					Match(PAREN_CLOSE);
 					}
 					break;
@@ -1192,7 +961,7 @@ public partial class ASPParser : Parser {
 				_localctx = new NumberTermContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 108;
+				State = 109;
 				Match(NUMBER);
 				}
 				break;
@@ -1201,7 +970,7 @@ public partial class ASPParser : Parser {
 				_localctx = new StringTermContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 109;
+				State = 110;
 				Match(STRING);
 				}
 				break;
@@ -1210,7 +979,7 @@ public partial class ASPParser : Parser {
 				_localctx = new VariableTermContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 110;
+				State = 111;
 				Match(VARIABLE);
 				}
 				break;
@@ -1219,7 +988,7 @@ public partial class ASPParser : Parser {
 				_localctx = new AnonymousVariableTermContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 111;
+				State = 112;
 				Match(ANONYMOUS_VARIABLE);
 				}
 				break;
@@ -1228,11 +997,11 @@ public partial class ASPParser : Parser {
 				_localctx = new ParenthesizedTermContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 112;
-				Match(PAREN_OPEN);
 				State = 113;
-				term(0);
+				Match(PAREN_OPEN);
 				State = 114;
+				term(0);
+				State = 115;
 				Match(PAREN_CLOSE);
 				}
 				break;
@@ -1241,9 +1010,9 @@ public partial class ASPParser : Parser {
 				_localctx = new NegatedTermContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 116;
-				Match(MINUS);
 				State = 117;
+				Match(MINUS);
+				State = 118;
 				term(3);
 				}
 				break;
@@ -1252,7 +1021,7 @@ public partial class ASPParser : Parser {
 				_localctx = new ListTermContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 118;
+				State = 119;
 				list();
 				}
 				break;
@@ -1260,9 +1029,9 @@ public partial class ASPParser : Parser {
 				throw new NoViableAltException(this);
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 127;
+			State = 128;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,15,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
@@ -1272,18 +1041,18 @@ public partial class ASPParser : Parser {
 					{
 					_localctx = new ArithmeticOperationTermContext(new TermContext(_parentctx, _parentState));
 					PushNewRecursionContext(_localctx, _startState, RULE_term);
-					State = 121;
-					if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
 					State = 122;
-					arithop();
+					if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
 					State = 123;
+					arithop();
+					State = 124;
 					term(2);
 					}
 					} 
 				}
-				State = 129;
+				State = 130;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,15,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
 			}
 			}
 		}
@@ -1318,16 +1087,6 @@ public partial class ASPParser : Parser {
 		}
 		public ConventionalListContext(ListContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterConventionalList(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitConventionalList(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitConventionalList(this);
@@ -1346,16 +1105,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SQUARE_CLOSE() { return GetToken(ASPParser.SQUARE_CLOSE, 0); }
 		public RecursiveListContext(ListContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterRecursiveList(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitRecursiveList(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitRecursiveList(this);
@@ -1369,26 +1118,26 @@ public partial class ASPParser : Parser {
 		EnterRule(_localctx, 20, RULE_list);
 		int _la;
 		try {
-			State = 141;
+			State = 142;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,17,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
 			case 1:
 				_localctx = new ConventionalListContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 130;
+				State = 131;
 				Match(SQUARE_OPEN);
-				State = 132;
+				State = 133;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6443769870L) != 0)) {
 					{
-					State = 131;
+					State = 132;
 					terms();
 					}
 				}
 
-				State = 134;
+				State = 135;
 				Match(SQUARE_CLOSE);
 				}
 				break;
@@ -1396,15 +1145,15 @@ public partial class ASPParser : Parser {
 				_localctx = new RecursiveListContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 135;
-				Match(SQUARE_OPEN);
 				State = 136;
-				term(0);
+				Match(SQUARE_OPEN);
 				State = 137;
-				Match(OR);
-				State = 138;
 				term(0);
+				State = 138;
+				Match(OR);
 				State = 139;
+				term(0);
+				State = 140;
 				Match(SQUARE_CLOSE);
 				}
 				break;
@@ -1437,16 +1186,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TIMES() { return GetToken(ASPParser.TIMES, 0); }
 		public TimesOperationContext(ArithopContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterTimesOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitTimesOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitTimesOperation(this);
@@ -1456,16 +1195,6 @@ public partial class ASPParser : Parser {
 	public partial class MinusOperationContext : ArithopContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS() { return GetToken(ASPParser.MINUS, 0); }
 		public MinusOperationContext(ArithopContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterMinusOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitMinusOperation(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -1477,16 +1206,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode POW() { return GetToken(ASPParser.POW, 0); }
 		public PowerOperationContext(ArithopContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterPowerOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitPowerOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitPowerOperation(this);
@@ -1497,16 +1216,6 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS() { return GetToken(ASPParser.PLUS, 0); }
 		public PlusOperationContext(ArithopContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterPlusOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitPlusOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitPlusOperation(this);
@@ -1516,16 +1225,6 @@ public partial class ASPParser : Parser {
 	public partial class DivOperationContext : ArithopContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIV() { return GetToken(ASPParser.DIV, 0); }
 		public DivOperationContext(ArithopContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.EnterDivOperation(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IASPListener typedListener = listener as IASPListener;
-			if (typedListener != null) typedListener.ExitDivOperation(this);
-		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPVisitor<TResult> typedVisitor = visitor as IASPVisitor<TResult>;
@@ -1539,14 +1238,14 @@ public partial class ASPParser : Parser {
 		ArithopContext _localctx = new ArithopContext(Context, State);
 		EnterRule(_localctx, 22, RULE_arithop);
 		try {
-			State = 148;
+			State = 149;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case PLUS:
 				_localctx = new PlusOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 143;
+				State = 144;
 				Match(PLUS);
 				}
 				break;
@@ -1554,7 +1253,7 @@ public partial class ASPParser : Parser {
 				_localctx = new MinusOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 144;
+				State = 145;
 				Match(MINUS);
 				}
 				break;
@@ -1562,7 +1261,7 @@ public partial class ASPParser : Parser {
 				_localctx = new TimesOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 145;
+				State = 146;
 				Match(TIMES);
 				}
 				break;
@@ -1570,7 +1269,7 @@ public partial class ASPParser : Parser {
 				_localctx = new DivOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 146;
+				State = 147;
 				Match(DIV);
 				}
 				break;
@@ -1578,7 +1277,7 @@ public partial class ASPParser : Parser {
 				_localctx = new PowerOperationContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 147;
+				State = 148;
 				Match(POW);
 				}
 				break;
@@ -1611,55 +1310,55 @@ public partial class ASPParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,38,151,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
-		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,1,0,1,0,1,0,1,1,1,1,1,1,1,2,5,
-		2,32,8,2,10,2,12,2,35,9,2,1,3,1,3,1,3,1,3,5,3,41,8,3,10,3,12,3,44,9,3,
-		1,3,1,3,1,3,1,3,1,3,1,3,1,3,5,3,53,8,3,10,3,12,3,56,9,3,3,3,58,8,3,1,3,
-		1,3,3,3,62,8,3,1,4,1,4,3,4,66,8,4,1,5,1,5,1,5,1,5,1,6,3,6,73,8,6,1,6,3,
-		6,76,8,6,1,6,1,6,1,6,3,6,81,8,6,1,6,3,6,84,8,6,1,7,1,7,1,7,1,7,1,7,1,7,
-		1,7,3,7,93,8,7,1,8,1,8,1,8,3,8,98,8,8,1,9,1,9,1,9,1,9,3,9,104,8,9,1,9,
-		3,9,107,8,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,120,8,9,1,
-		9,1,9,1,9,1,9,5,9,126,8,9,10,9,12,9,129,9,9,1,10,1,10,3,10,133,8,10,1,
-		10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,142,8,10,1,11,1,11,1,11,1,11,1,11,
-		3,11,149,8,11,1,11,0,1,18,12,0,2,4,6,8,10,12,14,16,18,20,22,0,0,171,0,
-		24,1,0,0,0,2,27,1,0,0,0,4,33,1,0,0,0,6,61,1,0,0,0,8,65,1,0,0,0,10,67,1,
-		0,0,0,12,72,1,0,0,0,14,92,1,0,0,0,16,94,1,0,0,0,18,119,1,0,0,0,20,141,
-		1,0,0,0,22,148,1,0,0,0,24,25,3,4,2,0,25,26,3,2,1,0,26,1,1,0,0,0,27,28,
-		3,12,6,0,28,29,5,6,0,0,29,3,1,0,0,0,30,32,3,6,3,0,31,30,1,0,0,0,32,35,
-		1,0,0,0,33,31,1,0,0,0,33,34,1,0,0,0,34,5,1,0,0,0,35,33,1,0,0,0,36,37,5,
-		11,0,0,37,42,3,8,4,0,38,39,5,5,0,0,39,41,3,8,4,0,40,38,1,0,0,0,41,44,1,
-		0,0,0,42,40,1,0,0,0,42,43,1,0,0,0,43,45,1,0,0,0,44,42,1,0,0,0,45,46,5,
-		4,0,0,46,62,1,0,0,0,47,57,3,12,6,0,48,49,5,11,0,0,49,54,3,8,4,0,50,51,
-		5,5,0,0,51,53,3,8,4,0,52,50,1,0,0,0,53,56,1,0,0,0,54,52,1,0,0,0,54,55,
-		1,0,0,0,55,58,1,0,0,0,56,54,1,0,0,0,57,48,1,0,0,0,57,58,1,0,0,0,58,59,
-		1,0,0,0,59,60,5,4,0,0,60,62,1,0,0,0,61,36,1,0,0,0,61,47,1,0,0,0,62,7,1,
-		0,0,0,63,66,3,12,6,0,64,66,3,10,5,0,65,63,1,0,0,0,65,64,1,0,0,0,66,9,1,
-		0,0,0,67,68,3,18,9,0,68,69,3,14,7,0,69,70,3,18,9,0,70,11,1,0,0,0,71,73,
-		5,10,0,0,72,71,1,0,0,0,72,73,1,0,0,0,73,75,1,0,0,0,74,76,5,13,0,0,75,74,
-		1,0,0,0,75,76,1,0,0,0,76,77,1,0,0,0,77,83,5,31,0,0,78,80,5,18,0,0,79,81,
-		3,16,8,0,80,79,1,0,0,0,80,81,1,0,0,0,81,82,1,0,0,0,82,84,5,19,0,0,83,78,
-		1,0,0,0,83,84,1,0,0,0,84,13,1,0,0,0,85,93,5,24,0,0,86,93,5,29,0,0,87,93,
-		5,25,0,0,88,93,5,26,0,0,89,93,5,27,0,0,90,93,5,28,0,0,91,93,5,30,0,0,92,
-		85,1,0,0,0,92,86,1,0,0,0,92,87,1,0,0,0,92,88,1,0,0,0,92,89,1,0,0,0,92,
-		90,1,0,0,0,92,91,1,0,0,0,93,15,1,0,0,0,94,97,3,18,9,0,95,96,5,5,0,0,96,
-		98,3,16,8,0,97,95,1,0,0,0,97,98,1,0,0,0,98,17,1,0,0,0,99,100,6,9,-1,0,
-		100,106,5,31,0,0,101,103,5,18,0,0,102,104,3,16,8,0,103,102,1,0,0,0,103,
-		104,1,0,0,0,104,105,1,0,0,0,105,107,5,19,0,0,106,101,1,0,0,0,106,107,1,
-		0,0,0,107,120,1,0,0,0,108,120,5,2,0,0,109,120,5,1,0,0,110,120,5,32,0,0,
-		111,120,5,3,0,0,112,113,5,18,0,0,113,114,3,18,9,0,114,115,5,19,0,0,115,
-		120,1,0,0,0,116,117,5,13,0,0,117,120,3,18,9,3,118,120,3,20,10,0,119,99,
-		1,0,0,0,119,108,1,0,0,0,119,109,1,0,0,0,119,110,1,0,0,0,119,111,1,0,0,
-		0,119,112,1,0,0,0,119,116,1,0,0,0,119,118,1,0,0,0,120,127,1,0,0,0,121,
-		122,10,1,0,0,122,123,3,22,11,0,123,124,3,18,9,2,124,126,1,0,0,0,125,121,
-		1,0,0,0,126,129,1,0,0,0,127,125,1,0,0,0,127,128,1,0,0,0,128,19,1,0,0,0,
-		129,127,1,0,0,0,130,132,5,20,0,0,131,133,3,16,8,0,132,131,1,0,0,0,132,
-		133,1,0,0,0,133,134,1,0,0,0,134,142,5,21,0,0,135,136,5,20,0,0,136,137,
-		3,18,9,0,137,138,5,9,0,0,138,139,3,18,9,0,139,140,5,21,0,0,140,142,1,0,
-		0,0,141,130,1,0,0,0,141,135,1,0,0,0,142,21,1,0,0,0,143,149,5,12,0,0,144,
-		149,5,13,0,0,145,149,5,14,0,0,146,149,5,16,0,0,147,149,5,15,0,0,148,143,
-		1,0,0,0,148,144,1,0,0,0,148,145,1,0,0,0,148,146,1,0,0,0,148,147,1,0,0,
-		0,149,23,1,0,0,0,19,33,42,54,57,61,65,72,75,80,83,92,97,103,106,119,127,
-		132,141,148
+		4,1,38,152,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,1,0,1,0,3,0,27,8,0,1,1,1,1,1,1,
+		1,2,5,2,33,8,2,10,2,12,2,36,9,2,1,3,1,3,1,3,1,3,5,3,42,8,3,10,3,12,3,45,
+		9,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,5,3,54,8,3,10,3,12,3,57,9,3,3,3,59,8,3,
+		1,3,1,3,3,3,63,8,3,1,4,1,4,3,4,67,8,4,1,5,1,5,1,5,1,5,1,6,3,6,74,8,6,1,
+		6,3,6,77,8,6,1,6,1,6,1,6,3,6,82,8,6,1,6,3,6,85,8,6,1,7,1,7,1,7,1,7,1,7,
+		1,7,1,7,3,7,94,8,7,1,8,1,8,1,8,3,8,99,8,8,1,9,1,9,1,9,1,9,3,9,105,8,9,
+		1,9,3,9,108,8,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,121,8,
+		9,1,9,1,9,1,9,1,9,5,9,127,8,9,10,9,12,9,130,9,9,1,10,1,10,3,10,134,8,10,
+		1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,143,8,10,1,11,1,11,1,11,1,11,1,
+		11,3,11,150,8,11,1,11,0,1,18,12,0,2,4,6,8,10,12,14,16,18,20,22,0,0,173,
+		0,24,1,0,0,0,2,28,1,0,0,0,4,34,1,0,0,0,6,62,1,0,0,0,8,66,1,0,0,0,10,68,
+		1,0,0,0,12,73,1,0,0,0,14,93,1,0,0,0,16,95,1,0,0,0,18,120,1,0,0,0,20,142,
+		1,0,0,0,22,149,1,0,0,0,24,26,3,4,2,0,25,27,3,2,1,0,26,25,1,0,0,0,26,27,
+		1,0,0,0,27,1,1,0,0,0,28,29,3,12,6,0,29,30,5,6,0,0,30,3,1,0,0,0,31,33,3,
+		6,3,0,32,31,1,0,0,0,33,36,1,0,0,0,34,32,1,0,0,0,34,35,1,0,0,0,35,5,1,0,
+		0,0,36,34,1,0,0,0,37,38,5,11,0,0,38,43,3,8,4,0,39,40,5,5,0,0,40,42,3,8,
+		4,0,41,39,1,0,0,0,42,45,1,0,0,0,43,41,1,0,0,0,43,44,1,0,0,0,44,46,1,0,
+		0,0,45,43,1,0,0,0,46,47,5,4,0,0,47,63,1,0,0,0,48,58,3,12,6,0,49,50,5,11,
+		0,0,50,55,3,8,4,0,51,52,5,5,0,0,52,54,3,8,4,0,53,51,1,0,0,0,54,57,1,0,
+		0,0,55,53,1,0,0,0,55,56,1,0,0,0,56,59,1,0,0,0,57,55,1,0,0,0,58,49,1,0,
+		0,0,58,59,1,0,0,0,59,60,1,0,0,0,60,61,5,4,0,0,61,63,1,0,0,0,62,37,1,0,
+		0,0,62,48,1,0,0,0,63,7,1,0,0,0,64,67,3,12,6,0,65,67,3,10,5,0,66,64,1,0,
+		0,0,66,65,1,0,0,0,67,9,1,0,0,0,68,69,3,18,9,0,69,70,3,14,7,0,70,71,3,18,
+		9,0,71,11,1,0,0,0,72,74,5,10,0,0,73,72,1,0,0,0,73,74,1,0,0,0,74,76,1,0,
+		0,0,75,77,5,13,0,0,76,75,1,0,0,0,76,77,1,0,0,0,77,78,1,0,0,0,78,84,5,31,
+		0,0,79,81,5,18,0,0,80,82,3,16,8,0,81,80,1,0,0,0,81,82,1,0,0,0,82,83,1,
+		0,0,0,83,85,5,19,0,0,84,79,1,0,0,0,84,85,1,0,0,0,85,13,1,0,0,0,86,94,5,
+		24,0,0,87,94,5,29,0,0,88,94,5,25,0,0,89,94,5,26,0,0,90,94,5,27,0,0,91,
+		94,5,28,0,0,92,94,5,30,0,0,93,86,1,0,0,0,93,87,1,0,0,0,93,88,1,0,0,0,93,
+		89,1,0,0,0,93,90,1,0,0,0,93,91,1,0,0,0,93,92,1,0,0,0,94,15,1,0,0,0,95,
+		98,3,18,9,0,96,97,5,5,0,0,97,99,3,16,8,0,98,96,1,0,0,0,98,99,1,0,0,0,99,
+		17,1,0,0,0,100,101,6,9,-1,0,101,107,5,31,0,0,102,104,5,18,0,0,103,105,
+		3,16,8,0,104,103,1,0,0,0,104,105,1,0,0,0,105,106,1,0,0,0,106,108,5,19,
+		0,0,107,102,1,0,0,0,107,108,1,0,0,0,108,121,1,0,0,0,109,121,5,2,0,0,110,
+		121,5,1,0,0,111,121,5,32,0,0,112,121,5,3,0,0,113,114,5,18,0,0,114,115,
+		3,18,9,0,115,116,5,19,0,0,116,121,1,0,0,0,117,118,5,13,0,0,118,121,3,18,
+		9,3,119,121,3,20,10,0,120,100,1,0,0,0,120,109,1,0,0,0,120,110,1,0,0,0,
+		120,111,1,0,0,0,120,112,1,0,0,0,120,113,1,0,0,0,120,117,1,0,0,0,120,119,
+		1,0,0,0,121,128,1,0,0,0,122,123,10,1,0,0,123,124,3,22,11,0,124,125,3,18,
+		9,2,125,127,1,0,0,0,126,122,1,0,0,0,127,130,1,0,0,0,128,126,1,0,0,0,128,
+		129,1,0,0,0,129,19,1,0,0,0,130,128,1,0,0,0,131,133,5,20,0,0,132,134,3,
+		16,8,0,133,132,1,0,0,0,133,134,1,0,0,0,134,135,1,0,0,0,135,143,5,21,0,
+		0,136,137,5,20,0,0,137,138,3,18,9,0,138,139,5,9,0,0,139,140,3,18,9,0,140,
+		141,5,21,0,0,141,143,1,0,0,0,142,131,1,0,0,0,142,136,1,0,0,0,143,21,1,
+		0,0,0,144,150,5,12,0,0,145,150,5,13,0,0,146,150,5,14,0,0,147,150,5,16,
+		0,0,148,150,5,15,0,0,149,144,1,0,0,0,149,145,1,0,0,0,149,146,1,0,0,0,149,
+		147,1,0,0,0,149,148,1,0,0,0,150,23,1,0,0,0,20,26,34,43,55,58,62,66,73,
+		76,81,84,93,98,104,107,120,128,133,142,149
 	};
 
 	public static readonly ATN _ATN =

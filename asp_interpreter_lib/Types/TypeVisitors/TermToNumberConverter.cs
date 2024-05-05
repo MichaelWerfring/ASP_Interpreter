@@ -17,12 +17,20 @@ public class TermToNumberConverter : TypeBaseVisitor<int>
 
     public override IOption<int> Visit(VariableTerm term)
     {
-        throw new NotImplementedException();
+        return new None<int>();
     }
 
     public override IOption<int> Visit(ArithmeticOperationTerm term)
     {
-        throw new NotImplementedException();
+        var left = term.Left.Accept(this);
+        var right = term.Left.Accept(this);
+
+        if (!left.HasValue || !right.HasValue)
+        {
+            return new None<int>();
+        }
+
+        return new Some<int>(term.Operation.Evaluate(left.GetValueOrThrow(), right.GetValueOrThrow()));
     }
 
     public override IOption<int> Visit(ParenthesizedTerm term)

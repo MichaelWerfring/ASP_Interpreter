@@ -36,7 +36,7 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
         var goalConverterForQuery = new GoalConverter(_record);
 
-        var convertedQueryMaybe = goalConverterForQuery.Convert(queryMaybe.GetValueOrThrow().ClassicalLiteral);
+        var convertedQueryMaybe = goalConverterForQuery.Convert(queryMaybe.GetValueOrThrow().Literal);
         if (!convertedQueryMaybe.HasValue)
         {
             throw new ArgumentException("Could not convert query!");

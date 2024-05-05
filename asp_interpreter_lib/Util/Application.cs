@@ -26,32 +26,32 @@ public class Application(
 
     private readonly ProgramVisitor _programVisitor = programVisitor;
 
-    private readonly ProgramConfig config = config;
+    private readonly ProgramConfig _config = config;
 
-    private readonly PrefixOptions prefixes = new("rwh", "fa", "eh", "chk", "dis", "var");
+    private readonly PrefixOptions _prefixes = new("rwh", "fa", "eh", "chk", "dis", "var");
 
     public void Run()
     {
         //Read
-        var code = FileReader.ReadFile(config.Path, _logger);
+        var code = FileReader.ReadFile(_config.Path, _logger);
         if (code == null) return;
 
         //Program
         var program = GetProgram(code);
 
         //Dual
-        var dualGenerator = new DualRuleConverter(prefixes, _logger);
+        var dualGenerator = new DualRuleConverter(_prefixes, _logger);
         var dual = dualGenerator.GetDualRules(program.Statements);
 
         //OLON
         List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
 
         //NMR 
-        var nmrChecker = new NmrChecker(prefixes, _logger);
+        var nmrChecker = new NmrChecker(_prefixes, _logger);
         var subcheck = nmrChecker.GetSubCheckRules(olonRules);
 
         //Interactive if needed else just solve
-        if (!config.Interactive)
+        if (!_config.Interactive)
         {
             if (!program.Query.HasValue)
             {
