@@ -1,11 +1,12 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.Solving;
+using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Solving.DualRules;
+namespace asp_interpreter_lib.Preprocessing.DualRules;
 
 //returns the term to be used at the occuring position (or same as before if no change)
 //and a goal to be added to the body (else its none)
@@ -74,7 +75,12 @@ public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
         
         return new Some<(ITerm, List<Goal>)>((term, goals));
     }
-    
+
+    public override IOption<(ITerm, List<Goal>)> Visit(AnonymusVariableTerm term)
+    {
+        return new Some<(ITerm, List<Goal>)>((term, []));
+    }
+
     public override IOption<(ITerm, List<Goal>)> Visit(VariableTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);

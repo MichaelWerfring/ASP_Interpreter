@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.Types;
+﻿using asp_interpreter_lib.Preprocessing.DualRules;
+using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;

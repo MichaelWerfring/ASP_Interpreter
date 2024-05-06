@@ -34,4 +34,9 @@ public class BinaryOperatorNegator : TypeBaseVisitor<BinaryOperator>
     {
         return new Some<BinaryOperator>(new GreaterOrEqualThan());
     }
+
+    public override IOption<BinaryOperator> Visit(Is _)
+    {
+        return new Some<BinaryOperator>(new Is());
+    }
 }
