@@ -73,7 +73,7 @@ public class VisitorTest
     public void HandlesProgramWithoutStatementsCorrectly()
     {
         var code = """
-                   a?
+                   ?- a(X).
                    """;
 
         _logger.LogInfo("Program has been specifed without any statement!");
@@ -87,7 +87,7 @@ public class VisitorTest
     {
         var code = """
                    a.
-                   a?
+                   ?- a.
                    """;
 
         _logger.LogInfo("Program has been specifed without any statement!");
@@ -101,7 +101,7 @@ public class VisitorTest
     {
         var code = """
                    a(X) :- - b(X).
-                   a?
+                   ?- a(Y).
                    """;
         
         var program = AspExtensions.GetProgram(code, _logger);
@@ -119,7 +119,7 @@ public class VisitorTest
     {
         var code = """
                    a(X) :- not b(X).
-                   a?
+                   ?- a(X).
                    """;
         
         var program = AspExtensions.GetProgram(code, _logger);
@@ -136,7 +136,7 @@ public class VisitorTest
     {
         var code = """
                    a(X) :- not -b(X).
-                   a?
+                   ?- a(X).
                    """;
         
         var program = AspExtensions.GetProgram(code, _logger);
@@ -149,16 +149,19 @@ public class VisitorTest
     }
     
     [Test]
-    public void ThrowsExceptionOnClassicalNegationAndNafCorrectly()
+    public void HandlesMultipleLiteralsInQueryCorrectly()
     {
         //This code cannot exist due to grammar specification
         var code = """
-                   a(X) :- - not b(X).
-                   a?
+                   a(X) :- c(X).
+                   a(X) :- b(X).
+                   b(1).
+                   c(3).
+                   ?- a(X), Y = 1 ,b(Y).
                    """;
+        var program = AspExtensions.GetProgram(code, _logger);
         
-        Assert.Throws<ArgumentException>(() => AspExtensions.GetProgram(code, _logger));
-        Assert.That(_logger.Errors.Count == 0);
+        Assert.That(program.Query.HasValue && program.Query.GetValueOrThrow().Goals.Count == 3);
     }
     
     [Test]
@@ -166,7 +169,7 @@ public class VisitorTest
     {
         var code = """
                    :- b.
-                   b?
+                   ?- a(X).
                    """;
         
         var program = AspExtensions.GetProgram(code, _logger);
@@ -190,7 +193,7 @@ public class VisitorTest
     {
         var code = """
                    a.
-                   a?
+                   ?- a.
                    """;
         
         var program = AspExtensions.GetProgram(code, _logger);
@@ -214,7 +217,7 @@ public class VisitorTest
     {
         var code = """
                    a :- b.
-                   a?
+                   ?- a.
                    """;
         
         var program = AspExtensions.GetProgram(code, _logger);
@@ -244,7 +247,7 @@ public class VisitorTest
     {
         var code = """
                    -a :- b.
-                   a?
+                   ?- -a.
                    """;
         
         var program = AspExtensions.GetProgram(code, _logger);
@@ -282,21 +285,6 @@ public class VisitorTest
             headLiteral is
                 { Identifier: "separate", HasStrongNegation: false, HasNafNegation: false, Terms.Count: 2 } &&
             firstTerm?.Identifier == "X" && secondTerm?.Identifier == "Y");
-        Assert.That(_logger.Errors.Count == 0);
-    }
-
-    [Test]
-    public void HandlesLiteralInQueryCorrectly()
-    {
-        AspProgram program = AspExtensions.GetProgram(_graphCode, _logger);
-
-        var queryLiteral = program.Query.GetValueOrThrow().Literal;
-        var firstTerm = queryLiteral.Terms[0] as VariableTerm;
-        var secondTerm = queryLiteral.Terms[1] as BasicTerm;
-
-        Assert.That(
-            queryLiteral is { Identifier: "edge", HasStrongNegation: false, HasNafNegation:false, Terms.Count: 2 } &&
-            firstTerm.Identifier == "X" && secondTerm.Identifier == "b");
         Assert.That(_logger.Errors.Count == 0);
     }
     

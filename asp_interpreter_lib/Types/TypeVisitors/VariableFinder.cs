@@ -27,12 +27,6 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
         return new Some<List<VariableTerm>>(variableTerms);
     }
 
-    public override IOption<List<VariableTerm>> Visit(Query query)
-    {
-        ArgumentNullException.ThrowIfNull(query);
-        return query.Literal.Accept(this);
-    }
-
     public override IOption<List<VariableTerm>> Visit(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);

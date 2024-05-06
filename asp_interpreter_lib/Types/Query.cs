@@ -1,31 +1,27 @@
 ﻿using asp_interpreter_lib.Types.TypeVisitors;
+using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Types;
 
 public class Query
 {
-    private Literal _literal;
+    private List<Goal> _goals;
 
-    public Query(Literal literal)
+    public Query(List<Goal> goals)
     {
-        if (literal.HasNafNegation)
-        {
-            throw new ArgumentException("Query cannot have NAF negation.");
-        }
-        
-        Literal = literal;
+        _goals = goals;
     }
 
-    public Literal Literal
+    public List<Goal> Goals
     {
-        get => _literal;
-        private set => _literal = value ?? throw new ArgumentNullException(nameof(Literal));
+        get => _goals;
+        private set => _goals = value ?? throw new ArgumentNullException(nameof(Goals));
     }
 
     public override string ToString()
     {
-        return $"?- {Literal.ToString()}.";
+        return $"?- {AspExtensions.ListToString(Goals)}.";
     }
     
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)

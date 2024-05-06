@@ -31,7 +31,7 @@ namespace asp_interpreter_test.DualRules
                       ab(X) :- wounded_bird(X).
                       
                       flies(X) :- bird(X), not ab(X).
-                      flies(sam)?
+                      ?- flies(sam).
                       """;
 
             var program = AspExtensions.GetProgram(code, _logger);
@@ -81,7 +81,7 @@ namespace asp_interpreter_test.DualRules
                       -ab(X) :- not ab(X).
                       -bird(X) :- not bird(X).
                       
-                      flies(sam)?
+                      ?-flies(sam).
                       """;
 
 
@@ -187,7 +187,7 @@ namespace asp_interpreter_test.DualRules
 
                       % You cannot choose two edges to the same vertex
                       :- chosen(U, W), chosen(V, W), U \= V.
-                      chosen(1,2)?
+                      ?-chosen(1,2).
                       """;
 
             var program = AspExtensions.GetProgram(code, _logger);
@@ -309,7 +309,7 @@ namespace asp_interpreter_test.DualRules
                       member(X,[X|T]).
                       member(X,[Y|T]) :- X\=Y, member(X,T).
 
-                      member(1, [1, 2, 3])?
+                      ?- p(X).member(1, [1, 2, 3]).
                       """;
 
             var program = AspExtensions.GetProgram(code, _logger);
@@ -351,7 +351,7 @@ namespace asp_interpreter_test.DualRules
                               sumlist(T, T2, T3).
                       sumlist([], [], []).
 
-                      sumlist([s(s(0)), s(s(s(0)))], [s(s(s(0))), s(s(s(0)))], X)?
+                      ?-sumlist([s(s(0)), s(s(s(0)))], [s(s(s(0))), s(s(s(0)))], X).
                       """;
 
             var program = AspExtensions.GetProgram(code, _logger);

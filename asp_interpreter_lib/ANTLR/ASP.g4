@@ -1,6 +1,6 @@
 grammar ASP;
 program : statements query?;
-query : literal QUERY_MARK;
+query : QUERY_SYMBOL goal(COMMA goal)* DOT;
 
 statements : statement*;
 
@@ -56,7 +56,7 @@ NUMBER :  [0] | [1-9][0-9]*;
 ANONYMOUS_VARIABLE : '_';
 DOT : '.';
 COMMA : ',';
-QUERY_MARK : '?';
+QUERY_SYMBOL : '?-';
 COLON : ':';
 SEMICOLON : ';';
 OR : '|';

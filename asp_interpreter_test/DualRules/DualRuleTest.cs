@@ -16,7 +16,7 @@ public class DualRuleTest
     {
         string code = """
                       :- not b(X), Y = 4, c(X, Y, Z).
-                      p?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -37,7 +37,7 @@ public class DualRuleTest
 
         string code = """
                       b(X).
-                      p?
+                      ?- b(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -59,7 +59,7 @@ public class DualRuleTest
         string code = """
                       p(0).
                       p(X) :- q(X), not t(X, Y).
-                      p?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -86,7 +86,7 @@ public class DualRuleTest
         string code = """
                       p(0).
                       p(X) :- -q(X), not -t(X, Y).
-                      p?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -113,7 +113,7 @@ public class DualRuleTest
         string code = """
                       p(X) :- not q(X), r(X).
                       -p(X) :- s(X), not t(X).
-                      p(4)?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -140,7 +140,7 @@ public class DualRuleTest
     {
         string code = """
                       p([X|T]) :- q(X), p(T).
-                      p?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -164,7 +164,7 @@ public class DualRuleTest
     {
         string code = """
                       p([X, Y, Z]) :- q(X), r(Y), s(Z).
-                      p?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -193,7 +193,7 @@ public class DualRuleTest
         string code = """
                       -p.
                       p :- -p.
-                      p?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
@@ -217,7 +217,7 @@ public class DualRuleTest
                       p :- not q.
                       q :- not p.
                       r :- p.
-                      p?
+                      ?- p(X).
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);

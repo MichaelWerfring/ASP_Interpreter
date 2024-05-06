@@ -17,7 +17,7 @@ public class NmrCheckerTest
     {
         string code = """
                       p(X) :- q(X), not p(X).
-                      p(a)?
+                      ?- p(X).
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);    
@@ -36,7 +36,7 @@ public class NmrCheckerTest
     {
         string code = """
                       :- not r(X).
-                      p(a)?
+                      ?- p(X).
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
@@ -56,7 +56,7 @@ public class NmrCheckerTest
         string code = """
                       p(X) :- q(X), not p(X).
                       :- not r(X).
-                      p(a)?
+                      ?- p(X).
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
@@ -78,7 +78,7 @@ public class NmrCheckerTest
         string code = """
                       :- not s(1, X).
                       p(X):- q(X), not p(X).
-                      p(a)?
+                      ?- p(X).
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
@@ -99,7 +99,7 @@ public class NmrCheckerTest
     {
         string code = """
                       p(X) :- q(X, Y), not p(Y).
-                      p(a)?
+                      ?- p(X).
                       """;
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);

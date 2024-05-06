@@ -36,13 +36,12 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
         var goalConverterForQuery = new GoalConverter(_record);
 
-        var convertedQueryMaybe = goalConverterForQuery.Convert(queryMaybe.GetValueOrThrow().Literal);
-        if (!convertedQueryMaybe.HasValue)
-        {
-            throw new ArgumentException("Could not convert query!");
-        }
+        List<ISimpleTerm> query = [];
+        queryMaybe.GetValueOrThrow().Goals.ForEach(g => 
+            query.Add(goalConverterForQuery.Convert(g).GetValueOrThrow("Goal cannot be converterd!")));
+        
 
-        return new InternalAspProgram(clauses, [convertedQueryMaybe.GetValueOrThrow()]);
+        return new InternalAspProgram(clauses, query);
     }
 
     private IEnumerable<ISimpleTerm> ConvertStatement(Statement statement)

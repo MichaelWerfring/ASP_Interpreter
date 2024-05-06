@@ -11,10 +11,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/Copy/GoalCopyVisitor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/Copy/StatementCopyVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/Copy/StatementCopyVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TypeBaseVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/TypeBaseVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.g4" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.g4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.interp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ProgramConversion/ASPProgramToInternalProgram/Conversion/ProgramConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ProgramConversion/ASPProgramToInternalProgram/Conversion/ProgramConverter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/Query.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Query.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/VariableFinder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/TypeVisitors/VariableFinder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/QueryVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/QueryVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleWithoutNotInNameCompoundProgramTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleWithoutNotInNameCompoundProgramTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/NmrCheckerTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/VisitorTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/VisitorTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +72,10 @@
     <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -230,15 +247,8 @@
       <workItem from="1714897682137" duration="7251000" />
       <workItem from="1714906684210" duration="4776000" />
       <workItem from="1714921575797" duration="55000" />
-      <workItem from="1714934813337" duration="873000" />
-    </task>
-    <task id="LOCAL-00006" summary="#30 - Implemented Visitor Pattern within every Type">
-      <option name="closed" value="true" />
-      <created>1711816956257</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1711816956257</updated>
+      <workItem from="1714934813337" duration="2092000" />
+      <workItem from="1714972273462" duration="839000" />
     </task>
     <task id="LOCAL-00007" summary="#25 - Implemented rewriting for Statements">
       <option name="closed" value="true" />
@@ -624,7 +634,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714921441305</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="#62 - Added option to copy forall as well">
+      <option name="closed" value="true" />
+      <created>1714935895680</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1714935895680</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -693,7 +711,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="#44 - Changed NMR Checker to work with new Literal" />
     <MESSAGE value="#43 - Rebuilt NMR Check based on Dual Rules" />
     <MESSAGE value="#44 - Merge after refactoring of types classes" />
     <MESSAGE value="#44 - fixed bug within inner term of forall" />
@@ -718,32 +735,10 @@
     <MESSAGE value="#31 - Testing of Dual Rules" />
     <MESSAGE value="#62 added the notAsName parameter to the dual rule generator constructor" />
     <MESSAGE value="#62 - Added flag for identifying Duals" />
-    <option name="LAST_COMMIT_MESSAGE" value="#62 - Added flag for identifying Duals" />
+    <MESSAGE value="#62 - Added option to copy forall as well" />
+    <option name="LAST_COMMIT_MESSAGE" value="#62 - Added option to copy forall as well" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/asp_interpreter_test/VisitorTest.cs</url>
-          <line>253</line>
-          <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_test\VisitorTest.cs" containingFunctionPresentation="Method 'HandlesStatementWithRuleBodyAndNegatedHeadCorrectly'" />
-          <option name="timeStamp" value="134" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs</url>
-          <line>269</line>
-          <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_test\DualRules\DualRuleCompoundProgramTest.cs" containingFunctionPresentation="Method 'HanoiTest'">
-            <startOffsets>
-              <option value="13954" />
-            </startOffsets>
-            <endOffsets>
-              <option value="14171" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="151" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#Antlr4.Runtime.ParserRuleContext" memberName="_start" />
