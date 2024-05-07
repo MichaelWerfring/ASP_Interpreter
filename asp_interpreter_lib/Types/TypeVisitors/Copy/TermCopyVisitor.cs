@@ -6,9 +6,9 @@ namespace asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 {
-    public override IOption<ITerm> Visit(AnonymusVariableTerm term)
+    public override IOption<ITerm> Visit(AnonymousVariableTerm term)
     {
-        return new Some<ITerm>(new AnonymusVariableTerm());
+        return new Some<ITerm>(new AnonymousVariableTerm());
     }
 
     public override IOption<ITerm> Visit(VariableTerm term)

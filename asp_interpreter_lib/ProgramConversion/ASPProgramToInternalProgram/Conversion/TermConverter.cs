@@ -35,7 +35,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         return term.Accept(this).GetValueOrThrow();
     }
 
-    public override IOption<ISimpleTerm> Visit(AnonymusVariableTerm _)
+    public override IOption<ISimpleTerm> Visit(AnonymousVariableTerm _)
     {
         var variable = new Variable($"{_functorTable.AnonymusVariable}{_nextAnonymousVariableIndex}");
         _nextAnonymousVariableIndex+=1;

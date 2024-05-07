@@ -18,7 +18,7 @@ public class TypeBaseVisitor<T>
 
     public virtual IOption<T> Visit(Literal goal) => new None<T>();
     
-    public virtual IOption<T> Visit(BinaryOperation goal) => new None<T>();
+    public virtual IOption<T> Visit(BinaryOperation binOp) => new None<T>();
     
     public virtual IOption<T> Visit(Plus _) => new None<T>();
     
@@ -44,11 +44,11 @@ public class TypeBaseVisitor<T>
     
     public virtual IOption<T> Visit(Is _) => new None<T>();
     
-    public virtual IOption<T> Visit(AnonymusVariableTerm _) => new None<T>();
+    public virtual IOption<T> Visit(AnonymousVariableTerm _) => new None<T>();
     
-    public virtual IOption<T> Visit(VariableTerm _) => new None<T>();
+    public virtual IOption<T> Visit(VariableTerm term) => new None<T>();
     
-    public virtual IOption<T> Visit(ArithmeticOperationTerm _) => new None<T>();
+    public virtual IOption<T> Visit(ArithmeticOperationTerm term) => new None<T>();
     
     public virtual IOption<T> Visit(BasicTerm _) => new None<T>();
     

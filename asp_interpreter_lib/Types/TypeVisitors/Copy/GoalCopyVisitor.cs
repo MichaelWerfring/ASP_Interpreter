@@ -36,13 +36,13 @@ public class GoalCopyVisitor : TypeBaseVisitor<Goal>
         return new Some<Goal>(new Literal(identifier, naf, classical, terms));
     }
 
-    public override IOption<Goal> Visit(BinaryOperation goal)
+    public override IOption<Goal> Visit(BinaryOperation binOp)
     {
-        var leftCopy = goal.Left.Accept(_termCopyVisitor).GetValueOrThrow(
+        var leftCopy = binOp.Left.Accept(_termCopyVisitor).GetValueOrThrow(
             "The given left term cannot be read!");
-        var rightCopy = goal.Right.Accept(_termCopyVisitor).GetValueOrThrow(
+        var rightCopy = binOp.Right.Accept(_termCopyVisitor).GetValueOrThrow(
             "The given right term cannot be read!");
 
-        return new Some<Goal>(new BinaryOperation(leftCopy, goal.BinaryOperator, rightCopy));
+        return new Some<Goal>(new BinaryOperation(leftCopy, binOp.BinaryOperator, rightCopy));
     }
 }

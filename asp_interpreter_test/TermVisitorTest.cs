@@ -142,7 +142,7 @@ public class TermVisitorTest
         var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
-            literal.Terms[0] is AnonymusVariableTerm &&
+            literal.Terms[0] is AnonymousVariableTerm &&
             literal.Terms[0].ToString() == "_");
     }
 
@@ -155,7 +155,7 @@ public class TermVisitorTest
         var literal = program.Statements[0].Head.GetValueOrThrow();
         
         Assert.That(literal != null &&
-            literal.Terms[0] is BasicTerm && literal.Terms[1] is AnonymusVariableTerm &&
+            literal.Terms[0] is BasicTerm && literal.Terms[1] is AnonymousVariableTerm &&
             literal.Terms[0].ToString() == "b" && 
             literal.Terms[1].ToString() == "_");
     }

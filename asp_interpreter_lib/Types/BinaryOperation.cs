@@ -21,13 +21,13 @@ public class BinaryOperation : Goal
     public ITerm Left
     {
         get => _left;
-        private set => _left = value ?? throw new ArgumentNullException(nameof(Left));
+        set => _left = value ?? throw new ArgumentNullException(nameof(Left));
     }
 
     public ITerm Right
     {
         get => _right;
-        private set => _right = value ?? throw new ArgumentNullException(nameof(Right));
+        set => _right = value ?? throw new ArgumentNullException(nameof(Right));
     }
 
     public BinaryOperator BinaryOperator

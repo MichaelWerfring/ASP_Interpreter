@@ -77,15 +77,15 @@ public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
         return new Some<ISimpleTerm>(convertedTerm);
     }
 
-    public override IOption<ISimpleTerm> Visit(BinaryOperation goal)
+    public override IOption<ISimpleTerm> Visit(BinaryOperation binOp)
     {
-        var leftMaybe = goal.Left.Accept(_termConverter);
+        var leftMaybe = binOp.Left.Accept(_termConverter);
         if (!leftMaybe.HasValue) { return new None<ISimpleTerm>(); }
 
-        var rightMaybe = goal.Right.Accept(_termConverter);
+        var rightMaybe = binOp.Right.Accept(_termConverter);
         if (!rightMaybe.HasValue) { return new None<ISimpleTerm>(); }
 
-        var functor = _operatorConverter.Convert(goal.BinaryOperator);
+        var functor = _operatorConverter.Convert(binOp.BinaryOperator);
 
         var convertedStructure = new Structure(functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 

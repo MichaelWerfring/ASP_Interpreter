@@ -16,8 +16,6 @@ public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
     
     private readonly HashSet<string> _variables;
 
-    private readonly TermCopyVisitor _termCopyVisitor = new();
-
     private int _counter;
     
     public HeadAtomEliminator(PrefixOptions options, Statement statement)
@@ -76,7 +74,7 @@ public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
         return new Some<(ITerm, List<Goal>)>((term, goals));
     }
 
-    public override IOption<(ITerm, List<Goal>)> Visit(AnonymusVariableTerm term)
+    public override IOption<(ITerm, List<Goal>)> Visit(AnonymousVariableTerm term)
     {
         return new Some<(ITerm, List<Goal>)>((term, []));
     }

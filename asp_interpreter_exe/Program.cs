@@ -5,7 +5,6 @@ using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 using Microsoft.Extensions.Configuration;
-using asp_interpreter_exe;
 
 internal class Program
 {

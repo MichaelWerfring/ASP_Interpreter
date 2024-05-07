@@ -10,7 +10,7 @@ public class TermToNumberConverter : TypeBaseVisitor<int>
         return new None<int>();
     }
 
-    public override IOption<int> Visit(AnonymusVariableTerm term)
+    public override IOption<int> Visit(AnonymousVariableTerm term)
     {
         return new None<int>(); 
     }

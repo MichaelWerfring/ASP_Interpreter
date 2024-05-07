@@ -1,6 +1,6 @@
 ﻿using asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_exe;
+namespace asp_interpreter_lib.Util;
 
 public class ProgramConfig
 {

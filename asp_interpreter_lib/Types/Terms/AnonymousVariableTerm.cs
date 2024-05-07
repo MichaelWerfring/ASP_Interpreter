@@ -3,7 +3,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Types.Terms;
 
-public class AnonymusVariableTerm : ITerm
+public class AnonymousVariableTerm : ITerm
 {
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {

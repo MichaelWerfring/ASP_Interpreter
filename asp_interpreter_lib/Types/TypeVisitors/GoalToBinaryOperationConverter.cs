@@ -6,9 +6,9 @@ namespace asp_interpreter_lib.Types.TypeVisitors;
 
 public class GoalToBinaryOperationConverter : TypeBaseVisitor<BinaryOperation>
 {
-    public override IOption<BinaryOperation> Visit(BinaryOperation binaryOperation)
+    public override IOption<BinaryOperation> Visit(BinaryOperation binOp)
     {
-        ArgumentNullException.ThrowIfNull(binaryOperation);
-        return new Some<BinaryOperation>(binaryOperation);
+        ArgumentNullException.ThrowIfNull(binOp);
+        return new Some<BinaryOperation>(binOp);
     }
 }

@@ -6,13 +6,13 @@ namespace asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 public class BinaryOperationVisitor(TypeBaseVisitor<ITerm> termCopyVisitor) : TypeBaseVisitor<BinaryOperation>
 {
-    public override IOption<BinaryOperation> Visit(BinaryOperation operation)
+    public override IOption<BinaryOperation> Visit(BinaryOperation binOp)
     {
-        var leftCopy = operation.Left.Accept(termCopyVisitor).GetValueOrThrow(
+        var leftCopy = binOp.Left.Accept(termCopyVisitor).GetValueOrThrow(
             "The given left term cannot be read!");
-        var rightCopy = operation.Right.Accept(termCopyVisitor).GetValueOrThrow(
+        var rightCopy = binOp.Right.Accept(termCopyVisitor).GetValueOrThrow(
             "The given right term cannot be read!");
 
-        return new Some<BinaryOperation>(new BinaryOperation(leftCopy, operation.BinaryOperator, rightCopy));
+        return new Some<BinaryOperation>(new BinaryOperation(leftCopy, binOp.BinaryOperator, rightCopy));
     }
 }
