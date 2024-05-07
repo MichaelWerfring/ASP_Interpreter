@@ -65,16 +65,38 @@ public class Application(
         while (true)
         {
             Console.Write("?-");
-            string input = Console.ReadLine();
+
+            string input = Console.ReadLine() ?? "";
 
             if (input == "exit") return;
+            if (input == "clear") Console.Clear();
 
             // 1) parse query 
+            var query = GetQuery("?-" + input);
+
             // 2) solve existing program with new query 
             // 3) show answer
         }
     }
 
+    private Query GetQuery(string code)
+    {
+        var inputStream = new AntlrInputStream(code);
+        var lexer = new ASPLexer(inputStream);
+        var commonTokenStream = new CommonTokenStream(lexer);
+        var parser = new ASPParser(commonTokenStream);
+        var context = parser.query();
+        var visitor = new QueryVisitor(_logger);
+        var query = visitor.VisitQuery(context);
+
+        if (!query.HasValue)
+        {
+            throw new ArgumentException("Failed to parse query!");
+        }
+
+        return query.GetValueOrThrow();
+    }
+    
     private AspProgram GetProgram(string code)
     {
         var inputStream = new AntlrInputStream(code);
