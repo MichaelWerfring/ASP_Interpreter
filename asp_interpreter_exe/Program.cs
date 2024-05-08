@@ -53,14 +53,14 @@ internal class Program
         Console.WriteLine();
 
         Console.WriteLine("Examples:");
-        Console.WriteLine("interpreter -l 0 -p /path/to/file.txt --interactive");
-        Console.WriteLine("interpreter --log-level 1 --path /path/to/file.txt --help");
+        Console.WriteLine("interpreter.exe -l 0 -p /path/to/file.txt --interactive");
+        Console.WriteLine("interpreter.exe --log-level 1 --path /path/to/file.txt --help");
         Console.WriteLine();
 
         Console.WriteLine("Dev mode:");
-        Console.WriteLine("interpreter /path/to/file.txt");
+        Console.WriteLine("interpreter.exe /path/to/file.txt");
         Console.WriteLine("is translated to:");
-        Console.WriteLine("interpreter -l 1 -p /path/to/file.txt -i");
+        Console.WriteLine("interpreter.exe -l 1 -p /path/to/file.txt -i");
     }
 
     private static CommandLineParser InitParser(ILogger logger)
