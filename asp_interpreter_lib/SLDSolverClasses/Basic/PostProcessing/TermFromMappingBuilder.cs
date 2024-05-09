@@ -19,7 +19,7 @@ internal class TermFromMappingBuilder : ISimpleTermArgsVisitor<ISimpleTerm, Dict
 
     public ISimpleTerm Visit(Variable term, Dictionary<Variable, ISimpleTerm> mapping)
     {
-        if (!mapping.ContainsKey(term)) { return term.Clone(); }
+        if (!mapping.ContainsKey(term)) { return term; }
 
         return mapping[term].Accept(this, mapping);
     }
@@ -33,7 +33,7 @@ internal class TermFromMappingBuilder : ISimpleTermArgsVisitor<ISimpleTerm, Dict
             newChildren[i] = term.Children.ElementAt(i).Accept(this, mapping);
         }
 
-        return new Structure(term.Functor.GetCopy(), newChildren.ToImmutableList());
+        return new Structure(term.Functor, newChildren);
     }
 
     public ISimpleTerm Visit(Integer term, Dictionary<Variable, ISimpleTerm> mapping)

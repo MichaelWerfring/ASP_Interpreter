@@ -14,8 +14,8 @@ public class ClauseVariableRenamer
         ArgumentNullException.ThrowIfNull(clause);
 
         var clauseVariables = clause
-            .SelectMany(x => x.ExtractVariables())
-            .ToHashSet(_comparer);
+            .SelectMany(x => x.Enumerate().OfType<Variable>())
+            .ToImmutableHashSet(_comparer);
 
         var varsToNewVarsMapping = new Dictionary<Variable, ISimpleTerm>(_comparer);
         foreach (var variable in clauseVariables)
@@ -24,7 +24,7 @@ public class ClauseVariableRenamer
             currentInternalIndex += 1;
         }
 
-        return new RenamingResult(clause.Select((term) => term.Substitute(varsToNewVarsMapping)).ToImmutableList(), currentInternalIndex);
+        return new RenamingResult(clause.Select((term) => term.Substitute(varsToNewVarsMapping)), currentInternalIndex);
     }
 
 }

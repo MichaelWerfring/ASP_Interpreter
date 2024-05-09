@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
@@ -36,7 +37,7 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
         var goalConverterForQuery = new GoalConverter(_record);
 
-        List<ISimpleTerm> query = [];
+        List<Structure> query = [];
         queryMaybe.GetValueOrThrow().Goals.ForEach(g => 
             query.Add(goalConverterForQuery.Convert(g).GetValueOrThrow("Goal cannot be converterd!")));
         
@@ -44,11 +45,11 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
         return new InternalAspProgram(clauses, query);
     }
 
-    private IEnumerable<ISimpleTerm> ConvertStatement(Statement statement)
+    private IEnumerable<Structure> ConvertStatement(Statement statement)
     {
         var converter = new GoalConverter(_record);
 
-        var list = new List<ISimpleTerm>();
+        var list = new List<Structure>();
 
         if(statement.HasHead)
         {

@@ -24,8 +24,8 @@ public class ConstructiveTarget
 
         // check for correctness of input mapping:
         // construct set of variables of both terms
-        var variableSet = left.ToList()
-                            .Union(right.ToList())
+        var variableSet = left.Enumerate()
+                            .Union(right.Enumerate())
                             .Where(x => x is Variable)
                             .Select(x => (Variable)x)
                             .ToHashSet(new VariableComparer());

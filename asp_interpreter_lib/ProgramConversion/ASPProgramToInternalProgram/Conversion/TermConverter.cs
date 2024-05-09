@@ -66,7 +66,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
             return new None<ISimpleTerm>();
         }
 
-        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildrenMaybes.Select((m)=> m.GetValueOrThrow()).ToImmutableList()));
+        return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildrenMaybes.Select((m)=> m.GetValueOrThrow())));
     }
 
     public override IOption<ISimpleTerm> Visit(ConventionalList term)

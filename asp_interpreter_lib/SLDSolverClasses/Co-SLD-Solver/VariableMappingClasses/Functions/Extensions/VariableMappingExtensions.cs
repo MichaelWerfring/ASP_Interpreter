@@ -10,26 +10,20 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public static class VariableMappingExtensions
 {
-    private static VariableMappingCopier _copier = new VariableMappingCopier();
-    private static VariableMappingSplitter _splitter = new VariableMappingSplitter();
-    private static VariableMappingConcatenator _concatenator = new VariableMappingConcatenator();
-    private static VariableMappingSubstituter _substituter = new VariableMappingSubstituter();
-
-    public static VariableMapping Copy(this VariableMapping mapping)
-    {
-        return _copier.Copy(mapping);
-    }
+    private static VariableMappingSplitter _splitter = new();
+    private static VariableMappingUpdater _updater = new();
+    private static VariableMappingSubstituter _substituter = new();
 
     public static (IImmutableDictionary<Variable, TermBinding>, IImmutableDictionary<Variable, ProhibitedValuesBinding>) Split(this VariableMapping mapping)
     {
         return _splitter.Split(mapping);
     }
 
-    public static IEither<ConcatenationException, VariableMapping> Concatenate(this VariableMapping mapping, VariableMapping other)
+    public static IEither<UpdateException, VariableMapping> Update(this VariableMapping mapping, VariableMapping other)
     {
         ArgumentNullException.ThrowIfNull(other, nameof(other));
 
-        return _concatenator.Concatenate(mapping, other);
+        return _updater.Update(mapping, other);
     }
 
     public static ISimpleTerm ApplySubstitution(this VariableMapping mapping, ISimpleTerm term)

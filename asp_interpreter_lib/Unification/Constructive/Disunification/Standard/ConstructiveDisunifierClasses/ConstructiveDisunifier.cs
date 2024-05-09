@@ -144,7 +144,7 @@ public class ConstructiveDisunifier
         }
 
         // do groundedness check if asked for
-        if (_doGroundednessCheck && right.ToList().Any(x => x is Variable))
+        if (_doGroundednessCheck && right.Enumerate().Any(x => x is Variable))
         {
             _fatalError = new NonGroundTermException
                 ($"Cannot disunify variable and nonground term: {left} and {right}");
@@ -181,7 +181,7 @@ public class ConstructiveDisunifier
 
         foreach (var term in difference)
         {
-            if (_doGroundednessCheck && term.ToList().Any(x => x is Variable))
+            if (_doGroundednessCheck && term.Enumerate().Any(x => x is Variable))
             {
                 _fatalError = new NonGroundTermException
                     ($"Cannot disunify variable and nonground term: {left} and {right}");

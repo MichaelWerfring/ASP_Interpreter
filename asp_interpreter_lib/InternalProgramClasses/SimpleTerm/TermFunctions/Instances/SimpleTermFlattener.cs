@@ -1,35 +1,40 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
-public class SimpleTermFlattener : ISimpleTermArgsVisitor<List<ISimpleTerm>>
+public class SimpleTermFlattener : ISimpleTermVisitor<IEnumerable<ISimpleTerm>>
 {
-    public List<ISimpleTerm> ToList(ISimpleTerm term)
+    public IEnumerable<ISimpleTerm> ToList(ISimpleTerm term)
     {
-        var list = new List<ISimpleTerm>();
-        term.Accept(this, list);
-        return list;
-    }
-
-    public void Visit(Variable variableTerm, List<ISimpleTerm> arguments)
-    {
-        arguments.Add(variableTerm);
-    }
-
-    public void Visit(Structure basicTerm, List<ISimpleTerm> arguments)
-    {
-        arguments.Add(basicTerm);
-
-        foreach (var childTerm in basicTerm.Children)
+        foreach (var t in term.Accept(this))
         {
-            childTerm.Accept(this, arguments);
+            yield return t;
         }
     }
 
-    public void Visit(Integer integer, List<ISimpleTerm> arguments)
+    public IEnumerable<ISimpleTerm> Visit(Variable variableTerm)
     {
-        arguments.Add(integer);
+       yield return variableTerm;
+    }
+
+    public IEnumerable<ISimpleTerm> Visit(Structure basicTerm)
+    {
+        yield return basicTerm;
+
+        foreach (var childTerm in basicTerm.Children)
+        {
+            foreach(var term in childTerm.Accept(this))
+            {
+                yield return term;
+            }
+        }
+    }
+
+    public IEnumerable<ISimpleTerm> Visit(Integer integer)
+    {
+        yield return integer;
     }
 }

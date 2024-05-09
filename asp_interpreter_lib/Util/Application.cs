@@ -154,7 +154,7 @@ public class Application(
         var convertedProgram = converter.Convert(program);
         Console.WriteLine(convertedProgram.ToString());
 
-        var db = new StandardDatabase(convertedProgram.Statements);
+        var db = new BasicDatabase(convertedProgram.Statements);
 
         var solver = new AdvancedSLDSolver(db, record);
         solver.SolutionFound += (_, sol) =>

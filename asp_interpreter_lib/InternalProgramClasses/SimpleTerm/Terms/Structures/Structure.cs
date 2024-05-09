@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Text;
+﻿using System.Text;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util;
 
@@ -7,7 +6,7 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures
 
 public class Structure : IStructure
 {
-    public Structure(string functor, IImmutableList<ISimpleTerm> children)
+    public Structure(string functor, IEnumerable<ISimpleTerm> children)
     {
         ArgumentException.ThrowIfNullOrEmpty(functor);
         ArgumentNullException.ThrowIfNull(children);
@@ -18,7 +17,7 @@ public class Structure : IStructure
 
     public string Functor { get; }
 
-    public IImmutableList<ISimpleTerm> Children { get; }
+    public IEnumerable<ISimpleTerm> Children { get; }
 
     public void Accept(ISimpleTermVisitor visitor)
     {

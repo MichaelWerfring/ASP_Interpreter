@@ -1,9 +1,10 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
 namespace asp_interpreter_lib.InternalProgramClasses.Database;
 
 public interface IDatabase
 {
-    public IEnumerable<IEnumerable<ISimpleTerm>> GetMatchingClauses(ISimpleTerm term);
+    public IEnumerable<IEnumerable<Structure>> GetPotentialUnifications(Structure term);
 
 }

@@ -36,7 +36,7 @@ public class AspProgram : IVisitableType
             builder.AppendLine();
         }
 
-        builder.Append(Query.ToString());
+        if (Query.HasValue) { builder.Append(Query.GetValueOrThrow().ToString()); };
         builder.AppendLine();
 
         return builder.ToString();

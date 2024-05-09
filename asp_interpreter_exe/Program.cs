@@ -29,8 +29,6 @@ internal class Program
         var host = builder.Build();
         host.Services.GetRequiredService<Application>().Run();
 
-        
-
     }
     private static ProgramConfig GetConfig(string[] args)
     {

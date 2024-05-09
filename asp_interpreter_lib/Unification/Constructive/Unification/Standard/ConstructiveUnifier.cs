@@ -40,9 +40,7 @@ public class ConstructiveUnifier
         {
             ProhibitedValuesBinding copiedProhibitedValues = new ProhibitedValuesBinding
             (
-                pair.Value.ProhibitedValues
-                                    .Select(x => x.Clone())
-                                    .ToImmutableHashSet(new SimpleTermEqualityComparer())
+                pair.Value.ProhibitedValues.ToImmutableHashSet(new SimpleTermEqualityComparer())
             );
 
             copiedDict.Add(new Variable(pair.Key.Identifier.GetCopy()), copiedProhibitedValues);

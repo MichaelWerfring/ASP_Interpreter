@@ -5,7 +5,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 
 public class RenamingResult
 {
-    public RenamingResult(IImmutableList<ISimpleTerm> clause, int nextInternalIndex)
+    public RenamingResult(IEnumerable<ISimpleTerm> clause, int nextInternalIndex)
     {
         ArgumentNullException.ThrowIfNull(clause);
 
@@ -13,7 +13,7 @@ public class RenamingResult
         NextInternalIndex = nextInternalIndex;
     }
 
-    public IImmutableList<ISimpleTerm> RenamedClause { get; }
+    public IEnumerable<ISimpleTerm> RenamedClause { get; }
 
     public int NextInternalIndex { get; }
 }

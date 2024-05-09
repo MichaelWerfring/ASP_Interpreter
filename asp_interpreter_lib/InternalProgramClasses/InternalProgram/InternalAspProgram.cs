@@ -1,12 +1,13 @@
 ﻿using System.Text;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Util;
 
 namespace asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 
 public class InternalAspProgram 
 {
-    public InternalAspProgram(IEnumerable<IEnumerable<ISimpleTerm>> statements, IEnumerable<ISimpleTerm> query)
+    public InternalAspProgram(IEnumerable<IEnumerable<Structure>> statements, IEnumerable<Structure> query)
     {
         ArgumentNullException.ThrowIfNull(statements);
         ArgumentNullException.ThrowIfNull(query);
@@ -41,9 +42,9 @@ public class InternalAspProgram
         Query = query;
     }
 
-    public IEnumerable<IEnumerable<ISimpleTerm>> Statements { get; }
+    public IEnumerable<IEnumerable<Structure>> Statements { get; }
 
-    public IEnumerable<ISimpleTerm> Query { get; }
+    public IEnumerable<Structure> Query { get; }
 
     public override string ToString()
     {

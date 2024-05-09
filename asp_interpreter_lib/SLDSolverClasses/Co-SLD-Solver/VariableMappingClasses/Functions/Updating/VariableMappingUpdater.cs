@@ -8,17 +8,17 @@ using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
 
-public class VariableMappingConcatenator : IVariableBindingArgumentVisitor<IVariableBinding, (Variable,IVariableBinding)>
+public class VariableMappingUpdater : IVariableBindingArgumentVisitor<IVariableBinding, (Variable,IVariableBinding)>
 {
     /// <summary>
-    /// Concatenates dictionaries of variableMappings.
+    /// Updates variableMapping with another VariableMapping.
     /// For a single variable:
     /// if only one variableMapping contains the variable, then take that one.
     /// if one maps to a term and the other to a prohibited values list, take term.
     /// if both map to prohibited values list, take the second one BUT if right does not contain all terms of left, then fail.
     /// if the 2 maps map to different termBinding, then fail. Otherwise, take one.
     /// </summary>
-    public IEither<ConcatenationException, VariableMapping> Concatenate(VariableMapping first, VariableMapping second)
+    public IEither<UpdateException, VariableMapping> Update(VariableMapping first, VariableMapping second)
     {
         ArgumentNullException.ThrowIfNull(first, nameof(first));
         ArgumentNullException.ThrowIfNull(second, nameof(second));
@@ -31,12 +31,12 @@ public class VariableMappingConcatenator : IVariableBindingArgumentVisitor<IVari
             newDict = variables.Select(x => ConcatenatePairs(x, first, second))
                             .ToDictionary(new VariableComparer());
         }
-        catch (ConcatenationException e)
+        catch (UpdateException e)
         {
-            return new Left<ConcatenationException, VariableMapping>(e);
+            return new Left<UpdateException, VariableMapping>(e);
         }
 
-        return new Right<ConcatenationException, VariableMapping>(new VariableMapping(newDict.ToImmutableDictionary(new VariableComparer())));
+        return new Right<UpdateException, VariableMapping>(new VariableMapping(newDict.ToImmutableDictionary(new VariableComparer())));
     }
 
     private (Variable, IVariableBinding) ConcatenatePairs(Variable x, VariableMapping first, VariableMapping second)
