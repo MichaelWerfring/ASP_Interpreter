@@ -64,6 +64,7 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
         if (chsCheckingResult is CHSDeterministicSuccessResult)
 {
             yield return new GoalSolution(_inputState.CurrentSet, _inputState.CurrentMapping, _inputState.NextInternalVariableIndex);
+            yield break;
         }
 
         var chsConstraintmentResult = (CHSConstrainmentResult) chsCheckingResult;
