@@ -1,11 +1,8 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using System.Collections.Immutable;
 
@@ -29,12 +26,12 @@ public class CoinductiveSLDSolver
 
         var initialSolverState = new CoSldSolverState
         (
-            query.ToImmutableList(),
+            query,
             new SolutionState
             (
                 new CallStack(ImmutableStack.Create<ISimpleTerm>()),
-                new CoinductiveHypothesisSet(ImmutableHashSet.Create<ISimpleTerm>(new SimpleTermEqualityComparer())),
-                new VariableMapping(ImmutableDictionary.Create<Variable, IVariableBinding>(new VariableComparer())),
+                new CoinductiveHypothesisSet(),
+                new VariableMapping(),
                 0
             )
         );

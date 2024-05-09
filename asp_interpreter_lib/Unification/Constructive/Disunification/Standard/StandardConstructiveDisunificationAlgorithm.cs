@@ -54,7 +54,7 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
         var mappings = new List<VariableMapping>();
         foreach (var disunifier in disunifiers.GetRightOrThrow())
         {
-            IImmutableDictionary<Variable, IVariableBinding>? newMapping;
+            ImmutableDictionary<Variable, IVariableBinding>? newMapping;
             if (disunifier.IsPositive)
             {
                 newMapping = mapping.Mapping.SetItem(disunifier.Variable, new TermBinding(disunifier.Term));

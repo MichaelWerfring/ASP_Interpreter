@@ -15,11 +15,6 @@ public class SimpleTermContainsChecker : ISimpleTermArgsVisitor<bool, ISimpleTer
         return term.Accept(this, other);
     }
 
-    public bool Visit(Variable term, ISimpleTerm other)
-    {
-        return term.IsEqualTo(other);
-    }
-
     public bool Visit(Structure term, ISimpleTerm other)
     {
         var areEqual = term.IsEqualTo(other);
@@ -39,6 +34,11 @@ public class SimpleTermContainsChecker : ISimpleTermArgsVisitor<bool, ISimpleTer
         }
 
         return false;
+    }
+
+    public bool Visit(Variable term, ISimpleTerm other)
+    {
+        return term.IsEqualTo(other);
     }
 
     public bool Visit(Integer term, ISimpleTerm other)

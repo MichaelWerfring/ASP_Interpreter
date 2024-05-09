@@ -12,7 +12,7 @@ using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
-public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
+public class GoalConverter : TypeBaseVisitor<Structure>
 {
     private readonly FunctorTableRecord _functorTable;
 
@@ -29,39 +29,39 @@ public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
         _operatorConverter = new OperatorConverter(functorTable);
     }
 
-    public IOption<ISimpleTerm> Convert(Goal goal)
+    public IOption<Structure> Convert(Goal goal)
     {
         ArgumentNullException.ThrowIfNull(goal, nameof(goal));
 
         return goal.Accept(this);
     }
 
-    public override IOption<ISimpleTerm> Visit(Forall goal)
+    public override IOption<Structure> Visit(Forall goal)
     {
         var leftMaybe = goal.VariableTerm.Accept(_termConverter);
         if(!leftMaybe.HasValue)
         {
-            return new None<ISimpleTerm>();
+            return new None<Structure>();
         }
 
         var rightMaybe = goal.Goal.Accept(this);
         if (!rightMaybe.HasValue)
         {
-            return new None<ISimpleTerm>();
+            return new None<Structure>();
         }
 
         var convertedStruct = new Structure(_functorTable.Forall, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
-        return new Some<ISimpleTerm>(convertedStruct);
+        return new Some<Structure>(convertedStruct);
     }
 
-    public override IOption<ISimpleTerm> Visit(Literal goal)
+    public override IOption<Structure> Visit(Literal goal)
     {
         var children = goal.Terms.Select(_termConverter.Convert);
 
         var convertedTerm = new Structure(
                                             goal.Identifier.GetCopy(),
-                                            children.ToImmutableList()
+                                            children
                                          );
 
         if (goal.HasStrongNegation)
@@ -74,21 +74,21 @@ public class GoalConverter : TypeBaseVisitor<ISimpleTerm>
             convertedTerm = new Structure(_functorTable.NegationAsFailure, [convertedTerm]);
         }
 
-        return new Some<ISimpleTerm>(convertedTerm);
+        return new Some<Structure>(convertedTerm);
     }
 
-    public override IOption<ISimpleTerm> Visit(BinaryOperation binOp)
+    public override IOption<Structure> Visit(BinaryOperation goal)
     {
-        var leftMaybe = binOp.Left.Accept(_termConverter);
-        if (!leftMaybe.HasValue) { return new None<ISimpleTerm>(); }
+        var leftMaybe = goal.Left.Accept(_termConverter);
+        if (!leftMaybe.HasValue) { return new None<Structure>(); }
 
-        var rightMaybe = binOp.Right.Accept(_termConverter);
-        if (!rightMaybe.HasValue) { return new None<ISimpleTerm>(); }
+        var rightMaybe = goal.Right.Accept(_termConverter);
+        if (!rightMaybe.HasValue) { return new None<Structure>(); }
 
-        var functor = _operatorConverter.Convert(binOp.BinaryOperator);
+        var functor = _operatorConverter.Convert(goal.BinaryOperator);
 
         var convertedStructure = new Structure(functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
-        return new Some<ISimpleTerm>(convertedStructure);       
+        return new Some<Structure>(convertedStructure);       
     }
 }

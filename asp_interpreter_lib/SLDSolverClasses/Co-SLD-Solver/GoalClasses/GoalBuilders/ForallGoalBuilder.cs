@@ -2,7 +2,6 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
@@ -25,6 +24,7 @@ public class ForallGoalBuilder : IGoalBuilder
         if (currentState.CurrentGoals.Count() < 1) { throw new ArgumentException(nameof(currentState)); }
 
         var goalTerm = currentState.CurrentGoals.First();
+
         if (goalTerm is not Structure forallStruct || forallStruct.Children.Count() != 2)
         { throw new ArgumentException("Must contain a structure term with two children.", nameof(currentState.CurrentGoals)); }
 
@@ -34,13 +34,6 @@ public class ForallGoalBuilder : IGoalBuilder
         }
 
         return new ForallGoal
-        (
-            database,
-            var,
-            forallStruct.Children.ElementAt(1),
-            _functors,
-            currentState.CurrentGoals.Skip(1).ToImmutableList(),
-            currentState.SolutionState
-        );
+            (database, var,forallStruct.Children.ElementAt(1),_functors,currentState.SolutionState);
     }
 }

@@ -11,12 +11,21 @@ namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 /// </summary>
 public class VariableMapping
 {
-    public VariableMapping(IImmutableDictionary<Variable, IVariableBinding> mapping)
+    public VariableMapping()
+    {
+        Mapping = ImmutableDictionary.Create<Variable, IVariableBinding>(new VariableComparer());
+    }
+
+    public VariableMapping(ImmutableDictionary<Variable, IVariableBinding> mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
+        if(mapping.KeyComparer is not VariableComparer)
+        {
+            throw new NotImplementedException();
+        }
 
         Mapping = mapping;
     }
 
-    public IImmutableDictionary<Variable, IVariableBinding> Mapping { get; }
+    public ImmutableDictionary<Variable, IVariableBinding> Mapping { get; }
 }

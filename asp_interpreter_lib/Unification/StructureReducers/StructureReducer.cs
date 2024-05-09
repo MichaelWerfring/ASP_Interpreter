@@ -31,7 +31,7 @@ public class StructureReducer : ISimpleTermArgsVisitor<IOption<IEnumerable<(ISim
         (
             basicTerm.Functor != b.Functor
             ||
-            basicTerm.Children.Count() != b.Children.Count
+            basicTerm.Children.Count() != b.Children.Count()
         )
         {
             return new None<IEnumerable<(ISimpleTerm, ISimpleTerm)>>();

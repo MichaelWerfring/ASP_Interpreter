@@ -5,6 +5,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.ArithmeticEvaluation;
 

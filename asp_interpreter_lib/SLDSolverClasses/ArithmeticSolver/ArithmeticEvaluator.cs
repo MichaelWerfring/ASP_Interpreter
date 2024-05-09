@@ -4,7 +4,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.ArithmeticEvaluation;
+namespace asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 
 public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 {

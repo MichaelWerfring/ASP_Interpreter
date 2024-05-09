@@ -2,8 +2,8 @@
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
 
-public class TermClashException : ConcatenationException
+public class ProhibitedValuesMismatchException : UpdateException
 {
-    public TermClashException(string message) : base(message)
+    public ProhibitedValuesMismatchException(string message) : base(message)
     { }
 }

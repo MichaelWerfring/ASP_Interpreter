@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # Launch settings
 launchSettings.json
+/ConsoleTest/ConsoleTest.csproj

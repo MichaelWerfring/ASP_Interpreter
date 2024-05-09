@@ -1,4 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.Util;
 using System.Collections.Immutable;
 
@@ -6,15 +8,23 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public class ProhibitedValuesBinding : IVariableBinding
 {
-    public ProhibitedValuesBinding(IImmutableSet<ISimpleTerm> prohibitedValuesSet)
+    public ProhibitedValuesBinding()
+    {
+        ProhibitedValues = ImmutableHashSet.Create<ISimpleTerm>(new SimpleTermEqualityComparer());
+    }
+
+    public ProhibitedValuesBinding(ImmutableHashSet<ISimpleTerm> prohibitedValuesSet)
     {
         ArgumentNullException.ThrowIfNull(prohibitedValuesSet, nameof(prohibitedValuesSet));
-
+        if (prohibitedValuesSet.KeyComparer is not SimpleTermEqualityComparer)
+        {
+            throw new ArgumentException("Must contain correct comparer.");
+        }
 
         ProhibitedValues = prohibitedValuesSet;
     }
 
-    public IImmutableSet<ISimpleTerm> ProhibitedValues { get; }
+    public ImmutableHashSet<ISimpleTerm> ProhibitedValues { get; }
 
     // visitor
     public void Accept(IVariableBindingVisitor visitor)
@@ -39,6 +49,6 @@ public class ProhibitedValuesBinding : IVariableBinding
 
     public override string ToString()
     {
-        return $"{{{ProhibitedValues.ToList().ListToString()}}}";
+        return $"ProhibitedValues:{{{ProhibitedValues.ToList().ListToString()}}}";
     }
 }

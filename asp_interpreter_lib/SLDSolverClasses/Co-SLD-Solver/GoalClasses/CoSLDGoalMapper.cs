@@ -3,7 +3,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.ArithmeticEvaluation;
+using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.GoalBuilders;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 using asp_interpreter_lib.Unification.Constructive.Disunification.Standard;

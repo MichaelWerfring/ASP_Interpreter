@@ -16,6 +16,18 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Dictionar
         return term.Accept(this, mapping);
     }
 
+    public ISimpleTerm Visit(Structure term, Dictionary<Variable, ISimpleTerm> mapping)
+    {
+        var newChildren = new ISimpleTerm[term.Children.Count()];
+
+        Parallel.For(0, newChildren.Length, index =>
+        {
+            newChildren[index] = term.Children.ElementAt(index).Accept(this, mapping);
+        });
+
+        return new Structure(term.Functor, newChildren);
+    }
+
     public ISimpleTerm Visit(Variable term, Dictionary<Variable, ISimpleTerm> mapping)
     {
         ISimpleTerm? value;
@@ -26,19 +38,7 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Dictionar
             return new Variable(term.Identifier);
         }
 
-        return value.Clone();
-    }
-
-    public ISimpleTerm Visit(Structure term, Dictionary<Variable, ISimpleTerm> mapping)
-    {
-        var newChildren = new ISimpleTerm[term.Children.Count()];
-
-        for (int i = 0; i < newChildren.Length; i++)
-        {
-            newChildren[i] = term.Children.ElementAt(i).Accept(this, mapping);
-        }
-
-        return new Structure(term.Functor.ToString(), newChildren.ToImmutableList());
+        return value;
     }
 
     public ISimpleTerm Visit(Integer integer, Dictionary<Variable, ISimpleTerm> arguments)

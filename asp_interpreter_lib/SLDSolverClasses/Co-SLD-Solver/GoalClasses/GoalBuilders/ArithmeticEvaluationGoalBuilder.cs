@@ -1,7 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.ArithmeticEvaluation;
-using System.Collections.Immutable;
+using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
@@ -33,7 +32,6 @@ public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
             _evaluator,
             evaluationStruct.Children.ElementAt(0),
             evaluationStruct.Children.ElementAt(1),
-            currentState.CurrentGoals.Skip(1).ToImmutableList(),
             currentState.SolutionState
         );
     }

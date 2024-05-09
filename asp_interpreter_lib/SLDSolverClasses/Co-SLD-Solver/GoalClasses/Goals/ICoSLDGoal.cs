@@ -2,6 +2,6 @@
 
 public interface ICoSLDGoal
 {
-    public IEnumerable<CoSldSolverState> TrySatisfy();
+    public IEnumerable<GoalSolution> TrySatisfy();
 
 }

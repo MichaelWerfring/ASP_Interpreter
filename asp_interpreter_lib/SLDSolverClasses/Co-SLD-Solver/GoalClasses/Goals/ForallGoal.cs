@@ -6,6 +6,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using System.Collections.Immutable;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
@@ -18,7 +19,6 @@ public class ForallGoal : ICoSLDGoal
 
     private readonly FunctorTableRecord _functors;
 
-    private readonly IImmutableList<ISimpleTerm> _nextGoals;
     private readonly SolutionState _solutionState;
 
     public ForallGoal
@@ -27,7 +27,6 @@ public class ForallGoal : ICoSLDGoal
         Variable variable,
         ISimpleTerm goalTerm,
         FunctorTableRecord functors,
-        IImmutableList<ISimpleTerm> nextGoals,
         SolutionState solutionState
     )
     {
@@ -35,31 +34,26 @@ public class ForallGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(functors, nameof(functors));
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));
         ArgumentNullException.ThrowIfNull(goalTerm, nameof(goalTerm));
-        ArgumentNullException.ThrowIfNull(nextGoals, nameof(nextGoals));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
 
         _database = database;
         _variable = variable;
         _goalTerm = goalTerm;
         _functors = functors;
-        _nextGoals = nextGoals;
         _solutionState = solutionState;
     }
 
-    public IEnumerable<CoSldSolverState> TrySatisfy()
+    public IEnumerable<GoalSolution> TrySatisfy()
     {
         var goalSolver = new GoalSolver(new CoSLDGoalMapper(_functors), _database);
+
         var initialState = new CoSldSolverState([_goalTerm], _solutionState);
-        var successCaseState = new CoSldSolverState
+
+        var successCaseState = new GoalSolution
         (
-            _nextGoals,
-            new SolutionState
-            (
-                _solutionState.CurrentStack,
                 new CoinductiveHypothesisSet(_solutionState.CurrentSet.Terms.Add(_goalTerm)),
                 _solutionState.CurrentMapping,
                 _solutionState.NextInternalVariableIndex
-            )
         );
 
         foreach (var initialForallSolution in goalSolver.SolveGoals(initialState))
@@ -102,7 +96,7 @@ public class ForallGoal : ICoSLDGoal
 
             // solve those goals, succeed if it has any solutions.
             var initialConstraintSolvingState = new 
-                CoSldSolverState(constraintSubstitutedGoals.ToImmutableList(), _solutionState);
+                CoSldSolverState(constraintSubstitutedGoals, _solutionState);
             var solutions = goalSolver.SolveGoals(initialConstraintSolvingState);
             if (solutions.Count() > 0) 
             {
