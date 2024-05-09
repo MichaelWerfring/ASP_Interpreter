@@ -56,7 +56,7 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
     }
 
     // unconvertible terms : these should not be inside a negated term
-    public override IOption<ISimpleTerm> Visit(AnonymusVariableTerm _)
+    public override IOption<ISimpleTerm> Visit(AnonymousVariableTerm _)
     {
         return new None<ISimpleTerm>();
     }

@@ -20,7 +20,7 @@ public class TermTest
     [Test]
     public void TermToNumberConverterFailsOnAnonymusVariableTerm()
     {
-        ITerm term = new AnonymusVariableTerm();
+        ITerm term = new AnonymousVariableTerm();
         var result = term.Accept(_visitor);
         
         Assert.That(!result.HasValue);

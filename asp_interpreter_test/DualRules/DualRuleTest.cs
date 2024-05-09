@@ -1,7 +1,9 @@
-﻿using asp_interpreter_lib.Solving;
+﻿using System.Linq;
+using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
+using NUnit.Framework;
 
 namespace asp_interpreter_test.DualRules;
 
@@ -25,16 +27,12 @@ public class DualRuleTest
         var dual = dualRuleConverter.AddForall(program.Statements[0]).ToList();
 
         Assert.That(dual.Count == 1);
-        Assert.Multiple(() =>
-        {
-            Assert.That(dual[0].ToString() == ":- not b(X), Y = 4, c(X, Y, Z).");
-        });
+        Assert.Multiple(() => { Assert.That(dual[0].ToString() == ":- not b(X), Y = 4, c(X, Y, Z)."); });
     }
 
     [Test]
     public void ForallSkipsFacts()
     {
-
         string code = """
                       b(X).
                       ?- b(X).
@@ -235,6 +233,159 @@ public class DualRuleTest
             Assert.That(duals[3].ToString() == "not_q :- p.");
             Assert.That(duals[4].ToString() == "not_r :- not p.");
             Assert.That(duals[5].ToString() == "not_s.");
+        });
+    }
+
+    [Test]
+    public void ConversionRemovesAnonymousVariablesInBinaryOperation()
+    {
+        string code = """
+                      p(X) :- _ > X.
+                      ?- p(X).
+                      """;
+
+        var program = AspExtensions.GetProgram(code, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+
+        var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+
+        //Solution was verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 2);
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(X) :- forall(V0_, not fa_p(X, V0_))."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not fa_p(X, V0_) :- V0_ <= X."));
+        });
+    }
+    
+    [Test]
+    public void ConversionRemovesAnonymousVariablesInLiteral()
+    {
+        string code = """
+                      p(X) :- q(_), s(X).
+                      q(3).
+                      s(4).
+                      ?- p(X).
+                      """;
+
+        var program = AspExtensions.GetProgram(code, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+
+        var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+
+        //Solution was verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 5);
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(X) :- forall(V0_, not fa_p(X, V0_))."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not fa_p(X, V0_) :- not q(V0_)."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not fa_p(X, V0_) :- q(V0_), not s(X)."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not q(V0) :- V0 \\= 3."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not s(V0) :- V0 \\= 4."));
+        });
+    }
+    
+    [Test]
+    public void ConversionRemovesAnonymousVariablesInHead()
+    {
+        string code = """
+                      p(X, _) :- q(X).
+                      q(3).
+                      ?- p(X).
+                      """;
+
+        var program = AspExtensions.GetProgram(code, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+
+        var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+
+        //Solution was verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 2);
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(X, V0_) :- not q(X)."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not q(V0) :- V0 \\= 3."));
+        });
+    }
+    
+    [Test]
+    public void ConversionRemovesAnonymousVariablesInRecursiveListHead()
+    {
+        string code = """
+                      p(X, [X|_]) :- q(X).
+                      q(3).
+                      ?- p(X).
+                      """;
+
+        var program = AspExtensions.GetProgram(code, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+
+        var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+
+        //Solution was verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 4);
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(X, V0) :- forall(V0_, not fa_p(X, V0, V0_))."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not fa_p(X, V0, V0_) :- V0 \\= [X| V0_]."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not fa_p(X, V0, V0_) :- V0 = [X| V0_], not q(X)."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not q(V0) :- V0 \\= 3."));
+        });
+    }
+    
+    [Test]
+    public void ConversionRemovesAnonymousVariablesInConventionalListHead()
+    {
+        string code = """
+                      p(X, [X, _]) :- q(X).
+                      q(3).
+                      ?- p(X).
+                      """;
+
+        var program = AspExtensions.GetProgram(code, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+
+        var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+
+        //Solution was verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 4);
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(X, V0) :- forall(V0_, not fa_p(X, V0, V0_))."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not fa_p(X, V0, V0_) :- V0 \\= [X, V0_]."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not fa_p(X, V0, V0_) :- V0 = [X, V0_], not q(X)."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not q(V0) :- V0 \\= 3."));
+        });
+    }
+    
+    [Test]
+    public void ConversionHandlesMultipleAnonymousVariablesInBody()
+    {
+        string code = """
+                      p(X) :- q(X), s(_, _), t(_).
+                      s(1, 2).
+                      t(4).
+                      q(3).
+                      ?- p(X).
+                      """;
+
+        var program = AspExtensions.GetProgram(code, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+
+        var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+
+        //Solution was verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 8);
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(X) :- forall(V0_, forall(V1_, forall(V2_, not fa_p(X, V0_, V1_, V2_))))."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not fa_p(X, V0_, V1_, V2_) :- not q(X)."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not fa_p(X, V0_, V1_, V2_) :- q(X), not s(V0_, V1_)."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not fa_p(X, V0_, V1_, V2_) :- q(X), s(V0_, V1_), not t(V2_)."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not s(V0, V1) :- V1 \\= 2."));
+            Assert.That(duals[5].ToString(), Is.EqualTo("not s(V0, V1) :- V1 = 2, V0 \\= 1."));
+            Assert.That(duals[6].ToString(), Is.EqualTo("not t(V0) :- V0 \\= 4."));
+            Assert.That(duals[7].ToString(), Is.EqualTo("not q(V0) :- V0 \\= 3."));
         });
     }
 }

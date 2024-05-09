@@ -96,7 +96,7 @@ public class TermVisitor(ILogger logger) : ASPBaseVisitor<IOption<ITerm>>
 
     public override IOption<ITerm> VisitAnonymousVariableTerm(ASPParser.AnonymousVariableTermContext context)
     {
-        return new Some<ITerm>(new AnonymusVariableTerm());
+        return new Some<ITerm>(new AnonymousVariableTerm());
     }
 
     public override IOption<ITerm> VisitNumberTerm(ASPParser.NumberTermContext context)

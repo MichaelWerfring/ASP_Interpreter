@@ -1,5 +1,4 @@
 ﻿using Antlr4.Runtime;
-using asp_interpreter_exe;
 using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.Preprocessing.OLONDetection;
 using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;

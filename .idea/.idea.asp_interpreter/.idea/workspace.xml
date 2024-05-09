@@ -10,12 +10,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="#63 - The Query can contain multiple Literals now">
+    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/DualRuleConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/DualRuleConverter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/HeadAtomEliminator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/HeadAtomEliminator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleCompoundProgramTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleWithoutNotInNameCompoundProgramTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_test/DualRules/DualRuleWithoutNotInNameCompoundProgramTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,17 +55,18 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/09190d4d899c4e68827ef2ee0d8f96282ee00/8f/e1f71744/RuleContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/09190d4d899c4e68827ef2ee0d8f96282ee00/e1/4ec167d8/AbstractParseTreeVisitor`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46a322d26154b982566e1817203e5452c91223f93b0e392d9c5b4806696fdc1/Assert.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/Types/TypeVisitors/BinaryOperatorNegator.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="SWEA" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -120,7 +119,7 @@
     </configuration>
     <configuration name="asp_interpreter_exe" type="DotNetProject" factoryName=".NET Project" singleton="false">
       <option name="EXE_PATH" value="$PROJECT_DIR$/asp_interpreter_exe/bin/Debug/net8.0/win-x64/asp_interpreter_exe.exe" />
-      <option name="PROGRAM_PARAMETERS" value="--log-level 4 -p Desktop/user/bla.asp" />
+      <option name="PROGRAM_PARAMETERS" value="-p C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_exe\program.asp --interactive" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/asp_interpreter_exe/bin/Debug/net8.0/win-x64" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
@@ -234,23 +233,11 @@
       <workItem from="1714906684210" duration="4776000" />
       <workItem from="1714921575797" duration="55000" />
       <workItem from="1714934813337" duration="2092000" />
-      <workItem from="1714972273462" duration="1579000" />
-    </task>
-    <task id="LOCAL-00008" summary="#31 - Tested rewriting for Statements">
-      <option name="closed" value="true" />
-      <created>1711894429761</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1711894429761</updated>
-    </task>
-    <task id="LOCAL-00009" summary="#32 - Replaced Variable List with Hash Set for increased performance in larger programs">
-      <option name="closed" value="true" />
-      <created>1711895534784</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1711895534784</updated>
+      <workItem from="1714972273462" duration="5526000" />
+      <workItem from="1714997172280" duration="3258000" />
+      <workItem from="1715057881613" duration="4061000" />
+      <workItem from="1715062686431" duration="553000" />
+      <workItem from="1715148141585" duration="1255000" />
     </task>
     <task id="LOCAL-00010" summary="#33 - Moved Variable Naming to Extensions">
       <option name="closed" value="true" />
@@ -628,7 +615,23 @@
       <option name="project" value="LOCAL" />
       <updated>1714973165691</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="#65 - Fixed is bug in dual converter">
+      <option name="closed" value="true" />
+      <created>1714974165677</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1714974165678</updated>
+    </task>
+    <task id="LOCAL-00058" summary="#64 - Added Conversion from _ to standalone Variables">
+      <option name="closed" value="true" />
+      <created>1715061852495</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1715061852496</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -638,30 +641,17 @@
     <option name="coveragePercentColumnWidth" value="75" />
     <option name="sortOrder" value="ASCENDING" />
     <option name="sortedColumn" value="2" />
-    <option name="symbolColumnWidth" value="227" />
+    <option name="symbolColumnWidth" value="349" />
     <coverage-tree-state>
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 42% 3661/6316" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="asp_interpreter_lib 35% 2230/3448" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="asp_interpreter_lib 35% 2230/3448" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="asp_interpreter_lib 36% 2205/3423" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 46% 2333/4318" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="asp_interpreter_lib 35% 2230/3448" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="asp_interpreter_lib 36% 2205/3423" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Util 19% 256/316" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 42% 3661/6316" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="asp_interpreter_lib 30% 3553/5045" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
       </expand>
       <select />
@@ -697,8 +687,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="#44 - Merge after refactoring of types classes" />
-    <MESSAGE value="#44 - fixed bug within inner term of forall" />
     <MESSAGE value="#43 - Used new Algorithm for nmr check generation" />
     <MESSAGE value="#40 - fixed NMR check bug" />
     <MESSAGE value="resolve merge conflict" />
@@ -722,9 +710,28 @@
     <MESSAGE value="#62 - Added flag for identifying Duals" />
     <MESSAGE value="#62 - Added option to copy forall as well" />
     <MESSAGE value="#63 - The Query can contain multiple Literals now" />
-    <option name="LAST_COMMIT_MESSAGE" value="#63 - The Query can contain multiple Literals now" />
+    <MESSAGE value="#65 - Fixed is bug in dual converter" />
+    <MESSAGE value="#64 - Added Conversion from _ to standalone Variables" />
+    <option name="LAST_COMMIT_MESSAGE" value="#64 - Added Conversion from _ to standalone Variables" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/asp_interpreter_exe/Program.cs</url>
+          <line>81</line>
+          <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_exe\Program.cs" containingFunctionPresentation="Lambda expression inside Method 'InitParser'">
+            <startOffsets>
+              <option value="2948" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2949" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#Antlr4.Runtime.ParserRuleContext" memberName="_start" />

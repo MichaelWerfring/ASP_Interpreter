@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.Types.ArithmeticOperations;
+﻿using asp_interpreter_lib.Solving;
+using asp_interpreter_lib.Types.ArithmeticOperations;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Util.ErrorHandling;
@@ -31,7 +32,7 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     {
         ArgumentNullException.ThrowIfNull(statement);
         List<VariableTerm> variables = [];
-
+        
         if (statement.HasHead)
         {
             statement.Head.GetValueOrThrow().Accept(this).
@@ -84,17 +85,17 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
         return new Some<List<VariableTerm>>([]);
     }
 
-    public override IOption<List<VariableTerm>> Visit(BinaryOperation binaryOperation)
+    public override IOption<List<VariableTerm>> Visit(BinaryOperation binOp)
     {
-        ArgumentNullException.ThrowIfNull(binaryOperation);
+        ArgumentNullException.ThrowIfNull(binOp);
         List<VariableTerm> variables = [];
         
-        binaryOperation.Left.Accept(this).IfHasValue(v =>
+        binOp.Left.Accept(this).IfHasValue(v =>
         {
             variables.AddRange(v);
         });
         
-        binaryOperation.Right.Accept(this).IfHasValue(v =>
+        binOp.Right.Accept(this).IfHasValue(v =>
         {
             variables.AddRange(v);
         });
@@ -137,7 +138,7 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
         return new Some<List<VariableTerm>>([]);
     }
 
-    public override IOption<List<VariableTerm>> Visit(AnonymusVariableTerm anonymusVariable)
+    public override IOption<List<VariableTerm>> Visit(AnonymousVariableTerm variable)
     {
         return new Some<List<VariableTerm>>([]);
     }

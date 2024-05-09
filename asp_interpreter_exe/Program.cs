@@ -5,7 +5,6 @@ using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 using Microsoft.Extensions.Configuration;
-using asp_interpreter_exe;
 
 internal class Program
 {
@@ -28,8 +27,12 @@ internal class Program
 
         var host = builder.Build();
         host.Services.GetRequiredService<Application>().Run();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2aea97bb51e83e6bd00c6f070a3265f71c847f17
     }
+    
     private static ProgramConfig GetConfig(string[] args)
     {
         //Assume that 1 is a path
@@ -54,14 +57,14 @@ internal class Program
         Console.WriteLine();
 
         Console.WriteLine("Examples:");
-        Console.WriteLine("interpreter -l 0 -p /path/to/file.txt --interactive");
-        Console.WriteLine("interpreter --log-level 1 --path /path/to/file.txt --help");
+        Console.WriteLine("interpreter.exe -l 0 -p /path/to/file.txt --interactive");
+        Console.WriteLine("interpreter.exe --log-level 1 --path /path/to/file.txt --help");
         Console.WriteLine();
 
         Console.WriteLine("Dev mode:");
-        Console.WriteLine("interpreter /path/to/file.txt");
+        Console.WriteLine("interpreter.exe /path/to/file.txt");
         Console.WriteLine("is translated to:");
-        Console.WriteLine("interpreter -l 1 -p /path/to/file.txt -i");
+        Console.WriteLine("interpreter.exe -l 1 -p /path/to/file.txt -i");
     }
 
     private static CommandLineParser InitParser(ILogger logger)
