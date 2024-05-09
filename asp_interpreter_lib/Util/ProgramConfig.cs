@@ -13,6 +13,7 @@ public class ProgramConfig
     public ProgramConfig(
         string path, 
         bool interactive,
+        bool timestamp,
         bool help = false,
         LogLevel logLevel = LogLevel.Error)
     {
@@ -22,6 +23,8 @@ public class ProgramConfig
         }
 
         Path = path;
+        Interactive = interactive;
+        Timestamp = timestamp;
         Help = help;
         LogLevel = logLevel;
     }
@@ -40,6 +43,7 @@ public class ProgramConfig
         }
     }
 
+    public bool Timestamp { get; set; }
     public bool Help { get; set; }
 
     public LogLevel LogLevel { get; set; }

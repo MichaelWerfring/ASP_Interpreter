@@ -6,6 +6,9 @@ public static class FileReader
 {
     public static string? ReadFile(string path, ILogger logger)
     {
+        ArgumentException.ThrowIfNullOrEmpty(path, nameof(path));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+
         try
         {
             return File.ReadAllText(path);

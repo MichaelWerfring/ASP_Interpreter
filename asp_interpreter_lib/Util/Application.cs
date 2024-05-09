@@ -9,6 +9,7 @@ using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Visitors;
 using QuikGraph;
@@ -27,7 +28,7 @@ public class Application(
 
     private readonly ProgramConfig _config = config;
 
-    private readonly PrefixOptions _prefixes = new("rwh", "fa", "eh", "chk", "dis", "var");
+    private readonly PrefixOptions _prefixes = new("fa_", "eh", "chk_", "not_", "V");
 
     public void Run()
     {
@@ -40,7 +41,7 @@ public class Application(
 
         //Dual
         var dualGenerator = new DualRuleConverter(_prefixes, _logger);
-        var dual = dualGenerator.GetDualRules(program.Statements);
+        var dual = dualGenerator.GetDualRules(program.Duplicate().Statements);
 
         //OLON
         List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
@@ -127,7 +128,7 @@ public class Application(
 
         Console.WriteLine("Duals:");
         Console.WriteLine("---------------------------------------------------------------------------");
-        var prefixes = new PrefixOptions("rwh", "fa", "eh", "chk", "dis", "var");
+        var prefixes = new PrefixOptions("fa", "eh", "chk", "dis", "var");
         DualRuleConverter dualConverter = new(
             prefixes,
             new ConsoleLogger(ErrorHandling.LogLevel.None));

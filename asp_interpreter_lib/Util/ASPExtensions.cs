@@ -2,6 +2,7 @@
 using Antlr4.Runtime;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Visitors;
 
@@ -10,7 +11,6 @@ namespace asp_interpreter_lib.Util;
 public static class AspExtensions
 {
     private static readonly PrefixOptions _commonPrefixes = new(
-        "rwh_", 
         "fa_",
         "eh",
         "chk_",
@@ -69,5 +69,32 @@ public static class AspExtensions
         sb.Append($"{list[^1].ToString()}");
 
         return sb.ToString();
+    }
+
+
+    public static AspProgram Duplicate(this AspProgram program)
+    {
+        var statements = new List<Statement>();
+        var visitor = new StatementCopyVisitor();
+        foreach (var statement in program.Statements)
+        {
+            statements.Add(statement.Accept(visitor).GetValueOrThrow());
+        }
+
+        if (!program.Query.HasValue)
+        {
+            return new AspProgram(statements, new None<Query>());
+        }
+
+        var queryCopy = new List<Goal>();
+        var query = program.Query.GetValueOrThrow();
+        var goalCopyVisitor = new GoalCopyVisitor(new TermCopyVisitor());
+
+        foreach (var goal in query.Goals)
+        {
+            queryCopy.Add(goal.Accept(goalCopyVisitor).GetValueOrThrow());
+        }
+        
+        return new AspProgram(statements, new Some<Query>(new Query(queryCopy)));
     }
 }

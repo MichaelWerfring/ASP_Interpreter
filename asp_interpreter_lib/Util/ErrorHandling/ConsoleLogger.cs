@@ -1,9 +1,11 @@
-﻿using Antlr4.Runtime;
+﻿using System.Diagnostics;
+using System.Globalization;
+using Antlr4.Runtime;
 using Microsoft.Extensions.Logging;
 
 namespace asp_interpreter_lib.Util.ErrorHandling;
 
-public class ConsoleLogger(LogLevel logLevel) : ILogger
+public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogger
 {
     public void LogTrace(string message)
     {
@@ -11,19 +13,23 @@ public class ConsoleLogger(LogLevel logLevel) : ILogger
 
         if (logLevel <= LogLevel.Trace)
         {
+            if (logTimestamp) LogTimestamp();
+            
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write($"Trace: ");
             Console.ResetColor();
             Console.WriteLine(message);
         }
     }
-
+    
     public void LogDebug(string message)
     {
         ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
-
+        
         if (logLevel <= LogLevel.Debug)
         {
+            if (logTimestamp) LogTimestamp();
+            
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write($"Debug: ");
             Console.ResetColor();
@@ -37,6 +43,8 @@ public class ConsoleLogger(LogLevel logLevel) : ILogger
 
         if (logLevel <= LogLevel.Info)
         {
+            if (logTimestamp) LogTimestamp();
+            
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write($"Info: ");
             Console.ResetColor();
@@ -50,6 +58,8 @@ public class ConsoleLogger(LogLevel logLevel) : ILogger
 
         if (logLevel <= LogLevel.Error)
         {
+            if (logTimestamp) LogTimestamp();
+            
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write($"Error: ");
             Console.ResetColor();
@@ -64,6 +74,8 @@ public class ConsoleLogger(LogLevel logLevel) : ILogger
               
         if (logLevel <= LogLevel.Error)
         {
+            if (logTimestamp) LogTimestamp();
+            
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write($"Error: ");
             Console.ResetColor();
@@ -74,5 +86,13 @@ public class ConsoleLogger(LogLevel logLevel) : ILogger
     public ILogger GetDummy()
     {
         return new ConsoleLogger(LogLevel.None);
+    }
+    
+    private static void LogTimestamp()
+    {
+        Console.Write(DateTime.Now.Hour + ":" +
+                      DateTime.Now.Minute + ":" +
+                      DateTime.Now.Second + " " +
+                      DateTime.Now.Millisecond + "ms ");
     }
 }

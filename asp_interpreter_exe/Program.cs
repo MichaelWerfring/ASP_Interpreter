@@ -18,10 +18,12 @@ internal class Program
         if (conf.Help)
         {
             DisplayHelp();
+            Console.WriteLine("\nPress any key to close Application...");
+            Console.ReadKey();
             return;
         }
 
-        builder.Services.AddSingleton<ILogger>(new ConsoleLogger(conf.LogLevel));
+        builder.Services.AddSingleton<ILogger>(new ConsoleLogger(conf.LogLevel, conf.Timestamp));
         builder.Services.AddTransient<ProgramVisitor>();
         builder.Services.AddSingleton(conf);
 
@@ -31,10 +33,15 @@ internal class Program
     
     private static ProgramConfig GetConfig(string[] args)
     {
+        if(args.Length == 0)
+        {
+            return new ProgramConfig(" ", false, false, true,  LogLevel.None);
+        }
+
         //Assume that 1 is a path
         if (args.Length == 1)
         {
-            return new ProgramConfig(args[0], true, false, LogLevel.Debug);
+            return new ProgramConfig(args[0], true, true, false, LogLevel.Debug);
         }
 
         var parser = InitParser(new ConsoleLogger(LogLevel.Info));
@@ -48,6 +55,7 @@ internal class Program
         Console.WriteLine("Options:");
         Console.WriteLine("-p, --path <path>            Specify the path to the input file (mandatory)");
         Console.WriteLine("-l, --log-level < level >    Set the log level(0 to 4: Trace, Debug, Info, Error, None)");
+        Console.WriteLine("-t, --timestamp              Log Timestamp for events");
         Console.WriteLine("-h, --help                   Display a help message");
         Console.WriteLine("-i, --interactive            Run in interactive mode");
         Console.WriteLine();
@@ -105,6 +113,13 @@ internal class Program
             conf.Interactive = true;
             return conf;
         };
+        Func<int, ProgramConfig, string[], ProgramConfig> getTimestamp = (i, conf, args) =>
+        {
+            conf.Timestamp = true;
+            return conf;
+        };
+
+
 
         actions.Add("-p", getPath);
         actions.Add("--path", getPath);
@@ -117,6 +132,9 @@ internal class Program
 
         actions.Add("-i", getInteractive);
         actions.Add("--interactive", getInteractive);
+
+        actions.Add("-t", getTimestamp);
+        actions.Add("--timestamp", getTimestamp);
 
         return new CommandLineParser(actions);
     }
