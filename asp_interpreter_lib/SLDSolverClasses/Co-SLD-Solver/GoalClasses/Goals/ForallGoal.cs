@@ -4,6 +4,11 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
+using System.Collections.Immutable;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.Util.ErrorHandling;
+
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
@@ -17,17 +22,28 @@ public class ForallGoal : ICoSLDGoal
 
     private readonly SolutionState _solutionState;
 
-    public ForallGoal(GoalSolver solver, Variable variable, ISimpleTerm goalTerm, SolutionState solutionState)
+    private readonly ILogger _logger;
+
+    public ForallGoal
+    (
+        GoalSolver solver,
+        Variable variable,
+        ISimpleTerm goalTerm,
+        SolutionState solutionState,
+        ILogger logger
+    )
     {
         ArgumentNullException.ThrowIfNull(solver, nameof(solver));
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));
         ArgumentNullException.ThrowIfNull(goalTerm, nameof(goalTerm));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
         _solver = solver;
         _variable = variable;
         _goalTerm = goalTerm;
         _solutionState = solutionState;
+        _logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()

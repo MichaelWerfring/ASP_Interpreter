@@ -1,17 +1,14 @@
 ﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
-using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
-using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using System.Collections.Immutable;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
-using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.Util.ErrorHandling;
+
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
@@ -27,13 +24,16 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
 
     private readonly SolutionState _inputState;
 
+    private readonly ILogger _logger;
+
     public DatabaseUnificationGoal
     (
         CoinductiveChecker checker,
         DatabaseUnifier databaseUnifier,
         GoalSolver solver,
         Structure target,
-        SolutionState solutionState
+        SolutionState solutionState,
+        ILogger logger
     )
     {
         ArgumentNullException.ThrowIfNull(checker, nameof(checker));
@@ -41,12 +41,14 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(solver, nameof(solver));
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
-        
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+
         _checker = checker;
         _databaseUnifier = databaseUnifier;
         _goalSolver = solver;
         _inputTarget = target;
         _inputState = solutionState;
+        _logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
@@ -109,11 +111,9 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
         // enumerate each way the subgoals can be satisfied
         foreach (var subgoalSolution in subgoalSolutions)
         {
-            var removedSet = subgoalSolution.ResultSet.Entries.Remove(new CHSEntry(constrainedTarget, false));
-
             var newCHS = new CoinductiveHypothesisSet
             (
-                removedSet.Add(new CHSEntry(constrainedTarget, true))
+                subgoalSolution.ResultSet.Entries.Add(new CHSEntry(constrainedTarget, true))
                 .Select(entry => new CHSEntry(subgoalSolution.ResultMapping.ApplySubstitution(entry.Term), entry.HasSucceded))
                 .ToImmutableSortedSet(new CHSEntryComparer())
             );

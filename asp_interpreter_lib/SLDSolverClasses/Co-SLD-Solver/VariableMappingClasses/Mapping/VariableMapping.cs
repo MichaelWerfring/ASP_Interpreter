@@ -1,6 +1,7 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using System.Collections.Immutable;
+using System.Text;
 
 namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 

@@ -20,9 +20,15 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
 
     private readonly DatabaseUnificationGoalBuilder _dbGoalBuilder;
 
-    public CoSLDGoalMapper(FunctorTableRecord functors)
+    private readonly ILogger _logger;
+
+
+    public CoSLDGoalMapper(FunctorTableRecord functors, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(functors);
+        ArgumentNullException.ThrowIfNull(logger);
+
+        _logger = logger;
 
         var goalBuilderDict = new Dictionary<(string, int), IGoalBuilder>()
         {
@@ -55,12 +61,12 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
                 new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functors))
             },
             {
-                (functors.Forall, 2), new ForallGoalBuilder(functors)
+                (functors.Forall, 2), new ForallGoalBuilder(functors, _logger)
             }
         };
 
         _mapping = goalBuilderDict.ToImmutableDictionary();
-        _dbGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false));
+        _dbGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false), _logger);
     }
 
     public IOption<ICoSLDGoal> GetGoal(CoSldSolverState state, IDatabase database)
@@ -80,6 +86,16 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
         return currentGoalTerm.Accept(this, (state, database));
     }
 
+    public IOption<ICoSLDGoal> Visit(Integer integer, (CoSldSolverState, IDatabase) arguments)
+    {
+        return new None<ICoSLDGoal>();
+    }
+
+    public IOption<ICoSLDGoal> Visit(Variable variableTerm, (CoSldSolverState, IDatabase) arguments)
+    {
+        return new None<ICoSLDGoal>();
+    }
+
     public IOption<ICoSLDGoal> Visit(Structure basicTerm, (CoSldSolverState, IDatabase) arguments)
     {
         IGoalBuilder? goalBuilder;
@@ -90,15 +106,5 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
         }
 
         return new Some<ICoSLDGoal>(_dbGoalBuilder.BuildGoal(arguments.Item1, arguments.Item2));
-    }
-
-    public IOption<ICoSLDGoal> Visit(Integer integer, (CoSldSolverState, IDatabase) arguments)
-    {
-        return new None<ICoSLDGoal>();
-    }
-
-    public IOption<ICoSLDGoal> Visit(Variable variableTerm, (CoSldSolverState, IDatabase) arguments)
-    {
-        return new None<ICoSLDGoal>();
     }
 }

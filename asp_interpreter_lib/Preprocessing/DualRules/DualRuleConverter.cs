@@ -44,7 +44,9 @@ public class DualRuleConverter
         return statement;
     }
 
-    public List<Statement> GetDualRules(IEnumerable<Statement> rules, bool appendPrefix = true)
+    public List<Statement> GetDualRules(IEnumerable<Statement> rules,
+                                        string wrapperPrefix = "",
+                                        bool appendPrefix = true)
     {
         _logger.LogInfo("Generating dual rules...");
 
@@ -58,7 +60,7 @@ public class DualRuleConverter
         var disjunctions = PreprocessRules(headComputed);
         foreach (var disjunction in disjunctions)
         {
-            duals.AddRange(ToConjunction(disjunction, appendPrefix));
+            duals.AddRange(ToConjunction(disjunction, wrapperPrefix, appendPrefix));
         }
 
         duals.AddRange(t);
@@ -69,8 +71,14 @@ public class DualRuleConverter
         return duals;
     }
 
-    public IEnumerable<Statement> ToDisjunction(Statement rule, bool appendPrefix = true)
+    public IEnumerable<Statement> ToDisjunction(Statement rule,
+                                                bool appendPrefix = true)
     {
+        if (rule is null)
+        {
+            throw new ArgumentNullException(nameof(rule));
+        }
+
         if (!rule.HasHead)
         {
             return [rule];
@@ -224,28 +232,10 @@ public class DualRuleConverter
 
         return new Forall(new VariableTerm(v), result);
     }
-
-    private List<Statement> EliminateAnonymusVariables(List<Statement> rules)
-    {
-        VariableFinder variableFinder = new();
-        
-        foreach (var rule in rules)
-        {
-            var variblesInRule = rule.Accept(variableFinder).GetValueOrThrow();
-            if (rule.Head.HasValue)
-            {
-                var head = rule.Head.GetValueOrThrow();
-                foreach (var term in head.Terms)
-                {
-                }
-            }
-        }
-        
-        return rules;
-    }
     
     private IEnumerable<Statement> ToConjunction(
         KeyValuePair<(string, int, bool), List<Statement>> disjunction,
+        string wrapperPrefix = "",
         bool appendPrefix = true)
     {
         List<Statement> duals = [];
@@ -273,10 +263,10 @@ public class DualRuleConverter
         }
 
         //If there is just one statement its not a disjunction
-        if (disjunction.Value.Count == 1)
-        {
-            return ToDisjunction(disjunction.Value[0]);
-        }
+        //if (disjunction.Value.Count == 1)
+        //{
+        //    return ToDisjunction(disjunction.Value[0]);
+        //}
 
         List<Goal> wrapperBody = [];
 
@@ -296,6 +286,7 @@ public class DualRuleConverter
             copy.Terms.Clear();
             copy.Terms.AddRange(wrapper.Head.GetValueOrThrow().Terms);
 
+            copy.Identifier = wrapperPrefix + copy.Identifier;
             if (_notAsName)
             {
                 copy.Identifier = (appendPrefix ? _options.DualPrefix : "") + copy.Identifier;
@@ -309,7 +300,9 @@ public class DualRuleConverter
 
             // 4) generate duals for old rules
             // 5) add duals to list
-            duals.AddRange(ToDisjunction(goal));
+            // If the goal is an atom we do not want its duals
+            if (goal.HasBody)
+                duals.AddRange(ToDisjunction(goal));
         }
 
         wrapper.AddBody(wrapperBody);

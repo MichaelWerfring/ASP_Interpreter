@@ -1,5 +1,8 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+using asp_interpreter_lib.Util;
+using asp_interpreter_lib.Util.ErrorHandling;
+
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
@@ -11,19 +14,26 @@ public class GoalSolver
 
     private readonly IDatabase _database;
 
-    public GoalSolver(CoSLDGoalMapper goalMapper, IDatabase database)
+    private readonly ILogger _logger;
+
+    public GoalSolver(CoSLDGoalMapper goalMapper, IDatabase database, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(goalMapper, nameof(goalMapper));
         ArgumentNullException.ThrowIfNull(database, nameof(database));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
         _goalMapper = goalMapper;
         _database = database;
+        _logger = logger;
     }
 
     public IEnumerable<GoalSolution> SolveGoals(CoSldSolverState inputState)
     {      
         if (!inputState.CurrentGoals.Any())
         {
+            if (inputState.SolutionState.Set.Entries.Count != 0) 
+                _logger.LogTrace("Solved goal: " + inputState.SolutionState.Set.Entries.ToList().ListToString());
+
             yield return new GoalSolution
             (
                 inputState.SolutionState.Set,

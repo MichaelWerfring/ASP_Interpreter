@@ -5,8 +5,9 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
 /// <summary>
-/// Compares terms, based on the SWI-Prolog "standard order of terms":
-/// Variables < Numbers < Strings < Atoms < Compounds
+/// Compares terms, based on the SWI-Prolog "Standard Order of Terms":
+/// Variables < Numbers < Compounds
+/// Compounds : check arity, check functor, then check children from left to right
 /// </summary>
 public class SimpleTermComparer : IComparer<ISimpleTerm>, ISimpleTermArgsVisitor<int, ISimpleTerm>
 {
@@ -86,6 +87,10 @@ public class SimpleTermComparer : IComparer<ISimpleTerm>, ISimpleTermArgsVisitor
         var childCountComparison = left.Children.Count().CompareTo(right.Children.Count());
 
         if (childCountComparison != 0) {return childCountComparison;}
+
+        var functorComparions = left.Functor.CompareTo(right.Functor);
+
+        if (functorComparions != 0) {  return functorComparions;}
 
         for(int i = 0; i < left.Children.Count(); i++)
         {

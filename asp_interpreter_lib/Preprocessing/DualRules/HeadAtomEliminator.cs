@@ -24,7 +24,7 @@ public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
         ArgumentNullException.ThrowIfNull(statement);
         _options = options;
         _variables = new HashSet<string>();
-        _counter = 0;
+        _counter = 1;
     }
     
     public Statement Rewrite(Statement statement)
@@ -38,13 +38,18 @@ public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
         
         var head = statement.Head.GetValueOrThrow("Cannot rewrite headless statement!");
 
+        var generatedGoals = new List<Goal>();
         for (var index = 0; index < head.Terms.Count; index++)
         {
             var term = head.Terms[index];
             var rewrite = term.Accept(this).GetValueOrThrow("Unable to parse head!");
             head.Terms[index] = rewrite.Item1;
-            statement.Body.InsertRange(0, rewrite.Item2);
+
+            //statement.Body.InsertRange(0, rewrite.Item2);
+            generatedGoals.AddRange(rewrite.Item2);
         }
+
+        statement.Body.InsertRange(0, generatedGoals);
         
         return statement;
     }
@@ -53,25 +58,10 @@ public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        if (term.Terms.Count == 0)
-        {
-            var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
-            var body = new BinaryOperation(newVariable, new Equality(), term);
-
-            return new Some<(ITerm, List<Goal>)>((newVariable, [body]));
-        }
+        var newVariable = new VariableTerm(_options.VariablePrefix + _counter++);
+        var body = new BinaryOperation(newVariable, new Equality(), term);
         
-        List<Goal> goals = new();
-        for (var i = 0; i < term.Terms.Count; i++)
-        {
-            var child = term.Terms[i];
-            var replace = child.Accept(this);
-            
-            term.Terms[i] = replace.GetValueOrThrow().Item1;
-            goals.InsertRange(0, replace.GetValueOrThrow().Item2);
-        }
-        
-        return new Some<(ITerm, List<Goal>)>((term, goals));
+        return new Some<(ITerm, List<Goal>)>((newVariable, [body]));
     }
 
     public override IOption<(ITerm, List<Goal>)> Visit(AnonymousVariableTerm term)

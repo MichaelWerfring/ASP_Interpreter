@@ -37,7 +37,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         DualRuleConverter converter = new DualRuleConverter(_options, _logger.GetDummy(), notAsName);
         var tempOlonRules = 
             preprocessedRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow());
-        var duals = converter.GetDualRules(tempOlonRules, notAsName);
+        var duals = converter.GetDualRules(tempOlonRules, "chk_", notAsName);
         
         // 3) assign unique head (e.g. chk0)
         duals.ForEach(d => 
@@ -101,6 +101,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             }
             
             var head = rule.Head.GetValueOrThrow("Could not parse head!");
+
             var negatedHead = head.Accept(new LiteralCopyVisitor(
                 new TermCopyVisitor())).GetValueOrThrow("Could not parse negated head!");
             negatedHead.HasNafNegation = !negatedHead.HasNafNegation;

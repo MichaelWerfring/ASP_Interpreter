@@ -15,4 +15,9 @@ public class CHSEntry
     public ISimpleTerm Term { get; }
 
     public bool HasSucceded { get; }
+
+    public override string ToString()
+    {
+        return $"{Term}:{HasSucceded}";
+    }
 }

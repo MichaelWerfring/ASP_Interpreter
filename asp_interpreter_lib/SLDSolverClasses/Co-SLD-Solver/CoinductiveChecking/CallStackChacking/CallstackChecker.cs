@@ -38,10 +38,6 @@ public class CallstackChecker
         ArgumentNullException.ThrowIfNull(callstack, nameof(callstack));
 
         int numberOfNegations = 0;
-        if (termToCheck.IsNegated(_functors))
-        {
-            numberOfNegations += 1;
-        }
 
         foreach(var term in callstack.TermStack)
         {

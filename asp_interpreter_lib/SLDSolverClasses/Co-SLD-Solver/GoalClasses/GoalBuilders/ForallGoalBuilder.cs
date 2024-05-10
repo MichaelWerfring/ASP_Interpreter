@@ -2,17 +2,21 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
 public class ForallGoalBuilder : IGoalBuilder
 {
+    private readonly ILogger _logger;
     private readonly FunctorTableRecord _functors;
 
-    public ForallGoalBuilder(FunctorTableRecord functors)
+    public ForallGoalBuilder(FunctorTableRecord functors, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(functors, nameof(functors));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
+        _logger = logger;
         _functors = functors;
     }
 
@@ -34,11 +38,13 @@ public class ForallGoalBuilder : IGoalBuilder
         }
 
         return new ForallGoal
+
         (
-            new GoalSolver(new CoSLDGoalMapper(_functors), database),
+            new GoalSolver(new CoSLDGoalMapper(_functors, _logger), database, _logger),
             var,
             forallStruct.Children.ElementAt(1),
-            currentState.SolutionState
+            currentState.SolutionState,
+            _logger
         );
     }
 }
