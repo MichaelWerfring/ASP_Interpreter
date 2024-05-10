@@ -224,25 +224,6 @@ public class DualRuleConverter
 
         return new Forall(new VariableTerm(v), result);
     }
-
-    private List<Statement> EliminateAnonymusVariables(List<Statement> rules)
-    {
-        VariableFinder variableFinder = new();
-        
-        foreach (var rule in rules)
-        {
-            var variblesInRule = rule.Accept(variableFinder).GetValueOrThrow();
-            if (rule.Head.HasValue)
-            {
-                var head = rule.Head.GetValueOrThrow();
-                foreach (var term in head.Terms)
-                {
-                }
-            }
-        }
-        
-        return rules;
-    }
     
     private IEnumerable<Statement> ToConjunction(
         KeyValuePair<(string, int, bool), List<Statement>> disjunction,
@@ -273,10 +254,10 @@ public class DualRuleConverter
         }
 
         //If there is just one statement its not a disjunction
-        if (disjunction.Value.Count == 1)
-        {
-            return ToDisjunction(disjunction.Value[0]);
-        }
+        //if (disjunction.Value.Count == 1)
+        //{
+        //    return ToDisjunction(disjunction.Value[0]);
+        //}
 
         List<Goal> wrapperBody = [];
 
@@ -309,7 +290,9 @@ public class DualRuleConverter
 
             // 4) generate duals for old rules
             // 5) add duals to list
-            duals.AddRange(ToDisjunction(goal));
+            // If the goal is an atom we do not want its duals
+            if (goal.HasBody)
+                duals.AddRange(ToDisjunction(goal));
         }
 
         wrapper.AddBody(wrapperBody);

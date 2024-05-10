@@ -1,8 +1,11 @@
 ﻿using System.Text;
 using Antlr4.Runtime;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Visitors;
 
@@ -96,5 +99,35 @@ public static class AspExtensions
         }
         
         return new AspProgram(statements, new Some<Query>(new Query(queryCopy)));
+    }
+
+    public static string SimplifyMapping(VariableMapping mapping)
+    {
+        var postProcessor = new VariableMappingPostprocessor();
+        var simplifiedMapping = postProcessor.Postprocess(mapping);
+        var sb = new StringBuilder();
+
+        sb.Append("{ ");
+
+        foreach (var pair in simplifiedMapping.Mapping)
+        {
+            if (pair.Value is TermBinding termBinding)
+            {
+                sb.Append($"{pair.Key} = {termBinding.Term}");
+            }
+            else if (pair.Value is ProhibitedValuesBinding binding)
+            {
+                sb.AppendLine($"{pair.Key} \\= {{ {binding.ProhibitedValues.ToList().ListToString()} }}");
+            }
+
+            if(simplifiedMapping.Mapping.Count > 1)
+            {
+                sb.Append(", ");
+            }
+        }
+
+        sb.Append(" }");
+
+        return sb.ToString();
     }
 }

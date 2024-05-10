@@ -19,10 +19,14 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
     private readonly IImmutableDictionary<(string, int), IGoalBuilder> _mapping;
 
     private readonly DatabaseUnificationGoalBuilder _databaseUnificationGoalBuilder;
+    private readonly ILogger _logger;
 
-    public CoSLDGoalMapper(FunctorTableRecord functors)
+    public CoSLDGoalMapper(FunctorTableRecord functors, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(functors);
+        ArgumentNullException.ThrowIfNull(logger);
+
+        _logger = logger;
 
         var goalBuilderDict = new Dictionary<(string, int), IGoalBuilder>()
         {
@@ -55,12 +59,12 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
                 new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functors))
             },
             {
-                (functors.Forall, 2), new ForallGoalBuilder(functors)
+                (functors.Forall, 2), new ForallGoalBuilder(functors, _logger)
             }
         };
 
         _mapping = goalBuilderDict.ToImmutableDictionary();
-        _databaseUnificationGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false));
+        _databaseUnificationGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false), _logger);
     }
 
     public IOption<ICoSLDGoal> GetGoal(CoSldSolverState state, IDatabase database)

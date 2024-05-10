@@ -10,11 +10,13 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 using System.Collections.Immutable;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 internal class DatabaseUnificationGoal : ICoSLDGoal
 {
+    private readonly ILogger _logger;
     private readonly CHSChecker _chsChecker;
     private readonly CallstackChecker _callstackChecker;
     private readonly DatabaseUnifier _databaseUnifier;
@@ -32,7 +34,8 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
         IDatabase database,
         CoSLDGoalMapper mapper,
         Structure target,
-        SolutionState solutionState
+        SolutionState solutionState,
+        ILogger logger
     )
     {
         ArgumentNullException.ThrowIfNull(checker, nameof(checker));
@@ -41,12 +44,15 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(mapper, nameof(mapper));
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+
+        _logger = logger;
 
         _chsChecker =checker;
 
         _callstackChecker =callstackChecker;
 
-        _goalSolver = new GoalSolver(mapper, database);
+        _goalSolver = new GoalSolver(mapper, database, _logger);
 
         _databaseUnifier = new DatabaseUnifier(new StandardConstructiveUnificationAlgorithm(false), database);
 

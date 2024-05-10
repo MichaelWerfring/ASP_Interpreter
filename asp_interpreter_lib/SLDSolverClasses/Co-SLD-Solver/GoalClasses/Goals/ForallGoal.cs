@@ -7,11 +7,13 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extens
 using System.Collections.Immutable;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class ForallGoal : ICoSLDGoal
 {
+    private readonly ILogger _logger;
     private readonly IDatabase _database;
 
     private readonly Variable _variable;
@@ -27,7 +29,8 @@ public class ForallGoal : ICoSLDGoal
         Variable variable,
         ISimpleTerm goalTerm,
         FunctorTableRecord functors,
-        SolutionState solutionState
+        SolutionState solutionState,
+        ILogger logger
     )
     {
         ArgumentNullException.ThrowIfNull(database, nameof(database));
@@ -35,7 +38,9 @@ public class ForallGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));
         ArgumentNullException.ThrowIfNull(goalTerm, nameof(goalTerm));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
+        _logger = logger;
         _database = database;
         _variable = variable;
         _goalTerm = goalTerm;
@@ -45,7 +50,7 @@ public class ForallGoal : ICoSLDGoal
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        var goalSolver = new GoalSolver(new CoSLDGoalMapper(_functors), _database);
+        var goalSolver = new GoalSolver(new CoSLDGoalMapper(_functors, _logger), _database, _logger);
 
         var initialState = new CoSldSolverState([_goalTerm], _solutionState);
 

@@ -1,19 +1,28 @@
 ﻿using Antlr4.Runtime;
 using asp_interpreter_lib.InternalProgramClasses.Database;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Preprocessing.OLONDetection;
 using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Visitors;
 using QuikGraph;
 using QuikGraph.Algorithms;
+using System.Diagnostics;
 
 namespace asp_interpreter_lib.Util;
 
@@ -110,7 +119,7 @@ public class Application(
         DualRuleConverter dualConverter = new(
             prefixes,
             new ConsoleLogger(ErrorHandling.LogLevel.None));
-        var duals = dualConverter.GetDualRules(CopyProgram(code).Statements);
+        var duals = dualConverter.GetDualRules(program.Duplicate().Statements);
         foreach (var dual in duals)
         {
             Console.WriteLine(dual);
@@ -215,10 +224,5 @@ public class Application(
         {
             Console.WriteLine(rule);
         }
-    }
-
-    private static AspProgram CopyProgram(string program)
-    {
-        return AspExtensions.GetProgram(program, new ConsoleLogger(ErrorHandling.LogLevel.Error));
     }
 }

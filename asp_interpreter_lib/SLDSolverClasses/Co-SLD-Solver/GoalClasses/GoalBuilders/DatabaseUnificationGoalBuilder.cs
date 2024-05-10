@@ -4,19 +4,26 @@ using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorT
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 using asp_interpreter_lib.Unification.Constructive.Unification;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class DatabaseUnificationGoalBuilder : IGoalBuilder
 {
+    private readonly ILogger _logger;
     private readonly CoSLDGoalMapper _mapper;
     private readonly IConstructiveUnificationAlgorithm _algorithm;
 
-    public DatabaseUnificationGoalBuilder(CoSLDGoalMapper mapper, IConstructiveUnificationAlgorithm unificationAlgorithm)
+    public DatabaseUnificationGoalBuilder(
+        CoSLDGoalMapper mapper, 
+        IConstructiveUnificationAlgorithm unificationAlgorithm,
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(mapper, nameof(mapper));
         ArgumentNullException.ThrowIfNull(unificationAlgorithm, nameof(unificationAlgorithm));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
+        _logger = logger;
         _mapper = mapper;
         _algorithm = unificationAlgorithm;
     }
@@ -39,10 +46,10 @@ public class DatabaseUnificationGoalBuilder : IGoalBuilder
             throw;
         }
 
-        var chsChecker = new CHSChecker(new FunctorTableRecord(), new GoalSolver(_mapper, database));
+        var chsChecker = new CHSChecker(new FunctorTableRecord(), new GoalSolver(_mapper, database, _logger));
         var callstackChecker = new CallstackChecker(new FunctorTableRecord());
 
         return new DatabaseUnificationGoal
-        (chsChecker, callstackChecker, database, _mapper, goalStruct, currentState.SolutionState);
+        (chsChecker, callstackChecker, database, _mapper, goalStruct, currentState.SolutionState, _logger);
     }
 }

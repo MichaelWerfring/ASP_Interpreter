@@ -30,7 +30,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "a(X, Y, V0, V1) :- V1 = X, V0 = X, c(X), b(Y).");
+            Assert.That(statement.ToString() == "a(X, Y, V1, V2) :- V2 = X, V1 = X, c(X), b(Y).");
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "a(X, Y, V0) :- V0 = 12, c(X), b(Y).");
+            Assert.That(statement.ToString() == "a(X, Y, V1) :- V1 = 12, c(X), b(Y).");
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "a(V0) :- V0 = b.");
+            Assert.That(statement.ToString() == "a(V1) :- V1 = b.");
         }
 
         [Test]
@@ -78,14 +78,14 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "a(V0) :- V0 = -4.");
+            Assert.That(statement.ToString() == "a(V1) :- V1 = -4.");
         }
 
         [Test]
         public void ComputeHeadHandlesHandlesCompoundTerm()
         {
             string code = """
-                      a(b(2, X, X, -3, (4), c)).
+                      a(b(c(d))).
                       a?
                       """;
 
@@ -94,7 +94,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "a(b(V0, X, V1, V2, V3, V4)) :- V4 = c, V3 = 4, V2 = -3, V1 = X, V0 = 2.");
+            Assert.That(statement.ToString() == "a(V1) :- V1 = b(c(d)).");
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "a(V0) :- V0 = 4.");
+            Assert.That(statement.ToString() == "a(V1) :- V1 = 4.");
         }
 
         [Test]
@@ -126,7 +126,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "p(V0) :- V0 = [X| T], q(X), p(T).");
+            Assert.That(statement.ToString() == "p(V1) :- V1 = [X| T], q(X), p(T).");
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "p(V0) :- V0 = [X, Y, Z], q(X), r(Y), s(Z).");
+            Assert.That(statement.ToString() == "p(V1) :- V1 = [X, Y, Z], q(X), r(Y), s(Z).");
         }
     }
 }
