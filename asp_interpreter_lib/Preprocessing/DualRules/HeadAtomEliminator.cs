@@ -38,13 +38,18 @@ public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
         
         var head = statement.Head.GetValueOrThrow("Cannot rewrite headless statement!");
 
+        var generatedGoals = new List<Goal>();
         for (var index = 0; index < head.Terms.Count; index++)
         {
             var term = head.Terms[index];
             var rewrite = term.Accept(this).GetValueOrThrow("Unable to parse head!");
             head.Terms[index] = rewrite.Item1;
-            statement.Body.InsertRange(0, rewrite.Item2);
+
+            //statement.Body.InsertRange(0, rewrite.Item2);
+            generatedGoals.AddRange(rewrite.Item2);
         }
+
+        statement.Body.InsertRange(0, generatedGoals);
         
         return statement;
     }

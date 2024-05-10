@@ -403,8 +403,8 @@ public class DualRuleTest
             Assert.That(duals[3].ToString(), Is.EqualTo("not fa_p1(X, V0_, V1_, V2_) :- q(X), not s(V0_, V1_)."));
             Assert.That(duals[4].ToString(), Is.EqualTo("not fa_p1(X, V0_, V1_, V2_) :- q(X), s(V0_, V1_), not t(V2_)."));
             Assert.That(duals[5].ToString(), Is.EqualTo("not s(V1, V2) :- not s1(V1, V2)."));
-            Assert.That(duals[6].ToString(), Is.EqualTo("not s1(V1, V2) :- V2 \\= 2."));
-            Assert.That(duals[7].ToString(), Is.EqualTo("not s1(V1, V2) :- V2 = 2, V1 \\= 1."));
+            Assert.That(duals[6].ToString(), Is.EqualTo("not s1(V1, V2) :- V1 \\= 1."));
+            Assert.That(duals[7].ToString(), Is.EqualTo("not s1(V1, V2) :- V1 = 1, V2 \\= 2."));
             Assert.That(duals[8].ToString(), Is.EqualTo("not t(V1) :- not t1(V1)."));
             Assert.That(duals[9].ToString(), Is.EqualTo("not t1(V1) :- V1 \\= 4."));
             Assert.That(duals[10].ToString(), Is.EqualTo("not q(V1) :- not q1(V1)."));

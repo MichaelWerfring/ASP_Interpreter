@@ -30,7 +30,7 @@ namespace asp_interpreter_test.DualRules
 
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
-            Assert.That(statement.ToString() == "a(X, Y, V1, V2) :- V2 = X, V1 = X, c(X), b(Y).");
+            Assert.That(statement.ToString() == "a(X, Y, V1, V2) :- V1 = X, V2 = X, c(X), b(Y).");
         }
 
         [Test]
@@ -143,6 +143,38 @@ namespace asp_interpreter_test.DualRules
             var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
 
             Assert.That(statement.ToString() == "p(V1) :- V1 = [X, Y, Z], q(X), r(Y), s(Z).");
+        }
+
+        [Test]
+        public void ComputeHeadPutsAtomsInCorrectOrder()
+        {
+            string code = """
+                      b(1, 2).
+                      p?
+                      """;
+
+            var program = AspExtensions.GetProgram(code, _logger);
+            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+
+            var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
+
+            Assert.That(statement.ToString() == "b(V1, V2) :- V1 = 1, V2 = 2.");
+        }
+
+        [Test]
+        public void ComputeHeadPutsAtomsAndVariablesInCorrectOrder()
+        {
+            string code = """
+                      b(1, X, 3) :- c(X).
+                      c(3)
+                      p?
+                      """;
+
+            var program = AspExtensions.GetProgram(code, _logger);
+            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+
+            var statement = dualRuleConverter.ComputeHead(program.Statements[0]);
+            Assert.That(statement.ToString(), Is.EqualTo("b(V1, X, V2) :- V1 = 1, V2 = 3, c(X)."));
         }
     }
 }
