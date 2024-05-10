@@ -37,7 +37,7 @@ namespace asp_interpreter_test.DualRules
             var program = AspExtensions.GetProgram(code, _logger);
             var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
 
-            var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+            var duals = dualRuleConverter.GetDualRules(program.Statements, "", false);
 
             Assert.Multiple(() =>
             {
@@ -90,7 +90,7 @@ namespace asp_interpreter_test.DualRules
 
             var program = AspExtensions.GetProgram(code, _logger);
             var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
-            var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+            var duals = dualRuleConverter.GetDualRules(program.Statements, "",false);
 
             //The output of this test has is based 
             //on the original s(CASP) implementation
@@ -139,7 +139,7 @@ namespace asp_interpreter_test.DualRules
             var program = AspExtensions.GetProgram(code, _logger);
             var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
 
-            var duals = dualRuleConverter.GetDualRules(program.Statements, false);
+            var duals = dualRuleConverter.GetDualRules(program.Statements, "", false);
 
             //Verified by s(CASP)
             Assert.Multiple(() =>

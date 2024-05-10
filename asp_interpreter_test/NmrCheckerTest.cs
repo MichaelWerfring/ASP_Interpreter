@@ -24,13 +24,19 @@ public class NmrCheckerTest
 
         var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
 
-        Assert.That(subCheckRules.Count == 4 &&
-                    subCheckRules[0].ToString() == "nmr_check :- forall(X, not chk_p(X))." &&
-                    subCheckRules[1].ToString() == "not chk_p(X) :- not q(X)." &&
-                    subCheckRules[2].ToString() == "not chk_p(X) :- q(X), p(X)." &&
-                    subCheckRules[3].ToString() == "not chk_q(X).");
+        Assert.Multiple(() =>
+        {
+            Assert.That(subCheckRules.Count, Is.EqualTo(5));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- forall(X, not chk_p(X))."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not chk_p(V1) :- not chk_p1(V1)."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not chk_p1(X) :- not q(X)."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not chk_p1(X) :- q(X), p(X)."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not chk_q(X)."));
+        });
+
+
     }
-    
+
     [Test]
     public void NmrCheckHandlesEmptyRuleHeads()
     {
@@ -41,15 +47,20 @@ public class NmrCheckerTest
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
         var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
-        
-        Assert.That(subCheckRules.Count == 4 &&
-                    subCheckRules[0].ToString() == "nmr_check :- not chk_eh0." &&
-                    subCheckRules[1].ToString() == "not chk_eh0 :- forall(X, not chk_fa_eh0(X))." &&
-                    subCheckRules[2].ToString() == "not chk_fa_eh0(X) :- r(X)." &&
-                    subCheckRules[3].ToString() == "not chk_r(X).");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(subCheckRules.Count, Is.EqualTo(5));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- not chk_eh0."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not chk_eh0 :- not chk_eh01."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not chk_eh01 :- forall(X, not chk_fa_eh01(X))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not chk_fa_eh01(X) :- r(X)."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not chk_r(X)."));
+        });
+
 
     }
-    
+
     [Test]
     public void NmrCheckHandlesCompoundProgram()
     {
@@ -61,15 +72,21 @@ public class NmrCheckerTest
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
         var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
-        
-        Assert.That(subCheckRules.Count == 7 &&
-                    subCheckRules[0].ToString() == "nmr_check :- forall(X, not chk_p(X)), not chk_eh0." &&
-                    subCheckRules[1].ToString() == "not chk_p(X) :- not q(X)." &&
-                    subCheckRules[2].ToString() == "not chk_p(X) :- q(X), p(X)." &&
-                    subCheckRules[3].ToString() == "not chk_eh0 :- forall(X, not chk_fa_eh0(X))." &&
-                    subCheckRules[4].ToString() == "not chk_fa_eh0(X) :- r(X)."&&
-                    subCheckRules[5].ToString() == "not chk_q(X)." &&
-                    subCheckRules[6].ToString() == "not chk_r(X).");
+
+        //verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(subCheckRules.Count, Is.EqualTo(9));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- forall(X, not chk_p(X)), not chk_eh0."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not chk_p(V1) :- not chk_p1(V1)."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not chk_p1(X) :- not q(X)."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not chk_p1(X) :- q(X), p(X)."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not chk_eh0 :- not chk_eh01."));
+            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not chk_eh01 :- forall(X, not chk_fa_eh01(X))."));
+            Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not chk_fa_eh01(X) :- r(X)."));
+            Assert.That(subCheckRules[7].ToString(), Is.EqualTo("not chk_q(X)."));
+            Assert.That(subCheckRules[8].ToString(), Is.EqualTo("not chk_r(X)."));
+        });
     }
     
     [Test]
@@ -83,15 +100,21 @@ public class NmrCheckerTest
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
         var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
-        
-        Assert.That(subCheckRules.Count ==7 &&
-                    subCheckRules[0].ToString() == "nmr_check :- not chk_eh0, forall(X, not chk_p(X))." &&
-                    subCheckRules[1].ToString() == "not chk_eh0 :- forall(X, not chk_fa_eh0(X))." &&
-                    subCheckRules[2].ToString() == "not chk_fa_eh0(X) :- s(1, X)." &&
-                    subCheckRules[3].ToString() == "not chk_p(X) :- not q(X)." &&
-                    subCheckRules[4].ToString() == "not chk_p(X) :- q(X), p(X)." &&
-                    subCheckRules[5].ToString() == "not chk_s(1, X)." &&
-                    subCheckRules[6].ToString() == "not chk_q(X).");
+
+        //verifed with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(subCheckRules.Count, Is.EqualTo(9));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- not chk_eh0, forall(X, not chk_p(X))."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not chk_eh0 :- not chk_eh01."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not chk_eh01 :- forall(X, not chk_fa_eh01(X))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not chk_fa_eh01(X) :- s(1, X)."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not chk_p(V1) :- not chk_p1(V1)."));
+            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not chk_p1(X) :- not q(X)."));
+            Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not chk_p1(X) :- q(X), p(X)."));
+            Assert.That(subCheckRules[7].ToString(), Is.EqualTo("not chk_s(1, X)."));
+            Assert.That(subCheckRules[8].ToString(), Is.EqualTo("not chk_q(X)."));
+        });
     }
 
     [Test]
@@ -104,14 +127,18 @@ public class NmrCheckerTest
         var program = AspExtensions.GetProgram(code, _logger);
         var checker = new NmrChecker(_prefixes, _logger);
         var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
-        
-        Assert.That(subCheckRules.Count == 6 &&
-                    subCheckRules[0].ToString() == "nmr_check :- forall(X, not chk_p(X))." &&
-                    subCheckRules[1].ToString() == "not chk_p(X) :- forall(Y, not chk_fa_p(X, Y))." &&
-                    subCheckRules[2].ToString() == "not chk_fa_p(X, Y) :- not q(X, Y)." &&
-                    subCheckRules[3].ToString() == "not chk_fa_p(X, Y) :- q(X, Y), p(Y)." &&
-                    subCheckRules[4].ToString() == "not chk_fa_p(X, Y) :- q(X, Y), not p(Y), p(X)." &&
-                    subCheckRules[5].ToString() == "not chk_q(X, Y).");
 
+        //verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(subCheckRules.Count, Is.EqualTo(7));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- forall(X, not chk_p(X))."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not chk_p(V1) :- not chk_p1(V1)."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not chk_p1(X) :- forall(Y, not chk_fa_p1(X, Y))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not chk_fa_p1(X, Y) :- not q(X, Y)."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not chk_fa_p1(X, Y) :- q(X, Y), p(Y)."));
+            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not chk_fa_p1(X, Y) :- q(X, Y), not p(Y), p(X)."));
+            Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not chk_q(X, Y)."));
+        });
     }
 }
