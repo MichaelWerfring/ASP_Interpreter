@@ -1,13 +1,12 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.Types.Terms;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
-public class SimpleTermFlattener : ISimpleTermVisitor<IEnumerable<ISimpleTerm>>
+public class SimpleTermEnumerator : ISimpleTermVisitor<IEnumerable<ISimpleTerm>>
 {
-    public IEnumerable<ISimpleTerm> ToList(ISimpleTerm term)
+    public IEnumerable<ISimpleTerm> Enumerate(ISimpleTerm term)
     {
         foreach (var t in term.Accept(this))
         {

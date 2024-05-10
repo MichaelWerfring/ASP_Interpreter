@@ -36,7 +36,7 @@ public class UnificationGoalBuilder : IGoalBuilder
            (
               disunificationStruct.Children.ElementAt(0),
               disunificationStruct.Children.ElementAt(1),
-              currentState.SolutionState.CurrentMapping
+              currentState.SolutionState.Mapping
            );
 
         return new UnificationGoal(target, _algorithm, currentState.SolutionState);

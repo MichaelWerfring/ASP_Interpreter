@@ -34,6 +34,11 @@ public class ForallGoalBuilder : IGoalBuilder
         }
 
         return new ForallGoal
-            (database, var,forallStruct.Children.ElementAt(1),_functors,currentState.SolutionState);
+        (
+            new GoalSolver(new CoSLDGoalMapper(_functors), database),
+            var,
+            forallStruct.Children.ElementAt(1),
+            currentState.SolutionState
+        );
     }
 }

@@ -11,12 +11,19 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 public static class VariableMappingExtensions
 {
     private static VariableMappingSplitter _splitter = new();
+
     private static VariableMappingUpdater _updater = new();
+
     private static VariableMappingSubstituter _substituter = new();
 
-    public static (IImmutableDictionary<Variable, TermBinding>, IImmutableDictionary<Variable, ProhibitedValuesBinding>) Split(this VariableMapping mapping)
+    public static IImmutableDictionary<Variable, TermBinding> GetTermBindings(this VariableMapping mapping)
     {
-        return _splitter.Split(mapping);
+        return _splitter.GetTermBindings(mapping);
+    }
+
+    public static IImmutableDictionary<Variable, ProhibitedValuesBinding> GetProhibitedValueBindings(this VariableMapping mapping)
+    {
+        return _splitter.GetProhibitedValueBindings(mapping);
     }
 
     public static IEither<UpdateException, VariableMapping> Update(this VariableMapping mapping, VariableMapping other)

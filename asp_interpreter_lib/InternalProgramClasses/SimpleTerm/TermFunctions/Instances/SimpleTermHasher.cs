@@ -1,30 +1,42 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
-public class SimpleTermHasher : ISimpleTermVisitor<string>
+internal class SimpleTermHasher : ISimpleTermVisitor<int>
 {
     public int Hash(ISimpleTerm term)
     {
-        ArgumentNullException.ThrowIfNull(term, nameof(term));
+        ArgumentNullException.ThrowIfNull(term);
 
-        return term.Accept(this).Length.GetHashCode();
+        return term.Accept(this);
     }
 
-    public string Visit(Variable variableTerm)
+    public int Visit(Variable variableTerm)
     {
-        return $"V:{variableTerm.Identifier}";
+        return variableTerm.Identifier.GetHashCode();
     }
 
-    public string Visit(Structure basicTerm)
+    public int Visit(Structure basicTerm)
     {
-        return $"S:{basicTerm.Functor}:C:{basicTerm.Children.Select(x => x.Accept(this))}";
+        int childHash = 0;
+
+        foreach (var child in basicTerm.Children)
+        {
+            childHash += child.Accept(this);
+        }
+
+        return basicTerm.Functor.GetHashCode() + childHash;
     }
 
-    public string Visit(Integer integer)
+    public int Visit(Integer integer)
     {
-        return $"I:{integer.Value}";
+        return integer.Value.GetHashCode();
     }
 }

@@ -41,10 +41,10 @@ public class UnificationGoal : ICoSLDGoal
         var unification = unificationMaybe.GetValueOrThrow();
 
         var newMappingEither = _variableMappingConcatenator
-            .Update(_solutionState.CurrentMapping, unification);
+            .Update(_solutionState.Mapping, unification);
 
         var newMapping = newMappingEither.GetRightOrThrow();
 
-        yield return new GoalSolution(_solutionState.CurrentSet, newMapping, _solutionState.NextInternalVariableIndex);
+        yield return new GoalSolution(_solutionState.Set, newMapping, _solutionState.NextInternalVariableIndex);
     }
 }

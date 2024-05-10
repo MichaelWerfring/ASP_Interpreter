@@ -1,7 +1,9 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 using asp_interpreter_lib.Unification.Constructive.Unification;
 
@@ -39,10 +41,17 @@ public class DatabaseUnificationGoalBuilder : IGoalBuilder
             throw;
         }
 
-        var chsChecker = new CHSChecker(new FunctorTableRecord(), new GoalSolver(_mapper, database));
-        var callstackChecker = new CallstackChecker(new FunctorTableRecord());
-
         return new DatabaseUnificationGoal
-        (chsChecker, callstackChecker, database, _mapper, goalStruct, currentState.SolutionState);
+        (
+            new CoinductiveChecker
+            (
+                new CHSChecker(new FunctorTableRecord(), new GoalSolver(_mapper, database)),
+                new CallstackChecker(new FunctorTableRecord())
+            ),
+            new DatabaseUnifier(_algorithm, database),
+            new GoalSolver(_mapper,database), 
+            goalStruct,
+            currentState.SolutionState
+       );
     }
 }

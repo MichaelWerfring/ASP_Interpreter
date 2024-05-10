@@ -1,5 +1,4 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
@@ -7,25 +6,20 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
-using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 
 public class DatabaseUnifier
 {
-    private readonly IConstructiveUnificationAlgorithm _algorithm;
-
-    private readonly IDatabase _database;
-
     private readonly ClauseVariableRenamer _renamer = new ();
 
     private readonly ConstructiveTargetBuilder _builder = new ();
 
-    public DatabaseUnifier
-    (
-        IConstructiveUnificationAlgorithm algorithm,
-        IDatabase database
-    )
+    private readonly IConstructiveUnificationAlgorithm _algorithm;
+
+    private readonly IDatabase _database;
+
+    public DatabaseUnifier(IConstructiveUnificationAlgorithm algorithm, IDatabase database)
     {
         ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
         ArgumentNullException.ThrowIfNull(database, nameof(database));
@@ -34,7 +28,12 @@ public class DatabaseUnifier
         _database = database;
     }
 
-    public IEnumerable<DBUnificationResult> GetDatabaseUnificationResults(Structure target, VariableMapping currentMapping, int nextInternal)
+    public IEnumerable<DBUnificationResult> GetDatabaseUnificationResults
+    (
+        Structure target,
+        VariableMapping currentMapping, 
+        int nextInternal
+    )
     {
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(currentMapping, nameof(currentMapping));

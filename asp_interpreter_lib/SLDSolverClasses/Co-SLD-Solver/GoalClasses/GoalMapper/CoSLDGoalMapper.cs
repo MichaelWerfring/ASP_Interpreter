@@ -18,7 +18,7 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
 {
     private readonly IImmutableDictionary<(string, int), IGoalBuilder> _mapping;
 
-    private readonly DatabaseUnificationGoalBuilder _databaseUnificationGoalBuilder;
+    private readonly DatabaseUnificationGoalBuilder _dbGoalBuilder;
 
     public CoSLDGoalMapper(FunctorTableRecord functors)
     {
@@ -60,7 +60,7 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
         };
 
         _mapping = goalBuilderDict.ToImmutableDictionary();
-        _databaseUnificationGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false));
+        _dbGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false));
     }
 
     public IOption<ICoSLDGoal> GetGoal(CoSldSolverState state, IDatabase database)
@@ -89,7 +89,7 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
             return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(arguments.Item1, arguments.Item2));
         }
 
-        return new Some<ICoSLDGoal>(_databaseUnificationGoalBuilder.BuildGoal(arguments.Item1, arguments.Item2));
+        return new Some<ICoSLDGoal>(_dbGoalBuilder.BuildGoal(arguments.Item1, arguments.Item2));
     }
 
     public IOption<ICoSLDGoal> Visit(Integer integer, (CoSldSolverState, IDatabase) arguments)

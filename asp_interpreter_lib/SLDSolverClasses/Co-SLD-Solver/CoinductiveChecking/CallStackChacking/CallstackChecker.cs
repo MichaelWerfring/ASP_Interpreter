@@ -1,10 +1,8 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
@@ -14,17 +12,21 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class CallstackChecker
 {
-    private ExactMatchChecker _checker = new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(false));
-
     private ConstructiveTargetBuilder _builder = new ConstructiveTargetBuilder();
 
-    private IConstructiveUnificationAlgorithm _unificationAlgorithm = new StandardConstructiveUnificationAlgorithm(false);
+    private ExactMatchChecker _checker;
+
+    private IConstructiveUnificationAlgorithm _unificationAlgorithm;
 
     private FunctorTableRecord _functors;
 
     public CallstackChecker(FunctorTableRecord functors)
     {
         ArgumentNullException.ThrowIfNull(functors, nameof(functors));
+
+        _unificationAlgorithm = new StandardConstructiveUnificationAlgorithm(true);
+
+        _checker = new ExactMatchChecker(_unificationAlgorithm);
 
         _functors = functors;
     }
@@ -36,6 +38,10 @@ public class CallstackChecker
         ArgumentNullException.ThrowIfNull(callstack, nameof(callstack));
 
         int numberOfNegations = 0;
+        if (termToCheck.IsNegated(_functors))
+        {
+            numberOfNegations += 1;
+        }
 
         foreach(var term in callstack.TermStack)
         {
@@ -61,7 +67,7 @@ public class CallstackChecker
                 }
             }
 
-            if (term.IsNegated(_functors) != termToCheck.IsNegated(_functors))
+            if (term.IsNegated(_functors))
             {
                 numberOfNegations += 1; 
             }

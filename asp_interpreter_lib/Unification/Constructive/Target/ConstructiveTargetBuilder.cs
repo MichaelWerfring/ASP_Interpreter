@@ -19,7 +19,7 @@ public class ConstructiveTargetBuilder
 
         var variables = left.ExtractVariables().Union(right.ExtractVariables()).ToHashSet(new VariableComparer());
 
-        var newDict = mapping.Split().Item2.Where(pair => variables.Contains(pair.Key)).ToDictionary(new VariableComparer());
+        var newDict = mapping.GetProhibitedValueBindings().Where(pair => variables.Contains(pair.Key)).ToDictionary(new VariableComparer());
 
         foreach (var variable in variables)
         {

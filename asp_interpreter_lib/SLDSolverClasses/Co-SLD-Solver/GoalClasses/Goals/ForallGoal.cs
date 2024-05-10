@@ -1,62 +1,47 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using System.Collections.Immutable;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class ForallGoal : ICoSLDGoal
 {
-    private readonly IDatabase _database;
+    private readonly GoalSolver _solver;
 
     private readonly Variable _variable;
-    private readonly ISimpleTerm _goalTerm;
 
-    private readonly FunctorTableRecord _functors;
+    private readonly ISimpleTerm _goalTerm;
 
     private readonly SolutionState _solutionState;
 
-    public ForallGoal
-    (
-        IDatabase database,
-        Variable variable,
-        ISimpleTerm goalTerm,
-        FunctorTableRecord functors,
-        SolutionState solutionState
-    )
+    public ForallGoal(GoalSolver solver, Variable variable, ISimpleTerm goalTerm, SolutionState solutionState)
     {
-        ArgumentNullException.ThrowIfNull(database, nameof(database));
-        ArgumentNullException.ThrowIfNull(functors, nameof(functors));
+        ArgumentNullException.ThrowIfNull(solver, nameof(solver));
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));
         ArgumentNullException.ThrowIfNull(goalTerm, nameof(goalTerm));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
 
-        _database = database;
+        _solver = solver;
         _variable = variable;
         _goalTerm = goalTerm;
-        _functors = functors;
         _solutionState = solutionState;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        var goalSolver = new GoalSolver(new CoSLDGoalMapper(_functors), _database);
-
         var initialState = new CoSldSolverState([_goalTerm], _solutionState);
 
         var successCaseState = new GoalSolution
         (
-                new CoinductiveHypothesisSet(_solutionState.CurrentSet.Terms.Add(_goalTerm)),
-                _solutionState.CurrentMapping,
+                new CoinductiveHypothesisSet(_solutionState.Set.Entries.Add(new CHSEntry(_goalTerm, true))),
+                _solutionState.Mapping,
                 _solutionState.NextInternalVariableIndex
         );
 
-        foreach (var initialForallSolution in goalSolver.SolveGoals(initialState))
+        foreach (var initialForallSolution in _solver.SolveGoals(initialState))
         {
             // get binding
             IVariableBinding? mappingForForallVariable;
@@ -97,8 +82,10 @@ public class ForallGoal : ICoSLDGoal
             // solve those goals, succeed if it has any solutions.
             var initialConstraintSolvingState = new 
                 CoSldSolverState(constraintSubstitutedGoals, _solutionState);
-            var solutions = goalSolver.SolveGoals(initialConstraintSolvingState);
-            if (solutions.Count() > 0) 
+
+            var solutions = _solver.SolveGoals(initialConstraintSolvingState);
+
+            if (solutions.Any()) 
             {
                 yield return successCaseState;
                 yield break;

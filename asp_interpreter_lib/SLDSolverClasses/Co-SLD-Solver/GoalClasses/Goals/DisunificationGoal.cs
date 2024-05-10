@@ -7,11 +7,13 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class DisunificationGoal : ICoSLDGoal
 {
-    private readonly VariableMappingUpdater _variableMappingConcatenator = new VariableMappingUpdater();
+    private readonly VariableMappingUpdater _variableMappingConcatenator = new ();
 
     private readonly ConstructiveTarget _target;
+
     private readonly IConstructiveDisunificationAlgorithm _algorithm;
-    private readonly SolutionState _solutionState;
+
+    private readonly SolutionState _solutionState; 
 
     public DisunificationGoal
     (
@@ -41,12 +43,12 @@ public class DisunificationGoal : ICoSLDGoal
 
         foreach (var result in results)
         {
-            var concatenationEither = _variableMappingConcatenator.Update(_solutionState.CurrentMapping, result);
+            var concatenationEither = _variableMappingConcatenator.Update(_solutionState.Mapping, result);
 
             var concatenation = concatenationEither.GetRightOrThrow();
 
             yield return new GoalSolution
-                (_solutionState.CurrentSet, concatenation, _solutionState.NextInternalVariableIndex);
+                (_solutionState.Set, concatenation, _solutionState.NextInternalVariableIndex);
         }
     }
 }

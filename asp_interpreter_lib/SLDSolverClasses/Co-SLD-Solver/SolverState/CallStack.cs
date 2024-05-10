@@ -13,9 +13,4 @@ public class CallStack
     }
 
     public IImmutableStack<ISimpleTerm> TermStack { get; }
-
-    public override string ToString()
-    {
-        return $"{{ {TermStack.ToList().ToList()} }}";
-    }
 }
