@@ -8,27 +8,27 @@ public class SolutionState
 {
     public SolutionState
     (
-        CallStack currentStack,
-        CoinductiveHypothesisSet currentSet,
-        VariableMapping currentMapping,
+        CallStack stack,
+        CoinductiveHypothesisSet set,
+        VariableMapping mapping,
         int nextInternalIndex
     )
     {
-        ArgumentNullException.ThrowIfNull(currentStack, nameof(currentStack));
-        ArgumentNullException.ThrowIfNull(currentSet, nameof(currentSet));
-        ArgumentNullException.ThrowIfNull(currentMapping, nameof(currentMapping));
+        ArgumentNullException.ThrowIfNull(stack, nameof(stack));
+        ArgumentNullException.ThrowIfNull(set, nameof(set));
+        ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        CurrentStack = currentStack;
-        CurrentSet = currentSet;
-        CurrentMapping = currentMapping;
+        Stack = stack;
+        Set = set;
+        Mapping = mapping;
         NextInternalVariableIndex = nextInternalIndex;
     }
 
-    public CallStack CurrentStack { get; }
+    public CallStack Stack { get; }
 
-    public CoinductiveHypothesisSet CurrentSet { get; }
+    public CoinductiveHypothesisSet Set { get; }
 
-    public VariableMapping CurrentMapping { get; }
+    public VariableMapping Mapping { get; }
 
     public int NextInternalVariableIndex { get; }
 
@@ -36,13 +36,13 @@ public class SolutionState
     {
         var sb = new StringBuilder();
         sb.AppendLine("Current stack:");
-        sb.AppendLine(CurrentStack.TermStack.ToList().ListToString());
+        sb.AppendLine(Stack.TermStack.ToList().ListToString());
 
         sb.AppendLine("Current set:");
-        sb.AppendLine($"{{ {CurrentSet.Terms.ToList().ListToString()} }}");
+        sb.AppendLine($"{{ {Set.Entries.ToList().ListToString()} }}");
 
         sb.AppendLine("Current mapping:");
-        foreach(var pair in CurrentMapping.Mapping)
+        foreach(var pair in Mapping.Mapping)
         {
             sb.AppendLine($"{pair.Key.ToString()} : {pair.Value.ToString()}");
         }

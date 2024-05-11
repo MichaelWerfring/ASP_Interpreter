@@ -8,12 +8,12 @@ using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 
-public class BindingFromVariableMappingBuilder : IVariableBindingArgumentVisitor<IVariableBinding, VariableMapping>,
-                                                 ISimpleTermArgsVisitor<IVariableBinding, VariableMapping>
+public class BindingSimplifier : IVariableBindingArgumentVisitor<IVariableBinding, VariableMapping>,
+                                 ISimpleTermArgsVisitor<IVariableBinding, VariableMapping>
 {
     private bool _doProhibitedValuesBindingResolution;
 
-    public BindingFromVariableMappingBuilder(bool doProhibitedValuesBindingResolution)
+    public BindingSimplifier(bool doProhibitedValuesBindingResolution)
     {
         _doProhibitedValuesBindingResolution = doProhibitedValuesBindingResolution;
     }

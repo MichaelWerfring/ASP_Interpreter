@@ -1,24 +1,21 @@
 ﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
-using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
-using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 using System.Collections.Immutable;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util.ErrorHandling;
+
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 internal class DatabaseUnificationGoal : ICoSLDGoal
 {
-    private readonly ILogger _logger;
-    private readonly CHSChecker _chsChecker;
-    private readonly CallstackChecker _callstackChecker;
+    private readonly CoinductiveChecker _checker;
+
     private readonly DatabaseUnifier _databaseUnifier;
 
     private readonly GoalSolver _goalSolver;
@@ -27,112 +24,107 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
 
     private readonly SolutionState _inputState;
 
+    private readonly ILogger _logger;
+
     public DatabaseUnificationGoal
     (
-        CHSChecker checker,
-        CallstackChecker callstackChecker,
-        IDatabase database,
-        CoSLDGoalMapper mapper,
+        CoinductiveChecker checker,
+        DatabaseUnifier databaseUnifier,
+        GoalSolver solver,
         Structure target,
         SolutionState solutionState,
         ILogger logger
     )
     {
         ArgumentNullException.ThrowIfNull(checker, nameof(checker));
-        ArgumentNullException.ThrowIfNull(callstackChecker, nameof(callstackChecker));
-        ArgumentNullException.ThrowIfNull (database, nameof(database));
-        ArgumentNullException.ThrowIfNull(mapper, nameof(mapper));
+        ArgumentNullException.ThrowIfNull(databaseUnifier, nameof(databaseUnifier));
+        ArgumentNullException.ThrowIfNull(solver, nameof(solver));
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
-        _logger = logger;
-
-        _chsChecker =checker;
-
-        _callstackChecker =callstackChecker;
-
-        _goalSolver = new GoalSolver(mapper, database, _logger);
-
-        _databaseUnifier = new DatabaseUnifier(new StandardConstructiveUnificationAlgorithm(false), database);
-
+        _checker = checker;
+        _databaseUnifier = databaseUnifier;
+        _goalSolver = solver;
         _inputTarget = target;
-
         _inputState = solutionState;
+        _logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        ICHSCheckingResult chsCheckingResult = _chsChecker.CheckCHS(_inputTarget, _inputState);
+        // for each way the input can "survive" the coinductive check..
+        foreach (CoinductiveCheckingResult checkingResult in _checker.Check(_inputTarget, _inputState))
+        {
+            foreach (var solution in ResolveCheckingResults(checkingResult))
+            {
+                yield return solution;
+            }
+        }
+    }
 
-        if (chsCheckingResult is CHSDeterministicFailureResult) {yield break;}
-
-        if (chsCheckingResult is CHSDeterministicSuccessResult)
-{
-            yield return new GoalSolution(_inputState.CurrentSet, _inputState.CurrentMapping, _inputState.NextInternalVariableIndex);
+    private IEnumerable<GoalSolution> ResolveCheckingResults(CoinductiveCheckingResult checkingResult)
+    {
+        if (checkingResult.SuccessType == SuccessType.DeterministicSuccess)
+        {
+            yield return new GoalSolution
+            (_inputState.Set, _inputState.Mapping, _inputState.NextInternalVariableIndex);
             yield break;
         }
 
-        var chsConstraintmentResult = (CHSConstrainmentResult) chsCheckingResult;
-
-        foreach (var constraintment in chsConstraintmentResult.ConstrainmentResults)
+        if (checkingResult.SuccessType == SuccessType.NonDeterministicSuccess)
         {
-            Structure targetwithConstraintment = (Structure)constraintment.ApplySubstitution(_inputTarget);
-
-            ICallstackCheckingResult callstackCheckingResult = 
-                _callstackChecker.CheckCallstack(targetwithConstraintment, constraintment, _inputState.CurrentStack);
-
-            if (callstackCheckingResult is CallstackDeterministicFailureResult)
-            {
-                yield break;
-            }
-
-            if (callstackCheckingResult is CallstackDeterministicSuccessResult)
-            {
-                yield return new 
-                    GoalSolution(_inputState.CurrentSet, constraintment, _inputState.NextInternalVariableIndex);
-                yield break;
-            }
-
-            if(callstackCheckingResult is CallstackNondeterministicSuccessResult)
-            {
-                yield return new GoalSolution(_inputState.CurrentSet, constraintment, _inputState.NextInternalVariableIndex);
-            }
-
-            IEnumerable<DBUnificationResult> dbunifications = _databaseUnifier.GetDatabaseUnificationResults
-            (targetwithConstraintment, constraintment, _inputState.NextInternalVariableIndex);
-
-            foreach (var dbunification in dbunifications)
-            {
-                var newStateForSolvingSubgoals = new CoSldSolverState
-                (
-                    dbunification.Subgoals,
-                    new SolutionState
-                    (
-                        new CallStack(_inputState.CurrentStack.TermStack.Push(targetwithConstraintment)),
-                        _inputState.CurrentSet,
-                        dbunification.VariableMapping,
-                        dbunification.NextInternalIndex
-                    )
-                );
-
-                var subgoalSolutions = _goalSolver.SolveGoals(newStateForSolvingSubgoals);
-
-                foreach (var subgoalSolution in subgoalSolutions)
-                {
-                    var newCHS = new CoinductiveHypothesisSet
-                    (
-                        subgoalSolution.ResultSet.Terms.Add(targetwithConstraintment)
-                        .Select(subgoalSolution.ResultMapping.ApplySubstitution)
-                        .ToImmutableHashSet(new SimpleTermEqualityComparer())
-                    );
-
-                    yield return new GoalSolution(newCHS, subgoalSolution.ResultMapping, subgoalSolution.NextInternalVariable);
-                }
-            }
+            yield return new GoalSolution
+            (_inputState.Set, checkingResult.ConstrainedMapping, _inputState.NextInternalVariableIndex);
         }
 
+        IEnumerable<DBUnificationResult> dbunifications = _databaseUnifier.GetDatabaseUnificationResults
+        (checkingResult.ConstrainedTarget, checkingResult.ConstrainedMapping, _inputState.NextInternalVariableIndex);
 
+        // for each way the target unifies with clauses in the database..
+        foreach (DBUnificationResult dbunification in dbunifications)
+        {
+            // ..enumerate the subgoal solutions.
+            foreach (var subgoalSolution in ResolveDatabaseUnifications(dbunification, checkingResult.ConstrainedTarget))
+            {
+                yield return subgoalSolution;
+            }
+        }
     }
-}   
+
+    private IEnumerable<GoalSolution> ResolveDatabaseUnifications(DBUnificationResult result, ISimpleTerm constrainedTarget)
+    {
+        var newStateForSolvingSubgoals = new CoSldSolverState
+        (
+            result.Subgoals,
+            new SolutionState
+            (
+                new CallStack(_inputState.Stack.TermStack.Push(constrainedTarget)),
+                _inputState.Set,
+                result.VariableMapping,
+                result.NextInternalIndex
+            )
+        );
+
+        var subgoalSolutions = _goalSolver.SolveGoals(newStateForSolvingSubgoals);
+
+        // enumerate each way the subgoals can be satisfied
+        foreach (var subgoalSolution in subgoalSolutions)
+        {
+            var newCHS = new CoinductiveHypothesisSet
+            (
+                subgoalSolution.ResultSet.Entries.Add(new CHSEntry(constrainedTarget, true))
+                .Select(entry => new CHSEntry(subgoalSolution.ResultMapping.ApplySubstitution(entry.Term), entry.HasSucceded))
+                .ToImmutableSortedSet(new CHSEntryComparer())
+            );
+
+            yield return new GoalSolution
+            (
+                newCHS,
+                subgoalSolution.ResultMapping,
+                subgoalSolution.NextInternalVariable
+            );
+        }
+    }
+}
 

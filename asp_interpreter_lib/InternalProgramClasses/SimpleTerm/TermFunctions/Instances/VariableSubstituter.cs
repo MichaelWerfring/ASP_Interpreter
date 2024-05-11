@@ -6,9 +6,9 @@ using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
-public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Dictionary<Variable, ISimpleTerm>>
+public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, IDictionary<Variable, ISimpleTerm>>
 {
-    public ISimpleTerm Substitute(ISimpleTerm term, Dictionary<Variable, ISimpleTerm> mapping)
+    public ISimpleTerm Substitute(ISimpleTerm term, IDictionary<Variable, ISimpleTerm> mapping)
     {
         ArgumentNullException.ThrowIfNull(term);
         ArgumentNullException.ThrowIfNull(mapping);
@@ -16,7 +16,7 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Dictionar
         return term.Accept(this, mapping);
     }
 
-    public ISimpleTerm Visit(Structure term, Dictionary<Variable, ISimpleTerm> mapping)
+    public ISimpleTerm Visit(Structure term, IDictionary<Variable, ISimpleTerm> mapping)
     {
         var newChildren = new ISimpleTerm[term.Children.Count()];
 
@@ -28,7 +28,7 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Dictionar
         return new Structure(term.Functor, newChildren);
     }
 
-    public ISimpleTerm Visit(Variable term, Dictionary<Variable, ISimpleTerm> mapping)
+    public ISimpleTerm Visit(Variable term, IDictionary<Variable, ISimpleTerm> mapping)
     {
         ISimpleTerm? value;
         mapping.TryGetValue(term, out value);
@@ -41,7 +41,7 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Dictionar
         return value;
     }
 
-    public ISimpleTerm Visit(Integer integer, Dictionary<Variable, ISimpleTerm> arguments)
+    public ISimpleTerm Visit(Integer integer, IDictionary<Variable, ISimpleTerm> arguments)
     {
         return new Integer(integer.Value);
     }

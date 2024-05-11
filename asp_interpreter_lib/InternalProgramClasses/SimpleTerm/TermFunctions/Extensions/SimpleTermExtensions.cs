@@ -9,19 +9,17 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Ex
 
 public static class SimpleTermExtensions
 {
-    private static SimpleTermFlattener _flattener = new ();
+    private static SimpleTermEnumerator _flattener = new ();
 
     private static SimpleTermEqualityComparer _equalityComparer = new ();
 
     private static SimpleTermContainsChecker _containsChecker = new ();
 
-    private static SimpleTermHasher _hasher = new ();
-
     private static VariableSubstituter _variableSubstituter = new ();
 
     public static IEnumerable<ISimpleTerm> Enumerate(this ISimpleTerm simpleTerm)
     {
-        return _flattener.ToList(simpleTerm);
+        return _flattener.Enumerate(simpleTerm);
     }
 
     public static bool IsEqualTo(this ISimpleTerm simpleTerm, ISimpleTerm other)
@@ -34,17 +32,12 @@ public static class SimpleTermExtensions
         return _containsChecker.LeftContainsRight(simpleTerm, other);
     }
 
-    public static int Hash(this ISimpleTerm simpleTerm)
-    {
-        return _hasher.Hash(simpleTerm);
-    }
-
     public static IEnumerable<Variable> ExtractVariables(this ISimpleTerm term)
     {
         return term.Enumerate().OfType<Variable>().ToImmutableHashSet();
     }
 
-    public static ISimpleTerm Substitute(this ISimpleTerm simpleTerm,Dictionary<Variable, ISimpleTerm> substitution)
+    public static ISimpleTerm Substitute(this ISimpleTerm simpleTerm, IDictionary<Variable, ISimpleTerm> substitution)
     {
         return _variableSubstituter.Substitute(simpleTerm, substitution);
     }

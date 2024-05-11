@@ -11,7 +11,9 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
     private readonly ArithmeticEvaluator _evaluator;
 
     private readonly ISimpleTerm _left;
+
     private readonly ISimpleTerm _right;
+
     private readonly Func<int, int, bool> _predicate;
 
     private readonly SolutionState _solutionState;
@@ -58,6 +60,6 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
         {  yield break; }
 
         yield return new GoalSolution
-            (_solutionState.CurrentSet, _solutionState.CurrentMapping, _solutionState.NextInternalVariableIndex);
+            (_solutionState.Set, _solutionState.Mapping, _solutionState.NextInternalVariableIndex);
     }
 }

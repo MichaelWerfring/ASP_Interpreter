@@ -8,7 +8,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public class VariableMappingPostprocessor
 {
-    private readonly BindingFromVariableMappingBuilder _builder = new(true);
+    private readonly BindingSimplifier _builder = new(true);
 
     public VariableMapping Postprocess(VariableMapping variableMapping)
     {

@@ -196,8 +196,8 @@ internal class Program
         var program = AspExtensions.GetProgram(fileReadingResult!, dummyLogger);
         var copy = AspExtensions.GetProgram(fileReadingResult!, dummyLogger);
 
-        var dualConverter = new DualRuleConverter(AspExtensions.CommonPrefixes, dummyLogger, false);
-        var duals = dualConverter.GetDualRules(copy.Statements, "",false);
+        var dualConverter = new DualRuleConverter(AspExtensions.CommonPrefixes, logger, false);
+        var duals = dualConverter.GetDualRules(copy.Statements);
 
         var detector = new OLONRulesFilterer(dummyLogger);
         var olonRules = detector.FilterOlonRules(program.Statements);
@@ -230,7 +230,7 @@ internal class Program
 
     static void RenderCHS(CoinductiveHypothesisSet set)
     {
-        Console.WriteLine($"{{ {set.Terms.ToList().ListToString()} }}");
+        Console.WriteLine($"{{ {set.Entries.ToList().ListToString()} }}");
     }
 
     static void RenderMapping(VariableMapping mapping)

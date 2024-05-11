@@ -18,8 +18,10 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
 {
     private readonly IImmutableDictionary<(string, int), IGoalBuilder> _mapping;
 
-    private readonly DatabaseUnificationGoalBuilder _databaseUnificationGoalBuilder;
+    private readonly DatabaseUnificationGoalBuilder _dbGoalBuilder;
+
     private readonly ILogger _logger;
+
 
     public CoSLDGoalMapper(FunctorTableRecord functors, ILogger logger)
     {
@@ -64,7 +66,7 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
         };
 
         _mapping = goalBuilderDict.ToImmutableDictionary();
-        _databaseUnificationGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false), _logger);
+        _dbGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false), _logger);
     }
 
     public IOption<ICoSLDGoal> GetGoal(CoSldSolverState state, IDatabase database)
@@ -84,6 +86,16 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
         return currentGoalTerm.Accept(this, (state, database));
     }
 
+    public IOption<ICoSLDGoal> Visit(Integer integer, (CoSldSolverState, IDatabase) arguments)
+    {
+        return new None<ICoSLDGoal>();
+    }
+
+    public IOption<ICoSLDGoal> Visit(Variable variableTerm, (CoSldSolverState, IDatabase) arguments)
+    {
+        return new None<ICoSLDGoal>();
+    }
+
     public IOption<ICoSLDGoal> Visit(Structure basicTerm, (CoSldSolverState, IDatabase) arguments)
     {
         IGoalBuilder? goalBuilder;
@@ -93,16 +105,6 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
             return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(arguments.Item1, arguments.Item2));
         }
 
-        return new Some<ICoSLDGoal>(_databaseUnificationGoalBuilder.BuildGoal(arguments.Item1, arguments.Item2));
-    }
-
-    public IOption<ICoSLDGoal> Visit(Integer integer, (CoSldSolverState, IDatabase) arguments)
-    {
-        return new None<ICoSLDGoal>();
-    }
-
-    public IOption<ICoSLDGoal> Visit(Variable variableTerm, (CoSldSolverState, IDatabase) arguments)
-    {
-        return new None<ICoSLDGoal>();
+        return new Some<ICoSLDGoal>(_dbGoalBuilder.BuildGoal(arguments.Item1, arguments.Item2));
     }
 }

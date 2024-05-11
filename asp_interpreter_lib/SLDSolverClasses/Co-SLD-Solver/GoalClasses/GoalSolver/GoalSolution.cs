@@ -27,7 +27,7 @@ public class GoalSolution
         var sb = new StringBuilder();
         sb.AppendLine("GoalSolution:");
         sb.AppendLine("Resultset:");
-        sb.AppendLine($"{{ {ResultSet.Terms.ToList().ListToString()} }}");
+        sb.AppendLine($"{{ {ResultSet.Entries.ToList().ListToString()} }}");
 
         sb.AppendLine("Resultmapping:");
         foreach (var pair in ResultMapping.Mapping)

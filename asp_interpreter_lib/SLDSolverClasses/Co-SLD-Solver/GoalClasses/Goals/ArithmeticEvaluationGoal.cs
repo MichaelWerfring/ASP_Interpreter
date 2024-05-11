@@ -49,7 +49,7 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal
         {
             if
             (   
-                ( (ProhibitedValuesBinding) _solutionState.CurrentMapping.Mapping[leftVariable] )
+                ( (ProhibitedValuesBinding) _solutionState.Mapping.Mapping[leftVariable] )
                 .ProhibitedValues.Contains(new Integer(rightEval)) 
             )
             {
@@ -57,10 +57,10 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal
             }
 
             var newMapping = new VariableMapping
-                (_solutionState.CurrentMapping.Mapping.SetItem(leftVariable, new TermBinding(new Integer(rightEval))));
+                (_solutionState.Mapping.Mapping.SetItem(leftVariable, new TermBinding(new Integer(rightEval))));
 
             yield return new GoalSolution
-            (_solutionState.CurrentSet, newMapping, _solutionState.NextInternalVariableIndex);
+            (_solutionState.Set, newMapping, _solutionState.NextInternalVariableIndex);
         }
         else if (_left is Integer leftInteger)
         {
@@ -70,7 +70,7 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal
             }
 
             yield return new GoalSolution
-            (_solutionState.CurrentSet, _solutionState.CurrentMapping, _solutionState.NextInternalVariableIndex);
+            (_solutionState.Set, _solutionState.Mapping, _solutionState.NextInternalVariableIndex);
         }
         else
         {

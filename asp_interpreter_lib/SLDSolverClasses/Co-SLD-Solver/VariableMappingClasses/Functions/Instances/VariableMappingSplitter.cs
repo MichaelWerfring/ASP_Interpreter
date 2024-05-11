@@ -7,22 +7,25 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public class VariableMappingSplitter
 {
-    public (IImmutableDictionary<Variable, TermBinding>, IImmutableDictionary<Variable, ProhibitedValuesBinding>) Split(VariableMapping mapping)
+    public IImmutableDictionary<Variable, TermBinding> GetTermBindings(VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping);
 
-        var termBindings = mapping.Mapping
+        return mapping.Mapping
             .Where(pair => pair.Value is TermBinding)
             .Select(pair => (pair.Key, (TermBinding)pair.Value))
             .ToDictionary(new VariableComparer())
             .ToImmutableDictionary(new VariableComparer());
+    }
 
-        var prohibitedValueBindings = mapping.Mapping
+    public IImmutableDictionary<Variable, ProhibitedValuesBinding> GetProhibitedValueBindings(VariableMapping mapping)
+    {
+        ArgumentNullException.ThrowIfNull(mapping);
+
+        return mapping.Mapping
             .Where(pair => pair.Value is ProhibitedValuesBinding)
             .Select(pair => (pair.Key, (ProhibitedValuesBinding)pair.Value))
             .ToDictionary(new VariableComparer())
             .ToImmutableDictionary(new VariableComparer());
-
-        return (termBindings, prohibitedValueBindings);
     }
 }

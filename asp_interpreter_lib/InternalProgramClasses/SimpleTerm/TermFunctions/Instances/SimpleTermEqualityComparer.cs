@@ -2,7 +2,6 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
@@ -18,7 +17,7 @@ public class SimpleTermEqualityComparer : ISimpleTermArgsVisitor<bool, ISimpleTe
 
     public int GetHashCode([DisallowNull] ISimpleTerm obj)
     {
-        return obj.Hash();
+        return obj.GetHashCode();
     }
 
     public bool Visit(Variable a, ISimpleTerm b)
