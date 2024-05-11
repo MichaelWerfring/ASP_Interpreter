@@ -56,14 +56,14 @@ internal class DatabaseUnificationGoal : ICoSLDGoal
         // for each way the input can "survive" the coinductive check..
         foreach (CoinductiveCheckingResult checkingResult in _checker.Check(_inputTarget, _inputState))
         {
-            foreach (var solution in ResolveCheckingResults(checkingResult))
+            foreach (var solution in ResolveCoinductiveCheckingResults(checkingResult))
             {
                 yield return solution;
             }
         }
     }
 
-    private IEnumerable<GoalSolution> ResolveCheckingResults(CoinductiveCheckingResult checkingResult)
+    private IEnumerable<GoalSolution> ResolveCoinductiveCheckingResults(CoinductiveCheckingResult checkingResult)
     {
         if (checkingResult.SuccessType == SuccessType.DeterministicSuccess)
         {

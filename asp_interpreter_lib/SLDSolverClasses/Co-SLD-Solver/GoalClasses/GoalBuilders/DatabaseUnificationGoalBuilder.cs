@@ -35,7 +35,7 @@ public class DatabaseUnificationGoalBuilder : IGoalBuilder
         ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
         ArgumentNullException.ThrowIfNull(database, nameof(database));
 
-        if (currentState.CurrentGoals.Count() < 1) { throw new ArgumentException(nameof(currentState)); }
+        if (!currentState.CurrentGoals.Any()) { throw new ArgumentException(nameof(currentState)); }
 
         var goalTerm = currentState.CurrentGoals.ElementAt(0);
         Structure goalStruct;

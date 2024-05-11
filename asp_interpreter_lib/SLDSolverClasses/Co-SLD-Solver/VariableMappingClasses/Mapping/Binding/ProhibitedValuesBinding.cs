@@ -10,13 +10,13 @@ public class ProhibitedValuesBinding : IVariableBinding
 {
     public ProhibitedValuesBinding()
     {
-        ProhibitedValues = ImmutableHashSet.Create<ISimpleTerm>(new SimpleTermEqualityComparer());
+        ProhibitedValues = ImmutableSortedSet.Create<ISimpleTerm>(new SimpleTermComparer());
     }
 
-    public ProhibitedValuesBinding(ImmutableHashSet<ISimpleTerm> prohibitedValuesSet)
+    public ProhibitedValuesBinding(ImmutableSortedSet<ISimpleTerm> prohibitedValuesSet)
     {
         ArgumentNullException.ThrowIfNull(prohibitedValuesSet, nameof(prohibitedValuesSet));
-        if (prohibitedValuesSet.KeyComparer is not SimpleTermEqualityComparer)
+        if (prohibitedValuesSet.KeyComparer is not SimpleTermComparer)
         {
             throw new ArgumentException("Must contain correct comparer.");
         }
@@ -24,9 +24,8 @@ public class ProhibitedValuesBinding : IVariableBinding
         ProhibitedValues = prohibitedValuesSet;
     }
 
-    public ImmutableHashSet<ISimpleTerm> ProhibitedValues { get; }
+    public ImmutableSortedSet<ISimpleTerm> ProhibitedValues { get; }
 
-    // visitor
     public void Accept(IVariableBindingVisitor visitor)
     {
         visitor.Visit(this);

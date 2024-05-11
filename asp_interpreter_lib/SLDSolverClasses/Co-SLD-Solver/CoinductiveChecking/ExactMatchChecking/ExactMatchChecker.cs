@@ -1,13 +1,18 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 
 public class ExactMatchChecker
 {
+    private TransitiveVariableMappingResolver _simplifier = new TransitiveVariableMappingResolver(true);
+
     private IConstructiveUnificationAlgorithm _algorithm;
 
     public ExactMatchChecker(IConstructiveUnificationAlgorithm algorithm)
@@ -30,20 +35,34 @@ public class ExactMatchChecker
 
         var unification = unificationMaybe.GetValueOrThrow();
 
-        // if the new mapping contains term bindings, then they are not an exact match.
+
+        // extract variables from both input terms.
+        var variables = target.Left.ExtractVariables()
+                        .Union(target.Right.ExtractVariables())
+                        .ToImmutableHashSet(new VariableComparer());
+
+        // transitively resolve variable mappings.
+        var variablesToTransitiveMapping = variables
+            .Select(var => (var, _simplifier.Resolve(var, unification)))
+            .ToDictionary(new VariableComparer());
+
+        // get the prohibitedValueBindings:
+        // if there are termbindings, then no exact match.
         Dictionary<Variable, ProhibitedValuesBinding> newProhibitedValuesMapping;
         try
         {
-            newProhibitedValuesMapping = unification.Mapping
-                .Select(x => (x.Key, (ProhibitedValuesBinding)x.Value))
-                .ToDictionary(new VariableComparer());
+            newProhibitedValuesMapping = variablesToTransitiveMapping
+            .Where(pair => pair.Value is ProhibitedValuesBinding)
+            .Select(pair => (pair.Key, (ProhibitedValuesBinding)pair.Value))
+            .ToDictionary(new VariableComparer());
         }
-        catch 
+        catch
         {
             return false;
         }
 
-        // if for any variable : their old and new prohibited values are different
+        // if for any variable:
+        // their old and new prohibited values are different, then no match.
         if 
         (
             target.Mapping.Keys.Any(x =>

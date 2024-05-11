@@ -8,7 +8,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 internal class VariableMappingSimplifier
 {
-    private readonly BindingSimplifier _builder = new(false);
+    private readonly TransitiveVariableMappingResolver _builder = new(false);
 
     public VariableMapping Simplify(VariableMapping variableMapping)
     {
@@ -20,7 +20,7 @@ internal class VariableMappingSimplifier
 
         Parallel.For(0, variableMapping.Mapping.Count, index =>
         {
-            newMapping[index] = (vars[index], _builder.Build(variableMapping.Mapping[vars[index]], variableMapping));
+            newMapping[index] = (vars[index], _builder.Resolve(vars[index], variableMapping));
         });
 
         return new VariableMapping(newMapping.ToDictionary(new VariableComparer()).ToImmutableDictionary(new VariableComparer()));

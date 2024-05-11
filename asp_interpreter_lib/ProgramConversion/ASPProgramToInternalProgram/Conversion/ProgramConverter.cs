@@ -45,7 +45,7 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
         return new InternalAspProgram(clauses, query);
     }
 
-    private IEnumerable<Structure> ConvertStatement(Statement statement)
+    public IEnumerable<Structure> ConvertStatement(Statement statement)
     {
         var converter = new GoalConverter(_record);
 

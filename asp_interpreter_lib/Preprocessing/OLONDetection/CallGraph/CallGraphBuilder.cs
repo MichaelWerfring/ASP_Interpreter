@@ -14,7 +14,7 @@ namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 public class CallGraphBuilder
 {
     /// <summary>
-    /// Build a callgraph from the rules of an ASP program. Ignores rules without a head.
+    /// Resolve a callgraph from the rules of an ASP program. Ignores rules without a head.
     /// </summary>
     /// <param name="program"></param>
     /// <returns>An directed graph of statements, with edges indicating negation.</returns>

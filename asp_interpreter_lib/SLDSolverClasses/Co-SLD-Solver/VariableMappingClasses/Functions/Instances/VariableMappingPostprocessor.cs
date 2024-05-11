@@ -8,7 +8,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public class VariableMappingPostprocessor
 {
-    private readonly BindingSimplifier _builder = new(true);
+    private readonly TransitiveVariableMappingResolver _builder = new(true);
 
     public VariableMapping Postprocess(VariableMapping variableMapping)
     {
@@ -22,7 +22,7 @@ public class VariableMappingPostprocessor
         var newBinding = new Dictionary<Variable, IVariableBinding>(new VariableComparer());
         foreach (var variable in nonInternalVariables)
         {
-            newBinding.Add(variable, _builder.Build(variableMapping.Mapping[variable], variableMapping));
+            newBinding.Add(variable, _builder.Resolve(variable, variableMapping));
         }
 
         // get all variables from all the term bindings.

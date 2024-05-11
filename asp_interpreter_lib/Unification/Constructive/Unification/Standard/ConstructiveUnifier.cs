@@ -40,7 +40,7 @@ public class ConstructiveUnifier
         {
             ProhibitedValuesBinding copiedProhibitedValues = new ProhibitedValuesBinding
             (
-                pair.Value.ProhibitedValues.ToImmutableHashSet(new SimpleTermEqualityComparer())
+                pair.Value.ProhibitedValues.ToImmutableSortedSet(new SimpleTermComparer())
             );
 
             copiedDict.Add(new Variable(pair.Key.Identifier.GetCopy()), copiedProhibitedValues);
@@ -168,7 +168,7 @@ public class ConstructiveUnifier
             _mapping.Mapping.SetItem
             (
                 right, 
-                new ProhibitedValuesBinding(union.ToImmutableHashSet(new SimpleTermEqualityComparer()))
+                new ProhibitedValuesBinding(union.ToImmutableSortedSet(new SimpleTermComparer()))
             )
         );
     }

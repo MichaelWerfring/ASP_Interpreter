@@ -34,7 +34,7 @@ public static class SimpleTermExtensions
 
     public static IEnumerable<Variable> ExtractVariables(this ISimpleTerm term)
     {
-        return term.Enumerate().OfType<Variable>().ToImmutableHashSet();
+        return term.Enumerate().OfType<Variable>().ToImmutableHashSet(new VariableComparer());
     }
 
     public static ISimpleTerm Substitute(this ISimpleTerm simpleTerm, IDictionary<Variable, ISimpleTerm> substitution)

@@ -8,22 +8,31 @@ using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 
-public class BindingSimplifier : IVariableBindingArgumentVisitor<IVariableBinding, VariableMapping>,
-                                 ISimpleTermArgsVisitor<IVariableBinding, VariableMapping>
+public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor<IVariableBinding, VariableMapping>,
+                                                 ISimpleTermArgsVisitor<IVariableBinding, VariableMapping>
 {
     private bool _doProhibitedValuesBindingResolution;
 
-    public BindingSimplifier(bool doProhibitedValuesBindingResolution)
+    public TransitiveVariableMappingResolver(bool doProhibitedValuesBindingResolution)
     {
         _doProhibitedValuesBindingResolution = doProhibitedValuesBindingResolution;
     }
 
-    public IVariableBinding Build(IVariableBinding binding, VariableMapping mapping)
+    /// <summary>
+    /// Transitively simplifies a variableBinding, ie. if X => Y => s(), then X => s().
+    /// </summary>
+    public IVariableBinding Resolve(Variable variable, VariableMapping mapping)
     {
-        ArgumentNullException.ThrowIfNull(binding, nameof(binding));
+        ArgumentNullException.ThrowIfNull(variable, nameof(variable));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        return binding.Accept(this, mapping);
+        IVariableBinding? value;
+        if (!mapping.Mapping.TryGetValue(variable, out value))
+        {
+            throw new ArgumentException($"Must contain mapping in {mapping}",nameof(variable));
+        }
+
+        return value.Accept(this, mapping);
     }
 
     public IVariableBinding Visit(ProhibitedValuesBinding binding, VariableMapping args)

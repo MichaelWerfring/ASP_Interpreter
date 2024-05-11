@@ -22,7 +22,7 @@ public class VariableMapping
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
         if(mapping.KeyComparer is not VariableComparer)
         {
-            throw new NotImplementedException();
+            throw new ArgumentException("Must contain the correct comparer!" ,nameof(mapping));
         }
 
         Mapping = mapping;

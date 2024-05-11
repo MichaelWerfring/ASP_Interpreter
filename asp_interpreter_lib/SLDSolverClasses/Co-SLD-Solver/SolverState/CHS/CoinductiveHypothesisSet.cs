@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
+﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
