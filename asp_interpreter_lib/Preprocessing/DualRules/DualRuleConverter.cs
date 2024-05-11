@@ -265,18 +265,18 @@ public class DualRuleConverter
 
         if (_wrapInNot)
         {
-            //wrapper.AddHead(WrapInNot(new Literal(
-            //    disjunction.Key.Item1,
-            //    false,
-            //    disjunction.Key.Item3,
-            //    GenerateVariables(disjunction.Key.Item2))));
-
-            wrapper.AddHead(new Literal(
-                (appendPrefix ? _options.DualPrefix : "") + disjunction.Key.Item1,
+            wrapper.AddHead(WrapInNot(new Literal(
+                disjunction.Key.Item1,
                 false,
                 disjunction.Key.Item3,
-                GenerateVariables(disjunction.Key.Item2)
-            ));
+                GenerateVariables(disjunction.Key.Item2))));
+
+            //wrapper.AddHead(new Literal(
+            //    (appendPrefix ? _options.DualPrefix : "") + disjunction.Key.Item1,
+            //    false,
+            //    disjunction.Key.Item3,
+            //    GenerateVariables(disjunction.Key.Item2)
+            //));
         }
         else
         {
@@ -304,7 +304,8 @@ public class DualRuleConverter
                 .GetValueOrThrow("Cannot copy rule!");
 
             copy.Terms.Clear();
-            copy.Terms.AddRange(wrapper.Head.GetValueOrThrow().Terms);
+            copy.Terms.AddRange(GenerateVariables(disjunction.Key.Item2));
+            //copy.Terms.AddRange(wrapper.Head.GetValueOrThrow().Terms);
 
             copy.Identifier = wrapperPrefix + copy.Identifier;
             if (_wrapInNot)

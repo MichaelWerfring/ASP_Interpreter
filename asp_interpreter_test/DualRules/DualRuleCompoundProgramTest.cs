@@ -35,7 +35,7 @@ namespace asp_interpreter_test.DualRules
                       """;
 
             var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, true);
 
             var duals = dualRuleConverter.GetDualRules(program.Statements);
 
