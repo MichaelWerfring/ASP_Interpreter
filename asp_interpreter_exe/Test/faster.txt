@@ -1,0 +1,4 @@
+faster(bike, skateboard).
+faster(bmw_z3, toyota_cor).
+
+fastest(X) :- not is_faster(Z, X).

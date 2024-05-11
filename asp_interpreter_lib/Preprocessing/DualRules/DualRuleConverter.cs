@@ -1,4 +1,5 @@
-﻿using Antlr4.Runtime.Tree.Xpath;
+﻿using Antlr4.Runtime.Tree;
+using Antlr4.Runtime.Tree.Xpath;
 using asp_interpreter_lib.Preprocessing.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
@@ -19,18 +20,18 @@ public class DualRuleConverter
     
     private readonly ILogger _logger;
 
-    private readonly bool _notAsName;
+    private readonly bool _wrapInNot;
 
     public DualRuleConverter(
         PrefixOptions options,
-        ILogger logger, bool notAsName = true)
+        ILogger logger, bool wrapInNot = false)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(logger);
 
         _options = options;
         _logger = logger;
-        _notAsName = notAsName;
+        _wrapInNot = wrapInNot;
         _replacer = new AnonymousVariableReplacer(options);
         _variableFinder = new VariableFinder();
     }
@@ -92,13 +93,9 @@ public class DualRuleConverter
         {
             Literal newHead;
 
-            if (_notAsName)
+            if (_wrapInNot)
             {
-                newHead = new Literal(
-                    (appendPrefix ? _options.DualPrefix : "") + head.Identifier,
-                    false,
-                    head.HasStrongNegation,
-                    head.Terms);
+                newHead = WrapInNot(head);
             }
             else
             {
@@ -127,16 +124,17 @@ public class DualRuleConverter
             }
 
             var goal = rule.Body[i];
-            var dualGoal = GoalNegator.Negate(goal);
+            var dualGoal = GoalNegator.Negate(goal, _wrapInNot);
 
             Literal newHead;
-            if (_notAsName)
+            if (_wrapInNot)
             {
-                newHead = new Literal(
-                    (appendPrefix ? _options.DualPrefix : "") + head.Identifier,
-                    false,
-                    head.HasStrongNegation,
-                    head.Terms);
+                //newHead = new Literal(
+                //    (appendPrefix ? _options.DualPrefix : "") + head.Identifier,
+                //    false,
+                //    head.HasStrongNegation,
+                //    head.Terms);
+                newHead = WrapInNot(head);
             }
             else
             {
@@ -161,6 +159,26 @@ public class DualRuleConverter
         }
 
         return duals;
+    }
+
+    private Literal WrapInNot(Literal literal)
+    {
+        var terms =
+                literal.Terms.Select(t => t.Accept(new TermCopyVisitor()).
+                    GetValueOrThrow("Failed to parse term!")).ToList();
+
+        //if (literal.HasNafNegation)
+        //{
+        //    return new Literal(
+        //        literal.Identifier.ToString(),
+        //        false,
+        //        literal.HasStrongNegation,
+        //        terms);
+        //}
+
+        return new Literal("not", false, false,
+            [new BasicTerm((literal.HasStrongNegation ? "-" : "") + literal.Identifier.ToString()
+                , literal.Terms)]);
     }
 
     public IEnumerable<Statement> AddForall(Statement rule)
@@ -204,13 +222,15 @@ public class DualRuleConverter
 
         // prefix like dual
 
-        if (_notAsName)
+        var head = rule.Head.GetValueOrThrow();
+        if (_wrapInNot)
         {
-            rule.Head.GetValueOrThrow().Identifier = _options.DualPrefix + rule.Head.GetValueOrThrow().Identifier;
+            rule.Head = new Some<Literal>(WrapInNot(head));
+            //rule.Head.GetValueOrThrow().Identifier = _options.DualPrefix + rule.Head.GetValueOrThrow().Identifier;
         }
         else
         {
-            rule.Head.GetValueOrThrow().HasNafNegation = true;
+            head.HasNafNegation = true;
         }
 
         duals.Insert(0, rule);
@@ -243,8 +263,14 @@ public class DualRuleConverter
         // 1) generate new rule at top (named like input)
         Statement wrapper = new();
 
-        if (_notAsName)
+        if (_wrapInNot)
         {
+            //wrapper.AddHead(WrapInNot(new Literal(
+            //    disjunction.Key.Item1,
+            //    false,
+            //    disjunction.Key.Item3,
+            //    GenerateVariables(disjunction.Key.Item2))));
+
             wrapper.AddHead(new Literal(
                 (appendPrefix ? _options.DualPrefix : "") + disjunction.Key.Item1,
                 false,
@@ -261,12 +287,6 @@ public class DualRuleConverter
                 GenerateVariables(disjunction.Key.Item2)
             ));
         }
-
-        //If there is just one statement its not a disjunction
-        //if (disjunction.Value.Count == 1)
-        //{
-        //    return ToDisjunction(disjunction.Value[0]);
-        //}
 
         List<Goal> wrapperBody = [];
 
@@ -287,9 +307,10 @@ public class DualRuleConverter
             copy.Terms.AddRange(wrapper.Head.GetValueOrThrow().Terms);
 
             copy.Identifier = wrapperPrefix + copy.Identifier;
-            if (_notAsName)
+            if (_wrapInNot)
             {
-                copy.Identifier = (appendPrefix ? _options.DualPrefix : "") + copy.Identifier;
+                copy = WrapInNot(copy);
+                //copy.Identifier = (appendPrefix ? _options.DualPrefix : "") + copy.Identifier;
             }
             else
             {
@@ -370,13 +391,14 @@ public class DualRuleConverter
 
                 Statement newStatement = new();
 
-                if (_notAsName)
+                if (_wrapInNot)
                 {
-                    newStatement.AddHead(new Literal(
-                        (appendPrefix ? _options.DualPrefix : "") + actual.Identifier,
-                        false,
-                        actual.HasStrongNegation,
-                        actual.Terms));
+                    newStatement.AddHead(WrapInNot(actual));
+                    //newStatement.AddHead(new Literal(
+                    //    (appendPrefix ? _options.DualPrefix : "") + actual.Identifier,
+                    //    false,
+                    //    actual.HasStrongNegation,
+                    //    actual.Terms));
                 }
                 else
                 {
@@ -387,8 +409,8 @@ public class DualRuleConverter
                         actual.Terms));
                 }
 
-                _logger.LogTrace("No Head found for: " + actual.ToString() + " generated: " + newStatement.ToString());
                 statements.Add(newStatement);
+
             }
         }
 

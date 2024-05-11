@@ -17,7 +17,7 @@ public class GoalNegator
     
     private static TermCopyVisitor _termCopyVisitor = new();
     
-    public static Goal Negate(Goal goal, bool notAsName = true)
+    public static Goal Negate(Goal goal, bool wrapInNot = false)
     {
         var literal = goal.Accept(_literalConverter);
         
@@ -30,13 +30,35 @@ public class GoalNegator
                 actualLiteral.Terms.Select(t=> t.Accept(_termCopyVisitor).
                     GetValueOrThrow("Failed to parse term!")).ToList();
 
-            return new Literal(
-                actualLiteral.Identifier.ToString(),
-                !actualLiteral.HasNafNegation,
-                actualLiteral.HasStrongNegation,
-                terms);
+            //return new Literal(
+            //    actualLiteral.Identifier.ToString(),
+            //    !actualLiteral.HasNafNegation,
+            //    actualLiteral.HasStrongNegation,
+            //    terms);
+
+            if (!wrapInNot)
+            {
+                return new Literal(
+                    actualLiteral.Identifier.ToString(),
+                    !actualLiteral.HasNafNegation,
+                    actualLiteral.HasStrongNegation,
+                    terms);
+            }
+
+            if (actualLiteral.HasNafNegation)
+            {
+                return new Literal(
+                    actualLiteral.Identifier.ToString(),
+                    false,
+                    actualLiteral.HasStrongNegation,
+                    terms);
+            }
+
+            return new Literal("not", false, false,
+                [new BasicTerm((actualLiteral.HasStrongNegation ? "-" : "") + actualLiteral.Identifier.ToString()
+                , actualLiteral.Terms)]);
         }
-        
+
         //Convert goal to bino operation
         var binaryOperation = goal.Accept(_binOpConverter)
             .GetValueOrThrow("The value must be either a literal or a binary operation!");
