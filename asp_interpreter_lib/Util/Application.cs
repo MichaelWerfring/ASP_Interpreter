@@ -69,7 +69,6 @@ public class Application(
                 _logger.LogError("The program has no query given, either specify one in the file or use interactive mode.");
             }
 
-            
             return;
         }
 
@@ -77,14 +76,37 @@ public class Application(
         while (true)
         {
             Console.Write("?-");
-            string input = Console.ReadLine();
+            string input = Console.ReadLine() ?? "";
 
             if (input == "exit") return;
+            if (input == "clear") return;
 
             // 1) parse query 
+            var query = ParseQuery(input);
+            if (query == null) continue;
+
             // 2) solve existing program with new query 
             // 3) show answer
         }
+    }
+
+    private Query? ParseQuery(string query)
+    {
+        var inputStream = new AntlrInputStream(query);
+        var lexer = new ASPLexer(inputStream);
+        var commonTokenStream = new CommonTokenStream(lexer);
+        var parser = new ASPParser(commonTokenStream);
+        var context = parser.program();
+        var visitor = new QueryVisitor(_logger);
+        var parsedQuery = visitor.VisitProgram(context);
+
+        if (!parsedQuery.HasValue)
+        {
+            _logger.LogError("Not able to parse query: " + query);
+            return null;
+        }
+        
+        return parsedQuery.GetValueOrThrow();
     }
 
     private void SolveAutomatic()
@@ -133,6 +155,4 @@ public class Application(
 
         return program.GetValueOrThrow();
     } 
-    
-
 }
