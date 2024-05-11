@@ -1,31 +1,29 @@
 ﻿using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.Util.ErrorHandling.Either;
 
 namespace asp_interpreter_lib.Util;
 
 public static class FileReader
 {
-    public static string? ReadFile(string path, ILogger logger)
+    public static IEither<string, string> ReadFile(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path, nameof(path));
-        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
         try
         {
-            return File.ReadAllText(path);
+            return new Right<string, string>(File.ReadAllText(path));
         }
         catch (FileNotFoundException)
         {
-            logger.LogError("File not Found: " + path);
+            return new Left<string, string>("File not Found: " + path);
         }
         catch (UnauthorizedAccessException)
         {
-            logger.LogError("Access denied: " + path);
+            return new Left<string, string>("Access denied: " + path);
         }
         catch (IOException e)
         {
-            logger.LogError("Unable to read file: " + e.Message);
+            return new Left<string, string>("Unable to read file: " + e.Message);
         }
-        
-        return null; 
     }
 }

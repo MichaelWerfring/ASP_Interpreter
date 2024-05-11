@@ -1,28 +1,20 @@
 ﻿using Antlr4.Runtime;
 using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Preprocessing.OLONDetection;
-using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.Visitors;
-using QuikGraph;
-using QuikGraph.Algorithms;
-using System.Diagnostics;
+using System.Net.Http.Headers;
 
 namespace asp_interpreter_lib.Util;
 
@@ -41,7 +33,15 @@ public class Application(
 
     public void Run()
     {
-        var program = LoadProgram();
+        var eitherProgram = LoadProgram();
+
+        if (!eitherProgram.IsRight)
+        {
+            _logger.LogError(eitherProgram.GetLeftOrThrow());
+            return;
+        }
+
+        var program = eitherProgram.GetRightOrThrow();
 
         //Interactive if needed else just solve
         if (!_config.Interactive)
@@ -49,6 +49,7 @@ public class Application(
             if (!program.Query.HasValue)
             {
                 _logger.LogError("The program has no query given, either specify one in the file or use interactive mode.");
+                return;
             }
 
             SolveAutomatic(program);        
@@ -69,7 +70,14 @@ public class Application(
             }
             if (input == "reload")
             {
-                program = LoadProgram();
+                var either= LoadProgram();
+                if (!either.IsRight)
+                {
+                    _logger.LogError(eitherProgram.GetLeftOrThrow());
+                    return;
+                }
+
+                program = eitherProgram.GetRightOrThrow();
                 continue;
             }
 
@@ -83,14 +91,18 @@ public class Application(
         }
     }
 
-    private AspProgram LoadProgram()
+    private IEither<string, AspProgram> LoadProgram()
     {
         //Read
-        var code = FileReader.ReadFile(_config.Path, _logger);
-        //if (code == null) return;
+        var code = FileReader.ReadFile(_config.Path);
+
+        if (!code.IsRight) 
+        {
+            return new Left<string, AspProgram>(code.GetLeftOrThrow());
+        }
 
         //Program
-        var program = GetProgram(code);
+        var program = GetProgram(code.GetRightOrThrow());
 
         //Dual
         var dualGenerator = new DualRuleConverter(_prefixes, _logger);
@@ -103,7 +115,7 @@ public class Application(
         var nmrChecker = new NmrChecker(_prefixes, _logger);
         var subcheck = nmrChecker.GetSubCheckRules(olonRules);
 
-        return new AspProgram([.. program.Statements, .. dual, .. subcheck], program.Query);
+        return new Right<string, AspProgram>(new AspProgram([.. program.Statements, .. dual, .. subcheck], program.Query));
     }
 
     private Query? ParseQuery(string query)
