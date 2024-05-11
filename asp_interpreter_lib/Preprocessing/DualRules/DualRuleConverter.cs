@@ -129,11 +129,6 @@ public class DualRuleConverter
             Literal newHead;
             if (_wrapInNot)
             {
-                //newHead = new Literal(
-                //    (appendPrefix ? _options.DualPrefix : "") + head.Identifier,
-                //    false,
-                //    head.HasStrongNegation,
-                //    head.Terms);
                 newHead = WrapInNot(head);
             }
             else
@@ -166,15 +161,6 @@ public class DualRuleConverter
         var terms =
                 literal.Terms.Select(t => t.Accept(new TermCopyVisitor()).
                     GetValueOrThrow("Failed to parse term!")).ToList();
-
-        //if (literal.HasNafNegation)
-        //{
-        //    return new Literal(
-        //        literal.Identifier.ToString(),
-        //        false,
-        //        literal.HasStrongNegation,
-        //        terms);
-        //}
 
         return new Literal("not", false, false,
             [new BasicTerm((literal.HasStrongNegation ? "-" : "") + literal.Identifier.ToString()
@@ -226,7 +212,6 @@ public class DualRuleConverter
         if (_wrapInNot)
         {
             rule.Head = new Some<Literal>(WrapInNot(head));
-            //rule.Head.GetValueOrThrow().Identifier = _options.DualPrefix + rule.Head.GetValueOrThrow().Identifier;
         }
         else
         {
@@ -270,13 +255,6 @@ public class DualRuleConverter
                 false,
                 disjunction.Key.Item3,
                 GenerateVariables(disjunction.Key.Item2))));
-
-            //wrapper.AddHead(new Literal(
-            //    (appendPrefix ? _options.DualPrefix : "") + disjunction.Key.Item1,
-            //    false,
-            //    disjunction.Key.Item3,
-            //    GenerateVariables(disjunction.Key.Item2)
-            //));
         }
         else
         {
@@ -311,7 +289,6 @@ public class DualRuleConverter
             if (_wrapInNot)
             {
                 copy = WrapInNot(copy);
-                //copy.Identifier = (appendPrefix ? _options.DualPrefix : "") + copy.Identifier;
             }
             else
             {
@@ -395,11 +372,6 @@ public class DualRuleConverter
                 if (_wrapInNot)
                 {
                     newStatement.AddHead(WrapInNot(actual));
-                    //newStatement.AddHead(new Literal(
-                    //    (appendPrefix ? _options.DualPrefix : "") + actual.Identifier,
-                    //    false,
-                    //    actual.HasStrongNegation,
-                    //    actual.Terms));
                 }
                 else
                 {

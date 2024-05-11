@@ -32,8 +32,8 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count, Is.EqualTo(2));
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X, Y) :- not c(X).");
-                Assert.That(dual[1].ToString() == "not_a(X, Y) :- c(X), b(X, Y).");
+                Assert.That(dual[0].ToString() == "not a(X, Y) :- not c(X).");
+                Assert.That(dual[1].ToString() == "not a(X, Y) :- c(X), b(X, Y).");
             });
         }
 
@@ -53,8 +53,8 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count == 2);
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X, Y) :- b(X).");
-                Assert.That(dual[1].ToString() == "not_a(X, Y) :- not b(X), Y \\= 4.");
+                Assert.That(dual[0].ToString() == "not a(X, Y) :- b(X).");
+                Assert.That(dual[1].ToString() == "not a(X, Y) :- not b(X), Y \\= 4.");
             });
         }
 
@@ -74,10 +74,10 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count == 4);
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X, Y) :- -b(X).");
-                Assert.That(dual[1].ToString() == "not_a(X, Y) :- not -b(X), Y \\= 4.");
-                Assert.That(dual[2].ToString() == "not_a(X, Y) :- not -b(X), Y = 4, not -c(Y).");
-                Assert.That(dual[3].ToString() == "not_a(X, Y) :- not -b(X), Y = 4, -c(Y), not d(X, Y).");
+                Assert.That(dual[0].ToString() == "not a(X, Y) :- -b(X).");
+                Assert.That(dual[1].ToString() == "not a(X, Y) :- not -b(X), Y \\= 4.");
+                Assert.That(dual[2].ToString() == "not a(X, Y) :- not -b(X), Y = 4, not -c(Y).");
+                Assert.That(dual[3].ToString() == "not a(X, Y) :- not -b(X), Y = 4, -c(Y), not d(X, Y).");
             });
         }
 
@@ -117,9 +117,9 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count == 3);
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
-                Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
-                Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), not d(X, Y).");
+                Assert.That(dual[0].ToString() == "not a(X) :- forall(Y, not fa_a(X, Y)).");
+                Assert.That(dual[1].ToString() == "not fa_a(X, Y) :- b(X).");
+                Assert.That(dual[2].ToString() == "not fa_a(X, Y) :- not b(X), not d(X, Y).");
             });
         }
 
@@ -139,9 +139,9 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count == 3);
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
-                Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
-                Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), d(X, Y).");
+                Assert.That(dual[0].ToString() == "not a(X) :- forall(Y, not fa_a(X, Y)).");
+                Assert.That(dual[1].ToString() == "not fa_a(X, Y) :- b(X).");
+                Assert.That(dual[2].ToString() == "not fa_a(X, Y) :- not b(X), d(X, Y).");
             });
         }
 
@@ -161,9 +161,9 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count == 3);
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
-                Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
-                Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), Y \\= 4.");
+                Assert.That(dual[0].ToString() == "not a(X) :- forall(Y, not fa_a(X, Y)).");
+                Assert.That(dual[1].ToString() == "not fa_a(X, Y) :- b(X).");
+                Assert.That(dual[2].ToString() == "not fa_a(X, Y) :- not b(X), Y \\= 4.");
             });
         }
         [Test]
@@ -182,10 +182,10 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count == 4);
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, fa_a(X, Y)).");
-                Assert.That(dual[1].ToString() == "fa_a(X, Y) :- b(X).");
-                Assert.That(dual[2].ToString() == "fa_a(X, Y) :- not b(X), not -c(Y).");
-                Assert.That(dual[3].ToString() == "fa_a(X, Y) :- not b(X), -c(Y), -d(X, Y).");
+                Assert.That(dual[0].ToString() == "not a(X) :- forall(Y, not fa_a(X, Y)).");
+                Assert.That(dual[1].ToString() == "not fa_a(X, Y) :- b(X).");
+                Assert.That(dual[2].ToString() == "not fa_a(X, Y) :- not b(X), not -c(Y).");
+                Assert.That(dual[3].ToString() == "not fa_a(X, Y) :- not b(X), -c(Y), -d(X, Y).");
             });
         }
 
@@ -205,10 +205,10 @@ namespace asp_interpreter_test.DualRules
             Assert.That(dual.Count == 4);
             Assert.Multiple(() =>
             {
-                Assert.That(dual[0].ToString() == "not_a(X) :- forall(Y, forall(Z, fa_a(X, Y, Z))).");
-                Assert.That(dual[1].ToString() == "fa_a(X, Y, Z) :- b(X).");
-                Assert.That(dual[2].ToString() == "fa_a(X, Y, Z) :- not b(X), Y \\= 4.");
-                Assert.That(dual[3].ToString() == "fa_a(X, Y, Z) :- not b(X), Y = 4, not c(X, Y, Z).");
+                Assert.That(dual[0].ToString() == "not a(X) :- forall(Y, forall(Z, not fa_a(X, Y, Z))).");
+                Assert.That(dual[1].ToString() == "not fa_a(X, Y, Z) :- b(X).");
+                Assert.That(dual[2].ToString() == "not fa_a(X, Y, Z) :- not b(X), Y \\= 4.");
+                Assert.That(dual[3].ToString() == "not fa_a(X, Y, Z) :- not b(X), Y = 4, not c(X, Y, Z).");
             });
         }
     }

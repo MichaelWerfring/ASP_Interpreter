@@ -68,13 +68,13 @@ public class DualRuleTest
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 7);
-            Assert.That(duals[0].ToString(), Is.EqualTo("not_p(V1) :- not_p1(V1), not_p2(V1)."));
-            Assert.That(duals[1].ToString(), Is.EqualTo("not_p1(V1) :- V1 \\= 0."));
-            Assert.That(duals[2].ToString(), Is.EqualTo("not_p2(X) :- forall(Y, fa_p2(X, Y))."));
-            Assert.That(duals[3].ToString(), Is.EqualTo("fa_p2(X, Y) :- not q(X)."));
-            Assert.That(duals[4].ToString(), Is.EqualTo("fa_p2(X, Y) :- q(X), t(X, Y)."));
-            Assert.That(duals[5].ToString(), Is.EqualTo("not_q(X)."));
-            Assert.That(duals[6].ToString(), Is.EqualTo("not_t(X, Y)."));
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(V1) :- not p1(V1), not p2(V1)."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not p1(V1) :- V1 \\= 0."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not p2(X) :- forall(Y, not fa_p2(X, Y))."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not fa_p2(X, Y) :- not q(X)."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not fa_p2(X, Y) :- q(X), t(X, Y)."));
+            Assert.That(duals[5].ToString(), Is.EqualTo("not q(X)."));
+            Assert.That(duals[6].ToString(), Is.EqualTo("not t(X, Y)."));
         });
     }
 
@@ -88,20 +88,20 @@ public class DualRuleTest
                       """;
 
         var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, true);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 7);
-            Assert.That(duals[0].ToString() == "not_p(V1) :- not_p1(V1), not_p2(V1).");
-            Assert.That(duals[1].ToString() == "not_p1(V1) :- V1 \\= 0.");
-            Assert.That(duals[2].ToString() == "not_p2(X) :- forall(Y, fa_p2(X, Y)).");
-            Assert.That(duals[3].ToString() == "fa_p2(X, Y) :- not -q(X).");
-            Assert.That(duals[4].ToString() == "fa_p2(X, Y) :- -q(X), -t(X, Y).");
-            Assert.That(duals[5].ToString() == "-not_q(X).");
-            Assert.That(duals[6].ToString() == "-not_t(X, Y).");
+            Assert.That(duals[0].ToString() == "not p(V1) :- not p1(V1), not p2(V1).");
+            Assert.That(duals[1].ToString() == "not p1(V1) :- V1 \\= 0.");
+            Assert.That(duals[2].ToString() == "not p2(X) :- forall(Y, not fa_p2(X, Y)).");
+            Assert.That(duals[3].ToString() == "not fa_p2(X, Y) :- not -q(X).");
+            Assert.That(duals[4].ToString() == "not fa_p2(X, Y) :- -q(X), -t(X, Y).");
+            Assert.That(duals[5].ToString() == "not -q(X).");
+            Assert.That(duals[6].ToString() == "not -t(X, Y).");
         });
     }
 
@@ -122,16 +122,16 @@ public class DualRuleTest
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 10);
-            Assert.That(duals[0].ToString(), Is.EqualTo("not_p(V1) :- not_p1(V1)."));
-            Assert.That(duals[1].ToString(), Is.EqualTo("not_p1(X) :- q(X)."));
-            Assert.That(duals[2].ToString(), Is.EqualTo("not_p1(X) :- not q(X), not r(X)."));
-            Assert.That(duals[3].ToString(), Is.EqualTo("-not_p(V1) :- -not_p1(V1)."));
-            Assert.That(duals[4].ToString(), Is.EqualTo("-not_p1(X) :- not s(X)."));
-            Assert.That(duals[5].ToString(), Is.EqualTo("-not_p1(X) :- s(X), t(X)."));
-            Assert.That(duals[6].ToString(), Is.EqualTo("not_q(X)."));
-            Assert.That(duals[7].ToString(), Is.EqualTo("not_r(X)."));
-            Assert.That(duals[8].ToString(), Is.EqualTo("not_s(X)."));
-            Assert.That(duals[9].ToString(), Is.EqualTo("not_t(X)."));
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(V1) :- not p1(V1)."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not p1(X) :- q(X)."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not p1(X) :- not q(X), not r(X)."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not -p(V1) :- not -p1(V1)."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not -p1(X) :- not s(X)."));
+            Assert.That(duals[5].ToString(), Is.EqualTo("not -p1(X) :- s(X), t(X)."));
+            Assert.That(duals[6].ToString(), Is.EqualTo("not q(X)."));
+            Assert.That(duals[7].ToString(), Is.EqualTo("not r(X)."));
+            Assert.That(duals[8].ToString(), Is.EqualTo("not s(X)."));
+            Assert.That(duals[9].ToString(), Is.EqualTo("not t(X)."));
         });
     }
 
@@ -152,12 +152,12 @@ public class DualRuleTest
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count, Is.EqualTo(6));
-            Assert.That(duals[0].ToString(), Is.EqualTo("not_p(V1) :- not_p1(V1)."));
-            Assert.That(duals[1].ToString(), Is.EqualTo("not_p1(V1) :- forall(X, forall(T, fa_p1(V1, X, T)))."));
-            Assert.That(duals[2].ToString(), Is.EqualTo("fa_p1(V1, X, T) :- V1 \\= [X| T]."));
-            Assert.That(duals[3].ToString(), Is.EqualTo("fa_p1(V1, X, T) :- V1 = [X| T], not q(X)."));
-            Assert.That(duals[4].ToString(), Is.EqualTo("fa_p1(V1, X, T) :- V1 = [X| T], q(X), not p(T)."));
-            Assert.That(duals[5].ToString(), Is.EqualTo("not_q(X)."));
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(V1) :- not p1(V1)."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not p1(V1) :- forall(X, forall(T, not fa_p1(V1, X, T)))."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not fa_p1(V1, X, T) :- V1 \\= [X| T]."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not fa_p1(V1, X, T) :- V1 = [X| T], not q(X)."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not fa_p1(V1, X, T) :- V1 = [X| T], q(X), not p(T)."));
+            Assert.That(duals[5].ToString(), Is.EqualTo("not q(X)."));
         });
     }
 
@@ -178,15 +178,15 @@ public class DualRuleTest
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count, Is.EqualTo(9));
-            Assert.That(duals[0].ToString(), Is.EqualTo("not_p(V1) :- not_p1(V1)."));
-            Assert.That(duals[1].ToString(), Is.EqualTo("not_p1(V1) :- forall(X, forall(Y, forall(Z, fa_p1(V1, X, Y, Z))))."));
-            Assert.That(duals[2].ToString(), Is.EqualTo("fa_p1(V1, X, Y, Z) :- V1 \\= [X, Y, Z]."));
-            Assert.That(duals[3].ToString(), Is.EqualTo("fa_p1(V1, X, Y, Z) :- V1 = [X, Y, Z], not q(X)."));
-            Assert.That(duals[4].ToString(), Is.EqualTo("fa_p1(V1, X, Y, Z) :- V1 = [X, Y, Z], q(X), not r(Y)."));
-            Assert.That(duals[5].ToString(), Is.EqualTo("fa_p1(V1, X, Y, Z) :- V1 = [X, Y, Z], q(X), r(Y), not s(Z)."));
-            Assert.That(duals[6].ToString(), Is.EqualTo("not_q(X)."));
-            Assert.That(duals[7].ToString(), Is.EqualTo("not_r(Y)."));
-            Assert.That(duals[8].ToString(), Is.EqualTo("not_s(Z)."));
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p(V1) :- not p1(V1)."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not p1(V1) :- forall(X, forall(Y, forall(Z, not fa_p1(V1, X, Y, Z))))."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not fa_p1(V1, X, Y, Z) :- V1 \\= [X, Y, Z]."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not fa_p1(V1, X, Y, Z) :- V1 = [X, Y, Z], not q(X)."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not fa_p1(V1, X, Y, Z) :- V1 = [X, Y, Z], q(X), not r(Y)."));
+            Assert.That(duals[5].ToString(), Is.EqualTo("not fa_p1(V1, X, Y, Z) :- V1 = [X, Y, Z], q(X), r(Y), not s(Z)."));
+            Assert.That(duals[6].ToString(), Is.EqualTo("not q(X)."));
+            Assert.That(duals[7].ToString(), Is.EqualTo("not r(Y)."));
+            Assert.That(duals[8].ToString(), Is.EqualTo("not s(Z)."));
         });
     }
 
@@ -208,9 +208,9 @@ public class DualRuleTest
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 3);
-            Assert.That(duals[0].ToString(), Is.EqualTo("-not_p :- -not_p1."));
-            Assert.That(duals[1].ToString(), Is.EqualTo("not_p :- not_p1."));
-            Assert.That(duals[2].ToString(), Is.EqualTo("not_p1 :- not -p."));
+            Assert.That(duals[0].ToString(), Is.EqualTo("not -p :- not -p1."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not p :- not p1."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not p1 :- not -p."));
         });
     }
 
@@ -234,14 +234,14 @@ public class DualRuleTest
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 8);
-            Assert.That(duals[0].ToString(), Is.EqualTo("not_p :- not_p1, not_p2."));
-            Assert.That(duals[1].ToString(), Is.EqualTo("not_p1 :- not s."));
-            Assert.That(duals[2].ToString(), Is.EqualTo("not_p2 :- q."));
-            Assert.That(duals[3].ToString(), Is.EqualTo("not_q :- not_q1."));
-            Assert.That(duals[4].ToString(), Is.EqualTo("not_q1 :- p."));
-            Assert.That(duals[5].ToString(), Is.EqualTo("not_r :- not_r1."));
-            Assert.That(duals[6].ToString(), Is.EqualTo("not_r1 :- not p."));
-            Assert.That(duals[7].ToString(), Is.EqualTo("not_s."));
+            Assert.That(duals[0].ToString(), Is.EqualTo("not p :- not p1, not p2."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not p1 :- not s."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not p2 :- q."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not q :- not q1."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not q1 :- p."));
+            Assert.That(duals[5].ToString(), Is.EqualTo("not r :- not r1."));
+            Assert.That(duals[6].ToString(), Is.EqualTo("not r1 :- not p."));
+            Assert.That(duals[7].ToString(), Is.EqualTo("not s."));
         });
     }
 
