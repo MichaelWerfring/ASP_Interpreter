@@ -9,7 +9,7 @@ public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogg
 {
     public void LogTrace(string message)
     {
-        ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         if (logLevel <= LogLevel.Trace)
         {
@@ -24,7 +24,7 @@ public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogg
     
     public void LogDebug(string message)
     {
-        ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
         
         if (logLevel <= LogLevel.Debug)
         {
@@ -39,7 +39,7 @@ public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogg
 
     public void LogInfo(string message)
     {
-        ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         if (logLevel <= LogLevel.Info)
         {
@@ -54,7 +54,7 @@ public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogg
 
     public void LogError(string message)
     {
-        ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         if (logLevel <= LogLevel.Error)
         {
@@ -69,7 +69,7 @@ public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogg
 
     public void LogError(string message, ParserRuleContext context)
     {
-        ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
         ArgumentNullException.ThrowIfNull(context);
               
         if (logLevel <= LogLevel.Error)

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -46,6 +47,11 @@ public class Statement: IVisitableType
             return ":- " + GetBodyAsString() + ".";
         }
         
+        if(!HasBody  && !HasHead)
+        {
+            return string.Empty;
+        }
+
         return $"{Head.GetValueOrThrow().ToString()}.";
     }
 

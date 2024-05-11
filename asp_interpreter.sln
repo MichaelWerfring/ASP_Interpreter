@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "asp_interpreter_lib", "asp_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "asp_interpreter_test", "asp_interpreter_test\asp_interpreter_test.csproj", "{4066E829-95A0-4971-AE75-A1FA414F2F63}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{1EAD1308-6C9E-4310-BBCE-4C6A423E7C80}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{4066E829-95A0-4971-AE75-A1FA414F2F63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4066E829-95A0-4971-AE75-A1FA414F2F63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4066E829-95A0-4971-AE75-A1FA414F2F63}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1EAD1308-6C9E-4310-BBCE-4C6A423E7C80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EAD1308-6C9E-4310-BBCE-4C6A423E7C80}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EAD1308-6C9E-4310-BBCE-4C6A423E7C80}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EAD1308-6C9E-4310-BBCE-4C6A423E7C80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

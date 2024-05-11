@@ -26,7 +26,9 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         if (olonRules.Count == 0)
         {
             _logger.LogDebug("Finished generation because no OLON rules found in program.");
-            return olonRules;
+            var emptyCheck = new Statement();
+            emptyCheck.AddHead(new Literal("nmr_check", false, false, []));
+            return [emptyCheck];
         }
         
         // 1) append negation of OLON Rule to its body (If not already present)

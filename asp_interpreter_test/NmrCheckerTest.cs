@@ -141,4 +141,18 @@ public class NmrCheckerTest
             Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not chk_q(X, Y)."));
         });
     }
+
+    [Test]
+    public void AlsoAddsCheckForEmtpyStatements()
+    {
+        var checker = new NmrChecker(_prefixes, _logger);
+        var subCheckRules = checker.GetSubCheckRules([], false);
+
+        //verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            Assert.That(subCheckRules.Count, Is.EqualTo(1));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check."));
+        });
+    }
 }

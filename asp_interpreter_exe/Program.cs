@@ -26,8 +26,6 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        Test1(args);
-
         var builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddTransient<Application>();
         builder.Services.AddSingleton(AspExtensions.CommonPrefixes);
@@ -192,18 +190,19 @@ internal class Program
     }
     static AspProgram ConstructFullProgram(string fileString, ILogger logger)
     {
-        var fileReadingResult = FileReader.ReadFile(fileString, logger);
+        var dummyLogger = logger.GetDummy();
+        var fileReadingResult = FileReader.ReadFile(fileString, dummyLogger);
 
-        var program = AspExtensions.GetProgram(fileReadingResult!, logger);
-        var copy = AspExtensions.GetProgram(fileReadingResult!, logger);
+        var program = AspExtensions.GetProgram(fileReadingResult!, dummyLogger);
+        var copy = AspExtensions.GetProgram(fileReadingResult!, dummyLogger);
 
-        var dualConverter = new DualRuleConverter(AspExtensions.CommonPrefixes, logger, false);
-        var duals = dualConverter.GetDualRules(copy.Statements, false);
+        var dualConverter = new DualRuleConverter(AspExtensions.CommonPrefixes, dummyLogger, false);
+        var duals = dualConverter.GetDualRules(copy.Statements, "",false);
 
-        var detector = new OLONRulesFilterer(logger);
+        var detector = new OLONRulesFilterer(dummyLogger);
         var olonRules = detector.FilterOlonRules(program.Statements);
 
-        var nmrChecker = new NmrChecker(AspExtensions.CommonPrefixes, logger);
+        var nmrChecker = new NmrChecker(AspExtensions.CommonPrefixes, dummyLogger);
         var subcheckRules = nmrChecker.GetSubCheckRules(olonRules, false);
 
         var newStatements = program.Statements.Concat(duals).Concat(subcheckRules).ToList();
