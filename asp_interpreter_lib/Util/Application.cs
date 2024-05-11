@@ -39,8 +39,6 @@ public class Application(
 
     private readonly PrefixOptions _prefixes = new("fa_", "eh", "chk_", "not_", "V");
 
-    private ProgramConverter _converter = new ProgramConverter(new FunctorTableRecord(), logger);
-
     public void Run()
     {
         //Read
@@ -69,7 +67,7 @@ public class Application(
                 _logger.LogError("The program has no query given, either specify one in the file or use interactive mode.");
             }
 
-            
+            SolveAutomatic(new AspProgram([.. program.Statements, .. dual, .. subcheck], program.Query));        
             return;
         }
 
@@ -87,35 +85,69 @@ public class Application(
         }
     }
 
-    private void SolveAutomatic()
+    private void SolveAutomatic(AspProgram program)
     {
+        var converter = new ProgramConverter(new FunctorTableRecord(), _logger);
 
-        ////converted program
-        //var convertedProgram = program.Statements.Concat(dual)
-        //                                         .Concat(subcheck)
-        //                                         .Select(_converter.ConvertStatement)
-        //                                         .ToList();
+        var convertedProgram = converter.Convert(program);
+        var database = new DualClauseDatabase(convertedProgram.Statements, new FunctorTableRecord());
 
-        //// database
-        //var database = new DualClauseDatabase(convertedProgram, new FunctorTableRecord());
-
-
-        //var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
-
-
-
-        //foreach (var solution in solver.Solve(query))
-        //{
-
-        //}
-        
-    }
-
-
-    private void InteractiveSolve(IDatabase database)
-    {
         var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
+
+        foreach (var solution in solver.Solve(convertedProgram.Query))
+        {
+            PrintSolution(solution);
+        }    
     }
+
+    private void InteractiveSolve(List<Statement> rules, List<Goal> query)
+    {
+        var converter = new ProgramConverter(new FunctorTableRecord(), _logger);
+        var convertedRules = rules.Select(converter.ConvertStatement);
+
+        var goalConverter = new GoalConverter(new FunctorTableRecord());
+        var convertedQuery = query.Select(x => goalConverter.Convert(x).GetValueOrThrow());
+
+        var database = new DualClauseDatabase(convertedRules, new FunctorTableRecord());
+
+        var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
+
+        foreach (var solution in solver.Solve(convertedQuery))
+        {
+            PrintSolution(solution);
+        }
+    }
+
+    static void PrintSolution(CoSLDSolution solution)
+    {
+        Console.WriteLine("Solution found!");
+        Console.WriteLine("---------------------------------------------------------------");
+        Console.WriteLine("Mapping:");
+        PrintMapping(solution.SolutionMapping);
+        Console.WriteLine("CHS:");
+        Console.WriteLine($"{{ {solution.SolutionSet.Entries.ToList().ListToString()} }}");
+        Console.WriteLine("---------------------------------------------------------------");
+    }
+
+    static void PrintMapping(VariableMapping mapping)
+    {
+        var postProcessor = new VariableMappingPostprocessor();
+        var simplifiedMapping = postProcessor.Postprocess(mapping);
+
+        foreach (var pair in simplifiedMapping.Mapping)
+        {
+            if (pair.Value is TermBinding termBinding)
+            {
+                Console.WriteLine($"{pair.Key} = {termBinding.Term}");
+            }
+            else if (pair.Value is ProhibitedValuesBinding binding)
+            {
+                Console.WriteLine($"{pair.Key} \\= {{ {binding.ProhibitedValues.ToList().ListToString()} }}");
+            }
+        }
+    }
+
+
 
     private AspProgram GetProgram(string code)
     {
@@ -133,6 +165,4 @@ public class Application(
 
         return program.GetValueOrThrow();
     } 
-    
-
 }
