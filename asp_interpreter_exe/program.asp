@@ -1,2 +1,2 @@
-﻿person(max).
-person(clemens).
+﻿a :- not b.
+b:- not a.
