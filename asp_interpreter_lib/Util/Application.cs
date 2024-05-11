@@ -41,25 +41,7 @@ public class Application(
 
     public void Run()
     {
-        //Read
-        var code = FileReader.ReadFile(_config.Path, _logger);
-        if (code == null) return;
-
-        //Program
-        var program = GetProgram(code);
-
-        //Dual
-        var dualGenerator = new DualRuleConverter(_prefixes, _logger);
-        var dual = dualGenerator.GetDualRules(program.Duplicate().Statements);
-
-        //OLON
-        List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
-
-        //NMR 
-        var nmrChecker = new NmrChecker(_prefixes, _logger);
-        var subcheck = nmrChecker.GetSubCheckRules(olonRules);
-
-        var completeProgram = new AspProgram([.. program.Statements, .. dual, .. subcheck], program.Query);
+        var program = LoadProgram();
 
         //Interactive if needed else just solve
         if (!_config.Interactive)
@@ -69,7 +51,7 @@ public class Application(
                 _logger.LogError("The program has no query given, either specify one in the file or use interactive mode.");
             }
 
-            SolveAutomatic(completeProgram);        
+            SolveAutomatic(program);        
             return;
         }
 
@@ -87,7 +69,7 @@ public class Application(
             }
             if (input == "reload")
             {
-                completeProgram = ReloadProgram();
+                program = LoadProgram();
                 continue;
             }
 
@@ -97,11 +79,11 @@ public class Application(
 
             // 2) solve existing program with new query 
             // 3) show answer
-            InteractiveSolve(completeProgram.Statements, query.Goals);
+            InteractiveSolve(program.Statements, query.Goals);
         }
     }
 
-    private AspProgram ReloadProgram()
+    private AspProgram LoadProgram()
     {
         //Read
         var code = FileReader.ReadFile(_config.Path, _logger);
