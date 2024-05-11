@@ -80,7 +80,16 @@ public class Application(
             string input = Console.ReadLine() ?? "";
 
             if (input == "exit") return;
-            if (input == "clear") return;
+            if (input == "clear")
+            {
+                Console.Clear();
+                continue;
+            }
+            if (input == "reload")
+            {
+                completeProgram = ReloadProgram();
+                continue;
+            }
 
             // 1) parse query 
             var query = ParseQuery("?-" + input);
@@ -90,6 +99,29 @@ public class Application(
             // 3) show answer
             InteractiveSolve(completeProgram.Statements, query.Goals);
         }
+    }
+
+    private AspProgram ReloadProgram()
+    {
+        //Read
+        var code = FileReader.ReadFile(_config.Path, _logger);
+        //if (code == null) return;
+
+        //Program
+        var program = GetProgram(code);
+
+        //Dual
+        var dualGenerator = new DualRuleConverter(_prefixes, _logger);
+        var dual = dualGenerator.GetDualRules(program.Duplicate().Statements);
+
+        //OLON
+        List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
+
+        //NMR 
+        var nmrChecker = new NmrChecker(_prefixes, _logger);
+        var subcheck = nmrChecker.GetSubCheckRules(olonRules);
+
+        return new AspProgram([.. program.Statements, .. dual, .. subcheck], program.Query);
     }
 
     private Query? ParseQuery(string query)

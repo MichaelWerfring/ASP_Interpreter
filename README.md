@@ -40,7 +40,13 @@ Log levels determine the severity or verbosity of the log messages. They are rep
 When setting the log level, provide the corresponding integer value to indicate the desired severity of log messages. For example, setting the log level to `2` will log only info and more severe messages.
 
 ### Interactive Mode
-When starting the Interpreter in Interactive Mode, a console window will open up and ask the developer to supply a query to solve the program. By typing `exit` the console window will be closed again and the command `clear` can be used to clear prior outputs.
+When starting the Interpreter in Interactive Mode, a console window will open up and ask the developer to supply a query to solve the program. 
+#### Commands 
+-`exit` closes the console window
+
+-`clear` clears the console window
+
+-`reload` reloads the specified file
 
 ### Developer Mode 
 The developer mode aims to simplify the Debugging process. When supplying the command `interpreter.exe /path/to/file.txt` it will be interpreted as `interpreter.exe --path /path/to/file.txt --log-level 1 --interactive` to automatically start in `Interactive Mode` and set the Log Level to `Debug`
