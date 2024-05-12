@@ -19,6 +19,10 @@ Some Configurations can be made by supplying Command Line Arguments to the inter
 - `-l`, `--log-level`: Sets the logging level for the operation.
   - Example: `-l 0`, `--log-level 4`
 
+#### Timestamp
+- `-t`, `--timestamp`: Adds timestamps to the logging messages.
+  - Example: `-t`, `--timestamp`
+
 #### Help
 - `-h`, `--help`: Displays the help message.
   - Example: `-h`, `--help`

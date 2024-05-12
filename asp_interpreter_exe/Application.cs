@@ -73,11 +73,11 @@ public class Application(
                 var either= LoadProgram();
                 if (!either.IsRight)
                 {
-                    _logger.LogError(eitherProgram.GetLeftOrThrow());
+                    _logger.LogError(either.GetLeftOrThrow());
                     return;
                 }
 
-                program = eitherProgram.GetRightOrThrow();
+                program = either.GetRightOrThrow();
                 continue;
             }
 
