@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using asp_interpreter_lib.InternalProgramClasses.Database;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Preprocessing.OLONDetection;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
@@ -146,7 +147,7 @@ public class Application(
 
         var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
 
-        foreach (var solution in solver.Solve(convertedProgram.Query))
+        foreach (var solution in solver.Solve(convertedProgram.Query.Append(new Structure("nmr_check", []))))
         {
             PrintSolution(solution);
         }    
@@ -164,7 +165,7 @@ public class Application(
 
         var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
 
-        foreach (var solution in solver.Solve(convertedQuery))
+        foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("nmr_check", []))))
         {
             PrintSolution(solution);
         }

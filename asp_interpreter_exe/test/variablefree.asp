@@ -1,2 +1,2 @@
-a :- b, not c.
+a :- b, not a.
 b.
