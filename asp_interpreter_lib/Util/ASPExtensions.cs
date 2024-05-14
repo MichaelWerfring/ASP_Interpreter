@@ -4,6 +4,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
@@ -74,15 +75,21 @@ public static class AspExtensions
         return sb.ToString();
     }
 
+    public static List<Statement> Duplicate(this List<Statement> statements)
+    {
+        var newStatements = new List<Statement>();
+        var visitor = new StatementCopyVisitor();
+        foreach (var statement in statements)
+        {
+            newStatements.Add(statement.Accept(visitor).GetValueOrThrow());
+        }
+
+        return newStatements;
+    }
 
     public static AspProgram Duplicate(this AspProgram program)
     {
-        var statements = new List<Statement>();
-        var visitor = new StatementCopyVisitor();
-        foreach (var statement in program.Statements)
-        {
-            statements.Add(statement.Accept(visitor).GetValueOrThrow());
-        }
+        var statements = program.Statements.Duplicate();
 
         if (!program.Query.HasValue)
         {
@@ -129,5 +136,22 @@ public static class AspExtensions
         sb.Append(" }");
 
         return sb.ToString();
+    }
+
+    public static List<Statement> PrefixNestedTerms(this  List<Statement> statements, string prefix)
+    {
+        ArgumentNullException.ThrowIfNull(prefix);
+
+        var result = new List<Statement>();
+        var basicTermConverter = new TermToBasicTermConverter();
+
+        foreach (var statement in statements)
+        {
+            
+
+            result.Add(statement);
+        }
+
+        return result;
     }
 }

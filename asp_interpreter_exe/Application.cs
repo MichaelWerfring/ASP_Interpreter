@@ -113,7 +113,7 @@ public class Application(
 
         //NMR 
         var nmrChecker = new NmrChecker(_prefixes, _logger);
-        var subcheck = nmrChecker.GetSubCheckRules(olonRules);
+        var subcheck = nmrChecker.GetSubCheckRules(olonRules.Duplicate());
 
         return new Right<string, AspProgram>(new AspProgram([.. program.Statements, .. dual, .. subcheck], program.Query));
     }

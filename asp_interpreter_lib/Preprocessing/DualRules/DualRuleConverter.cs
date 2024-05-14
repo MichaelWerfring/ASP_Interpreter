@@ -6,6 +6,7 @@ using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Util.ErrorHandling;
+using System.Runtime.InteropServices;
 using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
 
 namespace asp_interpreter_lib.Solving.DualRules;
@@ -36,6 +37,8 @@ public class DualRuleConverter
         _variableFinder = new VariableFinder();
     }
 
+    public AnonymousVariableReplacer Replacer { get { return _replacer; } }
+
     public Statement ComputeHead(Statement rule)
     {
         string oldRule = rule.ToString();
@@ -45,9 +48,7 @@ public class DualRuleConverter
         return statement;
     }
 
-    public List<Statement> GetDualRules(IEnumerable<Statement> rules,
-                                        string wrapperPrefix = "",
-                                        bool appendPrefix = true)
+    public List<Statement> GetDualRules(IEnumerable<Statement> rules, string prefix = "")
     {
         _logger.LogInfo("Generating dual rules...");
 
@@ -61,7 +62,7 @@ public class DualRuleConverter
         var disjunctions = PreprocessRules(headComputed);
         foreach (var disjunction in disjunctions)
         {
-            duals.AddRange(ToConjunction(disjunction, wrapperPrefix, appendPrefix));
+            duals.AddRange(ToConjunction(disjunction, prefix));
         }
 
         duals.AddRange(t);
@@ -72,8 +73,7 @@ public class DualRuleConverter
         return duals;
     }
 
-    public IEnumerable<Statement> ToDisjunction(Statement rule,
-                                                bool appendPrefix = true)
+    public IEnumerable<Statement> ToDisjunction(Statement rule, string prefix = "")
     {
         if (rule is null)
         {
@@ -119,7 +119,7 @@ public class DualRuleConverter
         {
             if (forallApplicable)
             {
-                duals.AddRange(AddForall(rule));
+                duals.AddRange(AddForall(rule, prefix));
                 continue;
             }
 
@@ -129,20 +129,34 @@ public class DualRuleConverter
             Literal newHead;
             if (_wrapInNot)
             {
-                newHead = WrapInNot(head);
+                //newHead = WrapInNot(head);
+                newHead = WrapInNot(new Literal(
+                    prefix + head.Identifier,
+                    true,
+                    head.HasStrongNegation,
+                    head.Terms));
             }
             else
             {
                 newHead = new Literal(
-                    head.Identifier,
+                    prefix + head.Identifier,
                     true,
                     head.HasStrongNegation,
                     head.Terms);
             }
 
-            //Add preceding
             var body = new List<Goal>();
-            body.AddRange(rule.Body[0..i]);
+
+            //Add preceding
+            if (_wrapInNot)
+            {
+                body = rule.Body[0..i].Select(WrapInNot).ToList();
+            }
+            else
+            {
+                body = rule.Body[0..i];
+            }
+
             body.Add(dualGoal);
 
             //Add new statement to duals
@@ -156,8 +170,28 @@ public class DualRuleConverter
         return duals;
     }
 
-    private Literal WrapInNot(Literal literal)
+    private static Goal WrapInNot(Goal goal)
     {
+        GoalToLiteralConverter literalConverter = new GoalToLiteralConverter();
+        var literal = goal.Accept(literalConverter);
+
+        if (!literal.HasValue)
+        {
+            return goal;
+        }
+
+        if (literal.GetValueOrThrow().HasNafNegation)
+        {
+            return WrapInNot(literal.GetValueOrThrow());
+        }
+
+        return literal.GetValueOrThrow();
+    }
+
+    public static Literal WrapInNot(Literal literal)
+    {
+        ArgumentNullException.ThrowIfNull(literal);
+
         var terms =
                 literal.Terms.Select(t => t.Accept(new TermCopyVisitor()).
                     GetValueOrThrow("Failed to parse term!")).ToList();
@@ -167,7 +201,7 @@ public class DualRuleConverter
                 , literal.Terms)]);
     }
 
-    public IEnumerable<Statement> AddForall(Statement rule)
+    public IEnumerable<Statement> AddForall(Statement rule, string prefix = "")
     {
         ArgumentNullException.ThrowIfNull(rule);
 
@@ -197,7 +231,7 @@ public class DualRuleConverter
         }
 
         // generate duals normally
-        var duals = ToDisjunction(ruleCopy, false).ToList();
+        var duals = ToDisjunction(ruleCopy, prefix).ToList();
 
         // add forall over the new predicate
         var innerGoal = duals.First().Head.GetValueOrThrow();
@@ -207,8 +241,9 @@ public class DualRuleConverter
         rule.Body.AddRange(( [NestForall([.. bodyVariables], innerGoal)]));
 
         // prefix like dual
-
         var head = rule.Head.GetValueOrThrow();
+        head.Identifier = prefix + head.Identifier;
+
         if (_wrapInNot)
         {
             rule.Head = new Some<Literal>(WrapInNot(head));
@@ -238,10 +273,8 @@ public class DualRuleConverter
         return new Forall(new VariableTerm(v), result);
     }
     
-    private IEnumerable<Statement> ToConjunction(
-        KeyValuePair<(string, int, bool), List<Statement>> disjunction,
-        string wrapperPrefix = "",
-        bool appendPrefix = true)
+    public IEnumerable<Statement> ToConjunction(
+        KeyValuePair<(string, int, bool), List<Statement>> disjunction, string prefix = "")
     {
         List<Statement> duals = [];
 
@@ -251,7 +284,7 @@ public class DualRuleConverter
         if (_wrapInNot)
         {
             wrapper.AddHead(WrapInNot(new Literal(
-                disjunction.Key.Item1,
+                prefix + disjunction.Key.Item1,
                 false,
                 disjunction.Key.Item3,
                 GenerateVariables(disjunction.Key.Item2))));
@@ -259,7 +292,7 @@ public class DualRuleConverter
         else
         {
             wrapper.AddHead(new Literal(
-                disjunction.Key.Item1,
+                prefix + disjunction.Key.Item1,
                 true,
                 disjunction.Key.Item3,
                 GenerateVariables(disjunction.Key.Item2)
@@ -283,9 +316,9 @@ public class DualRuleConverter
 
             copy.Terms.Clear();
             copy.Terms.AddRange(GenerateVariables(disjunction.Key.Item2));
-            //copy.Terms.AddRange(wrapper.Head.GetValueOrThrow().Terms);
+            
+            copy.Identifier = prefix + copy.Identifier;
 
-            copy.Identifier = wrapperPrefix + copy.Identifier;
             if (_wrapInNot)
             {
                 copy = WrapInNot(copy);
@@ -301,7 +334,7 @@ public class DualRuleConverter
             // 5) add duals to list
             // If the goal is an atom we do not want its duals
             if (goal.HasBody)
-                duals.AddRange(ToDisjunction(goal));
+                duals.AddRange(ToDisjunction(goal, prefix));
         }
 
         wrapper.AddBody(wrapperBody);
@@ -310,8 +343,9 @@ public class DualRuleConverter
         return duals;
     }
 
-    private Dictionary<(string, int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
+    public Dictionary<(string, int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
     {
+        ArgumentNullException.ThrowIfNull(rules);
         //heads mapped to all bodies occuring in the program
         Dictionary<(string, int, bool), List<Statement>> disjunctions = [];
         _logger.LogTrace("Started preprocessing for dual rules.");

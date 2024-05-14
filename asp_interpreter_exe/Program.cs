@@ -4,23 +4,6 @@ using asp_interpreter_lib.Visitors;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
-using Microsoft.Extensions.Configuration;
-using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.Preprocessing.OLONDetection;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
-using asp_interpreter_lib.Solving.DualRules;
-using asp_interpreter_lib.Solving.NMRCheck;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using System.Diagnostics;
 
 internal class Program
 {

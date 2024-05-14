@@ -4,6 +4,7 @@ using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Solving.NMRCheck;
@@ -17,6 +18,26 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
     private static readonly GoalToLiteralConverter _goalToLiteralConverter = new();
+
+    private readonly DualRuleConverter _converter = new DualRuleConverter(options, logger.GetDummy(), true);
+
+    private List<Statement> GetDualsForCheck(List<Statement> statements)
+    {
+        List<Statement> duals = [];
+
+        var withoutAnonymous = statements.Select(_converter.Replacer.Replace);
+        var headComputed = withoutAnonymous.Select(_converter.ComputeHead).ToList();
+        
+        var disjunctions = _converter.PreprocessRules(headComputed);
+        foreach (var disjunction in disjunctions)
+        {
+            duals.AddRange(_converter.ToConjunction(disjunction, "chk_"));
+        }
+
+        duals.ForEach(d => _logger.LogDebug(d.ToString()));
+
+        return duals;
+    } 
 
     public List<Statement> GetSubCheckRules(List<Statement> olonRules, bool notAsName = true)
     {
@@ -34,19 +55,15 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         // 1) append negation of OLON Rule to its body (If not already present)
         List<Statement> preprocessedRules = PreprocessRules(olonRules);
         
-        // 2) generate dual for modified rule
-        // dummy logger is enough because we do not want to log twice
-        DualRuleConverter converter = new DualRuleConverter(_options, _logger.GetDummy(), notAsName);
-        var tempOlonRules = 
-            preprocessedRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow());
-        var duals = converter.GetDualRules(tempOlonRules, "chk_", notAsName);
+        // 2) generate dual for modified rules
+        var tempOlonRules =
+            preprocessedRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow()).ToList();
+
+        List<Statement> duals = [];
+        // 3) assign unique head (e.g. chk0) 
+        duals = GetDualsForCheck(olonRules.ToList());
         
-        // 3) assign unique head (e.g. chk0)
-        duals.ForEach(d => 
-            d.Head.GetValueOrThrow().Identifier = _options.CheckPrefix + d.Head.GetValueOrThrow().Identifier);
-        
-        
-        Statement nmrCheck = GetCheckForDuals(preprocessedRules, notAsName);
+        Statement nmrCheck = GetCheckRule(tempOlonRules, notAsName);
         AddForallToCheck(nmrCheck);
         
         duals.Insert(0, nmrCheck);
@@ -57,25 +74,19 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         return duals;
     }
 
-    private Statement GetCheckForDuals(List<Statement> olonRules, bool notAsName = true)
+    private Statement GetCheckRule(IEnumerable<Statement> olonRules, bool notAsName = true)
     {
         Statement nmrCheck = new();
         nmrCheck.AddHead(new Literal("nmr_check", false, false, []));
 
         // 4) add modified duals to the NMR check goal if it is not already in there
-        var distinctOlon = olonRules.DistinctBy(r =>
-        {
-            var head = r.Head.GetValueOrThrow();
-            return head.Identifier + head.Terms.Count + head.HasStrongNegation;
-        });
-
         var nmrBody = new List<Goal>();
-        foreach (var rule in distinctOlon)
+        foreach (var rule in olonRules)
         {
             var head = rule.Head.GetValueOrThrow();
-            head.Identifier = _options.CheckPrefix + (notAsName ? _options.DualPrefix : "") + head.Identifier;
+            head.Identifier = _options.CheckPrefix + head.Identifier;
             head.HasNafNegation = !notAsName;
-            nmrBody.Add(head);
+            nmrBody.Add(DualRuleConverter.WrapInNot(head));
         }
         
         nmrCheck.AddBody(nmrBody);
