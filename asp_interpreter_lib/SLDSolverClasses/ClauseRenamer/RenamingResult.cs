@@ -1,5 +1,4 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 

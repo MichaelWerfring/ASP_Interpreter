@@ -30,7 +30,10 @@ public class ForallGoalBuilder : IGoalBuilder
         var goalTerm = currentState.CurrentGoals.First();
 
         if (goalTerm is not Structure forallStruct || forallStruct.Children.Count() != 2)
-        { throw new ArgumentException("Must contain a structure term with two children.", nameof(currentState.CurrentGoals)); }
+        {
+            throw new ArgumentException
+            ("Must contain a structure term with two children.", nameof(currentState.CurrentGoals)); 
+        }
 
         if (forallStruct.Children.ElementAt(0) is not Variable var)
         {

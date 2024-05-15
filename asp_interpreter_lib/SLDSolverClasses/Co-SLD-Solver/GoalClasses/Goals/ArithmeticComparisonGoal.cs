@@ -53,13 +53,23 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
         }
 
         var rightEvaluationMaybe = _evaluator.Evaluate(_right);
+
         if (!rightEvaluationMaybe.HasValue)
-        { yield break; }
+        {
+            yield break;
+        }
 
         if (!_predicate(leftInteger.Value, rightEvaluationMaybe.GetValueOrThrow()))
-        {  yield break; }
+        {
+            yield break;
+        }
 
         yield return new GoalSolution
-            (_solutionState.Set, _solutionState.Mapping, _solutionState.NextInternalVariableIndex);
+        (
+            _solutionState.CHS, 
+            _solutionState.Mapping, 
+            _solutionState.Callstack,
+            _solutionState.NextInternalVariableIndex
+        );
     }
 }

@@ -3,12 +3,11 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 
-
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class GoalSolver
 {
-    private readonly SolverStateUpdater _updater = new SolverStateUpdater();
+    private readonly SolverStateUpdater _updater = new();
 
     private readonly CoSLDGoalMapper _goalMapper;
 
@@ -31,38 +30,37 @@ public class GoalSolver
     {      
         if (!inputState.CurrentGoals.Any())
         {
-            if (inputState.SolutionState.Set.Entries.Count != 0) 
-                _logger.LogTrace("Solved goal: " + inputState.SolutionState.Set.Entries.ToList().ListToString());
+            if (inputState.SolutionState.CHS.Entries.Count != 0) 
+                _logger.LogTrace("Solved goal: " + inputState.SolutionState.CHS.Entries.ToList().ListToString());
 
             yield return new GoalSolution
             (
-                inputState.SolutionState.Set,
+                inputState.SolutionState.CHS,
                 inputState.SolutionState.Mapping,
+                inputState.SolutionState.Callstack,
                 inputState.SolutionState.NextInternalVariableIndex
             );
             yield break;
         }
 
-        var stateWithSubstitutedGoals = _updater.GetNewStateWithSubstitutedCurrentGoal(inputState);
-
-        var goalToSolveMaybe = _goalMapper.GetGoal(stateWithSubstitutedGoals, _database);
+        IOption<ICoSLDGoal> goalToSolveMaybe = _goalMapper.GetGoal(inputState, _database);
 
         if (!goalToSolveMaybe.HasValue)
         {
             yield break;
         }
 
-        var goal = goalToSolveMaybe.GetValueOrThrow();
-
+        ICoSLDGoal goal = goalToSolveMaybe.GetValueOrThrow();
+        
         // for each way the goal can be satisified..
-        foreach(var goalResult in goal.TrySatisfy())
+        foreach (GoalSolution solution in goal.TrySatisfy())
         {
-            var newState = _updater.CreateNewStateFromGoalSolution(inputState, goalResult);
-
+            CoSldSolverState nextState = _updater.UpdatAfterGoalFulfilled(inputState, solution);
+         
             // yield return all the ways the rest of the goals can be satisfied
-            foreach (var resolution in SolveGoals(newState))
+            foreach (GoalSolution resolution in SolveGoals(nextState))
             {
-                yield return resolution; 
+                yield return resolution;
             }
         }
     }

@@ -1,20 +1,24 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using System.Collections;
 using System.Collections.Immutable;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
 /// <summary>
 /// Represents a mapping for the co-sld-resolution:
 /// Variables are mapped to either a prohibited value set or a single term.
-/// Wraps the dictionary to make sure it has the correct comparer.
+/// This is a concretization of ImmutableDictionary to make sure that it always has the right comparer:
+/// All the methods just call the inner dictionary and wrap them in a UnifyingMapping before returning.
 /// </summary>
-public class VariableMapping
+public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 {
+    private ImmutableDictionary<Variable, IVariableBinding> _mapping;
+
     public VariableMapping()
     {
-        Mapping = ImmutableDictionary.Create<Variable, IVariableBinding>(new VariableComparer());
+        _mapping = ImmutableDictionary.Create<Variable, IVariableBinding>(new VariableComparer());
     }
 
     public VariableMapping(ImmutableDictionary<Variable, IVariableBinding> mapping)
@@ -22,11 +26,134 @@ public class VariableMapping
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
         if(mapping.KeyComparer is not VariableComparer)
         {
-            throw new ArgumentException("Must contain the correct comparer!" ,nameof(mapping));
+            throw new ArgumentException("Must contain the correct comparer.",nameof(mapping));
         }
 
-        Mapping = mapping;
+        _mapping = mapping;
     }
 
-    public ImmutableDictionary<Variable, IVariableBinding> Mapping { get; }
+    public VariableMapping(ImmutableDictionary<Variable, ProhibitedValuesBinding> mapping)
+    {
+        ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
+        if (mapping.KeyComparer is not VariableComparer)
+        {
+            throw new ArgumentException("Must contain the correct comparer.", nameof(mapping));
+        }
+    
+        var immutableBuilder = 
+            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(new VariableComparer());
+        foreach (var pair in mapping)
+        {
+            immutableBuilder.Add(pair.Key, pair.Value);
+        }
+
+       _mapping = immutableBuilder.ToImmutable();
+    }
+
+    public VariableMapping(ImmutableDictionary<Variable, TermBinding> mapping)
+    {
+        ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
+        if (mapping.KeyComparer is not VariableComparer)
+        {
+            throw new ArgumentException("Must contain the correct comparer.", nameof(mapping));
+        }
+
+        var immutableBuilder = 
+            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(new VariableComparer());
+        foreach (var pair in mapping)
+        {
+            immutableBuilder.Add(pair.Key, pair.Value);
+        }
+
+        _mapping = immutableBuilder.ToImmutable();
+    }
+
+    public IVariableBinding this[Variable key] => 
+        _mapping[key];
+
+    public IEnumerable<Variable> Keys => 
+        _mapping.Keys;
+
+    public IEnumerable<IVariableBinding> Values =>
+        _mapping.Values;
+
+    public int Count => 
+        _mapping.Count;
+
+    public VariableMapping Add(Variable key, IVariableBinding value) => 
+        new VariableMapping(_mapping.Add(key, value));
+
+    public VariableMapping AddRange(IEnumerable<KeyValuePair<Variable, IVariableBinding>> pairs) => 
+        new VariableMapping(_mapping.AddRange(pairs));
+
+    public VariableMapping Clear() => 
+        new VariableMapping(_mapping.Clear());
+
+    public bool Contains(KeyValuePair<Variable, IVariableBinding> pair) => 
+        _mapping.Contains(pair);
+
+    public bool ContainsKey(Variable key) => 
+        _mapping.ContainsKey(key);
+
+    public IEnumerator<KeyValuePair<Variable, IVariableBinding>> GetEnumerator() => 
+        _mapping.GetEnumerator();
+
+    public VariableMapping Remove(Variable key) => 
+        new VariableMapping(_mapping.Remove(key));
+
+    public VariableMapping RemoveRange(IEnumerable<Variable> keys) => 
+        new VariableMapping(_mapping.RemoveRange(keys));
+
+    public VariableMapping SetItem(Variable key, IVariableBinding value) => 
+        new VariableMapping(_mapping.SetItem(key, value));
+
+    public VariableMapping SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items) => 
+        new VariableMapping(_mapping.SetItems(items));
+
+    public bool TryGetKey(Variable equalKey, out Variable actualKey)
+        => _mapping.TryGetKey(equalKey, out actualKey);
+
+    public bool TryGetValue(Variable key, [MaybeNullWhen(false)] out IVariableBinding value)
+        => _mapping.TryGetValue(key, out value);
+
+    //explicit interface implementation so the compiler will shut up.
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return _mapping.GetEnumerator();
+    }
+
+    IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.Add(Variable key, IVariableBinding value)
+    {
+       return Add(key, value);
+    }
+
+    IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.AddRange(IEnumerable<KeyValuePair<Variable, IVariableBinding>> pairs)
+    {
+        return AddRange(pairs);
+    }
+
+    IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.Clear()
+    {
+        return Clear();
+    }
+
+    IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.Remove(Variable key)
+    {
+        return Remove(key);
+    }
+
+    IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.RemoveRange(IEnumerable<Variable> keys)
+    {
+        return RemoveRange(keys);
+    }
+
+    IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.SetItem(Variable key, IVariableBinding value)
+    {
+       return SetItem(key, value);
+    }
+
+    IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items)
+    {
+        return SetItems(items);
+    }
 }

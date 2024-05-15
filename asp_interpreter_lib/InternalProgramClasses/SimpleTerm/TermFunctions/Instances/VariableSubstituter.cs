@@ -1,8 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
@@ -28,14 +26,14 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, IDictiona
         return new Structure(term.Functor, newChildren);
     }
 
-    public ISimpleTerm Visit(Variable term, IDictionary<Variable, ISimpleTerm> mapping)
+    public ISimpleTerm Visit(Variable variable, IDictionary<Variable, ISimpleTerm> mapping)
     {
         ISimpleTerm? value;
-        mapping.TryGetValue(term, out value);
+        mapping.TryGetValue(variable, out value);
 
         if (value == null)
         {
-            return new Variable(term.Identifier);
+            return variable;
         }
 
         return value;
@@ -43,6 +41,6 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, IDictiona
 
     public ISimpleTerm Visit(Integer integer, IDictionary<Variable, ISimpleTerm> arguments)
     {
-        return new Integer(integer.Value);
+        return integer;
     }
 }

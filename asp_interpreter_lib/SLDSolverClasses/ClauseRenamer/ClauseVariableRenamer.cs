@@ -1,30 +1,28 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using System.Collections.Immutable;
+using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 
 public class ClauseVariableRenamer
 {
-    private VariableComparer _comparer = new VariableComparer();
-
     public RenamingResult RenameVariables(IEnumerable<ISimpleTerm> clause, int currentInternalIndex)
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        var clauseVariables = clause
-            .SelectMany(x => x.Enumerate().OfType<Variable>())
-            .ToImmutableHashSet(_comparer);
+        var func = new FunctorTableRecord();
+        var clauseVariables = clause.SelectMany(x => x.ExtractVariables()).Distinct(new VariableComparer());
 
-        var varsToNewVarsMapping = new Dictionary<Variable, ISimpleTerm>(_comparer);
-        foreach (var variable in clauseVariables)
+        var varsToNewVarsKeyValuePairs = new List<KeyValuePair<Variable, ISimpleTerm>>();
+        foreach( var var in clauseVariables )
         {
-            varsToNewVarsMapping.Add(variable, new Variable($"#VAR{currentInternalIndex}"));
+            varsToNewVarsKeyValuePairs.Add(new KeyValuePair<Variable, ISimpleTerm>(var, new Variable($"#Var{currentInternalIndex}")));
             currentInternalIndex += 1;
         }
 
-        return new RenamingResult(clause.Select((term) => term.Substitute(varsToNewVarsMapping)), currentInternalIndex);
-    }
+        var substitutedClause = clause.Select((term) => term.Substitute(varsToNewVarsKeyValuePairs.ToDictionary(new VariableComparer())));
 
+        return new RenamingResult(substitutedClause, currentInternalIndex);
+    }
 }

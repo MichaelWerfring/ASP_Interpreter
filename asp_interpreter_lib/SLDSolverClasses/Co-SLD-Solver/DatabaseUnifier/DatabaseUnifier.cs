@@ -2,7 +2,6 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
@@ -12,8 +11,6 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.D
 public class DatabaseUnifier
 {
     private readonly ClauseVariableRenamer _renamer = new ();
-
-    private readonly ConstructiveTargetBuilder _builder = new ();
 
     private readonly IConstructiveUnificationAlgorithm _algorithm;
 
@@ -45,8 +42,9 @@ public class DatabaseUnifier
                 (potentialUnification, nextInternal);
 
             // unify
-            var constructiveTarget = _builder.Build
-                (target, renamingResult.RenamedClause.First(), currentMapping);
+            var constructiveTarget = ConstructiveTargetBuilder.Build
+                (target, renamingResult.RenamedClause.First(), currentMapping).GetValueOrThrow();
+
             VariableMapping unificationResult;
             try
             {
@@ -57,10 +55,7 @@ public class DatabaseUnifier
                 continue;
             }
 
-            // update with unification result
-            var updatedMapping = currentMapping.Update(unificationResult).GetRightOrThrow();
-
-            yield return new DBUnificationResult(renamingResult.RenamedClause.Skip(1), updatedMapping, renamingResult.NextInternalIndex);
+            yield return new DBUnificationResult(renamingResult.RenamedClause, unificationResult, renamingResult.NextInternalIndex);
         }
     }
 }

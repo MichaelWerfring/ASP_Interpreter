@@ -2,17 +2,17 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
-using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 
 public class ExactMatchChecker
 {
-    private TransitiveVariableMappingResolver _simplifier = new TransitiveVariableMappingResolver(true);
+    private TransitiveVariableMappingResolver _resolver = new(true);
 
     private IConstructiveUnificationAlgorithm _algorithm;
 
@@ -38,22 +38,26 @@ public class ExactMatchChecker
             return false;
         }
 
+        // get the old prohibited values
+        var oldProhibitedValueBindings = target.Mapping.GetProhibitedValueBindings();
+
         // extract variables from both input terms.
         var variables = target.Left.ExtractVariables()
-                        .Union(target.Right.ExtractVariables(), new VariableComparer());
+                                   .Union(target.Right.ExtractVariables(), new VariableComparer());
 
         // transitively resolve variable mappings.
         var variablesToTransitiveMapping = variables
-            .Select(var => (var, _simplifier.Resolve(var, unification)))
-            .ToDictionary(new VariableComparer());
+                                           .Select(var => (var, _resolver.Resolve(var, unification)))
+                                           .ToDictionary(new VariableComparer());
 
-        // get the prohibitedValueBindings transitively: this is necessary because through constructive unification, there could be cases such as:
+        // get the prohibitedValueBindings transitively: this is necessary
+        // because through constructive unification, there could be cases such as:
         // X => Y => \= {1, 2}.
         // if there are termbindings, then no exact match.
-        Dictionary<Variable, ProhibitedValuesBinding> newProhibitedValuesMapping;
+        Dictionary<Variable, ProhibitedValuesBinding> newProhibitedValueBindings;
         try
         {
-            newProhibitedValuesMapping = variablesToTransitiveMapping
+            newProhibitedValueBindings = variablesToTransitiveMapping
             .Select(pair => (pair.Key, (ProhibitedValuesBinding)pair.Value))
             .ToDictionary(new VariableComparer());
         }
@@ -64,22 +68,21 @@ public class ExactMatchChecker
 
         // if for any variable:
         // their old and new prohibited values are different, then no match.
-        if 
+        if
         (
-            target.Mapping.Keys.Any(x =>
+            variables.Any(x =>
             {
-                var oldProhibitedValues = target.Mapping[x].ProhibitedValues;
-                var newProhibitedValues = newProhibitedValuesMapping[x].ProhibitedValues;
+                var olds = oldProhibitedValueBindings[x].ProhibitedValues;
+                var news = newProhibitedValueBindings[x].ProhibitedValues;
 
-                if (oldProhibitedValues.Count != newProhibitedValues.Count)
+                if (olds.Count != news.Count)
                 {
                     return true;
                 }
 
-                var intersection = oldProhibitedValues
-                .Intersect(newProhibitedValues, new SimpleTermEqualityComparer());
+                var intersection = olds.Intersect(news, new SimpleTermEqualityComparer());
 
-                if (intersection.Count() != oldProhibitedValues.Count)
+                if (intersection.Count() != olds.Count)
                 {
                     return true;
                 }

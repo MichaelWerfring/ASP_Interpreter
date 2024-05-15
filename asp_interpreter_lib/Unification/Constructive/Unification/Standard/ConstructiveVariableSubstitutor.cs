@@ -7,17 +7,19 @@ namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 public class ConstructiveVariableSubstitutor : IVariableBindingArgumentVisitor<ISimpleTerm, Variable>
 {
-    public ISimpleTerm GetSubstitutionOrDefault(Variable variable, VariableMapping mapping)
+    public ISimpleTerm TryGetSubstitution(ISimpleTerm term, VariableMapping mapping)
     {
-        ArgumentNullException.ThrowIfNull(variable, nameof(variable));
+        ArgumentNullException.ThrowIfNull(term, nameof(term));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        IVariableBinding? value;
-        mapping.Mapping.TryGetValue(variable, out value);
-
-        if (value == null)
+        if (term is not Variable variable)
         {
-            return variable;
+            return term;
+        }
+   
+        if (!mapping.TryGetValue(variable, out IVariableBinding? value))
+        {
+            return term;
         }
 
         return value.Accept(this, variable);

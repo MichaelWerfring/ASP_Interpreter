@@ -23,7 +23,7 @@ public record FunctorTableRecord
     public string Disunification { get; init; } = "\\=";
 
     // negation
-    public string NegationAsFailure { get; init; } = "_not";
+    public string NegationAsFailure { get; init; } = "not";
     public string ClassicalNegation { get; init; } = "_neg";
 
     // list
@@ -34,4 +34,6 @@ public record FunctorTableRecord
     public string Forall { get; init; } = "_forall";
 
     public string AnonymusVariable { get; init; } = "_anonVar";
+
+    public string LessOrEqualTerm { get; init; } = "@<";
 }

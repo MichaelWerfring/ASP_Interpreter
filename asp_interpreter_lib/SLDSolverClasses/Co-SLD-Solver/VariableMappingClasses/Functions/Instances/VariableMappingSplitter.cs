@@ -11,7 +11,7 @@ public class VariableMappingSplitter
     {
         ArgumentNullException.ThrowIfNull(mapping);
 
-        return mapping.Mapping
+        return mapping
             .Where(pair => pair.Value is TermBinding)
             .Select(pair => (pair.Key, (TermBinding)pair.Value))
             .ToDictionary(new VariableComparer())
@@ -22,7 +22,7 @@ public class VariableMappingSplitter
     {
         ArgumentNullException.ThrowIfNull(mapping);
 
-        return mapping.Mapping
+        return mapping
             .Where(pair => pair.Value is ProhibitedValuesBinding)
             .Select(pair => (pair.Key, (ProhibitedValuesBinding)pair.Value))
             .ToDictionary(new VariableComparer())

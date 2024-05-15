@@ -116,7 +116,7 @@ public static class AspExtensions
 
         sb.Append("{ ");
 
-        foreach (var pair in simplifiedMapping.Mapping)
+        foreach (var pair in simplifiedMapping)
         {
             if (pair.Value is TermBinding termBinding)
             {
@@ -127,7 +127,7 @@ public static class AspExtensions
                 sb.AppendLine($"{pair.Key} \\= {{ {binding.ProhibitedValues.ToList().ListToString()} }}");
             }
 
-            if(simplifiedMapping.Mapping.Count > 1)
+            if(simplifiedMapping.Count > 1)
             {
                 sb.Append(", ");
             }

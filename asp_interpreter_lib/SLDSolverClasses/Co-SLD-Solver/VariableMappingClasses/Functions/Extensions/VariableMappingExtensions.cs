@@ -1,7 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Concatenation.Exceptions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using System.Collections.Immutable;
@@ -10,11 +9,9 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public static class VariableMappingExtensions
 {
-    private static VariableMappingSplitter _splitter = new();
+    private static readonly VariableMappingSplitter _splitter = new();
 
-    private static VariableMappingUpdater _updater = new();
-
-    private static VariableMappingSubstituter _substituter = new();
+    private static readonly VariableMappingSubstituter _substituter = new();
 
     public static IImmutableDictionary<Variable, TermBinding> GetTermBindings(this VariableMapping mapping)
     {
@@ -24,13 +21,6 @@ public static class VariableMappingExtensions
     public static IImmutableDictionary<Variable, ProhibitedValuesBinding> GetProhibitedValueBindings(this VariableMapping mapping)
     {
         return _splitter.GetProhibitedValueBindings(mapping);
-    }
-
-    public static IEither<UpdateException, VariableMapping> Update(this VariableMapping mapping, VariableMapping other)
-    {
-        ArgumentNullException.ThrowIfNull(other, nameof(other));
-
-        return _updater.Update(mapping, other);
     }
 
     public static ISimpleTerm ApplySubstitution(this VariableMapping mapping, ISimpleTerm term)

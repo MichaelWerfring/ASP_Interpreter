@@ -3,5 +3,6 @@
 public class NonGroundTermException : DisunificationException
 {
     public NonGroundTermException(string message) : base(message)
-    { }
+    {
+    }
 }

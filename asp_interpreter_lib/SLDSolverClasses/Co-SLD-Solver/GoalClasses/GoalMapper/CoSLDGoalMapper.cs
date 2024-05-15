@@ -5,9 +5,9 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.GoalBuilders;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 using asp_interpreter_lib.Unification.Constructive.Disunification.Standard;
-using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 using asp_interpreter_lib.Util.ErrorHandling;
 using System.Collections.Immutable;
@@ -18,10 +18,9 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
 {
     private readonly IImmutableDictionary<(string, int), IGoalBuilder> _mapping;
 
-    private readonly DatabaseUnificationGoalBuilder _dbGoalBuilder;
+    private readonly PredicateGoalBuilder _dbGoalBuilder;
 
     private readonly ILogger _logger;
-
 
     public CoSLDGoalMapper(FunctorTableRecord functors, ILogger logger)
     {
@@ -34,15 +33,15 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
         {
             {
                 (functors.ArithmeticEvaluation, 2),
-                new ArithmeticEvaluationGoalBuilder(new ArithmeticEvaluator(functors))
+                new ArithmeticEvaluationGoalBuilder(new ArithmeticEvaluator(functors), new StandardConstructiveUnificationAlgorithm(false))
             },
             {
                 (functors.Unification, 2),
-                new UnificationGoalBuilder(new StandardConstructiveUnificationAlgorithm(false),new ConstructiveTargetBuilder())
+                new UnificationGoalBuilder(new StandardConstructiveUnificationAlgorithm(false))
             },
             {
                 (functors.Disunification, 2),
-                new DisunificationGoalBuilder(new StandardConstructiveDisunificationAlgorithm(true, false), new ConstructiveTargetBuilder())
+                new DisunificationGoalBuilder(new StandardConstructiveDisunificationAlgorithm(true, false))
             },
             {
                 (functors.LessThan, 2),
@@ -66,7 +65,13 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
         };
 
         _mapping = goalBuilderDict.ToImmutableDictionary();
-        _dbGoalBuilder = new DatabaseUnificationGoalBuilder(this, new StandardConstructiveUnificationAlgorithm(false), _logger);
+        _dbGoalBuilder = new PredicateGoalBuilder
+         (
+            this,
+            new StandardConstructiveUnificationAlgorithm(false),
+            new PredicateGoalStateUpdater(new SolverStateUpdater()),
+            _logger
+         );
     }
 
     public IOption<ICoSLDGoal> GetGoal(CoSldSolverState state, IDatabase database)
@@ -100,6 +105,7 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, (CoSl
     {
         IGoalBuilder? goalBuilder;
         _mapping.TryGetValue((basicTerm.Functor, basicTerm.Children.Count()), out goalBuilder);
+
         if(goalBuilder != null)
         {
             return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(arguments.Item1, arguments.Item2));

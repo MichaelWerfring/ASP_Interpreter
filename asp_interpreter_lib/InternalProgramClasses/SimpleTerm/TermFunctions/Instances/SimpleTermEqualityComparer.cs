@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
@@ -15,7 +14,7 @@ public class SimpleTermEqualityComparer : ISimpleTermArgsVisitor<bool, ISimpleTe
         return x.Accept(this, y);
     }
 
-    public int GetHashCode([DisallowNull] ISimpleTerm obj)
+    public int GetHashCode(ISimpleTerm obj)
     {
         return obj.GetHashCode();
     }
@@ -59,12 +58,10 @@ public class SimpleTermEqualityComparer : ISimpleTermArgsVisitor<bool, ISimpleTe
 
         for (int i = 0; i < a.Children.Count(); i++)
         {
-
             if (!Equals(a.Children.ElementAt(i), bStruct.Children.ElementAt(i)))
             {
                 return false;
             }
-
         }
 
         return true;

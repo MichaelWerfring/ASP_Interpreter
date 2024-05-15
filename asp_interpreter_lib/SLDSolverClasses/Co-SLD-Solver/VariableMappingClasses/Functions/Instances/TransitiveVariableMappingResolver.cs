@@ -11,7 +11,12 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor<IVariableBinding, VariableMapping>,
                                                  ISimpleTermArgsVisitor<IVariableBinding, VariableMapping>
 {
-    private bool _doProhibitedValuesBindingResolution;
+    /// <summary>
+    /// Whether X -> Y -> \={1,2,3}
+    /// should resolve to X -> \={1,2,3},
+    /// or just X -> Y.
+    /// </summary>
+    private readonly bool _doProhibitedValuesBindingResolution;
 
     public TransitiveVariableMappingResolver(bool doProhibitedValuesBindingResolution)
     {
@@ -26,8 +31,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        IVariableBinding? value;
-        if (!mapping.Mapping.TryGetValue(variable, out value))
+        if (!mapping.TryGetValue(variable, out IVariableBinding? value))
         {
             throw new ArgumentException($"Must contain mapping in {mapping}",nameof(variable));
         }
@@ -48,8 +52,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
 
     public IVariableBinding Visit(Variable variableTerm, VariableMapping map)
     {
-        IVariableBinding? binding;
-        if (!map.Mapping.TryGetValue(variableTerm, out binding))
+        if (!map.TryGetValue(variableTerm, out IVariableBinding? binding))
         {
             return new TermBinding(variableTerm);
         }
@@ -76,7 +79,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         var filteredVariables = variablesInTerm.Where
         (
             x =>
-            map.Mapping.TryGetValue(x, out IVariableBinding? varBinding)
+            map.TryGetValue(x, out IVariableBinding? varBinding)
             &&
             (varBinding is TermBinding tb && !tb.Term.IsEqualTo(basicTerm))
         );
@@ -85,7 +88,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         var resolvedVars = filteredVariables
             .Select(x => (x, Visit(new TermBinding(x), map)))
             .Where(pair => pair.Item2 is TermBinding)
-            .Select(pair => (pair.Item1, ((TermBinding)pair.Item2).Term))
+            .Select(pair => (pair.x, ((TermBinding)pair.Item2).Term))
             .ToDictionary(new VariableComparer());
 
         return new TermBinding(basicTerm.Substitute(resolvedVars));

@@ -1,5 +1,4 @@
 ﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
 
@@ -7,9 +6,10 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class UnificationGoal : ICoSLDGoal
 {
-    private readonly VariableMappingUpdater _variableMappingConcatenator = new VariableMappingUpdater();
+    private readonly SolverStateUpdater _updater = new();
 
     private readonly ConstructiveTarget _target;
+
     private readonly IConstructiveUnificationAlgorithm _algorithm;
 
     private readonly SolutionState _solutionState;
@@ -38,13 +38,18 @@ public class UnificationGoal : ICoSLDGoal
             yield break;
         }
 
-        var unification = unificationMaybe.GetValueOrThrow();
+        var unifyingMapping = unificationMaybe.GetValueOrThrow();
 
-        var newMappingEither = _variableMappingConcatenator
-            .Update(_solutionState.Mapping, unification);
+        CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_solutionState.CHS, unifyingMapping);
 
-        var newMapping = newMappingEither.GetRightOrThrow();
+        CallStack updatedCallstack = _updater.UpdateCallstack(_solutionState.Callstack, unifyingMapping);
 
-        yield return new GoalSolution(_solutionState.Set, newMapping, _solutionState.NextInternalVariableIndex);
+        yield return new GoalSolution       
+        (
+            updatedCHS, 
+            unifyingMapping,
+            updatedCallstack,
+            _solutionState.NextInternalVariableIndex
+        );
     }
 }

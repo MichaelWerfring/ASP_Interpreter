@@ -3,5 +3,6 @@
 public class VariableDisunificationException : DisunificationException
 {
     public VariableDisunificationException(string message) : base(message)
-    { }
+    {
+    }
 }

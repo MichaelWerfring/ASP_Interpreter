@@ -18,19 +18,15 @@ public class SimpleTermContainsChecker : ISimpleTermArgsVisitor<bool, ISimpleTer
     public bool Visit(Structure term, ISimpleTerm other)
     {
         var areEqual = term.IsEqualTo(other);
+
         if (areEqual)
         {
             return true;
         }
 
-        foreach (var child in term.Children)
+        if (term.Children.Any(child => child.Accept(this, other)))
         {
-            bool containsEqualChild = child.Accept(this, other);
-
-            if (containsEqualChild)
-            {
-                return true;
-            }
+            return true;
         }
 
         return false;

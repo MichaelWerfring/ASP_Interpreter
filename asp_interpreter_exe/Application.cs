@@ -156,7 +156,7 @@ public class Application(
     private void InteractiveSolve(List<Statement> rules, List<Goal> query)
     {
         var converter = new ProgramConverter(new FunctorTableRecord(), _logger);
-        var convertedRules = rules.Select(converter.ConvertStatement);
+        var convertedRules = rules.Where(rule => rule.Head.HasValue).Select(converter.ConvertStatement);
 
         var goalConverter = new GoalConverter(new FunctorTableRecord());
         var convertedQuery = query.Select(x => goalConverter.Convert(x).GetValueOrThrow());
@@ -178,16 +178,13 @@ public class Application(
         Console.WriteLine("Mapping:");
         PrintMapping(solution.SolutionMapping);
         Console.WriteLine("CHS:");
-        Console.WriteLine($"{{ {solution.SolutionSet.Entries.ToList().ListToString()} }}");
+        Console.WriteLine($"{{ {solution.CHSEntries.ToList().ListToString()} }}");
         Console.WriteLine("---------------------------------------------------------------");
     }
 
     static void PrintMapping(VariableMapping mapping)
     {
-        var postProcessor = new VariableMappingPostprocessor();
-        var simplifiedMapping = postProcessor.Postprocess(mapping);
-
-        foreach (var pair in simplifiedMapping.Mapping)
+        foreach (var pair in mapping)
         {
             if (pair.Value is TermBinding termBinding)
             {

@@ -5,20 +5,17 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.Cal
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.Unification.Constructive.Unification;
 using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class CallstackChecker
 {
-    private ConstructiveTargetBuilder _builder = new ConstructiveTargetBuilder();
+    private readonly ExactMatchChecker _checker;
 
-    private ExactMatchChecker _checker;
+    private readonly StandardConstructiveUnificationAlgorithm _unificationAlgorithm;
 
-    private IConstructiveUnificationAlgorithm _unificationAlgorithm;
-
-    private FunctorTableRecord _functors;
+    private readonly FunctorTableRecord _functors;
 
     public CallstackChecker(FunctorTableRecord functors)
     {
@@ -41,7 +38,7 @@ public class CallstackChecker
 
         foreach(var term in callstack.TermStack)
         {
-            var target = _builder.Build(termToCheck, term, currentMapping);
+            ConstructiveTarget target = ConstructiveTargetBuilder.Build(termToCheck, term, currentMapping).GetValueOrThrow();
 
             if (numberOfNegations == 0)
             {
