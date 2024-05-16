@@ -12,6 +12,7 @@ public class ProgramConfig
 
     public ProgramConfig(
         string path, 
+        bool explain,
         bool interactive,
         bool timestamp,
         bool help = false,
@@ -23,6 +24,7 @@ public class ProgramConfig
         }
 
         Path = path;
+        Explain = explain;
         Interactive = interactive;
         Timestamp = timestamp;
         Help = help;
@@ -43,6 +45,7 @@ public class ProgramConfig
         }
     }
 
+    public bool Explain { get; set; }
     public bool Timestamp { get; set; }
     public bool Help { get; set; }
 

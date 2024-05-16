@@ -3,7 +3,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class TermsVisitor(ILogger logger) : ASPBaseVisitor<IOption<List<ITerm>>>
+public class TermsVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<List<ITerm>>>
 {
 
     private readonly ILogger _logger = logger ??

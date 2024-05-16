@@ -3,7 +3,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class BinaryOperatorVisitor(ILogger logger) : ASPBaseVisitor<IOption<BinaryOperator>>
+public class BinaryOperatorVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<BinaryOperator>>
 {
     private readonly ILogger _logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");

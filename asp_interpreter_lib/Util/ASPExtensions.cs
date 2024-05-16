@@ -93,7 +93,7 @@ public static class AspExtensions
 
         if (!program.Query.HasValue)
         {
-            return new AspProgram(statements, new None<Query>());
+            return new AspProgram(statements, new None<Query>(), program.Explanations);
         }
 
         var queryCopy = new List<Goal>();
@@ -105,7 +105,7 @@ public static class AspExtensions
             queryCopy.Add(goal.Accept(goalCopyVisitor).GetValueOrThrow());
         }
         
-        return new AspProgram(statements, new Some<Query>(new Query(queryCopy)));
+        return new AspProgram(statements, new Some<Query>(new Query(queryCopy)),program.Explanations);
     }
 
     public static string SimplifyMapping(VariableMapping mapping)

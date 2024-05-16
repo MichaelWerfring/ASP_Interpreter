@@ -11,9 +11,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/asp_interpreter_exe/test/explanation.asp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Explaination/ExplainationText.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Explaination/Explanation.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ExplainationVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/program.asp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/program.asp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Util/ErrorHandling/ConsoleLogger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Util/ErrorHandling/ConsoleLogger.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Application.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Application.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.g4" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.g4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.interp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.tokens" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPBaseListener.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPBaseVisitor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.interp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.tokens" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPListener.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPVisitor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ASPProgram.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ASPProgram.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Util/ASPExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Util/ASPExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Util/ProgramConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Util/ProgramConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ArithmeticOperationVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ArithmeticOperationVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperationVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperationVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperatorVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperatorVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/GoalVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/GoalVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/LiteralVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/LiteralVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ProgramVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ProgramVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/QueryVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/QueryVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/StatementVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/StatementVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermsVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermsVisitor.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,18 +73,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/coreclr/System.Private.CoreLib/src/System/Runtime/CompilerServices/RuntimeHelpers.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Collections/src/System/Collections/Generic/Stack.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Linq/src/System/Linq/Distinct.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/ArgumentNullException.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/List.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/NullReferenceException.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/Object.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/9f4b1f5d664afdfc80e1508ab7ed099dff210fbd/src/libraries/System.Private.CoreLib/src/System/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/09190d4d899c4e68827ef2ee0d8f96282ee00/8f/e1f71744/RuleContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/09190d4d899c4e68827ef2ee0d8f96282ee00/e1/4ec167d8/AbstractParseTreeVisitor`1.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46a322d26154b982566e1817203e5452c91223f93b0e392d9c5b4806696fdc1/Assert.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/micha/Desktop/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/Types/TypeVisitors/BinaryOperatorNegator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/micha/FH/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_exe/Application.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -77,33 +95,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.asp_interpreter_exe.executor": "Run",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "aadd37ac-83d9-421d-80be-890da7df604c.executor": "Debug",
-    "ba91a5d0-6c99-41b2-b5c8-ac5b4c96a6f6.executor": "Debug",
-    "ea61b83f-6d9b-409e-8e9e-6b0fdd58b875.executor": "Debug",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "SolutionBuilderPresentationOptionsPageId",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.asp_interpreter_exe.executor&quot;: &quot;Run&quot;,
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;aadd37ac-83d9-421d-80be-890da7df604c.executor&quot;: &quot;Debug&quot;,
+    &quot;ba91a5d0-6c99-41b2-b5c8-ac5b4c96a6f6.executor&quot;: &quot;Debug&quot;,
+    &quot;ea61b83f-6d9b-409e-8e9e-6b0fdd58b875.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;explain-feature&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderPresentationOptionsPageId&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\micha\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\micha\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Project.asp_interpreter_exe">
     <configuration name="asp_interpreter_exe: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/asp_interpreter_exe/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="-8308708857670188800" uuid_low="-8333207306001444164" />
@@ -119,7 +138,7 @@
     </configuration>
     <configuration name="asp_interpreter_exe" type="DotNetProject" factoryName=".NET Project" singleton="false">
       <option name="EXE_PATH" value="$PROJECT_DIR$/asp_interpreter_exe/bin/Debug/net8.0/win-x64/asp_interpreter_exe.exe" />
-      <option name="PROGRAM_PARAMETERS" value="C:\Users\micha\FH\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_exe\program.asp --log-level 2" />
+      <option name="PROGRAM_PARAMETERS" value="-p C:\Users\micha\FH\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_exe\test\explanation.asp" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/asp_interpreter_exe/bin/Debug/net8.0/win-x64" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
@@ -239,6 +258,11 @@
       <workItem from="1715062686431" duration="553000" />
       <workItem from="1715148141585" duration="1255000" />
       <workItem from="1715263154937" duration="1069000" />
+      <workItem from="1715704194396" duration="7079000" />
+      <workItem from="1715714017874" duration="321000" />
+      <workItem from="1715714358308" duration="71000" />
+      <workItem from="1715773367333" duration="4711000" />
+      <workItem from="1715836160493" duration="3228000" />
     </task>
     <task id="LOCAL-00010" summary="#33 - Moved Variable Naming to Extensions">
       <option name="closed" value="true" />
@@ -719,9 +743,16 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/asp_interpreter_exe/Program.cs</url>
-          <line>81</line>
-          <properties documentPath="C:\Users\micha\Desktop\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_exe\Program.cs" containingFunctionPresentation="Lambda expression inside Method 'InitParser'" />
+          <url>file://$PROJECT_DIR$/asp_interpreter_lib/Visitors/ExplainationVisitor.cs</url>
+          <line>19</line>
+          <properties documentPath="C:\Users\micha\FH\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_lib\Visitors\ExplainationVisitor.cs" containingFunctionPresentation="Method 'VisitExplaination'">
+            <startOffsets>
+              <option value="659" />
+            </startOffsets>
+            <endOffsets>
+              <option value="690" />
+            </endOffsets>
+          </properties>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

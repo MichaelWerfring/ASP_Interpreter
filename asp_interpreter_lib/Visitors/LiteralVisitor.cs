@@ -4,7 +4,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class LiteralVisitor(ILogger logger) : ASPBaseVisitor<IOption<Literal>>
+public class LiteralVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<Literal>>
 {
     private readonly ILogger _logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
