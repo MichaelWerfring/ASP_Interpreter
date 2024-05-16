@@ -11,6 +11,7 @@ using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Solving.NMRCheck;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
@@ -34,6 +35,12 @@ public class Application(
 
     public void Run()
     {
+        if (_config.Explain)
+        {
+            ExplainProgram();
+            return;
+        }
+
         var eitherProgram = LoadProgram();
 
         if (!eitherProgram.IsRight)
@@ -92,6 +99,20 @@ public class Application(
         }
     }
 
+    private void ExplainProgram()
+    {
+        var code = FileReader.ReadFile(_config.Path);
+
+        if(!code.IsRight)
+        {
+            _logger.LogError(code.GetLeftOrThrow());
+            return;
+        }
+
+        var program = GetProgram(code.GetRightOrThrow());
+        program.Accept(new ExplainProgramVisitor());
+    }
+
     private IEither<string, AspProgram> LoadProgram()
     {
         //Read
@@ -116,7 +137,10 @@ public class Application(
         var nmrChecker = new NmrChecker(_prefixes, _logger);
         var subcheck = nmrChecker.GetSubCheckRules(olonRules.Duplicate());
 
-        return new Right<string, AspProgram>(new AspProgram([.. program.Statements, .. dual, .. subcheck], program.Query));
+        return new Right<string, AspProgram>(new AspProgram(
+            [.. program.Statements, .. dual, .. subcheck]
+            , program.Query
+            , program.Explanations));
     }
 
     private Query? ParseQuery(string query)

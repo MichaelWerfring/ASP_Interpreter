@@ -4,7 +4,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class QueryVisitor(ILogger logger) : ASPBaseVisitor<IOption<Query>>
+public class QueryVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<Query>>
 {
     private readonly ILogger _logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");

@@ -1,12 +1,15 @@
-grammar ASP;
+parser grammar ASPParser;
+options { tokenVocab=ASPLexer; }
 program : statements query?;
 query : QUERY_SYMBOL goal(COMMA goal)* DOT;
 
-statements : statement*;
-
+statements : (explaination? statement)*;
 statement 
     : CONS goal (COMMA goal)* DOT 
     | literal (CONS (goal (COMMA goal)*))? DOT;
+
+explaination : literal EXP_OPEN exp EXP_CLOSE ;
+exp : EXP_TEXT (EXP_VAR_OPEN EXP_VAR EXP_VAR_CLOSE|EXP_TEXT)* ;
 
 goal : 
     literal
@@ -48,48 +51,3 @@ arithop
     | TIMES                                 #timesOperation
     | DIV                                   #divOperation
     | POW                                   #powerOperation;
-
-
-//escaping the " and then match everything except " 
-STRING : '"' ~[\\"]+ '"';
-NUMBER :  [0] | [1-9][0-9]*;
-ANONYMOUS_VARIABLE : '_';
-DOT : '.';
-COMMA : ',';
-QUERY_SYMBOL : '?-';
-COLON : ':';
-SEMICOLON : ';';
-OR : '|';
-NAF : 'not';
-CONS : ':-';
-PLUS : '+';
-MINUS : '-';
-TIMES : '*';
-POW : '**';
-DIV : '/';
-AT : '@';
-PAREN_OPEN : '(';
-PAREN_CLOSE : ')';
-SQUARE_OPEN : '[';
-SQUARE_CLOSE : ']';
-CURLY_OPEN : '{';
-CURLY_CLOSE : '}';
-EQUAL : '=';
-LESS : '<';
-GREATER : '>';
-LESS_OR_EQ : '<=';
-GREATER_OR_EQ : '>=';
-DISUNIFICATION : '\\=';
-IS : 'is';
-
-//put this down so it does not match the not and is token
-ID : [a-z][a-zA-Z0-9_]*;
-VARIABLE : [A-Z][a-zA-Z0-9_]*;
-
-// ~ means match evereything except ...
-COMMENT		: '%' ~[\r?\n]* [\r?\n] -> skip;
-MULTI_LINE_COMMENT : '%*' .*? '*%' -> skip;
-BLANK : [ \t\n\r]+ -> skip;
-NEWLINE		: [\r?\n] -> skip ;
-TAB			: '\t' -> skip ;
-WS			: ' ' -> skip ;

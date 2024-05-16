@@ -3,7 +3,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
 
-public class TermVisitor(ILogger logger) : ASPBaseVisitor<IOption<ITerm>>
+public class TermVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<ITerm>>
 {
     private readonly ILogger _logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");

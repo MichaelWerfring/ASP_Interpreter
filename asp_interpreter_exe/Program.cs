@@ -34,13 +34,13 @@ internal class Program
     {
         if(args.Length == 0)
         {
-            return new ProgramConfig(" ", false, false, true,  LogLevel.None);
+            return new ProgramConfig(" ", false, false, false, true,  LogLevel.None);
         }
 
         //Assume that 1 is a path
         if (args.Length == 1)
         {
-            return new ProgramConfig(args[0], true, true, false, LogLevel.Debug);
+            return new ProgramConfig(args[0], false, true, true, false, LogLevel.Debug);
         }
 
         var parser = InitParser(new ConsoleLogger(LogLevel.Info));
@@ -57,6 +57,7 @@ internal class Program
         Console.WriteLine("-t, --timestamp              Log Timestamp for events");
         Console.WriteLine("-h, --help                   Display a help message");
         Console.WriteLine("-i, --interactive            Run in interactive mode");
+        Console.WriteLine("-e, --explain                Explain the program");
         Console.WriteLine();
 
         Console.WriteLine("Examples:");
@@ -117,6 +118,11 @@ internal class Program
             conf.Timestamp = true;
             return conf;
         };
+        Func<int, ProgramConfig, string[], ProgramConfig> getExplain = (i, conf, args) =>
+        {
+            conf.Explain = true;
+            return conf;
+        };
 
 
 
@@ -134,6 +140,9 @@ internal class Program
 
         actions.Add("-t", getTimestamp);
         actions.Add("--timestamp", getTimestamp);
+
+        actions.Add("-e", getExplain);
+        actions.Add("--explain", getExplain);
 
         return new CommandLineParser(actions);
     }
