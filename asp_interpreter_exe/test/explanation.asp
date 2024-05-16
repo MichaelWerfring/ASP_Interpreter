@@ -1,3 +1,3 @@
-﻿::.
+﻿nat(X) :: @(X) is a natural number.
 nat(0).
-nat(s(X)) :- nat(X).
+nat(s(N)) :- nat(N).

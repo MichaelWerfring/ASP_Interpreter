@@ -1,5 +1,4 @@
 ﻿using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.Explaination;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Visitors;
@@ -35,27 +34,21 @@ public class ProgramVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<AspPr
             return new Some<AspProgram>(new AspProgram([], query, []));
         }
         
-        List<Explanation> explanations = [];
+        Dictionary<string, Explanation> explanations = [];
         List<Statement> statements = [];
         var statementVisitor = new StatementVisitor(_logger);
-        var explanationVisitor = new ExplanationVisitor(_logger);
+        var explanationVisitor = new ExplanationVisitor(_logger, new LiteralVisitor(_logger));
         foreach (var statement in program)
         {
             var result = statement.Accept(statementVisitor);
             
-            if (result.HasValue)
+            if (result != null && result.HasValue)
             {
-                statements.Add(result.GetValueOrThrow());    
+                statements.Add(result.GetValueOrThrow());
+                continue;
             }
             
-            var explanation = statement.Accept(explanationVisitor);
-            if (explanation.HasValue)
-            {
-                explanations.Add(explanation.GetValueOrThrow());
-            }
-            
-            _logger.LogError("Failed to program parse statement", context);
-            return new None<AspProgram>();
+            statement.Accept(explanationVisitor)?.IfHasValue(v =>explanations.Add(v.Literal.Identifier, v));
         }
 
         return new Some<AspProgram>(new AspProgram(statements, query, explanations));
