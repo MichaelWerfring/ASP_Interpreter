@@ -46,7 +46,6 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
 
     public IVariableBinding Visit(TermBinding binding, VariableMapping args)
     {
-
         return binding.Term.Accept(this, args);      
     }
 
@@ -65,23 +64,21 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return binding.Accept(this, map);
     }
 
-    public IVariableBinding Visit(Structure basicTerm, VariableMapping map)
+    public IVariableBinding Visit(Structure structure, VariableMapping map)
     {
         // get variables in term
-        var variablesInTerm = basicTerm.Enumerate()
-            .OfType<Variable>()
-            .ToImmutableHashSet(new VariableComparer());
+        var variablesInTerm = structure.ExtractVariables();
 
         // filter out all variables where you have something like this : X => s(X).
         // Var must:
         // Map to something
-        // && map to a termbinding that is not the input termbinding.
+        // and map to a termbinding that is not the input termbinding.
         var filteredVariables = variablesInTerm.Where
         (
             x =>
             map.TryGetValue(x, out IVariableBinding? varBinding)
             &&
-            (varBinding is TermBinding tb && !tb.Term.IsEqualTo(basicTerm))
+            (varBinding is TermBinding tb && !tb.Term.IsEqualTo(structure))
         );
 
         // resolve those variables : get only the termbindings.
@@ -91,7 +88,9 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
             .Select(pair => (pair.x, ((TermBinding)pair.Item2).Term))
             .ToDictionary(new VariableComparer());
 
-        return new TermBinding(basicTerm.Substitute(resolvedVars));
+        var substitutedStruct = structure.Substitute(resolvedVars);
+
+        return new TermBinding(substitutedStruct);
     }
 
     public IVariableBinding Visit(Integer integer, VariableMapping arguments)

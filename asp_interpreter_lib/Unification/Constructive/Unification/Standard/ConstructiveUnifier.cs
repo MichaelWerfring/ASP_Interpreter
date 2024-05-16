@@ -175,29 +175,29 @@ public class ConstructiveUnifier
 
     private VariableMapping ApplySubstitutionComposition(VariableMapping oldMapping, Variable var, ISimpleTerm term)
     {
-        var dict = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
+        var dictForSubstitution = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
         {
             { var, term }
         };
 
-        var newDict = new KeyValuePair<Variable, IVariableBinding>[oldMapping.Count];
+        var newPairs = new KeyValuePair<Variable, IVariableBinding>[oldMapping.Count];
 
-        Parallel.For(0, newDict.Length, index =>
+        Parallel.For(0, newPairs.Length, index =>
         {
             var currentPair = oldMapping.ElementAt(index);
 
             if (currentPair.Value is TermBinding binding)
             {
-                newDict[index] = new KeyValuePair<Variable, IVariableBinding>
-                    (currentPair.Key, new TermBinding(binding.Term.Substitute(dict)));
+                newPairs[index] = new KeyValuePair<Variable, IVariableBinding>
+                    (currentPair.Key, new TermBinding(binding.Term.Substitute(dictForSubstitution)));
             }
             else
             {
-                newDict[index] = currentPair;
+                newPairs[index] = currentPair;
             }
         });
 
-        var newMapping = new VariableMapping(newDict.ToImmutableDictionary(new VariableComparer()));
+        var newMapping = new VariableMapping(newPairs.ToImmutableDictionary(new VariableComparer()));
 
         newMapping = newMapping.SetItem(var, new TermBinding(term));
 

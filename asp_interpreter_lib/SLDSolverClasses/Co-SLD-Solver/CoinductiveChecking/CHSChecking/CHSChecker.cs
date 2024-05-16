@@ -37,9 +37,8 @@ public class CHSChecker
         // construct negatedTerm
         ISimpleTerm negation = termToCheck.NegateTerm(_functors);
 
-
         if( state.CHS.Any( entry =>
-        {
+        {           
             return _checker.AreExactMatch(ConstructiveTargetBuilder.Build(negation, entry.Term, state.Mapping).GetValueOrThrow());
         }))
         {
@@ -53,7 +52,6 @@ public class CHSChecker
         {
             return new CHSDeterministicSuccessResult();
         }
-
 
         // get all terms that unify with the negation of input entry, substitute them with mapping.
         IEnumerable<ISimpleTerm> unifyingTerms = state.CHS.Entries

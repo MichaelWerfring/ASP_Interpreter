@@ -4,6 +4,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
@@ -90,16 +91,20 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
 
         VariableMapping unification = unificationMaybe.GetValueOrThrow();
 
-        CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_state.CHS, unification);
+        var updatedMapping = _state.Mapping.Update(unification).GetValueOrThrow();
 
-        CallStack updatedStack = _updater.UpdateCallstack(_state.Callstack, unification);
+        var flattenedMapping = updatedMapping.Flatten();
+
+        CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_state.CHS, flattenedMapping);
+
+        CallStack updatedStack = _updater.UpdateCallstack(_state.Callstack, flattenedMapping);
 
         return new Some<GoalSolution>
         (
             new GoalSolution
             (
                 updatedCHS,
-                unification,
+                flattenedMapping,
                 updatedStack,
                 _state.NextInternalVariableIndex
             )

@@ -2,6 +2,8 @@
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
@@ -44,14 +46,20 @@ public class DisunificationGoal : ICoSLDGoal
 
         foreach (VariableMapping result in disunificationResults)
         {
-            CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_solutionState.CHS, result);
 
-            CallStack updatedCallstack = _updater.UpdateCallstack(_solutionState.Callstack, result);
+            var updatedMapping = _solutionState.Mapping.Update(result).GetValueOrThrow();
+
+            var flattenedMapping = updatedMapping.Flatten();
+
+
+            CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_solutionState.CHS, flattenedMapping);
+
+            CallStack updatedCallstack = _updater.UpdateCallstack(_solutionState.Callstack, flattenedMapping);
 
             yield return new GoalSolution
             (
                 updatedCHS,
-                result,
+                flattenedMapping,
                 updatedCallstack, 
                 _solutionState.NextInternalVariableIndex
             );

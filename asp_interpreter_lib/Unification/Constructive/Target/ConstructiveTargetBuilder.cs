@@ -17,19 +17,25 @@ internal class ConstructiveTargetBuilder
 
         var variables = left.ExtractVariables().Union(right.ExtractVariables(), new VariableComparer());
 
-        VariableMapping newMapping = mapping;
+        VariableMapping newMapping = [];
 
         foreach (var variable in variables)
         {
-            if (!mapping.TryGetValue(variable, out IVariableBinding? value))
+            IVariableBinding? value;
+            mapping.TryGetValue(variable, out value);
+
+            if (value == null)
             {
                 newMapping = newMapping.Add(variable, new ProhibitedValuesBinding());
+                continue;
             }
 
             if (value is TermBinding)
             {
                 return new None<ConstructiveTarget>();
             }
+
+            newMapping = newMapping.SetItem(variable, value);
         }
 
         return new Some<ConstructiveTarget>(new ConstructiveTarget(left, right, newMapping));
