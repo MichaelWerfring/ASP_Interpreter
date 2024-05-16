@@ -11,38 +11,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_exe/test/explanation.asp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Explaination/ExplainationText.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/Explaination/Explanation.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ExplainationVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Application.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Application.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.g4" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.g4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.interp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASP.tokens" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPBaseListener.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPBaseVisitor.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.interp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPLexer.tokens" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPListener.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPVisitor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/test/explanation.asp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/test/explanation.asp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.g4" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.g4" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/ASPProgram.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Types/ASPProgram.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Util/ASPExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Util/ASPExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Util/ProgramConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Util/ProgramConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ArithmeticOperationVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ArithmeticOperationVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperationVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperationVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperatorVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/BinaryOperatorVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/GoalVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/GoalVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/LiteralVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/LiteralVisitor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/Explaination/ExplainationText.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Types/Explaination/Explanation.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ExplainationVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ExplainationVisitor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ProgramVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/ProgramVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/QueryVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/QueryVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/StatementVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/StatementVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermsVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Visitors/TermsVisitor.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -262,15 +239,9 @@
       <workItem from="1715714017874" duration="321000" />
       <workItem from="1715714358308" duration="71000" />
       <workItem from="1715773367333" duration="4711000" />
-      <workItem from="1715836160493" duration="3228000" />
-    </task>
-    <task id="LOCAL-00010" summary="#33 - Moved Variable Naming to Extensions">
-      <option name="closed" value="true" />
-      <created>1711895827716</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1711895827716</updated>
+      <workItem from="1715836160493" duration="3423000" />
+      <workItem from="1715841865037" duration="236000" />
+      <workItem from="1715843623007" duration="99000" />
     </task>
     <task id="LOCAL-00011" summary="#36 - Non Variable Terms are also part of generation, also changed tests to cover those cases.">
       <option name="closed" value="true" />
@@ -656,7 +627,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715061852496</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="#68 - Split up Lexer and Parser in separate files and added the Explain feature">
+      <option name="closed" value="true" />
+      <created>1715839495039</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1715839495039</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -712,7 +691,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="#43 - Used new Algorithm for nmr check generation" />
     <MESSAGE value="#40 - fixed NMR check bug" />
     <MESSAGE value="resolve merge conflict" />
     <MESSAGE value="#43 - added mechanism to separate generated rule heads from olon rules" />
@@ -737,26 +715,10 @@
     <MESSAGE value="#63 - The Query can contain multiple Literals now" />
     <MESSAGE value="#65 - Fixed is bug in dual converter" />
     <MESSAGE value="#64 - Added Conversion from _ to standalone Variables" />
-    <option name="LAST_COMMIT_MESSAGE" value="#64 - Added Conversion from _ to standalone Variables" />
+    <MESSAGE value="#68 - Split up Lexer and Parser in separate files and added the Explain feature" />
+    <option name="LAST_COMMIT_MESSAGE" value="#68 - Split up Lexer and Parser in separate files and added the Explain feature" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/asp_interpreter_lib/Visitors/ExplainationVisitor.cs</url>
-          <line>19</line>
-          <properties documentPath="C:\Users\micha\FH\4_Semester\Logikprogrammierung\ASP_Interpreter\asp_interpreter_lib\Visitors\ExplainationVisitor.cs" containingFunctionPresentation="Method 'VisitExplaination'">
-            <startOffsets>
-              <option value="659" />
-            </startOffsets>
-            <endOffsets>
-              <option value="690" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#Antlr4.Runtime.ParserRuleContext" memberName="_start" />

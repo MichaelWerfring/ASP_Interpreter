@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using asp_interpreter_lib.Types.Explaination;
+
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -9,9 +9,9 @@ public class AspProgram : IVisitableType
 {
     private List<Statement> _statements;
     private IOption<Query> _query;
-    private List<Explanation> _explainations;
+    private Dictionary<string, Explanation> _explainations;
 
-    public AspProgram(List<Statement> statements, IOption<Query> query, List<Explanation> explanations)
+    public AspProgram(List<Statement> statements, IOption<Query> query, Dictionary<string, Explanation> explanations)
     {
         Statements = statements;
         Query = query;
@@ -30,7 +30,7 @@ public class AspProgram : IVisitableType
         private set => _query = value ?? throw new ArgumentNullException(nameof(Query));
     }
 
-    public List<Explanation> Explanations 
+    public Dictionary<string, Explanation> Explanations 
     {
         get => _explainations;
         private set => _explainations = value ?? throw new ArgumentNullException(nameof(Explanations));

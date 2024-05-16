@@ -110,7 +110,12 @@ public class Application(
         }
 
         var program = GetProgram(code.GetRightOrThrow());
-        program.Accept(new ExplainProgramVisitor());
+        var visitor = new ExplainProgramVisitor(program);
+
+        foreach (var statement in program.Statements)
+        {
+            statement.Accept(visitor).IfHasValue(v => Console.WriteLine(v));
+        }
     }
 
     private IEither<string, AspProgram> LoadProgram()
