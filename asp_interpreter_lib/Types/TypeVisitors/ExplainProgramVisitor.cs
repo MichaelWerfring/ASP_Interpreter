@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Types.TypeVisitors
@@ -12,22 +13,11 @@ namespace asp_interpreter_lib.Types.TypeVisitors
             _program = program ?? throw new ArgumentNullException(nameof(program));
         }
 
-        public static string Explain(AspProgram program)
-        {
-            StringBuilder sb = new();
-            foreach (var statement in program.Statements)
-            {
-                
-            }
-            
-            return sb.ToString();
-        }
-
         public override IOption<string> Visit(Statement statement)
         {
             if (!statement.HasHead)
             {
-                new Some<string>("");
+                return new Some<string>(string.Empty);
             }
 
             StringBuilder sb = new StringBuilder();
@@ -37,8 +27,8 @@ namespace asp_interpreter_lib.Types.TypeVisitors
 
             if (!_program.Explanations.TryGetValue(head.Identifier, out explaination))
             {
-                sb.Append(head.ToString() + " holds");
-                return new Some<string>(sb.ToString());
+                //sb.Append(head.ToString() + " holds");
+                return new Some<string>(string.Empty);
             }
 
 
@@ -48,13 +38,11 @@ namespace asp_interpreter_lib.Types.TypeVisitors
 
                 if (explaination.VariablesAt.Contains(i))
                 {
-                    //replace var
-
-                    sb.Append(head.Terms[this.GetIndexOfVariable(item, explaination)].ToString());
+                    var varAt = GetIndexOfVariable(item, explaination);
+                    sb.Append(head.Terms[varAt].ToString());
                 }
                 else
                 {
-                    sb.Append(' ');
                     sb.Append(item);
                 }
             }
@@ -63,10 +51,22 @@ namespace asp_interpreter_lib.Types.TypeVisitors
             {
                 sb.Append(" if ");
                 sb.AppendLine();
-                foreach (var goal in statement.Body)
+                for (int i = 0; i < statement.Body.Count; i++)
                 {
-                    sb.AppendLine("   " + goal.Accept(this).GetValueOrThrow());
+                    Goal goal = statement.Body[i];
+                    if (i + 1 != statement.Body.Count)
+                    {
+                        sb.AppendLine("\t" + goal.Accept(this).GetValueOrThrow() + " and ");
+                    }
+                    else
+                    {
+                        sb.AppendLine("\t" + goal.Accept(this).GetValueOrThrow() + ".");
+                    }
                 }
+            }
+            else
+            {
+                sb.Append('.');
             }
 
             var t = sb.ToString();
@@ -80,11 +80,6 @@ namespace asp_interpreter_lib.Types.TypeVisitors
 
             Explanation explaination;
 
-            if (!_program.Explanations.TryGetValue(literal.Identifier, out explaination))
-            {
-                return new Some<string>("");
-            }
-
             if (literal.HasNafNegation)
             {
                 sb.Append("there is no evidence that ");
@@ -92,7 +87,14 @@ namespace asp_interpreter_lib.Types.TypeVisitors
 
             if (literal.HasStrongNegation)
             {
-                sb.Append("there is no case that ");
+                sb.Append("it is not the case that ");
+            }
+
+            if (!_program.Explanations.TryGetValue(literal.Identifier, out explaination))
+            {
+                var copy = new Literal(literal.Identifier, false, false, literal.Terms);
+                sb.Append(copy.ToString() + " holds");
+                return new Some<string>(sb.ToString());
             }
 
             for (int i = 0; i < explaination.TextParts.Count; i++)
@@ -102,11 +104,10 @@ namespace asp_interpreter_lib.Types.TypeVisitors
                 if (explaination.VariablesAt.Contains(i))
                 {
                     //replace var
-                    sb.Append(literal.Terms[this.GetIndexOfVariable(item, explaination)].ToString());
+                    sb.Append(literal.Terms[GetIndexOfVariable(item, explaination)].ToString());
                 }
                 else
                 {
-                    sb.Append(' ');
                     sb.Append(item);
                 }
             }
@@ -128,7 +129,7 @@ namespace asp_interpreter_lib.Types.TypeVisitors
             return new Some<string>(sb.ToString());
         }
 
-        private int GetIndexOfVariable(string neededVariable, Explanation explanation)
+        private static int GetIndexOfVariable(string neededVariable, Explanation explanation)
         {
             var actualVariables = new List<string>();
             var variableVisitor = new TermToVariableConverter();
