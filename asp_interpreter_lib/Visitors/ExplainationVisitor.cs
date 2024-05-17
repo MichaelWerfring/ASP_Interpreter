@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime.Tree;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Util.ErrorHandling;
 namespace asp_interpreter_lib.Visitors;
 
@@ -21,12 +22,22 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<asp_interpreter_l
 
     public override IOption<Explanation> VisitExplaination(ASPParser.ExplainationContext context)
     {
-        var literal = context.literal().Accept(_literalVisitor);
-        if (literal == null || !literal.HasValue)
+        var optionLiteral = context.literal().Accept(_literalVisitor);
+        if (optionLiteral == null || !optionLiteral.HasValue)
         {
             _logger.LogError("The specified literal cannot be parsed!", context);
             return new None<Explanation>();
         }
+
+        var literal = optionLiteral.GetValueOrThrow();
+        var variablesInLiteral = literal.Accept(new VariableFinder()).GetValueOrThrow();
+
+        if (literal.Terms.Count != variablesInLiteral.Count)
+        {
+            _logger.LogError("Not all terms in the head of the explanation are variables!",context);
+            return new None<Explanation>();
+        }
+
 
         List<string> textParts = [];
         HashSet<int> variablesAt = [];
@@ -44,12 +55,19 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<asp_interpreter_l
             var variable = child.Accept(_variableVisitor);
             if (variable != null)
             {
+                //see if variable is contained in literal
+                if (!variablesInLiteral.Any(v => v.Identifier == variable))
+                {
+                    _logger.LogError($"The variable {variable} is not in the head of the explanation: {literal.ToString()}!", context);
+                    return new None<Explanation>(); 
+                }
+
                 textParts.Add(variable);
                 int index = textParts.FindLastIndex(v => variable == v);
                 variablesAt.Add(index);
             }
         }
 
-        return new Some<Explanation>(new Explanation(textParts, variablesAt, literal.GetValueOrThrow()));
+        return new Some<Explanation>(new Explanation(textParts, variablesAt, literal));
     }
 }
