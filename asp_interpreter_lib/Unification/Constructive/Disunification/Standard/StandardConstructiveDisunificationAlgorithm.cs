@@ -4,15 +4,16 @@ using asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 using asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using System.Collections.Immutable;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard;
 
 public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunificationAlgorithm
 {
-    private bool _doGroundednessCheck;
-    private bool _doDisunifyUnboundVariables;
+    private readonly bool _doGroundednessCheck;
+    private readonly bool _doDisunifyUnboundVariables;
 
     public StandardConstructiveDisunificationAlgorithm(bool doGroundednessCheck, bool doDisunifyUnboundVariables)
     {
@@ -24,53 +25,55 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
     {
         ArgumentNullException.ThrowIfNull(target);
 
+        // get only the prohibitedValueBindings
+        IImmutableDictionary<Variable, ProhibitedValuesBinding> prohitedValueBindings = 
+            target.Mapping.GetProhibitedValueBindings();
+
         // create new disunifier instance
         var constructiveDisunifier = new ConstructiveDisunifier
-            (_doGroundednessCheck, _doDisunifyUnboundVariables, target);
+            (_doGroundednessCheck, _doDisunifyUnboundVariables,target.Left, target.Right, prohitedValueBindings);
 
         // if error during disunification, return error.
-        var disunifiers = constructiveDisunifier.Disunify();
-        if (!disunifiers.IsRight)
+        var disunifiersEither = constructiveDisunifier.Disunify();
+        IEnumerable<DisunificationResult> disunifiers;
+        try
+        {
+            disunifiers = disunifiersEither.GetRightOrThrow();
+        }
+        catch
         {
             return new Left<DisunificationException, IEnumerable<VariableMapping>>
-                (disunifiers.GetLeftOrThrow());
+                           (disunifiersEither.GetLeftOrThrow());
         }
-
-        // build a variableMapping from target's dictionary.
-        var immutableBuilder = 
-            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(new VariableComparer());
-        foreach(var pair in target.Mapping)
-        {
-            immutableBuilder.Add(pair.Key, pair.Value);
-        }
-        var mapping = new VariableMapping(immutableBuilder.ToImmutable());
 
         // if disunifiers is empty(target disunifies anyways), just return the mapping
-        if (disunifiers.GetRightOrThrow().Count() == 0)
+        if (!disunifiers.Any())
         {
-            return new Right<DisunificationException, IEnumerable<VariableMapping>>([mapping]);
+            return new Right<DisunificationException, IEnumerable<VariableMapping>>([target.Mapping]);
         }
 
-        var mappings = new List<VariableMapping>();
-        foreach (var disunifier in disunifiers.GetRightOrThrow())
+        // create a new mapping for every disunifier where the value is updated by the disunifier value.
+        List<VariableMapping> mappings = [];
+        foreach (var disunifier in disunifiers)
         {
-            ImmutableDictionary<Variable, IVariableBinding>? newMapping;
+            VariableMapping newMapping;
+
             if (disunifier.IsPositive)
             {
-                newMapping = mapping.Mapping.SetItem(disunifier.Variable, new TermBinding(disunifier.Term));
+                newMapping = target.Mapping.SetItem(disunifier.Variable, new TermBinding(disunifier.Term));
             }
             else
             {
-                var prohibitedValueList = (ProhibitedValuesBinding)mapping.Mapping[disunifier.Variable];
+                var prohibitedValueList = prohitedValueBindings[disunifier.Variable];
 
-                newMapping = mapping.Mapping.SetItem
+                newMapping = target.Mapping.SetItem
                 (
                     disunifier.Variable,
                     new ProhibitedValuesBinding(prohibitedValueList.ProhibitedValues.Add(disunifier.Term))
                 );
             }
 
-            mappings.Add(new VariableMapping(newMapping));
+            mappings.Add(newMapping);
         }
 
         return new Right<DisunificationException, IEnumerable<VariableMapping>>(mappings);

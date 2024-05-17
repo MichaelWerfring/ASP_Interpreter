@@ -4,16 +4,15 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
-using System.Collections.Immutable;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Util.ErrorHandling;
-
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class ForallGoal : ICoSLDGoal
 {
+    private readonly TransitiveVariableMappingResolver _resolver = new(true);
+
     private readonly GoalSolver _solver;
 
     private readonly Variable _variable;
@@ -50,23 +49,24 @@ public class ForallGoal : ICoSLDGoal
     {
         var initialState = new CoSldSolverState([_goalTerm], _solutionState);
 
-        var successCaseState = new GoalSolution
-        (
-                new CoinductiveHypothesisSet(_solutionState.Set.Entries.Add(new CHSEntry(_goalTerm, true))),
-                _solutionState.Mapping,
-                _solutionState.NextInternalVariableIndex
-        );
-
-        foreach (var initialForallSolution in _solver.SolveGoals(initialState))
+        foreach (GoalSolution initialForallSolution in _solver.SolveGoals(initialState))
         {
-            // get binding
-            IVariableBinding? mappingForForallVariable;
-            initialForallSolution.ResultMapping.Mapping.TryGetValue(_variable, out mappingForForallVariable);
+            // get binding. transitive resolving is necessary because through unification,
+            // you could have something like X -> Y -> \={1,2}, where
+            IVariableBinding? mappingForForallVariable = null;
+            try
+            {
+                mappingForForallVariable = _resolver.Resolve(_variable, initialForallSolution.ResultMapping);
+            }
+            catch 
+            {
+                continue;
+            }
 
             // if no binding, succeed.
             if (mappingForForallVariable == null)
             {
-                yield return successCaseState;
+                yield return initialForallSolution;
                 yield break;
             }
 
@@ -76,35 +76,44 @@ public class ForallGoal : ICoSLDGoal
                 continue;
             }
 
-            var prohibitedValuesForVariable = (ProhibitedValuesBinding) mappingForForallVariable;
+            // now we know it is a prohibited values binding.
+            var prohibitedValuesForVariable = (ProhibitedValuesBinding)mappingForForallVariable;
 
             // if no prohibited values(unconstrained), then succeed.
-            if (prohibitedValuesForVariable.ProhibitedValues.Count() == 0)
+            if (prohibitedValuesForVariable.ProhibitedValues.Count == 0)
             {
-                yield return successCaseState;
+                yield return initialForallSolution;
                 yield break;
             }
 
             // construct new goals where variable in goalTerm is substituted by each prohibited value of variable.
             var constraintSubstitutedGoals = prohibitedValuesForVariable.ProhibitedValues
-                .Select(prohibitedTerm => _goalTerm.Substitute
+            .Select(prohibitedTerm => _goalTerm.Substitute
+            (
+                new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
+                {
+                    { _variable, prohibitedTerm }
+                })
+            );
+
+            // construct new solver state
+            var initialSolvingState = new CoSldSolverState
+            (
+                constraintSubstitutedGoals,
+                new SolutionState
                 (
-                    new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
-                    {
-                        { _variable, prohibitedTerm }
-                    })
-                );
+                    initialForallSolution.Stack,
+                    initialForallSolution.ResultSet,
+                    initialForallSolution.ResultMapping, 
+                    initialForallSolution.NextInternalVariable
+                )
+            );
 
-            // solve those goals, succeed if it has any solutions.
-            var initialConstraintSolvingState = new 
-                CoSldSolverState(constraintSubstitutedGoals, _solutionState);
+            IEnumerable<GoalSolution> solutions = _solver.SolveGoals(initialSolvingState);
 
-            var solutions = _solver.SolveGoals(initialConstraintSolvingState);
-
-            if (solutions.Any()) 
+            foreach ( GoalSolution solution in solutions ) 
             {
-                yield return successCaseState;
-                yield break;
+                 yield return solution;
             }
         }
     }

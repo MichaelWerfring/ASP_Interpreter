@@ -15,7 +15,7 @@ public class VariableMappingPostprocessor
         ArgumentNullException.ThrowIfNull(variableMapping, nameof(variableMapping));
 
         // get noninternal variables
-        var nonInternalVariables = variableMapping.Mapping.Keys
+        var nonInternalVariables = variableMapping.Keys
             .Where(x => !x.Identifier.StartsWith('#'));
 
         // make a new binding, add noninternal variables and their simplified internalVariablesInTerms.
@@ -28,13 +28,14 @@ public class VariableMappingPostprocessor
         // get all variables from all the term bindings.
         var internalVariablesInTerms = newBinding.Values
             .OfType<TermBinding>()          
-            .SelectMany(x => (x).Term.Enumerate().OfType<Variable>())
+            .SelectMany(x => (x).Term.ExtractVariables())
+            .Where(x => x.Identifier.StartsWith('#'))
             .ToImmutableHashSet(new VariableComparer());
  
         // for all the variables in the termbindings: add their values as well, if they have any.
         foreach (var variable in internalVariablesInTerms)
         {
-            if (variableMapping.Mapping.TryGetValue(variable, out IVariableBinding? bindings))
+            if (variableMapping.TryGetValue(variable, out IVariableBinding? bindings))
             {
                 newBinding.Add(variable, bindings);
             }

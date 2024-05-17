@@ -1,194 +1,225 @@
 ﻿using asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
-using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.Unification.StructureReducers;
+using System.Collections.Immutable;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
+/// <summary>
+/// An instance-based disunification algorithm,
+/// as to provide the algorithm with a context through its fields.
+/// </summary>
 public class ConstructiveDisunifier
 {
     // functions
-    private readonly StructureReducer _reducer = new StructureReducer();
+    private readonly StructureReducer _reducer = new();
 
     // input by constructor
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
-    private readonly ConstructiveTarget _target;
+    private readonly ISimpleTerm _left;
+    private readonly ISimpleTerm _right;
+    private readonly IImmutableDictionary<Variable, ProhibitedValuesBinding> _prohibitedValues;
 
-    // modified during execution :
-    //  flags
-    private bool _mismatch;
-    private DisunificationException? _fatalError;
+    // disunifier mapping
+    private readonly List<DisunificationResult> _disunifiers = [];
 
-    //  disunifier mapping
-    private List<DisunificationResult> _disunifiers;
+    // flags
+    private bool _dontUnifyAnyway = false;
+    private DisunificationException? _fatalError = null;
 
-    public ConstructiveDisunifier(bool doGroundednessCheck, bool doDisunifyUnboundVariables, ConstructiveTarget target)
+    public ConstructiveDisunifier
+    (
+        bool doGroundednessCheck, 
+        bool doDisunifyUnboundVariables, 
+        ISimpleTerm left, 
+        ISimpleTerm right, 
+        IImmutableDictionary<Variable, ProhibitedValuesBinding> mapping
+    )
     {
-        ArgumentNullException.ThrowIfNull(target, nameof(target));
+        ArgumentNullException.ThrowIfNull(left, nameof(left));
+        ArgumentNullException.ThrowIfNull(right, nameof(right));
+        ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
         _doGroundednessCheck = doGroundednessCheck;
         _doDisunifyUnboundVariables = doDisunifyUnboundVariables;
-        _target = target;
-
-        // set flags 
-        _mismatch = false;
-        _fatalError = null;
-
-        //initialize mapping
-        _disunifiers = new List<DisunificationResult>();
+        _left = left;
+        _right = right;
+        _prohibitedValues = mapping;
     }
 
     public IEither<DisunificationException, IEnumerable<DisunificationResult>> Disunify()
     {
-        TryDisunify(_target.Left, _target.Right);
+        TryDisunify(_left, _right);
 
+        // if we encountered a fatal error, such as two variables disunifying, or occurs check.
         if (_fatalError != null)
         {
             return new Left<DisunificationException, IEnumerable<DisunificationResult>>
                 (_fatalError);
         }
 
-        if (_mismatch)
+        // if they wouldnt unify anyway
+        if (_dontUnifyAnyway)
         {
-            return new Right<DisunificationException, IEnumerable<DisunificationResult>>
-                (new List<DisunificationResult>());
+            return new Right<DisunificationException, IEnumerable<DisunificationResult>>([]);
         }
 
-        if (_disunifiers.Count() == 0)
+        // if there is no way that they can disunify
+        if (_disunifiers.Count == 0)
         {
             return new Left<DisunificationException, IEnumerable<DisunificationResult>>
-                (new CannotDisunifyException($"Terms {_target.Left} and {_target.Right} cannot be disunified."));
+                (new CannotDisunifyException($"Terms {_left} and {_right} cannot be disunified."));
         }
 
-        _disunifiers = _disunifiers.Where(disunifier =>
+        // filter for values that are already prohibited anyways
+        IEnumerable<DisunificationResult> filteredDisunifiers = _disunifiers.Where(disunifier =>
         {
             if (disunifier.IsPositive) { return true; };
 
-            if (_target.Mapping[disunifier.Variable].ProhibitedValues.Contains(disunifier.Term))
+            if (_prohibitedValues[disunifier.Variable].ProhibitedValues.Contains(disunifier.Term))
             {
                 return false;
             }
 
             return true;
-        }).ToList();
+        });
 
-        return new Right<DisunificationException, IEnumerable<DisunificationResult>>(_disunifiers);
+        return new Right<DisunificationException, IEnumerable<DisunificationResult>>(filteredDisunifiers);
     }
 
     private void TryDisunify(ISimpleTerm left, ISimpleTerm right)
     {
-        if (_mismatch || _fatalError != null) { return; }
-
-        // continue based on case of left.sag 
-        if (left is Variable variable)
+        // check if mismatch encountered or error
+        if (_dontUnifyAnyway || _fatalError != null)
         {
-            TryUnifyVariableCase(variable, right);
+            return; 
         }
-        else if (left is IStructure structure)
+
+        // determine case
+        if (left is Variable leftVar)
         {
-            TryUnifyStructureCase(structure, right);
+            if (right is Variable rightVar)
+            {
+                LeftIsVarRightIsVar(leftVar, rightVar);
+            }
+            else if (right is IStructure rightStruct)
+            {
+                LeftIsVarRightIsStruct(leftVar, rightStruct);
+            }
+            else
+            {
+                throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
+            }
+        }
+        else if (left is IStructure leftStruct)
+        {
+            if (right is Variable rightVar)
+            {
+                LeftIsStructRightIsVar(leftStruct, rightVar);
+            }
+            else if (right is IStructure rightStruct)
+            {
+                LeftIsStructRightIsStruct(leftStruct, rightStruct);
+            }
+            else
+            {
+                throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
+            }
         }
         else
         {
-            throw new ArgumentException
-            (
-                "The type hierarchy has been modified" +
-                " so that not every term is either a variable or a structure!"
-            );
+            throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
         }
     }
 
-    private void TryUnifyStructureCase(IStructure structure, ISimpleTerm other)
+    // cases
+    private void LeftIsStructRightIsStruct(IStructure leftStruct, IStructure rightStruct)
     {
-        if (other is IStructure b) // both are structures
+        IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> reductionMaybe = 
+            _reducer.TryReduce(leftStruct, rightStruct);
+
+        if (!reductionMaybe.HasValue)
         {
-            var reductionMaybe = _reducer.TryReduce(structure, b);
-            if (!reductionMaybe.HasValue)
-            {
-                _mismatch = true;
-                return;
-            }
-
-            var reduction = reductionMaybe.GetValueOrThrow();
-
-            foreach (var pair in reduction)
-            {
-                TryDisunify(pair.Item1, pair.Item2);
-            }
+            _dontUnifyAnyway = true;
+            return;
         }
-        else // left is structure and right variable
+
+        IEnumerable<(ISimpleTerm, ISimpleTerm)> reduction = reductionMaybe.GetValueOrThrow();
+
+        foreach (var pair in reduction)
         {
-            TryDisunify(other, structure);
+            TryDisunify(pair.Item1, pair.Item2);
         }
     }
 
-    private void TryUnifyVariableCase(Variable left, ISimpleTerm right)
+    private void LeftIsStructRightIsVar(IStructure left, Variable right)
     {
-        if (!_doDisunifyUnboundVariables && right is Variable)
-        {
-            _fatalError = new VariableDisunificationException
-                ($"Cannot disunify two variables: {left} and {right}");
-            return;
-        }
+        LeftIsVarRightIsStruct(right, left);
+    }
 
-        if (right is Variable rightVar)
-        {
-            DisunifyVariables(left, rightVar);
-            return;
-        }
-
+    private void LeftIsVarRightIsStruct(Variable left, IStructure right)
+    {
         // do groundedness check if asked for
-        if (_doGroundednessCheck && right.Enumerate().Any(x => x is Variable))
+        if (_doGroundednessCheck && right.ExtractVariables().Any())
         {
             _fatalError = new NonGroundTermException
                 ($"Cannot disunify variable and nonground term: {left} and {right}");
             return;
         }
 
-        // if the variable already maps to a different term, then we have a mismatch.
-        if (_disunifiers.Any
-        (
-            map => !map.IsPositive
-            &&
-            map.Variable.IsEqualTo(left)
-            && 
-            !map.Term.IsEqualTo(right)) 
-        )
+        IEnumerable<DisunificationResult> negativesInvolvingLeft = _disunifiers
+            .Where(disunifier => !disunifier.IsPositive && disunifier.Variable.IsEqualTo(left));
+
+        // if any maps to another term already,
+        // then it wont unify anyway.
+        if (negativesInvolvingLeft.Any(disunifier => !disunifier.Term.IsEqualTo(right)))
         {
-            _mismatch = true;
+            _dontUnifyAnyway = true;
+            return;
+        }
+
+        // if there is one with the same term already,
+        // then dont add this one to avoid duplicates.
+        if (negativesInvolvingLeft.Any(disunifier => disunifier.Term.IsEqualTo(right)))
+        {
             return;
         }
 
         _disunifiers.Add(new DisunificationResult(left, right, false));
     }
 
-    private void DisunifyVariables(Variable left, Variable right)
+    private void LeftIsVarRightIsVar(Variable left, Variable right)
     {
-        var comparer = new SimpleTermEqualityComparer();
+        if (!_doDisunifyUnboundVariables)
+        {
+            _fatalError = new VariableDisunificationException
+                ($"Cannot disunify two variables: {left} and {right}");
+            return;
+        }
 
-        var leftProhibitedValues = _target.Mapping[left].ProhibitedValues;
-        var rightProhibitedValues = _target.Mapping[right].ProhibitedValues;
+        var leftProhibitedValues = _prohibitedValues[left].ProhibitedValues;
+        var rightProhibitedValues = _prohibitedValues[right].ProhibitedValues;
 
-        var union = leftProhibitedValues.Union(rightProhibitedValues, comparer);
-        var intersect = leftProhibitedValues.Intersect(rightProhibitedValues, comparer);
-        var difference = union.Except(intersect, comparer);
+        var difference = leftProhibitedValues.Union(rightProhibitedValues)
+                        .Except(leftProhibitedValues.Intersect(rightProhibitedValues));
 
         foreach (var term in difference)
         {
-            if (_doGroundednessCheck && term.Enumerate().Any(x => x is Variable))
+            if (_doGroundednessCheck && term.ExtractVariables().Any())
             {
                 _fatalError = new NonGroundTermException
                     ($"Cannot disunify variable and nonground term: {left} and {right}");
                 return;
             }
 
-            if (leftProhibitedValues.Contains(term, comparer))
+            if (leftProhibitedValues.Contains(term))
             {
                 _disunifiers.Add(new DisunificationResult(right, term, true));
             }

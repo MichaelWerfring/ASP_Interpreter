@@ -6,19 +6,29 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class GoalSolution
 {
-    public GoalSolution(CoinductiveHypothesisSet resultSet, VariableMapping resultMapping, int nextInternalVariableIndex)
+    public GoalSolution
+    (
+        CoinductiveHypothesisSet resultSet,
+        VariableMapping resultMapping,
+        CallStack stack,
+        int nextInternalVariableIndex
+    )
     {
         ArgumentNullException.ThrowIfNull(resultSet, nameof(resultSet));
         ArgumentNullException.ThrowIfNull(resultMapping, nameof(resultMapping));
+        ArgumentNullException.ThrowIfNull(stack, nameof(stack));
 
         ResultSet = resultSet;
         ResultMapping = resultMapping;
         NextInternalVariable = nextInternalVariableIndex;
+        Stack = stack;
     }
 
     public CoinductiveHypothesisSet ResultSet { get; }
 
     public VariableMapping ResultMapping { get; }
+
+    public CallStack Stack { get; }
 
     public int NextInternalVariable { get; }
 
@@ -30,7 +40,7 @@ public class GoalSolution
         sb.AppendLine($"{{ {ResultSet.Entries.ToList().ListToString()} }}");
 
         sb.AppendLine("Resultmapping:");
-        foreach (var pair in ResultMapping.Mapping)
+        foreach (var pair in ResultMapping)
         {
             sb.AppendLine($"{pair.Key.ToString()} : {pair.Value.ToString()}");
         }

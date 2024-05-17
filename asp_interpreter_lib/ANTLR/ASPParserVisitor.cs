@@ -8,7 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+<<<<<<< HEAD:asp_interpreter_lib/ANTLR/ASPParserVisitor.cs
 // Generated from C:/Users/micha/FH/4_Semester/Logikprogrammierung/ASP_Interpreter/asp_interpreter_lib/ANTLR/ASPParser.g4 by ANTLR 4.13.1
+=======
+// Generated from ASP.g4 by ANTLR 4.13.1
+>>>>>>> main:asp_interpreter_lib/ANTLR/ASPVisitor.cs
 
 // Unreachable code detected
 #pragma warning disable 0162

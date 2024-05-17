@@ -1,13 +1,15 @@
-﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
-using asp_interpreter_lib.Unification.Constructive.Disunification;
+﻿using asp_interpreter_lib.Unification.Constructive.Disunification;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class DisunificationGoal : ICoSLDGoal
 {
-    private readonly VariableMappingUpdater _variableMappingConcatenator = new ();
+    private readonly SolverStateUpdater _updater = new();
 
     private readonly ConstructiveTarget _target;
 
@@ -33,22 +35,34 @@ public class DisunificationGoal : ICoSLDGoal
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        var disunificationMaybe = _algorithm.Disunify(_target);
-        if (!disunificationMaybe.IsRight)
+        var disunificationsEither = _algorithm.Disunify(_target);
+
+        if (!disunificationsEither.IsRight)
         {
             yield break;
         }
 
-        var results = disunificationMaybe.GetRightOrThrow();
+        var disunificationResults = disunificationsEither.GetRightOrThrow();
 
-        foreach (var result in results)
+        foreach (VariableMapping result in disunificationResults)
         {
-            var concatenationEither = _variableMappingConcatenator.Update(_solutionState.Mapping, result);
 
-            var concatenation = concatenationEither.GetRightOrThrow();
+            var updatedMapping = _solutionState.Mapping.Update(result).GetValueOrThrow();
+
+            var flattenedMapping = updatedMapping.Flatten();
+
+
+            CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_solutionState.CHS, flattenedMapping);
+
+            CallStack updatedCallstack = _updater.UpdateCallstack(_solutionState.Callstack, flattenedMapping);
 
             yield return new GoalSolution
-                (_solutionState.Set, concatenation, _solutionState.NextInternalVariableIndex);
+            (
+                updatedCHS,
+                flattenedMapping,
+                updatedCallstack, 
+                _solutionState.NextInternalVariableIndex
+            );
         }
     }
 }

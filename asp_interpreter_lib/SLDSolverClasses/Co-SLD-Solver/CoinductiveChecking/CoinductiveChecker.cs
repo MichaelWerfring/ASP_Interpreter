@@ -4,6 +4,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHS
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
+using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 
@@ -23,7 +24,7 @@ internal class CoinductiveChecker
     }
 
     /// <summary>
-    /// Enumerates all the ways that the target can go through the coinductive checking process.
+    /// Enumerates all the ways that the target can "survive" the coinductive checking process.
     /// </summary>
     public IEnumerable<CoinductiveCheckingResult> Check(Structure target, SolutionState state)
     {
@@ -43,14 +44,14 @@ internal class CoinductiveChecker
             yield break;
         }
 
-        var chsConstraintmentResult = (CHSConstrainmentResult)chsCheckingResult;
+        CHSConstrainmentResult chsConstraintmentResult = (CHSConstrainmentResult)chsCheckingResult;
 
-        foreach (var constraintment in chsConstraintmentResult.ConstrainmentResults)
+        foreach (VariableMapping constraintment in chsConstraintmentResult.ConstrainmentResults)
         {
             Structure targetwithConstraintment = (Structure)constraintment.ApplySubstitution(target);
 
             ICallstackCheckingResult callstackCheckingResult = _callstackChecker.CheckCallstack
-                (targetwithConstraintment, constraintment, state.Stack);
+                (targetwithConstraintment, constraintment, state.Callstack);
 
             if (callstackCheckingResult is CallstackDeterministicFailureResult)
             {

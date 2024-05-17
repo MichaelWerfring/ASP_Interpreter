@@ -27,7 +27,7 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
     {
         _logger.LogTrace("Converting to internal program structure...");
 
-        var clauses = prog.Statements.Select(ConvertStatement).ToList();
+        var clauses = prog.Statements.Where(rule => rule.Head.HasValue).Select(ConvertStatement).ToList();
 
         var queryMaybe = prog.Query;
         if (!queryMaybe.HasValue)
@@ -51,18 +51,21 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 
         var list = new List<Structure>();
 
-        if(statement.HasHead)
+        if (!statement.HasHead)
         {
-            var head = statement.Head.GetValueOrThrow();
-
-            var convertedHeadMaybe = converter.Convert(head);
-            if (!convertedHeadMaybe.HasValue)
-            {
-                throw new Exception("Could not convert head!");
-            }
-
-            list.Add(convertedHeadMaybe.GetValueOrThrow());
+            throw new ArgumentException("Must have a head!", nameof(statement));
         }
+        var head = statement.Head.GetValueOrThrow();
+
+        var convertedHeadMaybe = converter.Convert(head);
+        if (!convertedHeadMaybe.HasValue)
+        {
+            throw new Exception("Could not convert head!");
+        }
+
+        list.Add(convertedHeadMaybe.GetValueOrThrow());
+
+
 
         foreach (var goal in statement.Body)
         {

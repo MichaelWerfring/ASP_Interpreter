@@ -4,6 +4,7 @@ using asp_interpreter_lib.Visitors;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
+using System.Text.RegularExpressions;
 
 internal class Program
 {

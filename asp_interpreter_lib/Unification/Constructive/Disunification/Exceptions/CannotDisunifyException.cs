@@ -3,6 +3,6 @@
 public class CannotDisunifyException : DisunificationException
 {
     public CannotDisunifyException(string message) : base(message)
-    { }
-
+    {
+    }
 }

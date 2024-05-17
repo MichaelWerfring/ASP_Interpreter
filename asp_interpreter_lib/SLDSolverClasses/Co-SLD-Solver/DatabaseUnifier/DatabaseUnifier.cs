@@ -13,8 +13,6 @@ public class DatabaseUnifier
 {
     private readonly ClauseVariableRenamer _renamer = new ();
 
-    private readonly ConstructiveTargetBuilder _builder = new ();
-
     private readonly IConstructiveUnificationAlgorithm _algorithm;
 
     private readonly IDatabase _database;
@@ -45,8 +43,9 @@ public class DatabaseUnifier
                 (potentialUnification, nextInternal);
 
             // unify
-            var constructiveTarget = _builder.Build
-                (target, renamingResult.RenamedClause.First(), currentMapping);
+            var constructiveTarget = ConstructiveTargetBuilder.Build
+                (target, renamingResult.RenamedClause.First(), currentMapping).GetValueOrThrow();
+
             VariableMapping unificationResult;
             try
             {
@@ -57,10 +56,11 @@ public class DatabaseUnifier
                 continue;
             }
 
-            // update with unification result
-            var updatedMapping = currentMapping.Update(unificationResult).GetRightOrThrow();
+            var updatedMapping = currentMapping.Update(unificationResult).GetValueOrThrow();
 
-            yield return new DBUnificationResult(renamingResult.RenamedClause.Skip(1), updatedMapping, renamingResult.NextInternalIndex);
+            var flattenedMapping = updatedMapping.Flatten();
+
+            yield return new DBUnificationResult(renamingResult.RenamedClause, flattenedMapping, renamingResult.NextInternalIndex);
         }
     }
 }
