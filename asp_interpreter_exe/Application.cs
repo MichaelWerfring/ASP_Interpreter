@@ -133,7 +133,7 @@ public class Application(
 
         //Dual
         var dualGenerator = new DualRuleConverter(_prefixes, _logger);
-        var dual = dualGenerator.GetDualRules(program.Duplicate().Statements);
+        var dual = dualGenerator.GetDualRules(program.Duplicate().Statements, "_");
 
         //OLON
         List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);

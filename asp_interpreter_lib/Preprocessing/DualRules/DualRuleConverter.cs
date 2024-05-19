@@ -284,7 +284,8 @@ public class DualRuleConverter
         if (_wrapInNot)
         {
             wrapper.AddHead(WrapInNot(new Literal(
-                prefix + disjunction.Key.Item1,
+                //prefix + disjunction.Key.Item1,
+                disjunction.Key.Item1,
                 false,
                 disjunction.Key.Item3,
                 GenerateVariables(disjunction.Key.Item2))));
@@ -292,7 +293,8 @@ public class DualRuleConverter
         else
         {
             wrapper.AddHead(new Literal(
-                prefix + disjunction.Key.Item1,
+                //prefix + disjunction.Key.Item1,
+                disjunction.Key.Item1,
                 true,
                 disjunction.Key.Item3,
                 GenerateVariables(disjunction.Key.Item2)
