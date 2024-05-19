@@ -84,7 +84,7 @@ public class SimpleTermComparer : IComparer<ISimpleTerm>, ISimpleTermArgsVisitor
 
     private int CompareStructures(Structure left, Structure right)
     {
-        var childCountComparison = left.Children.Count().CompareTo(right.Children.Count());
+        var childCountComparison = left.Children.Count.CompareTo(right.Children.Count);
 
         if (childCountComparison != 0) {return childCountComparison;}
 
@@ -92,7 +92,7 @@ public class SimpleTermComparer : IComparer<ISimpleTerm>, ISimpleTermArgsVisitor
 
         if (functorComparions != 0) {  return functorComparions;}
 
-        for(int i = 0; i < left.Children.Count(); i++)
+        for(int i = 0; i < left.Children.Count; i++)
         {
             var currentChildrenComparison = left.Children.ElementAt(i).Accept(this, right.Children.ElementAt(i));
 

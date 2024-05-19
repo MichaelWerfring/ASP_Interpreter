@@ -2,13 +2,13 @@
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
 
-public class CHSConstrainmentResult : ICHSCheckingResult
+public class CHSNoMatchOrConstrainmentResult : ICHSCheckingResult
 {
-    public CHSConstrainmentResult(IEnumerable<VariableMapping> constrainmentResults)
+    public CHSNoMatchOrConstrainmentResult(IEnumerable<VariableMapping> results)
     {
-        ArgumentNullException.ThrowIfNull(constrainmentResults);
+        ArgumentNullException.ThrowIfNull(results);
 
-        ConstrainmentResults = constrainmentResults;
+        ConstrainmentResults = results;
     }
 
     public IEnumerable<VariableMapping> ConstrainmentResults { get; }

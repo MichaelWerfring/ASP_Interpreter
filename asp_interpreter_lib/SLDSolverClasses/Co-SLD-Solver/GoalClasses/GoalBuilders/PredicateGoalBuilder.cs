@@ -1,53 +1,49 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
-using asp_interpreter_lib.Unification.Constructive.Unification;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class PredicateGoalBuilder : IGoalBuilder
 {
-    private readonly ILogger _logger;
-
-    private readonly CoSLDGoalMapper _mapper;
-
-    private readonly IConstructiveUnificationAlgorithm _algorithm;
-
     private readonly PredicateGoalStateUpdater _stateUpdater;
+    private readonly CoinductiveChecker _checker;
+    private readonly DatabaseUnifier _unifier;
+    private readonly GoalSolver _solver;
+    private readonly ILogger _logger;
 
     public PredicateGoalBuilder
     (
-        CoSLDGoalMapper mapper, 
-        IConstructiveUnificationAlgorithm unificationAlgorithm,
+        CoinductiveChecker checker,
+        DatabaseUnifier dbUnifier,
+        GoalSolver solver,
         PredicateGoalStateUpdater updater,
         ILogger logger
     )
     {
-        ArgumentNullException.ThrowIfNull(mapper, nameof(mapper));
-        ArgumentNullException.ThrowIfNull(unificationAlgorithm, nameof(unificationAlgorithm));
-        ArgumentNullException.ThrowIfNull (updater, nameof(updater));
-        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(checker);
+        ArgumentNullException.ThrowIfNull(dbUnifier);
+        ArgumentNullException.ThrowIfNull(solver);
+        ArgumentNullException.ThrowIfNull (updater);
+        ArgumentNullException.ThrowIfNull(logger);
 
-        _logger = logger;
-        _mapper = mapper;
+        _checker = checker;
+        _unifier = dbUnifier;
+        _solver = solver;
         _stateUpdater = updater;
-        _algorithm = unificationAlgorithm;
+        _logger = logger;
     }
 
-    public ICoSLDGoal BuildGoal(CoSldSolverState currentState, IDatabase database)
+    public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
     {
         ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
-        ArgumentNullException.ThrowIfNull(database, nameof(database));
 
         if (!currentState.CurrentGoals.Any())
         {
-            throw new ArgumentException(nameof(currentState)); 
+            throw new ArgumentException("Must contain at least one goal.",nameof(currentState)); 
         }
 
         ISimpleTerm goalTerm = currentState.CurrentGoals.ElementAt(0);
@@ -64,13 +60,9 @@ public class PredicateGoalBuilder : IGoalBuilder
 
         return new PredicateGoal
         (
-            new CoinductiveChecker
-            (
-                new CHSChecker(new FunctorTableRecord(), new GoalSolver(_mapper, database, _logger)),
-                new CallstackChecker(new FunctorTableRecord())
-            ),
-            new DatabaseUnifier(_algorithm, database),
-            new GoalSolver(_mapper,database, _logger), 
+            _checker,
+            _unifier,
+            _solver,
             goalStruct,
             currentState.SolutionState,
             _stateUpdater,

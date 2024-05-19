@@ -10,6 +10,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extens
 using asp_interpreter_lib.Unification.StructureReducers;
 using System.Collections.Immutable;
 using Antlr4.Runtime.Misc;
+using System;
 
 namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
@@ -180,27 +181,17 @@ public class ConstructiveUnifier
             { var, term }
         };
 
-        var newPairs = new KeyValuePair<Variable, IVariableBinding>[oldMapping.Count];
+        var newMap = oldMapping;
 
-        Parallel.For(0, newPairs.Length, index =>
+        foreach (var pair in oldMapping)
         {
-            var currentPair = oldMapping.ElementAt(index);
-
-            if (currentPair.Value is TermBinding binding)
+            if (pair.Value is TermBinding binding)
             {
-                newPairs[index] = new KeyValuePair<Variable, IVariableBinding>
-                    (currentPair.Key, new TermBinding(binding.Term.Substitute(dictForSubstitution)));
+                newMap = newMap.SetItem(pair.Key, new TermBinding(binding.Term.Substitute(dictForSubstitution)));
             }
-            else
-            {
-                newPairs[index] = currentPair;
-            }
-        });
+        }
+        newMap = newMap.SetItem(var, new TermBinding(term));
 
-        var newMapping = new VariableMapping(newPairs.ToImmutableDictionary(new VariableComparer()));
-
-        newMapping = newMapping.SetItem(var, new TermBinding(term));
-
-        return newMapping;
+        return newMap;
     }
 }

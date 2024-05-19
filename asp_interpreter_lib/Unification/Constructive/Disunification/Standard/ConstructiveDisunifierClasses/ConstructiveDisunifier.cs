@@ -79,7 +79,7 @@ public class ConstructiveDisunifier
         }
 
         // filter for values that are already prohibited anyways
-        IEnumerable<DisunificationResult> filteredDisunifiers = _disunifiers.Where(disunifier =>
+        IEnumerable<DisunificationResult> filteredDisunifiers = _disunifiers.AsParallel().Where(disunifier =>
         {
             if (disunifier.IsPositive) { return true; };
 

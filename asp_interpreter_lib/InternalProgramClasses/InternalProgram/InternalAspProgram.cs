@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Util;
 
@@ -18,7 +17,7 @@ public class InternalAspProgram
             (
                 (statement) => statement == null
                 ||
-                statement.Count() < 1
+                !statement.Any()
                 ||
                 statement.Any((term) => term == null)
             )

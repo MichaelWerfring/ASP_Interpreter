@@ -11,7 +11,7 @@ public class SolverStateUpdater
 {
     public CallStack UpdateCallstack(CallStack callStack, VariableMapping map)
     {
-        var newCalls = new ISimpleTerm[callStack.TermStack.Count()];
+        var newCalls = new ISimpleTerm[callStack.Count()];
         Parallel.For(0, newCalls.Length, index =>
         {
             newCalls[index] = map.ApplySubstitution
@@ -25,39 +25,15 @@ public class SolverStateUpdater
 
     public CoinductiveHypothesisSet UpdateCHS(CoinductiveHypothesisSet set, VariableMapping map)
     {
-        var newCH = new CHSEntry[set.Entries.Count];
+        var newCH = new CHSEntry[set.Count];
         Parallel.For(0, newCH.Length, index =>
         {
-            var currentEntry = set.Entries[index];
+            var currentEntry = set.ElementAt(index);
 
             newCH[index] = new CHSEntry
                 (map.ApplySubstitution(currentEntry.Term), currentEntry.HasSucceded);
         });
 
         return new CoinductiveHypothesisSet([.. newCH]);
-    }
-
-    public CoSldSolverState UpdatAfterGoalFulfilled(CoSldSolverState inputState, GoalSolution goalSolution)
-    {
-        var goalTail = inputState.CurrentGoals.Skip(1);
-
-        if (goalTail.Any())
-        {
-            var substitutedNextGoal = goalSolution.ResultMapping.ApplySubstitution(goalTail.First());
-
-            goalTail = goalTail.Skip(1).Prepend(substitutedNextGoal);
-        }
-
-        return new CoSldSolverState
-        (
-            goalTail,
-            new SolutionState
-            (
-                goalSolution.Stack,
-                goalSolution.ResultSet,
-                goalSolution.ResultMapping,
-                goalSolution.NextInternalVariable
-            )
-        );
     }
 }

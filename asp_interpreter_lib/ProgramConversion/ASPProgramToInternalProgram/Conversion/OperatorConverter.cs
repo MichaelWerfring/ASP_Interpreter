@@ -1,4 +1,4 @@
-﻿using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.Types.ArithmeticOperations;
 using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.TypeVisitors;

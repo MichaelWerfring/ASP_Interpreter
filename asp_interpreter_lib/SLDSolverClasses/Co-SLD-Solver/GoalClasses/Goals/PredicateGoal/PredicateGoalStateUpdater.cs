@@ -34,11 +34,11 @@ public class PredicateGoalStateUpdater
     )
     {
         // update chs by updating all the variables in it.
-        var newCHS = _updater.UpdateCHS(inputSet, unifyingMapping);
+        var newCHS =  _updater.UpdateCHS(inputSet, unifyingMapping);
 
         // update callstack by pushing target onto stack and updating all the variables in it.
         var newCallstack = _updater.UpdateCallstack(inputStack.Push(constrainedTarget), unifyingMapping);
-
+        
         // substitute the next goal, if there is one.
         var nextGoals = renamedClause.Skip(1);
         if (nextGoals.Any())
@@ -60,6 +60,17 @@ public class PredicateGoalStateUpdater
         );
     }
 
+    public GoalSolution ConstructCoinductiveSuccessSolution(SolutionState state, VariableMapping result)
+    {
+        return new GoalSolution
+        (
+            _updater.UpdateCHS(state.CHS, result),
+            result,
+            _updater.UpdateCallstack(state.Callstack, result),
+            state.NextInternalVariableIndex
+        );
+    }
+
     /// <summary>
     /// updates subgoal solution by adding target to chs and popping the latest item from callstack.
     /// </summary>
@@ -67,7 +78,9 @@ public class PredicateGoalStateUpdater
     {
         var substitutedTarget = subgoalSolution.ResultMapping.ApplySubstitution(target);
 
-        var newCHS = subgoalSolution.ResultSet.Add(new CHSEntry(substitutedTarget, true));
+        var entry = new CHSEntry(substitutedTarget, true);
+
+        var newCHS = subgoalSolution.ResultSet.Add(entry);
 
         return new GoalSolution
         (

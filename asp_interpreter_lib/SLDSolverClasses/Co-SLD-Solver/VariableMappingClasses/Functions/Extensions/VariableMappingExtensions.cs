@@ -2,6 +2,7 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Instances;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
@@ -12,12 +13,11 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 public static class VariableMappingExtensions
 {
     private static readonly VariableMappingSplitter _splitter = new();
-
     private static readonly VariableMappingSubstituter _substituter = new();
-
     private static readonly VariableMappingFlattener _flattener = new();
-
     private static readonly VariableMappingUpdater _updater = new();
+    private static readonly TransitiveVariableMappingResolver _toProhibResolver = new(true);
+    private static readonly TransitiveVariableMappingResolver _toLastVariableResolver = new(false);
 
     public static IImmutableDictionary<Variable, TermBinding> GetTermBindings(this VariableMapping mapping)
     {
@@ -44,5 +44,17 @@ public static class VariableMappingExtensions
     public static IOption<VariableMapping> Update(this VariableMapping left, VariableMapping right)
     {
         return _updater.Update(left, right);
+    }
+
+    public static IVariableBinding Resolve(this VariableMapping mapping, Variable var, bool doProhibitedValueResolution)
+    {
+        if (doProhibitedValueResolution)
+        {
+            return _toProhibResolver.Resolve(var, mapping);
+        }
+        else
+        {
+            return _toLastVariableResolver.Resolve(var, mapping);
+        }
     }
 }

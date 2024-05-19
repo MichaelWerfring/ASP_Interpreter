@@ -11,7 +11,7 @@ public class CoSldSolverState
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
 
         SolutionState = solutionState;
-        CurrentGoals = currentGoals.ToList();      
+        CurrentGoals = currentGoals;      
     }
 
     public IEnumerable<ISimpleTerm> CurrentGoals { get; }

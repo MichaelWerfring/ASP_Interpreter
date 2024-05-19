@@ -1,9 +1,7 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
@@ -12,8 +10,6 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 
 public class ExactMatchChecker
 {
-    private TransitiveVariableMappingResolver _resolver = new(true);
-
     private IConstructiveUnificationAlgorithm _algorithm;
 
     public ExactMatchChecker(IConstructiveUnificationAlgorithm algorithm)
@@ -45,15 +41,15 @@ public class ExactMatchChecker
         var variables = target.Left.ExtractVariables()
                                    .Union(target.Right.ExtractVariables(), new VariableComparer());
 
-        // transitively resolve variable mappings.
-        var variablesToTransitiveMapping = variables
-                                           .Select(var => (var, _resolver.Resolve(var, unification)))
-                                           .ToDictionary(new VariableComparer());
-
-        // get the prohibitedValueBindings transitively: this is necessary
+        // Transitively resolve: this is necessary
         // because through constructive unification, there could be cases such as:
         // X => Y => \= {1, 2}.
         // if there are termbindings, then no exact match.
+        var variablesToTransitiveMapping = variables
+                                           .Select(var => (var, unification.Resolve(var, true)))
+                                           .ToDictionary(new VariableComparer());
+
+        // get only the prohibited values: if there are any termbinding, then return false.
         Dictionary<Variable, ProhibitedValuesBinding> newProhibitedValueBindings;
         try
         {
@@ -80,7 +76,7 @@ public class ExactMatchChecker
                     return true;
                 }
 
-                var intersection = olds.Intersect(news, new SimpleTermEqualityComparer());
+                var intersection = olds.Intersect(news);
 
                 if (intersection.Count() != olds.Count)
                 {

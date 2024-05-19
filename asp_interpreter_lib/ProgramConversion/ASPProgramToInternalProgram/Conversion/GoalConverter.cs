@@ -1,14 +1,10 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.BinaryOperations;
+﻿using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
 using System.Text;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using System.Collections.Immutable;
+using asp_interpreter_lib.FunctorNaming;
 
 namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
@@ -50,19 +46,17 @@ public class GoalConverter : TypeBaseVisitor<Structure>
             return new None<Structure>();
         }
 
-        var convertedStruct = new Structure(_functorTable.Forall, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
+        var convertedStruct = new Structure
+            (_functorTable.Forall, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
         return new Some<Structure>(convertedStruct);
     }
 
     public override IOption<Structure> Visit(Literal goal)
     {
-        var children = goal.Terms.Select(_termConverter.Convert);
+        var children = goal.Terms.Select(_termConverter.Convert).ToArray();
 
-        var convertedTerm = new Structure(
-                                            goal.Identifier.GetCopy(),
-                                            children
-                                         );
+        var convertedTerm = new Structure(goal.Identifier.GetCopy(),children);
 
         if (goal.HasStrongNegation)
         {
@@ -80,14 +74,13 @@ public class GoalConverter : TypeBaseVisitor<Structure>
     public override IOption<Structure> Visit(BinaryOperation goal)
     {
         var leftMaybe = goal.Left.Accept(_termConverter);
-        if (!leftMaybe.HasValue) { return new None<Structure>(); }
 
         var rightMaybe = goal.Right.Accept(_termConverter);
-        if (!rightMaybe.HasValue) { return new None<Structure>(); }
 
         var functor = _operatorConverter.Convert(goal.BinaryOperator);
 
-        var convertedStructure = new Structure(functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
+        var convertedStructure = new Structure
+            (functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
         return new Some<Structure>(convertedStructure);       
     }

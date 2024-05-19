@@ -8,7 +8,7 @@ using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 
-internal class CoinductiveChecker
+public class CoinductiveChecker
 {
     private readonly CHSChecker _chsChecker;
 
@@ -44,14 +44,14 @@ internal class CoinductiveChecker
             yield break;
         }
 
-        CHSConstrainmentResult chsConstraintmentResult = (CHSConstrainmentResult)chsCheckingResult;
+        CHSNoMatchOrConstrainmentResult chsConstraintmentResult = (CHSNoMatchOrConstrainmentResult)chsCheckingResult;
 
-        foreach (VariableMapping constraintment in chsConstraintmentResult.ConstrainmentResults)
+        foreach (VariableMapping result in chsConstraintmentResult.ConstrainmentResults)
         {
-            Structure targetwithConstraintment = (Structure)constraintment.ApplySubstitution(target);
+            var targetwithConstraintment = (Structure)result.ApplySubstitution(target);
 
             ICallstackCheckingResult callstackCheckingResult = _callstackChecker.CheckCallstack
-                (targetwithConstraintment, constraintment, state.Callstack);
+                (targetwithConstraintment, result, state.Callstack);
 
             if (callstackCheckingResult is CallstackDeterministicFailureResult)
             {
@@ -63,7 +63,7 @@ internal class CoinductiveChecker
                 yield return new CoinductiveCheckingResult
                 (
                     targetwithConstraintment,
-                    constraintment,
+                    result,
                     SuccessType.DeterministicSuccess
                 );
                 yield break;
@@ -74,7 +74,7 @@ internal class CoinductiveChecker
                 yield return new CoinductiveCheckingResult
                 (
                     targetwithConstraintment,
-                    constraintment,
+                    result,
                     SuccessType.NonDeterministicSuccess
                 );
                 yield break;
@@ -83,7 +83,7 @@ internal class CoinductiveChecker
             yield return new CoinductiveCheckingResult
             (
                 targetwithConstraintment,
-                constraintment,
+                result,
                 SuccessType.NoMatch
             );
         }

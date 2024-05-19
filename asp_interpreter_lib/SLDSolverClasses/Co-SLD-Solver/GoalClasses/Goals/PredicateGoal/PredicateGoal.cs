@@ -5,7 +5,6 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUni
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 using asp_interpreter_lib.Util.ErrorHandling;
 
-
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 internal class PredicateGoal : ICoSLDGoal
@@ -54,6 +53,10 @@ internal class PredicateGoal : ICoSLDGoal
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
+        _logger.LogInfo($"Attempting to solve predicate goal {_inputTarget}");
+        _logger.LogTrace($"Input state is: {_inputState}");
+
+
         // for each way the input can "survive" the coinductive check..
         foreach (CoinductiveCheckingResult checkingResult in _checker.Check(_inputTarget, _inputState))
         {
@@ -69,15 +72,14 @@ internal class PredicateGoal : ICoSLDGoal
     {
         if (checkingResult.SuccessType == SuccessType.DeterministicSuccess)
         {
-            yield return new GoalSolution
-            (_inputState.CHS, _inputState.Mapping, _inputState.Callstack, _inputState.NextInternalVariableIndex);
+            yield return _stateUpdater.ConstructCoinductiveSuccessSolution(_inputState, checkingResult.Mapping);
             yield break;
         }
 
         if (checkingResult.SuccessType == SuccessType.NonDeterministicSuccess)
         {
-            yield return new GoalSolution
-            (_inputState.CHS, checkingResult.Mapping,_inputState.Callstack, _inputState.NextInternalVariableIndex);
+            yield return _stateUpdater.ConstructCoinductiveSuccessSolution(_inputState, checkingResult.Mapping);
+
         }
 
         IEnumerable<DBUnificationResult> dbunifications = _databaseUnifier.GetDatabaseUnificationResults

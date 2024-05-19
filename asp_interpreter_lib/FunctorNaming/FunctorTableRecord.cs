@@ -1,4 +1,4 @@
-﻿namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
+﻿namespace asp_interpreter_lib.FunctorNaming;
 
 public record FunctorTableRecord
 {
@@ -9,8 +9,12 @@ public record FunctorTableRecord
     public string Multiplication { get; init; } = "*";
     public string Division { get; init; } = "/";
     public string Power { get; init; } = "**";
-
     public string Parenthesis { get; init; } = "_";
+
+    // variables 
+    public string AnonymusVariable { get; init; } = "_AnonVar";
+
+    public string InternalVariable { get; init; } = "#Var";
 
     // number comparison
     public string GreaterOrEqualThan { get; init; } = ">=";
@@ -32,8 +36,6 @@ public record FunctorTableRecord
 
     // sasp
     public string Forall { get; init; } = "_forall";
-
-    public string AnonymusVariable { get; init; } = "_anonVar";
 
     public string LessOrEqualTerm { get; init; } = "@<";
 }

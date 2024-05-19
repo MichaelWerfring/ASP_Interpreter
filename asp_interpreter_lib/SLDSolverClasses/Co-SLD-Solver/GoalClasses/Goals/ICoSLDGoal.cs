@@ -3,5 +3,4 @@
 public interface ICoSLDGoal
 {
     public IEnumerable<GoalSolution> TrySatisfy();
-
 }

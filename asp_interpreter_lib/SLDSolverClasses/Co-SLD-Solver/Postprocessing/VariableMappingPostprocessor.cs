@@ -1,6 +1,7 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using System.Collections.Immutable;
 
@@ -8,21 +9,21 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public class VariableMappingPostprocessor
 {
-    private readonly TransitiveVariableMappingResolver _builder = new(true);
+    public VariableMapping Postprocess(VariableMapping mapping)
+    {
+        return Postprocess(mapping, mapping.Keys.Where(x => !x.Identifier.StartsWith('#')));
+    }
 
-    public VariableMapping Postprocess(VariableMapping variableMapping)
+    public VariableMapping Postprocess(VariableMapping variableMapping, IEnumerable<Variable> variablesToKeep)
     {
         ArgumentNullException.ThrowIfNull(variableMapping, nameof(variableMapping));
-
-        // get noninternal variables
-        var nonInternalVariables = variableMapping.Keys
-            .Where(x => !x.Identifier.StartsWith('#'));
+        ArgumentNullException.ThrowIfNull(variablesToKeep, nameof(variablesToKeep));
 
         // make a new binding, add noninternal variables and their simplified internalVariablesInTerms.
         var newBinding = new Dictionary<Variable, IVariableBinding>(new VariableComparer());
-        foreach (var variable in nonInternalVariables)
+        foreach (var variable in variablesToKeep)
         {
-            newBinding.Add(variable, _builder.Resolve(variable, variableMapping));
+            newBinding.Add(variable, variableMapping.Resolve(variable, true));
         }
 
         // get all variables from all the term bindings.

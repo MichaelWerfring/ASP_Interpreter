@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using System.Collections.Immutable;
@@ -8,8 +9,6 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 internal class VariableMappingFlattener
 {
-    private TransitiveVariableMappingResolver _resolver = new(false);
-
     public VariableMapping Simplify(VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
@@ -21,7 +20,7 @@ internal class VariableMappingFlattener
             var currentVariable = mapping.Keys.ElementAt(index);
 
             newMapping[index] = new KeyValuePair<Variable, IVariableBinding>
-                (currentVariable, _resolver.Resolve(currentVariable, mapping));
+                (currentVariable, mapping.Resolve(currentVariable, false));
         });
 
         return new VariableMapping(newMapping.ToImmutableDictionary(new VariableComparer()));
