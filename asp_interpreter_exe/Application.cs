@@ -110,7 +110,7 @@ public class Application(
         }
 
         var program = GetProgram(code.GetRightOrThrow());
-        var visitor = new ExplainProgramVisitor(program);
+        var visitor = new ExplainProgramVisitor(program, logger);
 
         foreach (var statement in program.Statements)
         {

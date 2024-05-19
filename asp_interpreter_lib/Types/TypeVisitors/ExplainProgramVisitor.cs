@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Resources;
 using System.Text;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -7,10 +8,12 @@ namespace asp_interpreter_lib.Types.TypeVisitors
     public class ExplainProgramVisitor : TypeBaseVisitor<string>
     {
         private readonly AspProgram _program;
+        private readonly ILogger _logger;
 
-        public ExplainProgramVisitor(AspProgram program)
+        public ExplainProgramVisitor(AspProgram program, ILogger logger)
         {
             _program = program ?? throw new ArgumentNullException(nameof(program));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public override IOption<string> Visit(Statement statement)
@@ -25,12 +28,18 @@ namespace asp_interpreter_lib.Types.TypeVisitors
 
             Explanation explaination;
 
-            if (!_program.Explanations.TryGetValue(head.Identifier, out explaination))
+            if (!_program.Explanations.TryGetValue((head.Identifier, head.Terms.Count), out explaination))
             {
-                //sb.Append(head.ToString() + " holds");
+                _logger.LogInfo($"Unable to find Explanation for: {head.ToString()}");
                 return new Some<string>(string.Empty);
             }
 
+            if (explaination.Literal.Terms.Count != head.Terms.Count)
+            {
+                _logger.LogError($"The actual Head of the statement: {head.ToString()}, does not " +
+                    $"match the statement to be explained: {explaination.Literal.ToString()}");
+                return new None<string>();
+            }
 
             for (int i = 0; i < explaination.TextParts.Count; i++)
             {
@@ -90,7 +99,7 @@ namespace asp_interpreter_lib.Types.TypeVisitors
                 sb.Append("it is not the case that ");
             }
 
-            if (!_program.Explanations.TryGetValue(literal.Identifier, out explaination))
+            if (!_program.Explanations.TryGetValue((literal.Identifier, literal.Terms.Count), out explaination))
             {
                 var copy = new Literal(literal.Identifier, false, false, literal.Terms);
                 sb.Append(copy.ToString() + " holds");

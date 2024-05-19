@@ -34,7 +34,7 @@ public class ProgramVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<AspPr
             return new Some<AspProgram>(new AspProgram([], query, []));
         }
         
-        Dictionary<string, Explanation> explanations = [];
+        Dictionary<(string,int), Explanation> explanations = [];
         List<Statement> statements = [];
         var statementVisitor = new StatementVisitor(_logger);
         var explanationVisitor = new ExplanationVisitor(_logger, new LiteralVisitor(_logger));
@@ -48,7 +48,8 @@ public class ProgramVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<AspPr
                 continue;
             }
             
-            statement.Accept(explanationVisitor)?.IfHasValue(v =>explanations.Add(v.Literal.Identifier, v));
+            statement.Accept(explanationVisitor)?.IfHasValue(
+                v =>explanations.Add((v.Literal.Identifier, v.Literal.Terms.Count), v));
         }
 
         return new Some<AspProgram>(new AspProgram(statements, query, explanations));

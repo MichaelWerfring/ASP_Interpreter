@@ -9,9 +9,9 @@ public class AspProgram : IVisitableType
 {
     private List<Statement> _statements;
     private IOption<Query> _query;
-    private Dictionary<string, Explanation> _explainations;
+    private Dictionary<(string, int), Explanation> _explainations;
 
-    public AspProgram(List<Statement> statements, IOption<Query> query, Dictionary<string, Explanation> explanations)
+    public AspProgram(List<Statement> statements, IOption<Query> query, Dictionary<(string, int), Explanation> explanations)
     {
         Statements = statements;
         Query = query;
@@ -30,7 +30,7 @@ public class AspProgram : IVisitableType
         private set => _query = value ?? throw new ArgumentNullException(nameof(Query));
     }
 
-    public Dictionary<string, Explanation> Explanations 
+    public Dictionary<(string, int), Explanation> Explanations 
     {
         get => _explainations;
         private set => _explainations = value ?? throw new ArgumentNullException(nameof(Explanations));
