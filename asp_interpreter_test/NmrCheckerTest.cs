@@ -148,4 +148,31 @@ public class NmrCheckerTest
             Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check."));
         });
     }
+
+    [Test]
+    public void NMRCheckerDoesNotNestForallMoreThanOnce()
+    {
+        string code = """
+                      other(U, V) :-
+                          vertex(U), vertex(V), vertex(W),
+                          edge(U, W), V \= W, chosen(U, W).
+                      chosen(U, V) :-
+                          edge(U, V), not other(U, V).
+
+                      :- chosen(U, W), chosen(V, W), U \= V.
+
+                      ?- chosen(X, Y).
+                      """;
+        var program = AspExtensions.GetProgram(code, _logger);
+        var checker = new NmrChecker(_prefixes, _logger);
+        var subCheckRules = checker.GetSubCheckRules(program.Statements, false);
+
+        //verified with s(CASP)
+        Assert.Multiple(() =>
+        {
+            //Just check the nmr_rule is important now
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo(
+                "nmr_check :- forall(U, forall(V, not(chk_other(U, V)))), forall(U, forall(V, not(chk_chosen(U, V)))), not(chk_eh0)."));
+        });
+    }
 }

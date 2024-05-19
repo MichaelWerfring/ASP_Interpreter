@@ -133,15 +133,8 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
     private static void AddForallToCheck(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
-        //Variables are body variables implicitly
-        List<string> variables = [];
+        
         VariableFinder variableFinder = new();
-        foreach (var goal in statement.Body)
-        {
-            variables.AddRange(goal.Accept(variableFinder).
-                GetValueOrThrow("Cannot retrieve variables from body!").
-                Select(v => v.Identifier));
-        }
 
         for (var i = 0; i < statement.Body.Count; i++)
         {
@@ -154,14 +147,14 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
 
             var innerGoal = literal.GetValueOrThrow();
 
-            var variablesInGoal = innerGoal.Accept(variableFinder).GetValueOrThrow();
+            var variablesInGoal = innerGoal.Accept(variableFinder).GetValueOrThrow().Select(v => v.Identifier).ToList();
 
             if (variablesInGoal.Count == 0)
             {
                 continue;
             }
             
-            var forall = DualRuleConverter.NestForall(variables.ToList(), innerGoal);
+            var forall = DualRuleConverter.NestForall(variablesInGoal, innerGoal);
             statement.Body[i] = forall;
         }
     }
