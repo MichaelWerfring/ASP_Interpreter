@@ -31,7 +31,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         var disjunctions = _converter.PreprocessRules(headComputed);
         foreach (var disjunction in disjunctions)
         {
-            duals.AddRange(_converter.ToConjunction(disjunction, "chk_"));
+            duals.AddRange(_converter.ToConjunction(disjunction, "_chk_"));
         }
 
         duals.ForEach(d => _logger.LogDebug(d.ToString()));
@@ -48,7 +48,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         {
             _logger.LogDebug("Finished generation because no OLON rules found in program.");
             var emptyCheck = new Statement();
-            emptyCheck.AddHead(new Literal("nmr_check", false, false, []));
+            emptyCheck.AddHead(new Literal("_nmr_check", false, false, []));
             return [emptyCheck];
         }
         
@@ -77,7 +77,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
     private Statement GetCheckRule(IEnumerable<Statement> olonRules, bool notAsName = true)
     {
         Statement nmrCheck = new();
-        nmrCheck.AddHead(new Literal("nmr_check", false, false, []));
+        nmrCheck.AddHead(new Literal("_nmr_check", false, false, []));
 
         // 4) add modified duals to the NMR check goal if it is not already in there
         var nmrBody = new List<Goal>();
