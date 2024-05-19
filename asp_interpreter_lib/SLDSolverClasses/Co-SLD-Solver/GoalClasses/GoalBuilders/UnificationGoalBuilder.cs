@@ -1,7 +1,7 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Unification;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
@@ -9,28 +9,31 @@ public class UnificationGoalBuilder : IGoalBuilder
 {
     private readonly IConstructiveUnificationAlgorithm _algorithm;
 
-    public UnificationGoalBuilder(IConstructiveUnificationAlgorithm algorithm)
+    private readonly ILogger _logger;
+
+    public UnificationGoalBuilder(IConstructiveUnificationAlgorithm algorithm, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(algorithm);
+        ArgumentNullException.ThrowIfNull(logger);
 
         _algorithm = algorithm;
+        _logger = logger;
     }
 
-    public ICoSLDGoal BuildGoal(CoSldSolverState currentState, IDatabase database)
+    public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
     {
         ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
-        ArgumentNullException.ThrowIfNull(database, nameof(database));
 
         if (!currentState.CurrentGoals.Any())
         {
-            throw new ArgumentException("Must contain at least one goal!", nameof(currentState.CurrentGoals)); 
+            throw new ArgumentException("Must contain at least one goal!", nameof(currentState)); 
         }
 
         var goalTerm = currentState.CurrentGoals.First();
 
-        if (goalTerm is not Structure disunificationStruct || disunificationStruct.Children.Count() != 2)
+        if (goalTerm is not Structure disunificationStruct || disunificationStruct.Children.Count != 2)
         { 
-            throw new ArgumentException("Must contain a structure term with two children.", nameof(currentState.CurrentGoals)); 
+            throw new ArgumentException("Must contain a structure term with two children.", nameof(currentState)); 
         }
 
         var targetMaybe = ConstructiveTargetBuilder.Build
@@ -43,7 +46,7 @@ public class UnificationGoalBuilder : IGoalBuilder
         ConstructiveTarget target;
         try
         {
-            target = targetMaybe.GetValueOrThrow();
+            target = targetMaybe.GetRightOrThrow();
         }
         catch
         {
@@ -52,6 +55,6 @@ public class UnificationGoalBuilder : IGoalBuilder
                 $"for variables in unification goal term {goalTerm}",nameof(currentState));
         }
 
-        return new UnificationGoal(target, _algorithm, currentState.SolutionState);
+        return new UnificationGoal(target, _algorithm, currentState.SolutionState, _logger);
     }
 }

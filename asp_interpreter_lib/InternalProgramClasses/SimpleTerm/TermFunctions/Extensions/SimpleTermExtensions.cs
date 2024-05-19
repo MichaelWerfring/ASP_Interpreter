@@ -1,21 +1,24 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+﻿using asp_interpreter_lib.FunctorNaming;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 
 public static class SimpleTermExtensions
 {
-    private static SimpleTermEnumerator _flattener = new ();
+    private static readonly SimpleTermEnumerator _flattener = new();
 
-    private static SimpleTermEqualityComparer _equalityComparer = new ();
+    private static readonly SimpleTermComparer _comparer = new();
 
-    private static SimpleTermContainsChecker _containsChecker = new ();
+    private static readonly SimpleTermContainsChecker _containsChecker = new();
 
-    private static VariableSubstituter _variableSubstituter = new ();
+    private static readonly VariableSubstituter _variableSubstituter = new();
+
+    private static readonly ClauseVariableRenamer _renamer = new(new VariableComparer(), new FunctorTableRecord());
 
     public static IEnumerable<ISimpleTerm> Enumerate(this ISimpleTerm simpleTerm)
     {
@@ -24,7 +27,11 @@ public static class SimpleTermExtensions
 
     public static bool IsEqualTo(this ISimpleTerm simpleTerm, ISimpleTerm other)
     {
-        return _equalityComparer.Equals(simpleTerm, other);
+        return _comparer.Compare(simpleTerm, other) == 0;
+    }
+    public static int Compare(this ISimpleTerm left, ISimpleTerm other)
+    {
+        return _comparer.Compare(left, other);
     }
 
     public static bool Contains(this ISimpleTerm simpleTerm, ISimpleTerm other)
@@ -50,7 +57,7 @@ public static class SimpleTermExtensions
         (
             term is Structure structure
             && structure.Functor == functors.NegationAsFailure
-            && structure.Children.Count() == 1
+            && structure.Children.Count == 1
         )
         {
             return true;
@@ -69,7 +76,7 @@ public static class SimpleTermExtensions
         (
             term is Structure structure
             && structure.Functor == functors.NegationAsFailure
-            && structure.Children.Count() == 1
+            && structure.Children.Count == 1
         )
         {
             return structure.Children.ElementAt(0);
@@ -78,5 +85,10 @@ public static class SimpleTermExtensions
         {
             return new Structure(functors.NegationAsFailure, [term]);
         }
+    }
+
+    public static RenamingResult RenameClause(this IEnumerable<ISimpleTerm> clause, int nextInternalIndex)
+    {
+        return _renamer.RenameVariables(clause, nextInternalIndex);
     }
 }

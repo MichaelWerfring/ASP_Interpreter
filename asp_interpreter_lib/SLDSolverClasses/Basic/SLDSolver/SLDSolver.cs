@@ -1,19 +1,17 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Basic.Events;
 using asp_interpreter_lib.SLDSolverClasses.Basic.PostProcessing;
-using asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
 using asp_interpreter_lib.Unification.Basic.Interfaces;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDSolver;
 
 public class SLDSolver
 {
-    private ClauseVariableRenamer _variableRenamer = new ClauseVariableRenamer();
-
     private SubstitutionPostProcessor _postProcessor = new SubstitutionPostProcessor();
 
     private IUnificationAlgorithm _unificationAlgorithm;
@@ -51,7 +49,8 @@ public class SLDSolver
         {
             ISimpleTerm currentGoal = goals.First();
 
-            RenamingResult renamedClauseResult = _variableRenamer.RenameVariables(clause, nextInternalID);
+            RenamingResult renamedClauseResult = clause.RenameClause(nextInternalID);
+
             ISimpleTerm renamedClauseHead = renamedClauseResult.RenamedClause.First();
 
             var substitutionMaybe = _unificationAlgorithm.Unify(currentGoal, renamedClauseHead);

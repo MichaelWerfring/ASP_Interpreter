@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using System.Text;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 
@@ -29,4 +30,23 @@ public class SolutionState
     public VariableMapping Mapping { get; }
 
     public int NextInternalVariableIndex { get; }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine("Callstack:");
+        sb.AppendLine(Callstack.ToString());
+
+        sb.AppendLine("CHS:");
+        sb.AppendLine(CHS.ToString());
+
+        sb.AppendLine("VariableMapping:");
+        sb.AppendLine(Mapping.ToString());
+
+        sb.AppendLine("NextVar");
+        sb.AppendLine(NextInternalVariableIndex.ToString());
+
+        return sb.ToString();
+    }
 }

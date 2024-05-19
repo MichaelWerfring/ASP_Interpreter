@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.Util;
 using System.Collections;
 using System.Collections.Immutable;
 
@@ -6,55 +7,55 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class CallStack : IImmutableStack<ISimpleTerm>
 {
+    private readonly IImmutableStack<ISimpleTerm> _terms;
+
     public CallStack()
     {
-        TermStack = [];
+        _terms = [];
     }
 
     public CallStack(IImmutableStack<ISimpleTerm> termStack)
     {
         ArgumentNullException.ThrowIfNull(termStack, nameof(termStack));
 
-        TermStack = termStack;
+        _terms = termStack;
     }
 
-    public IImmutableStack<ISimpleTerm> TermStack { get; }
-
-    public bool IsEmpty => TermStack.IsEmpty;
-
-    bool IImmutableStack<ISimpleTerm>.IsEmpty => throw new NotImplementedException();
+    public bool IsEmpty => _terms.IsEmpty;
 
     public CallStack Clear()
     {
-        return new CallStack(TermStack.Clear());
+        return new CallStack(_terms.Clear());
     }
 
     public IEnumerator<ISimpleTerm> GetEnumerator()
     {
-        return TermStack.GetEnumerator();
+        return _terms.GetEnumerator();
     }
 
     public ISimpleTerm Peek()
     {
-        return TermStack.Peek();
+        return _terms.Peek();
     }
 
     public CallStack Pop()
     {
-        if (TermStack.IsEmpty)
+        if (_terms.IsEmpty)
         {
             return this;
         }
         else
         {
-            return new CallStack(TermStack.Pop());
+            return new CallStack(_terms.Pop());
         }       
     }
 
     public CallStack Push(ISimpleTerm value)
     {
-        return new CallStack(TermStack.Push(value));
+        return new CallStack(_terms.Push(value));
     }
+
+    bool IImmutableStack<ISimpleTerm>.IsEmpty => IsEmpty;
 
     IImmutableStack<ISimpleTerm> IImmutableStack<ISimpleTerm>.Clear()
     {
@@ -84,5 +85,10 @@ public class CallStack : IImmutableStack<ISimpleTerm>
     IImmutableStack<ISimpleTerm> IImmutableStack<ISimpleTerm>.Push(ISimpleTerm value)
     {
         return Push(value);
+    }
+
+    public override string ToString()
+    {
+        return _terms.ToList().ListToString();
     }
 }

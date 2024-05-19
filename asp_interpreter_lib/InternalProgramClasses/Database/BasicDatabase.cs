@@ -9,7 +9,7 @@ public class BasicDatabase : IDatabase
     public BasicDatabase(IEnumerable<IEnumerable<Structure>> clauses)
     {
         ArgumentNullException.ThrowIfNull(clauses);
-        if (clauses.Any((clause) => clause == null || clause.Count() < 1))
+        if (clauses.Any((clause) => clause == null || !clause.Any()))
         {
             throw new ArgumentException("Must not contain null clauses, or clauses with not at least one term");
         }
@@ -21,9 +21,6 @@ public class BasicDatabase : IDatabase
     {
         ArgumentNullException.ThrowIfNull(term, nameof(term));
 
-        foreach (var clause in _clauses)
-        {
-            yield return clause;
-        }
+        return _clauses;
     }
 }

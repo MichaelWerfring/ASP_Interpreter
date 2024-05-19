@@ -35,19 +35,15 @@ public class GoalSolution
     public override string ToString()
     {
         var sb = new StringBuilder();
-        sb.AppendLine("GoalSolution:");
+
         sb.AppendLine("Resultset:");
-        sb.AppendLine($"{{ {ResultSet.Entries.ToList().ListToString()} }}");
+        sb.AppendLine($"{{ {ResultSet} }}");
 
         sb.AppendLine("Resultmapping:");
-        foreach (var pair in ResultMapping)
-        {
-            sb.AppendLine($"{pair.Key.ToString()} : {pair.Value.ToString()}");
-        }
+        sb.AppendLine(ResultMapping.ToString());
+
         sb.AppendLine("Next variable index:");
         sb.AppendLine(NextInternalVariable.ToString());
-
-        sb.AppendLine();
 
         return sb.ToString();
     }

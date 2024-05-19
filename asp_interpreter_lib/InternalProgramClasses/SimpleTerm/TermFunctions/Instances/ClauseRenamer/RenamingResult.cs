@@ -1,6 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
-namespace asp_interpreter_lib.SLDSolverClasses.ClauseRenamer;
+namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
 
 public class RenamingResult
 {

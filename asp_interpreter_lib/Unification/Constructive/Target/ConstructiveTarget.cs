@@ -5,10 +5,7 @@ namespace asp_interpreter_lib.Unification.Constructive.Target;
 
 /// <summary>
 /// A class that holds a target for a constructive (dis)unification algorithm. 
-/// Basically two terms to unify, as well as their prohibited values lists.
-/// The mapping must provide prohibited values lists for every variable in the left and right term.
-/// It will not throw due to efficiency reasons of checking correctness,
-/// but it will be problematic down the line.
+/// Constructor should NEVER be called directly, always use Builder.
 /// </summary>
 public class ConstructiveTarget
 {
@@ -28,4 +25,9 @@ public class ConstructiveTarget
     public ISimpleTerm Right { get; }
 
     public VariableMapping Mapping { get; }
+
+    public override string ToString()
+    {
+        return $"{{ {Left}, {Right}, {Mapping} }}";
+    }
 }

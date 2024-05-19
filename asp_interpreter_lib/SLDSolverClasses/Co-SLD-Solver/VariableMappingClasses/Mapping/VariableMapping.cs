@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.Util;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -155,5 +156,10 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items)
     {
         return SetItems(items);
+    }
+
+    public override string ToString() 
+    {
+        return _mapping.ToList().ListToString();
     }
 }

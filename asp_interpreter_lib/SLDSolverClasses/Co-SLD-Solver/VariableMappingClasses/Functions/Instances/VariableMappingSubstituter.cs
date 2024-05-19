@@ -30,7 +30,7 @@ public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Va
 
     public ISimpleTerm Visit(Structure basicTerm, VariableMapping map)
     {
-        var newChildren = new ISimpleTerm[basicTerm.Children.Count()];
+        var newChildren = new ISimpleTerm[basicTerm.Children.Count];
 
         Parallel.For(0, newChildren.Length, index =>
         {

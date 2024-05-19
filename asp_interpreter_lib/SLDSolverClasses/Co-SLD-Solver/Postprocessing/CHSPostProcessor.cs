@@ -1,6 +1,7 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
+using Medallion.Collections;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
@@ -20,9 +21,9 @@ internal partial class CHSPostProcessor
                     .All(structure => MyRegex().IsMatch(structure.Functor))
         );
 
-        return new CoinductiveHypothesisSet(results.ToImmutableList());
+        return new CoinductiveHypothesisSet(results.ToImmutableLinkedList());
     }
 
-    [GeneratedRegex("^[a-zA-Z]+$")]
+    [GeneratedRegex("^[a-zA-Z_]+$")]
     private static partial Regex MyRegex();
 }

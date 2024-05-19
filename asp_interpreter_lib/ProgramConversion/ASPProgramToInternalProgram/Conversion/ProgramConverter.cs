@@ -1,7 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
+﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Util.ErrorHandling;
@@ -12,64 +11,41 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 {
     private readonly ILogger _logger;
 
-    private readonly FunctorTableRecord _record;
+    private readonly GoalConverter _converter;
 
     public ProgramConverter(FunctorTableRecord functorTable, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(functorTable);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _record = functorTable;
+        _converter = new GoalConverter(functorTable);
         _logger = logger;
     }
 
-    public InternalAspProgram Convert(AspProgram prog)
+    public IEnumerable<Structure> ConvertQuery(Query query)
     {
-        _logger.LogTrace("Converting to internal program structure...");
+        ArgumentNullException.ThrowIfNull(query);
 
-        var clauses = prog.Statements.Where(rule => rule.Head.HasValue).Select(ConvertStatement).ToList();
-
-        var queryMaybe = prog.Query;
-        if (!queryMaybe.HasValue)
-        {
-            throw new ArgumentException("No query found!");
-        }
-
-        var goalConverterForQuery = new GoalConverter(_record);
-
-        List<Structure> query = [];
-        queryMaybe.GetValueOrThrow().Goals.ForEach(g => 
-            query.Add(goalConverterForQuery.Convert(g).GetValueOrThrow("Goal cannot be converterd!")));
-        
-
-        return new InternalAspProgram(clauses, query);
+        return query.Goals.Select(x => _converter.Convert(x).GetValueOrThrow()).ToList();
     }
 
     public IEnumerable<Structure> ConvertStatement(Statement statement)
     {
-        var converter = new GoalConverter(_record);
-
-        var list = new List<Structure>();
-
+        ArgumentNullException.ThrowIfNull(statement);
         if (!statement.HasHead)
         {
             throw new ArgumentException("Must have a head!", nameof(statement));
         }
-        var head = statement.Head.GetValueOrThrow();
 
-        var convertedHeadMaybe = converter.Convert(head);
-        if (!convertedHeadMaybe.HasValue)
-        {
-            throw new Exception("Could not convert head!");
-        }
+        var list = new List<Structure>();
 
-        list.Add(convertedHeadMaybe.GetValueOrThrow());
+        var convertedHead = _converter.Convert(statement.Head.GetValueOrThrow()).GetValueOrThrow();
 
-
+        list.Add(convertedHead);
 
         foreach (var goal in statement.Body)
         {
-            var convertedGoalMaybe = converter.Convert(goal);
+            var convertedGoalMaybe = _converter.Convert(goal);
             if (!convertedGoalMaybe.HasValue)
             {
                 throw new Exception("Could not convert goal!");

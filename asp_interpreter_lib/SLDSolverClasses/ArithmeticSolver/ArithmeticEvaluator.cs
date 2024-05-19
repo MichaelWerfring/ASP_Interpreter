@@ -1,14 +1,14 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.FunctorNaming;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 
 public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 {
-    private FunctorTableRecord _functorTable;
+    private readonly FunctorTableRecord _functorTable;
 
     public ArithmeticEvaluator(FunctorTableRecord functorTable)
     {
@@ -31,7 +31,7 @@ public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 
     public IOption<int> Visit(Structure structure)
     {
-        if (structure.Children.Count() != 2) return new None<int>();
+        if (structure.Children.Count != 2) return new None<int>();
 
         int leftVal;
         int rightVal;

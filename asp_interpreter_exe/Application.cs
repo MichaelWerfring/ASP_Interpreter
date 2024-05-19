@@ -1,12 +1,11 @@
 ﻿using Antlr4.Runtime;
+using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.Database;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Preprocessing.OLONDetection;
 using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.FunctorTable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Solving.NMRCheck;
@@ -171,12 +170,17 @@ public class Application(
     {
         var converter = new ProgramConverter(new FunctorTableRecord(), _logger);
 
-        var convertedProgram = converter.Convert(program);
-        var database = new DualClauseDatabase(convertedProgram.Statements, new FunctorTableRecord());
+        var convertedStatements = program.Statements.Where(x => x.HasHead).Select(converter.ConvertStatement).ToList();
+
+        var convertedQuery = converter.ConvertQuery(program.Query.GetValueOrThrow());
+
+        var database = new DualClauseDatabase(convertedStatements, new FunctorTableRecord());
 
         var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
 
-        foreach (var solution in solver.Solve(convertedProgram.Query.Append(new Structure("nmr_check", []))))
+        var appendedQuery = convertedQuery.Append(new Structure("nmr_check", []));
+
+        foreach (var solution in solver.Solve(appendedQuery))
         {
             PrintSolution(solution);
         }    

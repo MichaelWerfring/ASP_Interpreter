@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util;
 
@@ -12,12 +13,12 @@ public class Structure : IStructure
         ArgumentNullException.ThrowIfNull(children);
 
         Functor = functor;
-        Children = children;
+        Children = children.ToImmutableList();
     }
 
     public string Functor { get; }
 
-    public IEnumerable<ISimpleTerm> Children { get; }
+    public IImmutableList<ISimpleTerm> Children { get; }
 
     public void Accept(ISimpleTermVisitor visitor)
     {
@@ -41,11 +42,11 @@ public class Structure : IStructure
 
     public override string ToString()
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new();
 
         stringBuilder.Append(Functor);
 
-        if (Children.Count() > 0)
+        if (Children.Count > 0)
         {
             stringBuilder.Append('(');
             stringBuilder.Append(Children.ToList().ListToString());

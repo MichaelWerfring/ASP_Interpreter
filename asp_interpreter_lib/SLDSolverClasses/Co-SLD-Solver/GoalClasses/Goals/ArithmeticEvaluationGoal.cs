@@ -2,6 +2,7 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
@@ -14,7 +15,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOption<GoalSolution>, int>
 {
-    private SolverStateUpdater _updater = new();
+    private readonly SolverStateUpdater _updater;
 
     private readonly ArithmeticEvaluator _evaluator;
 
@@ -26,30 +27,41 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
 
     private readonly IConstructiveUnificationAlgorithm _algorithm;
 
+    private readonly ILogger _logger;
+
     public ArithmeticEvaluationGoal
     (
+        SolverStateUpdater updater,
         ArithmeticEvaluator evaluator,
         ISimpleTerm left,
         ISimpleTerm right,
         SolutionState state,
-        IConstructiveUnificationAlgorithm algorithm
+        IConstructiveUnificationAlgorithm algorithm,
+        ILogger logger
     )
     {
+        ArgumentNullException.ThrowIfNull(updater);
         ArgumentNullException.ThrowIfNull(evaluator);
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
         ArgumentNullException.ThrowIfNull(state);
         ArgumentNullException.ThrowIfNull(algorithm);
+        ArgumentNullException.ThrowIfNull(logger);
 
+        _updater = updater;
         _evaluator = evaluator;
         _left = left;
         _right = right;
         _state = state;
         _algorithm = algorithm;
+        _logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
+        _logger.LogInfo($"Attempting to solve arithmetic evaluation goal: {_left}, {_right}");
+        _logger.LogTrace($"Input state is: {_state}");
+
         IOption<int> rightEvalMaybe = _evaluator.Evaluate( _right );
 
         int rightEval;
@@ -73,14 +85,15 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
 
     public IOption<GoalSolution> Visit(Variable var, int integer)
     {
-        var targetMaybe = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
+        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
 
-        if(!targetMaybe.HasValue)
+        if(!targetEither.IsRight)
         {
-            throw new ArgumentException("Mapping must not contain term value for left variable!");
+            _logger.LogError(targetEither.GetLeftOrThrow().Message);
+            throw new ArgumentException(nameof(_state));
         }
 
-        var target = targetMaybe.GetValueOrThrow();
+        var target = targetEither.GetRightOrThrow();
 
         IOption<VariableMapping> unificationMaybe = _algorithm.Unify(target);
 
@@ -90,10 +103,13 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
         }
 
         VariableMapping unification = unificationMaybe.GetValueOrThrow();
+        _logger.LogDebug($"Unifying mapping is {unification}");
 
         var updatedMapping = _state.Mapping.Update(unification).GetValueOrThrow();
+        _logger.LogTrace($"Updated mapping is {updatedMapping}");
 
         var flattenedMapping = updatedMapping.Flatten();
+        _logger.LogTrace($"Flattened mapping is {flattenedMapping}");
 
         CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_state.CHS, flattenedMapping);
 

@@ -10,7 +10,7 @@ public class DBUnificationResult
         ArgumentNullException.ThrowIfNull(renamedClause, nameof(renamedClause));
         ArgumentNullException.ThrowIfNull(unifyingMapping, nameof(unifyingMapping));
 
-        RenamedClause = renamedClause.ToList();
+        RenamedClause = renamedClause;
         UnifyingMapping = unifyingMapping;
         NextInternalIndex = nextInternalIndex;
     }
