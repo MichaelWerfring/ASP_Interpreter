@@ -6,9 +6,6 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extens
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
-using asp_interpreter_lib.Unification.Constructive.Target;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
@@ -95,7 +92,12 @@ public class ForallGoal : ICoSLDGoal
                 yield break;
             }
 
+            // update goal with whatever we have found out about its vars during initial forall execution.
             var updatedGoal = initialForallSolution.ResultMapping.ApplySubstitution(_goalTerm);
+
+            // get the "new version" of the variable:
+            // forall(X, p(X)) would have X renamed during unification with database clause.
+            var updatedVar = initialForallSolution.ResultMapping.Resolve(_variable, false);
 
             // construct new goals where variable in goalTerm is substituted by each prohibited value of variable.
             var constraintSubstitutedGoals = prohibitedValuesForVariable.ProhibitedValues
@@ -103,7 +105,7 @@ public class ForallGoal : ICoSLDGoal
             (
                 new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
                 {
-                    { _variable, prohibitedTerm }
+                    {(Variable)((TermBinding)updatedVar).Term, prohibitedTerm }
                 })
             );
 
@@ -115,7 +117,7 @@ public class ForallGoal : ICoSLDGoal
                 (
                     initialForallSolution.Stack,
                     initialForallSolution.ResultSet,
-                    initialForallSolution.ResultMapping.SetItem(_variable, new ProhibitedValuesBinding()), 
+                    initialForallSolution.ResultMapping, 
                     initialForallSolution.NextInternalVariable
                 )
             );
@@ -126,7 +128,13 @@ public class ForallGoal : ICoSLDGoal
 
             foreach (GoalSolution solution in solutions ) 
             {
-                var newSolution = new GoalSolution(solution.ResultSet, solution.ResultMapping.SetItem(_variable, new ProhibitedValuesBinding()), solution.Stack, solution.NextInternalVariable);
+                var newSolution = new GoalSolution
+                (
+                    solution.ResultSet, 
+                    solution.ResultMapping.SetItem(_variable, new ProhibitedValuesBinding()),
+                    solution.Stack,
+                    solution.NextInternalVariable
+                );
 
                  yield return newSolution;
             }

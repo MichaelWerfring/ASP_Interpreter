@@ -3,7 +3,6 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instan
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.Unification.StructureReducers;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Unification.Basic.Robinson;

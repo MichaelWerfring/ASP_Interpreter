@@ -34,9 +34,6 @@ public class ExactMatchChecker
             return false;
         }
 
-        // get the old prohibited values
-        var oldProhibitedValueBindings = target.Mapping.GetProhibitedValueBindings();
-
         // extract variables from both input terms.
         var variables = target.Left.ExtractVariables()
                                    .Union(target.Right.ExtractVariables(), new VariableComparer());
@@ -68,7 +65,7 @@ public class ExactMatchChecker
         (
             variables.Any(x =>
             {
-                var olds = oldProhibitedValueBindings[x].ProhibitedValues;
+                var olds = target.Mapping[x].ProhibitedValues;
                 var news = newProhibitedValueBindings[x].ProhibitedValues;
 
                 if (olds.Count != news.Count)

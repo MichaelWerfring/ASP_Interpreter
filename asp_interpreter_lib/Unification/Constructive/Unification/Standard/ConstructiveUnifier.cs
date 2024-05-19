@@ -7,17 +7,14 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instan
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.Unification.StructureReducers;
 using System.Collections.Immutable;
-using Antlr4.Runtime.Misc;
-using System;
 
 namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 public class ConstructiveUnifier
 {
-    private readonly ConstructiveVariableSubstitutor _maybeSubstitutor = new();
-    private readonly StructureReducer _reducer = new();
+    private readonly ConstructiveVariableSubstitutor _maybeSubstitutor;
+    private readonly VariableComparer _varComparer;
 
     // input by constructor args
     private readonly bool _doOccursCheck;
@@ -28,16 +25,29 @@ public class ConstructiveUnifier
     private VariableMapping _mapping;
     private bool _hasSucceded;
 
-    public ConstructiveUnifier(bool doOccursCheck, ConstructiveTarget target)
+    public ConstructiveUnifier
+    (
+        bool doOccursCheck, 
+        ConstructiveTarget target,
+        ConstructiveVariableSubstitutor maybeSubstituter,
+        VariableComparer varComparer
+    )
     {
-        ArgumentNullException.ThrowIfNull(target, nameof(target));
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(maybeSubstituter);
+        ArgumentNullException.ThrowIfNull(varComparer);
+
+        _maybeSubstitutor = maybeSubstituter;
+        _varComparer = varComparer;
 
         _doOccursCheck = doOccursCheck;
         _left = target.Left;
         _right = target.Right;
-        _mapping = target.Mapping;
+
+        _mapping = new VariableMapping(target.Mapping);
 
         _hasSucceded = true;
+
     }
 
     public IOption<VariableMapping> Unify()
@@ -103,7 +113,7 @@ public class ConstructiveUnifier
     // cases
     private void LeftIsStructRightIsStruct(IStructure left, IStructure right)
     {
-        var reductionMaybe = _reducer.TryReduce(left, right);
+        var reductionMaybe = left.Reduce(right);
         if (!reductionMaybe.HasValue)
         {
             _hasSucceded = false;
@@ -141,7 +151,7 @@ public class ConstructiveUnifier
         }
 
         // now do substitution composition
-        _mapping = ApplySubstitutionComposition(_mapping, left, right);
+        ApplySubstitutionComposition(_mapping, left, right);
     }
 
     private void LeftIsVarRightIsVar(Variable left, Variable right)
@@ -154,7 +164,7 @@ public class ConstructiveUnifier
 
         UpdateProhibitedValues(left, right);
 
-        _mapping = ApplySubstitutionComposition(_mapping, left, right);
+        ApplySubstitutionComposition(_mapping, left, right);
     }
 
     // updating
@@ -164,24 +174,23 @@ public class ConstructiveUnifier
         ProhibitedValuesBinding rightVals = (ProhibitedValuesBinding)_mapping[right];
 
         ImmutableSortedSet<ISimpleTerm> union = leftVals.ProhibitedValues
-                                                    .Union(rightVals.ProhibitedValues)
-                                                    .ToImmutableSortedSet(new SimpleTermComparer());
-
+                                                    .Union(rightVals.ProhibitedValues);
+                                                    
         _mapping = _mapping.SetItem
         (
             right,
-            new ProhibitedValuesBinding(union.ToImmutableSortedSet(new SimpleTermComparer()))
+            new ProhibitedValuesBinding(union)
         );
     }
 
-    private VariableMapping ApplySubstitutionComposition(VariableMapping oldMapping, Variable var, ISimpleTerm term)
+    private void ApplySubstitutionComposition(VariableMapping oldMapping, Variable var, ISimpleTerm term)
     {
-        var dictForSubstitution = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
+        var dictForSubstitution = new Dictionary<Variable, ISimpleTerm>(_varComparer)
         {
             { var, term }
         };
 
-        var newMap = oldMapping;
+        VariableMapping newMap = oldMapping;
 
         foreach (var pair in oldMapping)
         {
@@ -190,8 +199,7 @@ public class ConstructiveUnifier
                 newMap = newMap.SetItem(pair.Key, new TermBinding(binding.Term.Substitute(dictForSubstitution)));
             }
         }
-        newMap = newMap.SetItem(var, new TermBinding(term));
 
-        return newMap;
+        _mapping = newMap.SetItem(var, new TermBinding(term));
     }
 }

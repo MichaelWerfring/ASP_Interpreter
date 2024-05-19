@@ -4,10 +4,10 @@ using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.Unification.StructureReducers;
 using System.Collections.Immutable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
@@ -17,9 +17,6 @@ namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.C
 /// </summary>
 public class ConstructiveDisunifier
 {
-    // functions
-    private readonly StructureReducer _reducer = new();
-
     // input by constructor
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
@@ -142,8 +139,7 @@ public class ConstructiveDisunifier
     // cases
     private void LeftIsStructRightIsStruct(IStructure leftStruct, IStructure rightStruct)
     {
-        IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> reductionMaybe = 
-            _reducer.TryReduce(leftStruct, rightStruct);
+        IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> reductionMaybe = leftStruct.Reduce(rightStruct);
 
         if (!reductionMaybe.HasValue)
         {

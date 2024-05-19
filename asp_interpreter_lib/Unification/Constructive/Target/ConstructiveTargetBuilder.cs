@@ -22,7 +22,7 @@ internal static class ConstructiveTargetBuilder
         var variables = left.ExtractVariables()
             .Union(right.ExtractVariables(), _comparer);
 
-        VariableMapping newMapping = [];
+        ImmutableDictionary<Variable, ProhibitedValuesBinding> newMapping = ImmutableDictionary.Create<Variable, ProhibitedValuesBinding>(_comparer);
 
         foreach (Variable variable in variables)
         {
@@ -39,8 +39,15 @@ internal static class ConstructiveTargetBuilder
                 return new Left<TargetBuildingException, ConstructiveTarget>
                     (new TargetBuildingException($"Variable {variable} was bound to term {tb.Term}"));
             }
-
-            newMapping = newMapping.SetItem(variable, value);
+            else if (value is ProhibitedValuesBinding pb)
+            {
+                newMapping = newMapping.SetItem(variable, pb);
+            }
+            else
+            {
+                throw new InvalidDataException
+                    ($"Binding class hierarchy has changed so not every binding is {nameof(ProhibitedValuesBinding)} or {nameof(TermBinding)}");
+            }        
         }
 
         return new Right<TargetBuildingException, ConstructiveTarget>

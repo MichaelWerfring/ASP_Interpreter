@@ -1,5 +1,8 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.Unification.Constructive.Target;
 
@@ -9,7 +12,7 @@ namespace asp_interpreter_lib.Unification.Constructive.Target;
 /// </summary>
 public class ConstructiveTarget
 {
-    public ConstructiveTarget(ISimpleTerm left, ISimpleTerm right, VariableMapping mapping)
+    public ConstructiveTarget(ISimpleTerm left, ISimpleTerm right, ImmutableDictionary<Variable, ProhibitedValuesBinding> mapping)
     {
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
@@ -24,7 +27,7 @@ public class ConstructiveTarget
 
     public ISimpleTerm Right { get; }
 
-    public VariableMapping Mapping { get; }
+    public ImmutableDictionary<Variable, ProhibitedValuesBinding> Mapping { get; }
 
     public override string ToString()
     {

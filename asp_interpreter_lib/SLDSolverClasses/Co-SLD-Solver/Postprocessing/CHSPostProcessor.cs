@@ -2,8 +2,6 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using Medallion.Collections;
-using System.Collections.Immutable;
-using System.Text.RegularExpressions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
 
@@ -18,12 +16,9 @@ internal partial class CHSPostProcessor
         var results = set.Where
         (
             entry => entry.Term.Enumerate().OfType<Structure>()
-                    .All(structure => MyRegex().IsMatch(structure.Functor))
+                    .All(structure => structure.Functor.StartsWith('_'))
         );
 
         return new CoinductiveHypothesisSet(results.ToImmutableLinkedList());
     }
-
-    [GeneratedRegex("^[a-zA-Z_]+$")]
-    private static partial Regex MyRegex();
 }
