@@ -1,4 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Util;
 using System.Collections;
@@ -11,15 +13,15 @@ namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 /// Represents a mapping for the co-sld-resolution:
 /// Variables are mapped to either a prohibited value set or a single term.
 /// This is a concretization of ImmutableDictionary to make sure that it always has the right comparer:
-/// All the methods just call the inner dictionary and wrap them in a UnifyingMapping before returning.
+/// All the methods just call the inner dictionary and wrap them in a NewMapping before returning.
 /// </summary>
 public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 {
-    private ImmutableDictionary<Variable, IVariableBinding> _mapping;
+    private readonly ImmutableDictionary<Variable, IVariableBinding> _mapping;
 
     public VariableMapping()
     {
-        _mapping = ImmutableDictionary.Create<Variable, IVariableBinding>(new VariableComparer());
+        _mapping = ImmutableDictionary.Create<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
     }
 
     public VariableMapping(ImmutableDictionary<Variable, IVariableBinding> mapping)
@@ -42,7 +44,7 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
         }
     
         var immutableBuilder = 
-            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(new VariableComparer());
+            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
         foreach (var pair in mapping)
         {
             immutableBuilder.Add(pair.Key, pair.Value);
@@ -60,7 +62,7 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
         }
 
         var immutableBuilder = 
-            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(new VariableComparer());
+            ImmutableDictionary.CreateBuilder<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
         foreach (var pair in mapping)
         {
             immutableBuilder.Add(pair.Key, pair.Value);
@@ -68,6 +70,20 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 
         _mapping = immutableBuilder.ToImmutable();
     }
+
+    public VariableMapping Add(Variable key, IVariableBinding value) => new(_mapping.Add(key, value));
+
+    public VariableMapping AddRange(IEnumerable<KeyValuePair<Variable, IVariableBinding>> pairs) => new(_mapping.AddRange(pairs));
+
+    public VariableMapping Clear() => new(_mapping.Clear());
+
+    public VariableMapping Remove(Variable key) => new(_mapping.Remove(key));
+
+    public VariableMapping RemoveRange(IEnumerable<Variable> keys) => new(_mapping.RemoveRange(keys));
+
+    public VariableMapping SetItem(Variable key, IVariableBinding value) => new(_mapping.SetItem(key, value));
+
+    public VariableMapping SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items) => new(_mapping.SetItems(items));
 
     public IVariableBinding this[Variable key] => 
         _mapping[key];
@@ -81,41 +97,18 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
     public int Count => 
         _mapping.Count;
 
-    public VariableMapping Add(Variable key, IVariableBinding value) => 
-        new VariableMapping(_mapping.Add(key, value));
-
-    public VariableMapping AddRange(IEnumerable<KeyValuePair<Variable, IVariableBinding>> pairs) => 
-        new VariableMapping(_mapping.AddRange(pairs));
-
-    public VariableMapping Clear() => 
-        new VariableMapping(_mapping.Clear());
-
     public bool Contains(KeyValuePair<Variable, IVariableBinding> pair) => 
         _mapping.Contains(pair);
 
     public bool ContainsKey(Variable key) => 
         _mapping.ContainsKey(key);
 
+    public bool TryGetKey(Variable equalKey, out Variable actualKey) => _mapping.TryGetKey(equalKey, out actualKey);
+
+    public bool TryGetValue(Variable key, [MaybeNullWhen(false)] out IVariableBinding value) => _mapping.TryGetValue(key, out value);
+
     public IEnumerator<KeyValuePair<Variable, IVariableBinding>> GetEnumerator() => 
         _mapping.GetEnumerator();
-
-    public VariableMapping Remove(Variable key) => 
-        new VariableMapping(_mapping.Remove(key));
-
-    public VariableMapping RemoveRange(IEnumerable<Variable> keys) => 
-        new VariableMapping(_mapping.RemoveRange(keys));
-
-    public VariableMapping SetItem(Variable key, IVariableBinding value) => 
-        new VariableMapping(_mapping.SetItem(key, value));
-
-    public VariableMapping SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items) => 
-        new VariableMapping(_mapping.SetItems(items));
-
-    public bool TryGetKey(Variable equalKey, out Variable actualKey)
-        => _mapping.TryGetKey(equalKey, out actualKey);
-
-    public bool TryGetValue(Variable key, [MaybeNullWhen(false)] out IVariableBinding value)
-        => _mapping.TryGetValue(key, out value);
 
     //explicit interface implementation so the compiler will shut up.
     IEnumerator IEnumerable.GetEnumerator()
@@ -160,6 +153,6 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 
     public override string ToString() 
     {
-        return _mapping.ToList().ListToString();
+        return _mapping.Count > 0 ? $"{{{_mapping.ToList().ListToString()}}}" : "Empty Mapping";
     }
 }

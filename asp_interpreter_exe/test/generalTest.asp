@@ -1,24 +1,33 @@
-﻿% fact for each vertex(N).
-vertex(0).
-vertex(1).
-vertex(2).
+﻿test(X) :- not test2(X, Y).
+test(X) :- test([]).
+test(X).
+test2(X, Y) :- Y \= 1, not test3(X).
+test2(X, 1) :- not test3(X).
+test3(X) :- not test(X).
 
-% fact for each edge edge(U, V).
-edge(0, 1).
-edge(1, 2).
-edge(2, 0).
+male(bob).
+male(bo).
+male(ben).
 
-reachable(V) :- chosen(U, V), reachable(U).
-reachable(0) :- chosen(V, 0).
+female(may).
+female(jill).
+female(sam).
 
-% Every vertex must be reachable.
-:- vertex(U), not reachable(U).
+father(bob,jill).
+father(bob,bo).
+father(ben,sam).
 
-% Choose exactly one edge from each vertex.
-other(U, V) :-
-    vertex(U), vertex(V), vertex(W),
-    edge(U, W), V \= W, chosen(U, W).
-chosen(U, V) :-
-    edge(U, V), not other(U, V).
+mother(may,jill).
+mother(may,bo).
+mother(jill,sam).
 
-?- chosen(X, Y).
+parent(X,Y) :- father(X,Y).
+parent(X,Y) :- mother(X,Y).
+
+% Get lineage from X to Y
+ancestor(X,Y,[X,Y]) :- parent(X,Y).
+ancestor(X,Y,[X|T]) :- parent(X,Z),ancestor(Z,Y,T).
+
+arith(Z) :- Z is 2 ** 2.
+
+?- ancestor(bob,sam,X), arith(Z).

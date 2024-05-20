@@ -4,7 +4,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.Unification;
 
@@ -55,7 +55,7 @@ public class UnificationGoal : IGoal
             new SolverState
                 (
                     newGoals,
-                    state.CurrentSubstitution.Union(substitution).ToDictionary(new VariableComparer()),
+                    state.CurrentSubstitution.Union(substitution).ToDictionary(TermFuncs.GetSingletonVariableComparer()),
                     state.NextInternalVariable
                 )
         ];

@@ -5,19 +5,19 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.D
 
 public class DBUnificationResult
 {
-    public DBUnificationResult(IEnumerable<ISimpleTerm> renamedClause, VariableMapping unifyingMapping, int nextInternalIndex)
+    public DBUnificationResult(IEnumerable<ISimpleTerm> renamedClause, VariableMapping newMapping, int nextInternalIndex)
     {
         ArgumentNullException.ThrowIfNull(renamedClause, nameof(renamedClause));
-        ArgumentNullException.ThrowIfNull(unifyingMapping, nameof(unifyingMapping));
+        ArgumentNullException.ThrowIfNull(newMapping, nameof(newMapping));
 
         RenamedClause = renamedClause;
-        UnifyingMapping = unifyingMapping;
+        NewMapping = newMapping;
         NextInternalIndex = nextInternalIndex;
     }
 
     public IEnumerable<ISimpleTerm> RenamedClause { get; }
 
-    public VariableMapping UnifyingMapping { get; }
+    public VariableMapping NewMapping { get; }
 
     public int NextInternalIndex { get; }
 }

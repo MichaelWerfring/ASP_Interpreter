@@ -1,5 +1,4 @@
 using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 
@@ -7,15 +6,12 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.In
 
 public class ClauseVariableRenamer
 {
-    private readonly VariableComparer _comparer;
     private readonly FunctorTableRecord _functors;
 
-    public ClauseVariableRenamer(VariableComparer comparer, FunctorTableRecord functors)
+    public ClauseVariableRenamer(FunctorTableRecord functors)
     {
-        ArgumentNullException.ThrowIfNull(comparer, nameof(comparer));
         ArgumentNullException.ThrowIfNull(functors, nameof(functors));
 
-        _comparer = comparer;
         _functors = functors;
     }
 
@@ -23,7 +19,9 @@ public class ClauseVariableRenamer
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        var clauseVariables = clause.SelectMany(x => x.ExtractVariables()).Distinct(_comparer);
+        var clauseVariables = clause
+            .SelectMany(x => x.ExtractVariables())
+            .Distinct(TermFuncs.GetSingletonVariableComparer());
 
         var varsToNewVarsKeyValuePairs = new List<KeyValuePair<Variable, ISimpleTerm>>();
         foreach (var var in clauseVariables)
@@ -34,7 +32,8 @@ public class ClauseVariableRenamer
             currentInternalIndex += 1;
         }
 
-        var dict = varsToNewVarsKeyValuePairs.ToDictionary(_comparer);
+        var dict = varsToNewVarsKeyValuePairs.
+            ToDictionary(TermFuncs.GetSingletonVariableComparer());
 
         var substitutedClause = clause.Select((term) => term.Substitute(dict));
 

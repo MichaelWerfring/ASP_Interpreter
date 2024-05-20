@@ -1,20 +1,21 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Util;
 using System.Collections;
 using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
-public class CallStack : IImmutableStack<ISimpleTerm>
+public class CallStack : IImmutableStack<Structure>
 {
-    private readonly IImmutableStack<ISimpleTerm> _terms;
+    private readonly IImmutableStack<Structure> _terms;
 
     public CallStack()
     {
         _terms = [];
     }
 
-    public CallStack(IImmutableStack<ISimpleTerm> termStack)
+    public CallStack(IImmutableStack<Structure> termStack)
     {
         ArgumentNullException.ThrowIfNull(termStack, nameof(termStack));
 
@@ -28,12 +29,12 @@ public class CallStack : IImmutableStack<ISimpleTerm>
         return new CallStack(_terms.Clear());
     }
 
-    public IEnumerator<ISimpleTerm> GetEnumerator()
+    public IEnumerator<Structure> GetEnumerator()
     {
         return _terms.GetEnumerator();
     }
 
-    public ISimpleTerm Peek()
+    public Structure Peek()
     {
         return _terms.Peek();
     }
@@ -50,14 +51,14 @@ public class CallStack : IImmutableStack<ISimpleTerm>
         }       
     }
 
-    public CallStack Push(ISimpleTerm value)
+    public CallStack Push(Structure value)
     {
         return new CallStack(_terms.Push(value));
     }
 
-    bool IImmutableStack<ISimpleTerm>.IsEmpty => IsEmpty;
+    bool IImmutableStack<Structure>.IsEmpty => IsEmpty;
 
-    IImmutableStack<ISimpleTerm> IImmutableStack<ISimpleTerm>.Clear()
+    IImmutableStack<Structure> IImmutableStack<Structure>.Clear()
     {
         return Clear();
     }
@@ -67,28 +68,28 @@ public class CallStack : IImmutableStack<ISimpleTerm>
         return GetEnumerator();
     }
 
-    IEnumerator<ISimpleTerm> IEnumerable<ISimpleTerm>.GetEnumerator()
+    IEnumerator<Structure> IEnumerable<Structure>.GetEnumerator()
     {
         return GetEnumerator();
     }
 
-    ISimpleTerm IImmutableStack<ISimpleTerm>.Peek()
+    Structure IImmutableStack<Structure>.Peek()
     {
         return Peek();
     }
 
-    IImmutableStack<ISimpleTerm> IImmutableStack<ISimpleTerm>.Pop()
+    IImmutableStack<Structure> IImmutableStack<Structure>.Pop()
     {
         return Pop();
     }
 
-    IImmutableStack<ISimpleTerm> IImmutableStack<ISimpleTerm>.Push(ISimpleTerm value)
+    IImmutableStack<Structure> IImmutableStack<Structure>.Push(Structure value)
     {
         return Push(value);
     }
 
     public override string ToString()
     {
-        return _terms.ToList().ListToString();
+        return !_terms.IsEmpty ? $"{{{_terms.ToList().ListToString()}}}" : "Empty Callstack";
     }
 }

@@ -1,16 +1,15 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.Unification.StructureReducers;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Unification.Basic.Robinson;
 
 public class RobinsonUnifier
 {
-    private readonly StructureReducer _reducer = new StructureReducer();
+    private readonly StructureReducer _reducer = new();
 
     private readonly bool _doOccursCheck;
 
@@ -21,7 +20,7 @@ public class RobinsonUnifier
     {
         _doOccursCheck = doOccursCheck;
 
-        _substitution = new Dictionary<Variable, ISimpleTerm>(new VariableComparer());
+        _substitution = new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer());
         _hasSucceded = true;
     }
 
@@ -117,7 +116,7 @@ public class RobinsonUnifier
         // now do substitution composition
         else
         {
-            var newDict = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
+            var newDict = new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
             {
                 { left, right }
             };
@@ -132,9 +131,9 @@ public class RobinsonUnifier
     )
     {
         return oldSubstitution.Select(keyValuePair => (keyValuePair.Key, keyValuePair.Value.Substitute(substitution)))
-                              .ToDictionary(new VariableComparer())
+                              .ToDictionary(TermFuncs.GetSingletonVariableComparer())
                               .Union(substitution)
-                              .ToDictionary(new VariableComparer());
+                              .ToDictionary(TermFuncs.GetSingletonVariableComparer());
     }
 
     private ISimpleTerm GetSubstitutionOrDefault

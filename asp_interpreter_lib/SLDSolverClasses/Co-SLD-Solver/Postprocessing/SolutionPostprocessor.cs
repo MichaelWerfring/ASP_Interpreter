@@ -1,16 +1,14 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
 
 internal class SolutionPostprocessor
 {
-    private VariableMappingPostprocessor _mappingPostprocessor;
+    private readonly VariableMappingPostprocessor _mappingPostprocessor;
 
-    private CHSPostProcessor _chsPostprocessor;
+    private readonly CHSPostProcessor _chsPostprocessor;
 
     public SolutionPostprocessor(VariableMappingPostprocessor mappingProcessor, CHSPostProcessor chsProcessor)
     {
@@ -25,16 +23,16 @@ internal class SolutionPostprocessor
     {
         ArgumentNullException.ThrowIfNull(solution, nameof(solution));
 
-        CoinductiveHypothesisSet postprocessedCHS = solution.ResultSet;
+        CoinductiveHypothesisSet postprocessedCHS = _chsPostprocessor.Postprocess(solution.ResultSet);
 
         var variablesInCHS = postprocessedCHS
             .Select(x => x.Term)
             .SelectMany(x => x.ExtractVariables())
-            .Distinct(new VariableComparer());
+            .Distinct(TermFuncs.GetSingletonVariableComparer());
 
         var nonInternals = solution.ResultMapping.Keys.Where(x => !x.Identifier.StartsWith('#'));
 
-        var varsToKeep = variablesInCHS.Union(nonInternals, new VariableComparer());
+        var varsToKeep = variablesInCHS.Union(nonInternals, TermFuncs.GetSingletonVariableComparer());
 
         var postprocessedMapping = _mappingPostprocessor.Postprocess(solution.ResultMapping, varsToKeep);
 

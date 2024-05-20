@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.Database;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
@@ -19,7 +20,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSldSolverState>
 {
-    private readonly IDictionary<(string, int), IGoalBuilder> _mapping;
+    private readonly ImmutableDictionary<(string, int), IGoalBuilder> _mapping;
 
     private readonly PredicateGoalBuilder _dbGoalBuilder;
 

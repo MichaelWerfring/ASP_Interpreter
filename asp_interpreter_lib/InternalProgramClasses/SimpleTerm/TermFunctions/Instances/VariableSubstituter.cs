@@ -16,7 +16,7 @@ public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, IDictiona
 
     public ISimpleTerm Visit(Structure term, IDictionary<Variable, ISimpleTerm> mapping)
     {
-        var newChildren = new ISimpleTerm[term.Children.Count()];
+        var newChildren = new ISimpleTerm[term.Children.Count];
 
         Parallel.For(0, newChildren.Length, index =>
         {

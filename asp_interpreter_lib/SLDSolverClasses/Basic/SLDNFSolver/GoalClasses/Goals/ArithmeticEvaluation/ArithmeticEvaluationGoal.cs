@@ -1,6 +1,6 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
@@ -53,7 +53,7 @@ public class ArithmeticEvaluationGoal : IGoal
 
         if (evaluation.Children.ElementAt(0) is Variable leftVariable)
         {
-            Dictionary<Variable, ISimpleTerm> substitution = new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
+            Dictionary<Variable, ISimpleTerm> substitution = new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
             {
                 {leftVariable, new Integer(rightEvaluation) }
             };
@@ -65,7 +65,7 @@ public class ArithmeticEvaluationGoal : IGoal
                 new SolverState
                 (
                     newGoals,
-                    state.CurrentSubstitution.Union(substitution).ToDictionary(new VariableComparer()),
+                    state.CurrentSubstitution.Union(substitution).ToDictionary(TermFuncs.GetSingletonVariableComparer()),
                     state.NextInternalVariable
                 )
             ];

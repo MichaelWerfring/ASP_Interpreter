@@ -1,13 +1,15 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
+using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.Util.ErrorHandling.Either;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
@@ -47,19 +49,22 @@ public class CallstackChecker
         ArgumentNullException.ThrowIfNull(callstack, nameof(callstack));
 
         _logger.LogInfo($"Checking callstack for {termToCheck}");
-        _logger.LogDebug($"Callstack is: {callstack}");
+        _logger.LogTrace($"Callstack is: {callstack}");
         _logger.LogTrace($"Current mapping is: {currentMapping}");
 
         int numberOfNegations = 0;
+
         foreach (ISimpleTerm term in callstack)
         {
+            _logger.LogDebug($"Checking term in callstack: {term}");
+
             var targetEither = ConstructiveTargetBuilder.Build(termToCheck, term, currentMapping);
 
             if (!targetEither.IsRight)
             {
                 _logger.LogError(
                     $"Could not build constructive target for {termToCheck} and {term}: {targetEither.GetLeftOrThrow().Message}");
-                throw new Exception();
+                throw targetEither.GetLeftOrThrow();
             }
 
             ConstructiveTarget target = targetEither.GetRightOrThrow();
@@ -94,7 +99,7 @@ public class CallstackChecker
             }
         }
 
-        _logger.LogInfo($"Found no match.");
+        _logger.LogInfo($"Found no match for {termToCheck}");
 
         return new CallStackNoMatchResult();
     }

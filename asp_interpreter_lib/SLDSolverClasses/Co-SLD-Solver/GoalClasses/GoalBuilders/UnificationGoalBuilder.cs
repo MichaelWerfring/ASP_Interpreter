@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Unification.Constructive.Target;
+using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Unification.Constructive.Unification;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -26,13 +27,16 @@ public class UnificationGoalBuilder : IGoalBuilder
 
         if (!currentState.CurrentGoals.Any())
         {
+            _logger.LogError("Failed to build unification goal: state did not contain any goals.");
             throw new ArgumentException("Must contain at least one goal!", nameof(currentState)); 
         }
 
         var goalTerm = currentState.CurrentGoals.First();
 
         if (goalTerm is not Structure disunificationStruct || disunificationStruct.Children.Count != 2)
-        { 
+        {
+            _logger.LogError($"Failed to build unification goal: " +
+                $"Goalterm {goalTerm} was not of type struct or did not contain 2 children.");
             throw new ArgumentException("Must contain a structure term with two children.", nameof(currentState)); 
         }
 
@@ -50,9 +54,8 @@ public class UnificationGoalBuilder : IGoalBuilder
         }
         catch
         {
-            throw new ArgumentException
-                ($"{nameof(currentState.SolutionState.Mapping)} contained term bindings " +
-                $"for variables in unification goal term {goalTerm}",nameof(currentState));
+            _logger.LogError($"Failed to build unification goal: {targetMaybe.GetLeftOrThrow().Message}");
+            throw new ArgumentException($"{nameof(currentState.SolutionState.Mapping)} contained term bindings : {targetMaybe.GetLeftOrThrow().Message}");
         }
 
         return new UnificationGoal(target, _algorithm, currentState.SolutionState, _logger);

@@ -5,6 +5,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 
@@ -44,11 +45,12 @@ public class CoinductiveChecker
             yield break;
         }
 
-        CHSNoMatchOrConstrainmentResult chsConstraintmentResult = (CHSNoMatchOrConstrainmentResult)chsCheckingResult;
+        var chsConstraintmentResult = chsCheckingResult as CHSNoMatchOrConstrainmentResult
+            ?? throw new InvalidDataException("Type hierarchy has changed: change this method to consider new type.");
 
         foreach (VariableMapping result in chsConstraintmentResult.ConstrainmentResults)
         {
-            var targetwithConstraintment = (Structure)result.ApplySubstitution(target);
+            var targetwithConstraintment = result.ApplySubstitution(target);
 
             ICallstackCheckingResult callstackCheckingResult = _callstackChecker.CheckCallstack
                 (targetwithConstraintment, result, state.Callstack);
@@ -58,25 +60,10 @@ public class CoinductiveChecker
                 yield break;
             }
 
-            if (callstackCheckingResult is CallstackDeterministicSuccessResult)
-            {
-                yield return new CoinductiveCheckingResult
-                (
-                    targetwithConstraintment,
-                    result,
-                    SuccessType.DeterministicSuccess
-                );
-                yield break;
-            }
+            IOption<SuccessType> resultTypeMaybe = ConvertToResultType(callstackCheckingResult);
 
-            if (callstackCheckingResult is CallstackNondeterministicSuccessResult)
+            if (!resultTypeMaybe.HasValue)
             {
-                yield return new CoinductiveCheckingResult
-                (
-                    targetwithConstraintment,
-                    result,
-                    SuccessType.NonDeterministicSuccess
-                );
                 yield break;
             }
 
@@ -84,8 +71,20 @@ public class CoinductiveChecker
             (
                 targetwithConstraintment,
                 result,
-                SuccessType.NoMatch
+                resultTypeMaybe.GetValueOrThrow()
             );
         }
+    }
+
+    private IOption<SuccessType> ConvertToResultType(ICallstackCheckingResult result)
+    {
+        return result switch
+        {
+            CallstackDeterministicFailureResult => new None<SuccessType>(),
+            CallstackDeterministicSuccessResult => new Some<SuccessType>(SuccessType.DeterministicSuccess),
+            CallstackNondeterministicSuccessResult => new Some<SuccessType>(SuccessType.NonDeterministicSuccess),
+            CallStackNoMatchResult => new Some<SuccessType>(SuccessType.NoMatch),
+            _ => throw new InvalidDataException("Type hierarchy has changed: change this method to consider new type."),
+        };
     }
 }

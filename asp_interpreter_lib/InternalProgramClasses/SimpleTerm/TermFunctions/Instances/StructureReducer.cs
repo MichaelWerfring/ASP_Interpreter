@@ -3,7 +3,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Unification.StructureReducers;
+namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
 public class StructureReducer : ISimpleTermArgsVisitor<IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>>, IStructure>
 {

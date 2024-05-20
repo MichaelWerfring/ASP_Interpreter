@@ -8,6 +8,12 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, VariableMapping>
 {
+    /// <summary>
+    /// Substitutes all variables in the term by their value in mapping, in case they have a termbinding.
+    /// </summary>
+    /// <param name="term"></param>
+    /// <param name="mapping"></param>
+    /// <returns></returns>
     public ISimpleTerm Substitute(ISimpleTerm term, VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -18,7 +24,7 @@ public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Va
 
     public ISimpleTerm Visit(Variable variableTerm, VariableMapping map)
     {
-        if(map.TryGetValue(variableTerm, out IVariableBinding? value) && value is TermBinding tb)
+        if (map.TryGetValue(variableTerm, out IVariableBinding? value) && value is TermBinding tb)
         {
             return tb.Term;
         }

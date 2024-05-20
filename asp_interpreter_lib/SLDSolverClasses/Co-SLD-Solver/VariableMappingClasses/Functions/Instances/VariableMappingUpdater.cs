@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
@@ -8,6 +7,17 @@ using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Instances;
 
+/// <summary>
+/// Updates left by values in right like so:
+/// For every variable key in the union of left and right:
+/// if only left has value, take left.
+/// if only right has value, take right.
+/// if left and right has value:
+/// if left is prohib and right is prohib, take their union.
+/// if left is prohib and right is term, take right.
+/// if left is term and right is prohib, fail.
+/// if left is term and right is term, fail if they are different or just take right.
+/// </summary>
 internal class VariableMappingUpdater
 {
     public IOption<VariableMapping> Update(VariableMapping left, VariableMapping right)
@@ -15,7 +25,7 @@ internal class VariableMappingUpdater
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));
 
-        var variables = left.Keys.Union(right.Keys, new VariableComparer());
+        var variables = left.Keys.Union(right.Keys, TermFuncs.GetSingletonVariableComparer());
 
         var newPairs = new KeyValuePair<Variable, IVariableBinding>[variables.Count()];
 
@@ -41,7 +51,7 @@ internal class VariableMappingUpdater
             return new None<VariableMapping>();
         }
 
-        var newValues = ImmutableDictionary.CreateRange(new VariableComparer(), newPairs);
+        var newValues = ImmutableDictionary.CreateRange(TermFuncs.GetSingletonVariableComparer(), newPairs);
 
         return new Some<VariableMapping>(new VariableMapping(newValues));
     }

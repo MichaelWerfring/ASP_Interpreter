@@ -38,6 +38,7 @@ public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
 
         if (!currentState.CurrentGoals.Any())
         {
+            _logger.LogError("Failed to build arithmetic evaluation goal: state did not contain any goals.");
             throw new ArgumentException("Must contain at least one goal.", nameof(currentState)); 
         }
 
@@ -45,6 +46,8 @@ public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
 
         if (goalTerm is not Structure evaluationStruct || evaluationStruct.Children.Count != 2)
         {
+            _logger.LogError($"Failed to build arithmetic evaluation goal:" +
+                    $" Goalterm {goalTerm} was not of type struct or did not contain 2 children.");
             throw new ArgumentException("Next goal must be a structure term with two children.", nameof(currentState)); 
         }
 

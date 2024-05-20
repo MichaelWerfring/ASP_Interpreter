@@ -6,11 +6,20 @@ namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 public class StandardConstructiveUnificationAlgorithm : IConstructiveUnificationAlgorithm
 {
+    private readonly ConstructiveVariableSubstitutor _substituter;
     private readonly bool _doOccursCheck;
+    private readonly SubstitutionApplier _subApplier;
+    private readonly ProhibitedValuesUpdater _prohibsUpdater;
 
-    public StandardConstructiveUnificationAlgorithm(bool doOccursCheck)
+    public StandardConstructiveUnificationAlgorithm
+    (
+        bool doOccursCheck
+    )
     {
         _doOccursCheck = doOccursCheck;
+        _substituter = new();
+        _subApplier = new();
+        _prohibsUpdater = new();
     }
 
     /// <summary>
@@ -21,7 +30,8 @@ public class StandardConstructiveUnificationAlgorithm : IConstructiveUnification
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        var constructiveUnifier = new ConstructiveUnifier(_doOccursCheck, target);
+        var constructiveUnifier = new ConstructiveUnifier
+            (_doOccursCheck, target, _substituter, _subApplier, _prohibsUpdater);
 
         return constructiveUnifier.Unify();
     }

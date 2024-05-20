@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
@@ -29,7 +30,7 @@ public class PredicateGoalStateUpdater
         CallStack inputStack,
         VariableMapping unifyingMapping,
         IEnumerable<ISimpleTerm> renamedClause, 
-        ISimpleTerm constrainedTarget,
+        Structure constrainedTarget,
         int nextInternal
     )
     {
@@ -74,7 +75,7 @@ public class PredicateGoalStateUpdater
     /// <summary>
     /// updates subgoal solution by adding target to chs and popping the latest item from callstack.
     /// </summary>
-    public GoalSolution UpdateGoalSolution(GoalSolution subgoalSolution, ISimpleTerm target)
+    public GoalSolution UpdateGoalSolution(GoalSolution subgoalSolution, Structure target)
     {
         var substitutedTarget = subgoalSolution.ResultMapping.ApplySubstitution(target);
 

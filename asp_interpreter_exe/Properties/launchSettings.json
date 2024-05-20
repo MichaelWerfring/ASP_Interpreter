@@ -2,7 +2,11 @@
   "profiles": {
     "asp_interpreter_exe": {
       "commandName": "Project",
+<<<<<<< HEAD
       "commandLineArgs": "-p C:\\Users\\micha\\FH\\4_Semester\\Logikprogrammierung\\ASP_Interpreter\\asp_interpreter_exe\\test\\queens.asp"
+=======
+      "commandLineArgs": "-p \"D:\\FH\\Semester 4\\Logikprogrammierung ILV\\SASP-Projekt\\ASP_Interpreter\\asp_interpreter_exe\\test\\generalTest.asp\" -l 4"
+>>>>>>> e8f60342685e5cd4080fc01a45988ffd535cf777
     }
   }
 }

@@ -16,6 +16,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.Visitors;
 using System.Net.Http.Headers;
+
 namespace asp_interpreter_lib.Util;
 
 public class Application(
@@ -177,7 +178,7 @@ public class Application(
 
         var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
 
-        var appendedQuery = convertedQuery.Append(new Structure("nmr_check", []));
+        var appendedQuery = convertedQuery.Append(new Structure("_nmr_check", []));
 
         foreach (var solution in solver.Solve(appendedQuery))
         {
@@ -197,7 +198,7 @@ public class Application(
 
         var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
 
-        foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("nmr_check", []))))
+        foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("_nmr_check", []))))
         {
             PrintSolution(solution);
         }

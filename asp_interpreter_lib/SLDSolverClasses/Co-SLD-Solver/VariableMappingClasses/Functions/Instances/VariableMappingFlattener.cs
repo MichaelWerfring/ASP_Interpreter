@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
@@ -9,7 +10,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 
 internal class VariableMappingFlattener
 {
-    public VariableMapping Simplify(VariableMapping mapping)
+    public VariableMapping Flatten(VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
@@ -20,9 +21,9 @@ internal class VariableMappingFlattener
             var currentVariable = mapping.Keys.ElementAt(index);
 
             newMapping[index] = new KeyValuePair<Variable, IVariableBinding>
-                (currentVariable, mapping.Resolve(currentVariable, false));
+                (currentVariable, mapping.Resolve(currentVariable, false).GetValueOrThrow());
         });
 
-        return new VariableMapping(newMapping.ToImmutableDictionary(new VariableComparer()));
+        return new VariableMapping(newMapping.ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer()));
     }
 }

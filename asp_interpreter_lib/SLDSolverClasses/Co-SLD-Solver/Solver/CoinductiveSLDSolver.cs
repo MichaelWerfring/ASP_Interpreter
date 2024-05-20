@@ -26,7 +26,7 @@ public class CoinductiveSLDSolver
 
         _goalSolver = new GoalSolver(new CoSLDGoalMapper(functors, database, logger), logger);
 
-        _postprocessor = new SolutionPostprocessor(new VariableMappingPostprocessor(), new CHSPostProcessor());
+        _postprocessor = new SolutionPostprocessor(new VariableMappingPostprocessor(), new CHSPostProcessor(functors));
 
         _logger = logger;
     }

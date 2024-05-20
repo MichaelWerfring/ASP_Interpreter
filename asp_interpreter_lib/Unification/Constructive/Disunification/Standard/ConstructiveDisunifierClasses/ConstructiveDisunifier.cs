@@ -3,11 +3,10 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
-using asp_interpreter_lib.Unification.StructureReducers;
 using System.Collections.Immutable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
@@ -17,9 +16,6 @@ namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.C
 /// </summary>
 public class ConstructiveDisunifier
 {
-    // functions
-    private readonly StructureReducer _reducer = new();
-
     // input by constructor
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
@@ -32,7 +28,7 @@ public class ConstructiveDisunifier
 
     // flags
     private bool _dontUnifyAnyway = false;
-    private DisunificationException? _fatalError = null;
+    private DisunificationException? _disunificationError = null;
 
     public ConstructiveDisunifier
     (
@@ -59,10 +55,10 @@ public class ConstructiveDisunifier
         TryDisunify(_left, _right);
 
         // if we encountered a fatal error, such as two variables disunifying, or occurs check.
-        if (_fatalError != null)
+        if (_disunificationError != null)
         {
             return new Left<DisunificationException, IEnumerable<DisunificationResult>>
-                (_fatalError);
+                (_disunificationError);
         }
 
         // if they wouldnt unify anyway
@@ -97,7 +93,7 @@ public class ConstructiveDisunifier
     private void TryDisunify(ISimpleTerm left, ISimpleTerm right)
     {
         // check if mismatch encountered or error
-        if (_dontUnifyAnyway || _fatalError != null)
+        if (_dontUnifyAnyway || _disunificationError != null)
         {
             return; 
         }
@@ -142,8 +138,7 @@ public class ConstructiveDisunifier
     // cases
     private void LeftIsStructRightIsStruct(IStructure leftStruct, IStructure rightStruct)
     {
-        IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> reductionMaybe = 
-            _reducer.TryReduce(leftStruct, rightStruct);
+        IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> reductionMaybe = TermFuncs.Reduce(leftStruct, rightStruct);
 
         if (!reductionMaybe.HasValue)
         {
@@ -169,7 +164,7 @@ public class ConstructiveDisunifier
         // do groundedness check if asked for
         if (_doGroundednessCheck && right.ExtractVariables().Any())
         {
-            _fatalError = new NonGroundTermException
+            _disunificationError = new NonGroundTermException
                 ($"Cannot disunify variable and nonground term: {left} and {right}");
             return;
         }
@@ -199,7 +194,7 @@ public class ConstructiveDisunifier
     {
         if (!_doDisunifyUnboundVariables)
         {
-            _fatalError = new VariableDisunificationException
+            _disunificationError = new VariableDisunificationException
                 ($"Cannot disunify two variables: {left} and {right}");
             return;
         }
@@ -214,7 +209,7 @@ public class ConstructiveDisunifier
         {
             if (_doGroundednessCheck && term.ExtractVariables().Any())
             {
-                _fatalError = new NonGroundTermException
+                _disunificationError = new NonGroundTermException
                     ($"Cannot disunify variable and nonground term: {left} and {right}");
                 return;
             }

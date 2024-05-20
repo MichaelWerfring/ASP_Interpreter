@@ -25,13 +25,9 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        // get only the prohibitedValueBindings
-        IImmutableDictionary<Variable, ProhibitedValuesBinding> prohitedValueBindings = 
-            target.Mapping.GetProhibitedValueBindings();
-
         // create new disunifier instance
         var constructiveDisunifier = new ConstructiveDisunifier
-            (_doGroundednessCheck, _doDisunifyUnboundVariables,target.Left, target.Right, prohitedValueBindings);
+            (_doGroundednessCheck, _doDisunifyUnboundVariables,target.Left, target.Right, target.Mapping);
 
         // if error during disunification, return error.
         var disunifiersEither = constructiveDisunifier.Disunify();
@@ -46,10 +42,13 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
                            (disunifiersEither.GetLeftOrThrow());
         }
 
+        // wrap input mapping into a more generic variable mapping
+        var inputMappingAsVariableMapping = new VariableMapping(target.Mapping);
+
         // if disunifiers is empty(target disunifies anyways), just return the mapping
         if (!disunifiers.Any())
         {
-            return new Right<DisunificationException, IEnumerable<VariableMapping>>([target.Mapping]);
+            return new Right<DisunificationException, IEnumerable<VariableMapping>>([inputMappingAsVariableMapping]);
         }
 
         // create a new mapping for every disunifier where the value is updated by the disunifier value.
@@ -60,13 +59,13 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
 
             if (disunifier.IsPositive)
             {
-                newMapping = target.Mapping.SetItem(disunifier.Variable, new TermBinding(disunifier.Term));
+                newMapping = inputMappingAsVariableMapping.SetItem(disunifier.Variable, new TermBinding(disunifier.Term));
             }
             else
             {
-                var prohibitedValueList = prohitedValueBindings[disunifier.Variable];
+                var prohibitedValueList = target.Mapping[disunifier.Variable];
 
-                newMapping = target.Mapping.SetItem
+                newMapping = inputMappingAsVariableMapping.SetItem
                 (
                     disunifier.Variable,
                     new ProhibitedValuesBinding(prohibitedValueList.ProhibitedValues.Add(disunifier.Term))

@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Util;
 using System.Collections.Immutable;
@@ -9,7 +10,7 @@ public class ProhibitedValuesBinding : IVariableBinding
 {
     public ProhibitedValuesBinding()
     {
-        ProhibitedValues = ImmutableSortedSet.Create<ISimpleTerm>(new SimpleTermComparer());
+        ProhibitedValues = ImmutableSortedSet.Create<ISimpleTerm>(TermFuncs.GetSingletonTermComparer());
     }
 
     public ProhibitedValuesBinding(ImmutableSortedSet<ISimpleTerm> prohibitedValuesSet)

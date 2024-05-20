@@ -1,11 +1,11 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Instances;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.Util.ErrorHandling.Either;
 using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
@@ -29,16 +29,9 @@ public static class VariableMappingExtensions
         return _splitter.GetProhibitedValueBindings(mapping);
     }
 
-    public static ISimpleTerm ApplySubstitution(this VariableMapping mapping, ISimpleTerm term)
-    {
-        ArgumentNullException.ThrowIfNull(term, nameof(term));
-
-        return _substituter.Substitute(term, mapping);
-    }
-
     public static VariableMapping Flatten(this VariableMapping mapping)
     {
-        return _flattener.Simplify(mapping);
+        return _flattener.Flatten(mapping);
     }
 
     public static IOption<VariableMapping> Update(this VariableMapping left, VariableMapping right)
@@ -46,7 +39,7 @@ public static class VariableMappingExtensions
         return _updater.Update(left, right);
     }
 
-    public static IVariableBinding Resolve(this VariableMapping mapping, Variable var, bool doProhibitedValueResolution)
+    public static IOption<IVariableBinding> Resolve(this VariableMapping mapping, Variable var, bool doProhibitedValueResolution)
     {
         if (doProhibitedValueResolution)
         {
@@ -56,5 +49,15 @@ public static class VariableMappingExtensions
         {
             return _toLastVariableResolver.Resolve(var, mapping);
         }
+    }
+
+    public static ISimpleTerm ApplySubstitution(this VariableMapping mapping, ISimpleTerm term)
+    {
+        return _substituter.Substitute(term, mapping);
+    }
+
+    public static Structure ApplySubstitution(this VariableMapping mapping, Structure term)
+    {
+        return (_substituter.Visit(term, mapping) as Structure)!;
     }
 }
