@@ -8,6 +8,8 @@ internal class CHSPostprocessingComparer : IComparer<CHSEntry>
 {
     private FunctorTableRecord _functors;
 
+    private TermPostprocessingComparer _comparer = new TermPostprocessingComparer();
+
     public CHSPostprocessingComparer(FunctorTableRecord functors)
     {
         _functors = functors;
@@ -21,15 +23,15 @@ internal class CHSPostprocessingComparer : IComparer<CHSEntry>
 
         if (y == null) return 1;
 
-        if (x.Term.Functor == _functors.NegationAsFailure && x.Term.Functor == _functors.NegationAsFailure)
+        if (x.Term.IsNegated(_functors) && y.Term.IsNegated(_functors))
         {
-            return TermFuncs.GetSingletonTermComparer().Compare(x.Term.Children.ElementAt(0), y.Term.Children.ElementAt(0));
+            return _comparer.Compare(x.Term.Children.ElementAt(0), y.Term.Children.ElementAt(0));
         }
 
-        if (x.Term.Functor == _functors.NegationAsFailure) return 1;
+        if (x.Term.IsNegated(_functors)) return 1;
 
-        if (y.Term.Functor == _functors.NegationAsFailure) return -1;
+        if (y.Term.IsNegated(_functors)) return -1;
 
-        return TermFuncs.GetSingletonTermComparer().Compare(x.Term, y.Term);
+        return _comparer.Compare(x.Term, y.Term);
     }
 }

@@ -1,25 +1,33 @@
-﻿% Move N disks in T moves.
-hanoi(N, T) :-
-        moven(N, 0, T, 1, 2, 3).
+﻿test(X) :- not test2(X, Y).
+test(X) :- test([]).
+test(X).
+test2(X, Y) :- Y \= 1, not test3(X).
+test2(X, 1) :- not test3(X).
+test3(X) :- not test(X).
 
-% Move N disks from peg A to peg B using peg C. Assign move numbers.
-moven(N, Ti, To, A, B, C) :-
-        N > 1,
-        N1 is N - 1,
-        moven(N1, Ti, T2, A, C, B),
-        T3 is T2 + 1,
-        move(T3, A, B),
-        moven(N1, T3, To, C, B, A).
-moven(1, Ti, To, A, B, _) :-
-        To is Ti + 1,
-        move(To, A, B).
+male(bob).
+male(bo).
+male(ben).
 
-% move T: move disk from P1 to P2.
-% any move may or may not be selected.
-move(T, P1, P2) :-
-        not negmove(T, P1, P2).
+female(may).
+female(jill).
+female(sam).
 
-negmove(T, P1, P2) :-
-        not move(T, P1, P2).
+father(bob,jill).
+father(bob,bo).
+father(ben,sam).
 
-?- hanoi(4, T).
+mother(may,jill).
+mother(may,bo).
+mother(jill,sam).
+
+parent(X,Y) :- father(X,Y).
+parent(X,Y) :- mother(X,Y).
+
+% Get lineage from X to Y
+ancestor(X,Y,[X,Y]) :- parent(X,Y).
+ancestor(X,Y,[X|T]) :- parent(X,Z),ancestor(Z,Y,T).
+
+arith(Z) :- Z is 2 ** 2.
+
+?- ancestor(bob,sam,X), arith(Z).
