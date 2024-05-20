@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.Database;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
@@ -37,12 +38,12 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
                 (
                     new SolverStateUpdater(),
                     new ArithmeticEvaluator(functors), 
-                    new StandardConstructiveUnificationAlgorithm(false, new(), new()), logger
+                    new StandardConstructiveUnificationAlgorithm(false), logger
                 )
             },
             {
                 (functors.Unification, 2),
-                new UnificationGoalBuilder(new StandardConstructiveUnificationAlgorithm(false, new(), new()), logger)
+                new UnificationGoalBuilder(new StandardConstructiveUnificationAlgorithm(false), logger)
             },
             {
                 (functors.Disunification, 2),
@@ -77,8 +78,8 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
             (
                 new CHSChecker
                 (
-                    new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(false, new(), new())),
-                    new StandardConstructiveUnificationAlgorithm(false, new(), new()),
+                    new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(false)),
+                    new StandardConstructiveUnificationAlgorithm(false),
                     functors, 
                     new GoalSolver(this, logger),
                     logger
@@ -86,12 +87,12 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
                 new CallstackChecker
                 (
                     functors,
-                    new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(true, new(), new())), 
-                    new StandardConstructiveUnificationAlgorithm(false, new(), new()),
+                    new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(true)), 
+                    new StandardConstructiveUnificationAlgorithm(false),
                     logger
                 )
             ),
-            new DatabaseUnifier(new StandardConstructiveUnificationAlgorithm(false, new(), new()), database, logger),
+            new DatabaseUnifier(new StandardConstructiveUnificationAlgorithm(false), database, logger),
             new GoalSolver(this, logger),
             new PredicateGoalStateUpdater(new SolverStateUpdater()),
             logger

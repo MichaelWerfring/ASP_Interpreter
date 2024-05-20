@@ -37,7 +37,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
     public override IOption<ISimpleTerm> Visit(AnonymousVariableTerm _)
     {
         var variable = new Variable($"{_functorTable.AnonymusVariable}{_nextAnonymousVariableIndex}");
-        _nextAnonymousVariableIndex+=1;
+        _nextAnonymousVariableIndex += 1;
 
         return new Some<ISimpleTerm>(variable);
     }

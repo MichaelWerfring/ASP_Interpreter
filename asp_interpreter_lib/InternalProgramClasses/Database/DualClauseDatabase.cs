@@ -6,18 +6,18 @@ namespace asp_interpreter_lib.InternalProgramClasses.Database;
 
 public class DualClauseDatabase : IDatabase
 {
-    private FunctorTableRecord _functors;
+    private readonly FunctorTableRecord _functors;
 
-    private IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _standardClauses;
+    private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _standardClauses;
 
-    private IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _dualClauses;
+    private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _dualClauses;
 
     public DualClauseDatabase(IEnumerable<IEnumerable<Structure>> clauses, FunctorTableRecord functors)
     {
         ArgumentNullException.ThrowIfNull(clauses);
         ArgumentNullException.ThrowIfNull(functors);
 
-        if (clauses.Any((clause) => clause == null || clause.Count() < 1))
+        if (clauses.Any((clause) => clause == null || !clause.Any()))
         {
             throw new ArgumentException("Must not contain null clauses, or clauses with not at least one term");
         }
@@ -34,16 +34,16 @@ public class DualClauseDatabase : IDatabase
             (
                 clauseHead.Functor == functors.NegationAsFailure
                 &&
-                clauseHead.Children.Count() == 1
+                clauseHead.Children.Count == 1
                 &&
-                clauseHead.Children.First() is Structure innerStruct
+                clauseHead.Children[0] is Structure innerStruct
             )
             {
-                AddToDict(clause, (innerStruct.Functor, innerStruct.Children.Count()), dualDict);
+                AddToDict(clause, (innerStruct.Functor, innerStruct.Children.Count), dualDict);
             }
             else
             {
-                AddToDict(clause, (clauseHead.Functor, clauseHead.Children.Count()), standardDict);
+                AddToDict(clause, (clauseHead.Functor, clauseHead.Children.Count), standardDict);
             }
         }
 
@@ -63,9 +63,9 @@ public class DualClauseDatabase : IDatabase
         (
             term.Functor == _functors.NegationAsFailure
             &&
-            term.Children.Count() == 1
+            term.Children.Count == 1
             &&
-            term.Children.First() is Structure innerStruct
+            term.Children[0] is Structure innerStruct
         )
         {
             matchingClauses = GetMatches(innerStruct, _dualClauses);
@@ -98,14 +98,14 @@ public class DualClauseDatabase : IDatabase
         }
     }
 
-    private IEnumerable<IEnumerable<Structure>> GetMatches
+    private List<IEnumerable<Structure>> GetMatches
     (
         Structure term,
         IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> dict
     )
     {
         List<IEnumerable<Structure>>? matchingClauses;
-        if (!dict.TryGetValue((term.Functor, term.Children.Count()), out matchingClauses))
+        if (!dict.TryGetValue((term.Functor, term.Children.Count), out matchingClauses))
         {
             return [];
         }

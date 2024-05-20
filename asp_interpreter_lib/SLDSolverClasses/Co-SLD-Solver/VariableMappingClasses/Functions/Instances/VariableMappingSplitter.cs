@@ -1,4 +1,5 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using System.Collections.Immutable;
@@ -14,8 +15,8 @@ public class VariableMappingSplitter
         return mapping
             .Where(pair => pair.Value is TermBinding)
             .Select(pair => (pair.Key, (TermBinding)pair.Value))
-            .ToDictionary(new VariableComparer())
-            .ToImmutableDictionary(new VariableComparer());
+            .ToDictionary(TermFuncs.GetSingletonVariableComparer())
+            .ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer());
     }
 
     public IImmutableDictionary<Variable, ProhibitedValuesBinding> GetProhibitedValueBindings(VariableMapping mapping)
@@ -25,7 +26,7 @@ public class VariableMappingSplitter
         return mapping
             .Where(pair => pair.Value is ProhibitedValuesBinding)
             .Select(pair => (pair.Key, (ProhibitedValuesBinding)pair.Value))
-            .ToDictionary(new VariableComparer())
-            .ToImmutableDictionary(new VariableComparer());
+            .ToDictionary(TermFuncs.GetSingletonVariableComparer())
+            .ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer());
     }
 }

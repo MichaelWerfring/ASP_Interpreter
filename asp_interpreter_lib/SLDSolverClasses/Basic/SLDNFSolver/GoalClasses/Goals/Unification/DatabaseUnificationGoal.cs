@@ -2,9 +2,9 @@
 using asp_interpreter_lib.Unification.Basic.Interfaces;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals.Unification;
 
@@ -32,7 +32,7 @@ public class DatabaseUnificationGoal : IGoal
 
         foreach (var clause in database.GetPotentialUnifications(currentGoalStruct))
         {
-            RenamingResult renamedClauseResult = clause.RenameClause(state.NextInternalVariable);
+            RenamingResult renamedClauseResult = TermFuncs.RenameClause(clause, state.NextInternalVariable);
             ISimpleTerm renamedClauseHead = renamedClauseResult.RenamedClause.First();
 
             var substitutionMaybe = _algorithm.Unify(currentGoal, renamedClauseHead);
@@ -42,7 +42,7 @@ public class DatabaseUnificationGoal : IGoal
             }
             var substitution = substitutionMaybe.GetValueOrThrow();
 
-            var newMapping = state.CurrentSubstitution.Union(substitution).ToDictionary(new VariableComparer());
+            var newMapping = state.CurrentSubstitution.Union(substitution).ToDictionary(TermFuncs.GetSingletonVariableComparer());
 
             var nextGoals = renamedClauseResult.RenamedClause.Skip(1).Concat(state.CurrentGoals.Skip(1));
             var substitutedGoals = nextGoals.Select((term) => term.Substitute(newMapping));

@@ -54,13 +54,13 @@ public class DisunificationGoal : ICoSLDGoal
 
         foreach (VariableMapping disunifyingMapping in disunificationsEither.GetRightOrThrow())
         {
-            _logger.LogDebug($"Disunifying mapping is {disunifyingMapping}");
+            _logger.LogTrace($"Disunifying mapping is {disunifyingMapping}");
 
             var updatedMapping = _inputState.Mapping.Update(disunifyingMapping).GetValueOrThrow();
-            _logger.LogDebug($"Updated mapping is {updatedMapping}");
+            _logger.LogTrace($"Updated mapping is {updatedMapping}");
 
             var flattenedMapping = updatedMapping.Flatten();
-            _logger.LogDebug($"Flattened mapping is {updatedMapping}");
+            _logger.LogTrace($"Flattened mapping is {updatedMapping}");
 
             CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_inputState.CHS, flattenedMapping);
 

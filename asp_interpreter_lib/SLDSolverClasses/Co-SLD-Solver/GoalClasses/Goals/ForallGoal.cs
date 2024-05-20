@@ -2,10 +2,10 @@
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Util;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
@@ -60,7 +60,7 @@ public class ForallGoal : ICoSLDGoal
             IVariableBinding? mappingForForallVariable = null;
             try
             {
-                mappingForForallVariable = initialForallSolution.ResultMapping.Resolve(_variable, true);
+                mappingForForallVariable = initialForallSolution.ResultMapping.Resolve(_variable, true).GetValueOrThrow();
             }
             catch 
             {
@@ -82,7 +82,7 @@ public class ForallGoal : ICoSLDGoal
             }
 
             // now we know it is a prohibited values binding.
-            var prohibitedValuesForVariable = (ProhibitedValuesBinding)mappingForForallVariable;
+            var prohibitedValuesForVariable = (mappingForForallVariable as ProhibitedValuesBinding)!;
 
             // if no prohibited values(unconstrained), then succeed.
             if (prohibitedValuesForVariable.ProhibitedValues.Count == 0)
@@ -97,13 +97,13 @@ public class ForallGoal : ICoSLDGoal
 
             // get the "new version" of the variable:
             // forall(X, p(X)) would have X renamed during unification with database clause.
-            var updatedVar = initialForallSolution.ResultMapping.Resolve(_variable, false);
+            var updatedVar = initialForallSolution.ResultMapping.Resolve(_variable, false).GetValueOrThrow();
 
             // construct new goals where variable in goalTerm is substituted by each prohibited value of variable.
             var constraintSubstitutedGoals = prohibitedValuesForVariable.ProhibitedValues
             .Select(prohibitedTerm => updatedGoal.Substitute
             (
-                new Dictionary<Variable, ISimpleTerm>(new VariableComparer())
+                new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
                 {
                     {(Variable)((TermBinding)updatedVar).Term, prohibitedTerm }
                 })

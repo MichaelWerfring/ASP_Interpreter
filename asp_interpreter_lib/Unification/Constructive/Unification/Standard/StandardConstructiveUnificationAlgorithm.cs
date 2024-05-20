@@ -1,6 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+﻿using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -10,21 +8,18 @@ public class StandardConstructiveUnificationAlgorithm : IConstructiveUnification
 {
     private readonly ConstructiveVariableSubstitutor _substituter;
     private readonly bool _doOccursCheck;
-    private readonly VariableComparer _varComparer;
+    private readonly SubstitutionApplier _subApplier;
+    private readonly ProhibitedValuesUpdater _prohibsUpdater;
 
     public StandardConstructiveUnificationAlgorithm
     (
-        bool doOccursCheck,
-        ConstructiveVariableSubstitutor substitutor,
-        VariableComparer varComparer
+        bool doOccursCheck
     )
     {
-        ArgumentNullException.ThrowIfNull(substitutor);
-        ArgumentNullException.ThrowIfNull(varComparer);
-
         _doOccursCheck = doOccursCheck;
-        _substituter = substitutor;
-        _varComparer = varComparer;
+        _substituter = new();
+        _subApplier = new();
+        _prohibsUpdater = new();
     }
 
     /// <summary>
@@ -35,7 +30,8 @@ public class StandardConstructiveUnificationAlgorithm : IConstructiveUnification
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        var constructiveUnifier = new ConstructiveUnifier(_doOccursCheck, target, _substituter, _varComparer);
+        var constructiveUnifier = new ConstructiveUnifier
+            (_doOccursCheck, target, _substituter, _subApplier, _prohibsUpdater);
 
         return constructiveUnifier.Unify();
     }

@@ -1,10 +1,10 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using System.Collections.Immutable;
+using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 
@@ -25,18 +25,19 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
 
     /// <summary>
     /// Transitively simplifies a variableBinding, ie. if X => Y => s(), then X => s().
+    /// Handles self-recursive structures like so: X => s(X) just returns s(X). However: X => s(X, Y), Y => 1 would resolve to s(X, 1).
     /// </summary>
-    public IVariableBinding Resolve(Variable variable, VariableMapping mapping)
+    public IOption<IVariableBinding> Resolve(Variable variable, VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
         if (!mapping.TryGetValue(variable, out IVariableBinding? value))
         {
-            throw new ArgumentException($"Must contain mapping in {mapping}",nameof(variable));
+            return new None<IVariableBinding>();
         }
 
-        return value.Accept(this, mapping);
+        return new Some<IVariableBinding>(value.Accept(this, mapping));
     }
 
     public IVariableBinding Visit(ProhibitedValuesBinding binding, VariableMapping args)
@@ -81,13 +82,14 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
             (varBinding is TermBinding tb && !tb.Term.IsEqualTo(structure))
         );
 
-        // resolve those variables : get only the termbindings.
+        // resolve those variables : get only the termbindings. Build mapping.
         var resolvedVars = filteredVariables
             .Select(x => (x, Visit(new TermBinding(x), map)))
             .Where(pair => pair.Item2 is TermBinding)
             .Select(pair => (pair.x, ((TermBinding)pair.Item2).Term))
-            .ToDictionary(new VariableComparer());
+            .ToDictionary(TermFuncs.GetSingletonVariableComparer());
 
+        // substitute using that dictionary.
         var substitutedStruct = structure.Substitute(resolvedVars);
 
         return new TermBinding(substitutedStruct);

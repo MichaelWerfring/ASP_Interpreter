@@ -27,10 +27,10 @@ public class NmrCheckerTest
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(4));
-            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- forall(X, not(chk_p(X)))."));
-            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(chk_p(V1)) :- not(chk_p1(V1))."));
-            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(chk_p1(X)) :- not(q(X))."));
-            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(chk_p1(X)) :- q(X), p(X)."));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("_nmr_check :- forall(X, not(_chk_p(X)))."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(_chk_p(V1)) :- not(_chk_p1(V1))."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_p1(X)) :- not(q(X))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(_chk_p1(X)) :- q(X), p(X)."));
         });
 
 
@@ -50,10 +50,10 @@ public class NmrCheckerTest
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(4));
-            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- not(chk_eh0)."));
-            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(chk_eh0) :- not(chk_eh01)."));
-            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(chk_eh01) :- forall(X, not(chk_fa_eh01(X)))."));
-            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(chk_fa_eh01(X)) :- r(X)."));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("_nmr_check :- not(_chk_eh0)."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(_chk_eh0) :- not(_chk_eh01)."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_eh01) :- forall(X, not(_chk_fa_eh01(X)))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(_chk_fa_eh01(X)) :- r(X)."));
         });
 
 
@@ -75,13 +75,13 @@ public class NmrCheckerTest
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(7));
-            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- forall(X, not(chk_p(X))), not(chk_eh0)."));
-            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(chk_p(V1)) :- not(chk_p1(V1))."));
-            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(chk_p1(X)) :- not(q(X))."));
-            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(chk_p1(X)) :- q(X), p(X)."));
-            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not(chk_eh0) :- not(chk_eh01)."));
-            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not(chk_eh01) :- forall(X, not(chk_fa_eh01(X)))."));
-            Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not(chk_fa_eh01(X)) :- r(X)."));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("_nmr_check :- forall(X, not(_chk_p(X))), not(_chk_eh0)."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(_chk_p(V1)) :- not(_chk_p1(V1))."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_p1(X)) :- not(q(X))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(_chk_p1(X)) :- q(X), p(X)."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not(_chk_eh0) :- not(_chk_eh01)."));
+            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not(_chk_eh01) :- forall(X, not(_chk_fa_eh01(X)))."));
+            Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not(_chk_fa_eh01(X)) :- r(X)."));
         });
     }
     
@@ -101,13 +101,13 @@ public class NmrCheckerTest
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(7));
-            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- not(chk_eh0), forall(X, not(chk_p(X)))."));
-            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(chk_eh0) :- not(chk_eh01)."));
-            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(chk_eh01) :- forall(X, not(chk_fa_eh01(X)))."));
-            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(chk_fa_eh01(X)) :- s(1, X)."));
-            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not(chk_p(V1)) :- not(chk_p1(V1))."));
-            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not(chk_p1(X)) :- not(q(X))."));
-            Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not(chk_p1(X)) :- q(X), p(X)."));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("_nmr_check :- not(_chk_eh0), forall(X, not(_chk_p(X)))."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(_chk_eh0) :- not(_chk_eh01)."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_eh01) :- forall(X, not(_chk_fa_eh01(X)))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(_chk_fa_eh01(X)) :- s(1, X)."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not(_chk_p(V1)) :- not(_chk_p1(V1))."));
+            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not(_chk_p1(X)) :- not(q(X))."));
+            Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not(_chk_p1(X)) :- q(X), p(X)."));
         });
     }
 
@@ -126,12 +126,12 @@ public class NmrCheckerTest
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(6));
-            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check :- forall(X, not(chk_p(X)))."));
-            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(chk_p(V1)) :- not(chk_p1(V1))."));
-            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(chk_p1(X)) :- forall(Y, not(chk_fa_p1(X, Y)))."));
-            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(chk_fa_p1(X, Y)) :- not(q(X, Y))."));
-            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not(chk_fa_p1(X, Y)) :- q(X, Y), p(Y)."));
-            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not(chk_fa_p1(X, Y)) :- q(X, Y), not(p(Y)), p(X)."));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("_nmr_check :- forall(X, not(_chk_p(X)))."));
+            Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(_chk_p(V1)) :- not(_chk_p1(V1))."));
+            Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_p1(X)) :- forall(Y, not(_chk_fa_p1(X, Y)))."));
+            Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(_chk_fa_p1(X, Y)) :- not(q(X, Y))."));
+            Assert.That(subCheckRules[4].ToString(), Is.EqualTo("not(_chk_fa_p1(X, Y)) :- q(X, Y), p(Y)."));
+            Assert.That(subCheckRules[5].ToString(), Is.EqualTo("not(_chk_fa_p1(X, Y)) :- q(X, Y), not(p(Y)), p(X)."));
         });
     }
 
@@ -145,7 +145,7 @@ public class NmrCheckerTest
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(1));
-            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("nmr_check."));
+            Assert.That(subCheckRules[0].ToString(), Is.EqualTo("_nmr_check."));
         });
     }
 
@@ -172,7 +172,7 @@ public class NmrCheckerTest
         {
             //Just check the nmr_rule is important now
             Assert.That(subCheckRules[0].ToString(), Is.EqualTo(
-                "nmr_check :- forall(U, forall(V, not(chk_other(U, V)))), forall(U, forall(V, not(chk_chosen(U, V)))), not(chk_eh0)."));
+                "_nmr_check :- forall(U, forall(V, not(_chk_other(U, V)))), forall(U, forall(V, not(_chk_chosen(U, V)))), not(_chk_eh0)."));
         });
     }
 }

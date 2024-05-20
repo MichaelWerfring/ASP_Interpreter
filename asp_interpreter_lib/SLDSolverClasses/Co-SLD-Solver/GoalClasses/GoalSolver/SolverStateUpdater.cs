@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
@@ -11,7 +10,7 @@ public class SolverStateUpdater
 {
     public CallStack UpdateCallstack(CallStack callStack, VariableMapping map)
     {
-        var newCalls = new ISimpleTerm[callStack.Count()];
+        var newCalls = new Structure[callStack.Count()];
         Parallel.For(0, newCalls.Length, index =>
         {
             newCalls[index] = map.ApplySubstitution

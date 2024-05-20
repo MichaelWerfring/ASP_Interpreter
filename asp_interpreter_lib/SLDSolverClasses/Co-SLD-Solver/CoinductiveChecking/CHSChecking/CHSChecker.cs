@@ -1,5 +1,5 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
@@ -7,6 +7,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
+using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
@@ -53,34 +54,37 @@ public class CHSChecker
         ArgumentNullException.ThrowIfNull(state);
 
         _logger.LogInfo($"Checking CHS for {termToCheck}");
-        _logger.LogTrace($"Current solution state is: {state}");
+        _logger.LogDebug($"CHS is: {state.CHS}");
+        _logger.LogTrace($"Current mapping is: {state.Mapping}");
 
         // construct negatedTerm
-        ISimpleTerm negation = termToCheck.NegateTerm(_functors);
+        Structure negation = termToCheck.NegateTerm(_functors);
 
-        _logger.LogInfo($"Checking for negations..");
+        // check for exact matches for negation of term
+        _logger.LogInfo($"Checking for exact matches for negation of term..");
         if (HasExactMatch(negation, state.CHS, state.Mapping, false))
         {
-            _logger.LogInfo($"Deterministic failure.");
+            _logger.LogInfo($"Found exact match for negation. Deterministic failure.");
             return new CHSDeterministicFailureResult();
         }
+        _logger.LogInfo($"No exact matches for negation found!");
 
+        // check for exact matches for term
+        _logger.LogInfo($"Checking for exact matches for term..");
         if (HasExactMatch(termToCheck, state.CHS, state.Mapping, true))
         {
-            _logger.LogInfo($"Deterministic success.");
+            _logger.LogInfo($"Found exact match for term. Deterministic success.");
 
             return new CHSDeterministicSuccessResult();
         }
-
-        _logger.LogInfo($"No exact matches found!");
+        _logger.LogInfo($"No exact matches for term found!");
 
         // get all terms that unify with the negation of input entry.
-        IEnumerable<ISimpleTerm> termsUnifyingWithNegation = GetUnifyingTerms(negation, state.CHS, state.Mapping);
-
+        IEnumerable<Structure> termsUnifyingWithNegation = GetUnifyingTerms(negation, state.CHS, state.Mapping);
         _logger.LogDebug($"Terms unifying with negation of input term: {termsUnifyingWithNegation.ToList().ListToString()}");
 
         // construct disunification goals
-        IEnumerable<ISimpleTerm> disunificationGoals = termsUnifyingWithNegation.AsParallel()
+        IEnumerable<Structure> disunificationGoals = termsUnifyingWithNegation.AsParallel()
             .Select(term => new Structure(_functors.Disunification, [termToCheck, term]));
 
         // from that, construct initial state for solver.
@@ -94,6 +98,10 @@ public class CHSChecker
         {
             _logger.LogInfo($"Found unifying negations: {termsUnifyingWithNegation.ToList().ListToString()}");
             _logger.LogInfo($"Attempting to disunify {termToCheck} with them");
+        }
+        else
+        {
+            _logger.LogInfo($"No negations for term {termToCheck}. No match.");
         }
 
         // return all the ways that all these disunifications can be solved.
@@ -129,16 +137,15 @@ public class CHSChecker
                 return true;
             }
         }
-        catch (AggregateException ex)
+        catch
         {
             throw;
         }
         
-
         return false;
     }
 
-    private ParallelQuery<ISimpleTerm> GetUnifyingTerms(ISimpleTerm term, CoinductiveHypothesisSet set, VariableMapping mapping)
+    private ParallelQuery<Structure> GetUnifyingTerms(Structure term, CoinductiveHypothesisSet set, VariableMapping mapping)
     {
        return set.AsParallel().Where
        (

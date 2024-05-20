@@ -41,7 +41,7 @@ public class AdvancedSLDSolver
             new SolverState
             (
                 goals,
-                new Dictionary<Variable, ISimpleTerm>(new VariableComparer()),
+                new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer()),
                 0
             )
         );

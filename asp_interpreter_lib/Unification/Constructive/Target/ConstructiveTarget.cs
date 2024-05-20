@@ -1,7 +1,7 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using asp_interpreter_lib.Util;
 using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.Unification.Constructive.Target;
@@ -31,6 +31,6 @@ public class ConstructiveTarget
 
     public override string ToString()
     {
-        return $"{{ {Left}, {Right}, {Mapping} }}";
+        return $"{{ {Left}, {Right}, [{Mapping.ToList().ListToString()}] }}";
     }
 }

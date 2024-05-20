@@ -3,18 +3,23 @@ using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
 using System.Collections.Immutable;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
-public class ConstructiveUnifier
+/// <summary>
+/// An instance class to provide context for the unification algorithm.
+/// </summary>
+internal class ConstructiveUnifier
 {
+    // function providers
     private readonly ConstructiveVariableSubstitutor _maybeSubstitutor;
-    private readonly VariableComparer _varComparer;
+    private readonly SubstitutionApplier _subApplier;
+    private readonly ProhibitedValuesUpdater _varUpdater;
+
 
     // input by constructor args
     private readonly bool _doOccursCheck;
@@ -25,20 +30,26 @@ public class ConstructiveUnifier
     private VariableMapping _mapping;
     private bool _hasSucceded;
 
+    /// <summary>
+    /// Creates a new instance of the class. Should never be called directly, except by StandardConstructiveAlgorithm.
+    /// </summary>
     public ConstructiveUnifier
     (
         bool doOccursCheck, 
         ConstructiveTarget target,
         ConstructiveVariableSubstitutor maybeSubstituter,
-        VariableComparer varComparer
+        SubstitutionApplier subApplier,
+        ProhibitedValuesUpdater varUpdater
     )
     {
         ArgumentNullException.ThrowIfNull(target);
         ArgumentNullException.ThrowIfNull(maybeSubstituter);
-        ArgumentNullException.ThrowIfNull(varComparer);
+        ArgumentNullException.ThrowIfNull (subApplier);
+        ArgumentNullException.ThrowIfNull (varUpdater);
 
         _maybeSubstitutor = maybeSubstituter;
-        _varComparer = varComparer;
+        _subApplier = subApplier;
+        _varUpdater = varUpdater;
 
         _doOccursCheck = doOccursCheck;
         _left = target.Left;
@@ -47,7 +58,6 @@ public class ConstructiveUnifier
         _mapping = new VariableMapping(target.Mapping);
 
         _hasSucceded = true;
-
     }
 
     public IOption<VariableMapping> Unify()
@@ -113,7 +123,7 @@ public class ConstructiveUnifier
     // cases
     private void LeftIsStructRightIsStruct(IStructure left, IStructure right)
     {
-        var reductionMaybe = left.Reduce(right);
+        var reductionMaybe = TermFuncs.Reduce(left, right);
         if (!reductionMaybe.HasValue)
         {
             _hasSucceded = false;
@@ -151,7 +161,7 @@ public class ConstructiveUnifier
         }
 
         // now do substitution composition
-        ApplySubstitutionComposition(_mapping, left, right);
+        _mapping = _subApplier.ApplySubstitutionComposition(_mapping, left, right);
     }
 
     private void LeftIsVarRightIsVar(Variable left, Variable right)
@@ -162,44 +172,8 @@ public class ConstructiveUnifier
             return;
         }
 
-        UpdateProhibitedValues(left, right);
+        _mapping =_varUpdater.UpdateProhibitedValues(left, right, _mapping);
 
-        ApplySubstitutionComposition(_mapping, left, right);
-    }
-
-    // updating
-    private void UpdateProhibitedValues(Variable left, Variable right)
-    {
-        ProhibitedValuesBinding leftVals = (ProhibitedValuesBinding)_mapping[left];
-        ProhibitedValuesBinding rightVals = (ProhibitedValuesBinding)_mapping[right];
-
-        ImmutableSortedSet<ISimpleTerm> union = leftVals.ProhibitedValues
-                                                    .Union(rightVals.ProhibitedValues);
-                                                    
-        _mapping = _mapping.SetItem
-        (
-            right,
-            new ProhibitedValuesBinding(union)
-        );
-    }
-
-    private void ApplySubstitutionComposition(VariableMapping oldMapping, Variable var, ISimpleTerm term)
-    {
-        var dictForSubstitution = new Dictionary<Variable, ISimpleTerm>(_varComparer)
-        {
-            { var, term }
-        };
-
-        VariableMapping newMap = oldMapping;
-
-        foreach (var pair in oldMapping)
-        {
-            if (pair.Value is TermBinding binding)
-            {
-                newMap = newMap.SetItem(pair.Key, new TermBinding(binding.Term.Substitute(dictForSubstitution)));
-            }
-        }
-
-        _mapping = newMap.SetItem(var, new TermBinding(term));
+        _mapping = _subApplier.ApplySubstitutionComposition(_mapping, left, right);
     }
 }

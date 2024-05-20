@@ -1,18 +1,16 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using System.Collections.Immutable;
 
-namespace asp_interpreter_lib.Unification.Constructive.Target;
+namespace asp_interpreter_lib.Unification.Constructive.Target.Builder;
 
-internal static class ConstructiveTargetBuilder
+public static class ConstructiveTargetBuilder
 {
-    private static readonly VariableComparer _comparer = new();
-
     public static IEither<TargetBuildingException, ConstructiveTarget> Build(ISimpleTerm left, ISimpleTerm right, VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
@@ -20,9 +18,10 @@ internal static class ConstructiveTargetBuilder
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
         var variables = left.ExtractVariables()
-            .Union(right.ExtractVariables(), _comparer);
+            .Union(right.ExtractVariables(), TermFuncs.GetSingletonVariableComparer());
 
-        ImmutableDictionary<Variable, ProhibitedValuesBinding> newMapping = ImmutableDictionary.Create<Variable, ProhibitedValuesBinding>(_comparer);
+        var newMapping = ImmutableDictionary.Create<Variable, ProhibitedValuesBinding>
+            (TermFuncs.GetSingletonVariableComparer());
 
         foreach (Variable variable in variables)
         {
@@ -47,7 +46,7 @@ internal static class ConstructiveTargetBuilder
             {
                 throw new InvalidDataException
                     ($"Binding class hierarchy has changed so not every binding is {nameof(ProhibitedValuesBinding)} or {nameof(TermBinding)}");
-            }        
+            }
         }
 
         return new Right<TargetBuildingException, ConstructiveTarget>

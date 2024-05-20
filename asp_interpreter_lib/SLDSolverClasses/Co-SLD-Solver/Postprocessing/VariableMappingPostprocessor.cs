@@ -1,4 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
@@ -20,10 +20,10 @@ public class VariableMappingPostprocessor
         ArgumentNullException.ThrowIfNull(variablesToKeep, nameof(variablesToKeep));
 
         // make a new binding, add noninternal variables and their simplified internalVariablesInTerms.
-        var newBinding = new Dictionary<Variable, IVariableBinding>(new VariableComparer());
+        var newBinding = new Dictionary<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
         foreach (var variable in variablesToKeep)
         {
-            newBinding.Add(variable, variableMapping.Resolve(variable, true));
+            newBinding.Add(variable, variableMapping.Resolve(variable, true).GetValueOrThrow());
         }
 
         // get all variables from all the term bindings.
@@ -31,7 +31,7 @@ public class VariableMappingPostprocessor
             .OfType<TermBinding>()          
             .SelectMany(x => (x).Term.ExtractVariables())
             .Where(x => x.Identifier.StartsWith('#'))
-            .ToImmutableHashSet(new VariableComparer());
+            .ToImmutableHashSet(TermFuncs.GetSingletonVariableComparer());
  
         // for all the variables in the termbindings: add their values as well, if they have any.
         foreach (var variable in internalVariablesInTerms)
@@ -42,6 +42,6 @@ public class VariableMappingPostprocessor
             }
         }
 
-        return new VariableMapping(newBinding.ToImmutableDictionary(new VariableComparer()));
+        return new VariableMapping(newBinding.ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer()));
     }
 }

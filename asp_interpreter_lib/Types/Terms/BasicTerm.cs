@@ -19,7 +19,7 @@ public class BasicTerm: ITerm
     public string Identifier
     {
         get => _identifier;
-        private set
+        set
         {
             if (string.IsNullOrWhiteSpace(value) || value == string.Empty )
             {

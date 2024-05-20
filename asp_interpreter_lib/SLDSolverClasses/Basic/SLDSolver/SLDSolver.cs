@@ -1,5 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.InternalProgram;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
@@ -26,7 +26,13 @@ public class SLDSolver
     {
         ArgumentNullException.ThrowIfNull(internalAspProgram);
 
-        Resolve(internalAspProgram.Query.ToList(), internalAspProgram.Statements.ToList(), new Dictionary<Variable, ISimpleTerm>(new VariableComparer()), 0);
+        Resolve
+        (
+            internalAspProgram.Query.ToList(),
+            internalAspProgram.Statements.ToList(), 
+            new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer()),
+            0
+        );
     }
 
     public event EventHandler<SolutionFoundEventArgs>? SolutionFound;
@@ -49,7 +55,7 @@ public class SLDSolver
         {
             ISimpleTerm currentGoal = goals.First();
 
-            RenamingResult renamedClauseResult = clause.RenameClause(nextInternalID);
+            RenamingResult renamedClauseResult = TermFuncs.RenameClause(clause, nextInternalID);
 
             ISimpleTerm renamedClauseHead = renamedClauseResult.RenamedClause.First();
 
@@ -60,7 +66,7 @@ public class SLDSolver
             }
             var substitution = substitutionMaybe.GetValueOrThrow();
 
-            var newMapping = mapping.Union(substitution).ToDictionary(new VariableComparer());
+            var newMapping = mapping.Union(substitution).ToDictionary(TermFuncs.GetSingletonVariableComparer());
 
             var nextGoals = renamedClauseResult.RenamedClause.Skip(1).Concat(goals.Skip(1));
             var substitutedGoals = nextGoals.Select((term) => term.Substitute(newMapping));

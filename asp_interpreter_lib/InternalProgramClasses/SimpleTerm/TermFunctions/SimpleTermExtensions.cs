@@ -7,7 +7,7 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.Util.ErrorHandling;
 using System.Collections.Immutable;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Extensions;
+namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 public static class SimpleTermExtensions
 {
@@ -18,10 +18,6 @@ public static class SimpleTermExtensions
     private static readonly SimpleTermContainsChecker _containsChecker = new();
 
     private static readonly VariableSubstituter _variableSubstituter = new();
-
-    private static readonly ClauseVariableRenamer _renamer = new(new(), new());
-
-    private static readonly StructureReducer _reducer = new();
 
     public static bool IsEqualTo(this ISimpleTerm simpleTerm, ISimpleTerm other)
     {
@@ -62,18 +58,19 @@ public static class SimpleTermExtensions
         return _variableSubstituter.Substitute(simpleTerm, substitution);
     }
 
-    public static ISimpleTerm NegateTerm(this ISimpleTerm term, FunctorTableRecord functors)
+    public static Structure NegateTerm(this Structure term, FunctorTableRecord functors)
     {
         ArgumentNullException.ThrowIfNull(functors);
 
-        if 
+        if
         (
             term is Structure structure
             && structure.Functor == functors.NegationAsFailure
             && structure.Children.Count == 1
+            && structure.Children.ElementAt(0) is Structure innerStruct
         )
         {
-            return structure.Children.ElementAt(0);
+            return innerStruct;
         }
         else
         {
@@ -81,23 +78,13 @@ public static class SimpleTermExtensions
         }
     }
 
-    public static RenamingResult RenameClause(this IEnumerable<ISimpleTerm> clause, int nextInternalIndex)
-    {
-        return _renamer.RenameVariables(clause, nextInternalIndex);
-    }
-
     public static IEnumerable<Variable> ExtractVariables(this ISimpleTerm term)
     {
-        return term.Enumerate().OfType<Variable>().ToImmutableHashSet(new VariableComparer());
+        return term.Enumerate().OfType<Variable>().ToImmutableHashSet(TermFuncs.GetSingletonVariableComparer());
     }
 
     public static IEnumerable<ISimpleTerm> Enumerate(this ISimpleTerm simpleTerm)
     {
         return _flattener.Enumerate(simpleTerm);
-    }
-
-    public static IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> Reduce(this IStructure structure, IStructure other)
-    {
-        return _reducer.TryReduce(structure, other);
     }
 }

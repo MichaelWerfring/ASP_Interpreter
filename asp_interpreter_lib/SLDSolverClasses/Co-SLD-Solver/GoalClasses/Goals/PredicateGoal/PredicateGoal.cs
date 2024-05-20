@@ -10,17 +10,11 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 internal class PredicateGoal : ICoSLDGoal
 {
     private readonly CoinductiveChecker _checker;
-
     private readonly DatabaseUnifier _databaseUnifier;
-
     private readonly GoalSolver _goalSolver;
-
     private readonly Structure _inputTarget;
-
     private readonly SolutionState _inputState;
-
     private readonly PredicateGoalStateUpdater _stateUpdater;
-
     private readonly ILogger _logger;
 
     public PredicateGoal
@@ -106,7 +100,7 @@ internal class PredicateGoal : ICoSLDGoal
         (
             _inputState.CHS,
             _inputState.Callstack, 
-            result.UnifyingMapping,
+            result.NewMapping,
             result.RenamedClause,
             _inputTarget, 
             result.NextInternalIndex
