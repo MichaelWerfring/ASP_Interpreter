@@ -62,6 +62,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         List<Statement> duals = [];
         // 3) assign unique head (e.g. chk0) 
         duals = GetDualsForCheck(olonRules.ToList());
+        AddMissingPrefixes(duals, "_chk_");
         
         Statement nmrCheck = GetCheckRule(tempOlonRules, notAsName);
         AddForallToCheck(nmrCheck);
@@ -74,6 +75,40 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         return duals;
     }
 
+    private void AddMissingPrefixes(List<Statement> duals, string prefix)
+    {
+        ArgumentNullException.ThrowIfNull(prefix);
+        ArgumentNullException.ThrowIfNull(duals);
+
+        foreach (var dual in duals)
+        {
+            //At this point in the program no rule should be headless
+            var head = dual.Head.GetValueOrThrow();
+
+            if (head.Identifier == "not")
+            {
+                if (head.Terms.Count != 1)
+                {
+                    throw new InvalidOperationException("Expected exactly one term in the not literal");
+                }
+                
+                var basicTerm = head.Terms[0].Accept(new TermToBasicTermConverter()).GetValueOrThrow();
+
+                if (!basicTerm.Identifier.StartsWith(prefix))
+                {
+                    basicTerm.Identifier = prefix + basicTerm.Identifier;
+                }
+            }
+            else
+            {
+                if (!head.Identifier.StartsWith(prefix))
+                {
+                    head.Identifier = prefix + head.Identifier;
+                }
+            }
+        }
+    }
+
     private Statement GetCheckRule(IEnumerable<Statement> olonRules, bool notAsName = true)
     {
         Statement nmrCheck = new();
@@ -84,7 +119,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         foreach (var rule in olonRules)
         {
             var head = rule.Head.GetValueOrThrow();
-            head.Identifier = _options.CheckPrefix + head.Identifier;
+            head.Identifier = "_" + _options.CheckPrefix + head.Identifier;
             head.HasNafNegation = !notAsName;
             nmrBody.Add(DualRuleConverter.WrapInNot(head));
         }

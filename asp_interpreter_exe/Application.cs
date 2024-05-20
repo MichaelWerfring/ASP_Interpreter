@@ -16,7 +16,6 @@ using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.Visitors;
 using System.Net.Http.Headers;
-
 namespace asp_interpreter_lib.Util;
 
 public class Application(
