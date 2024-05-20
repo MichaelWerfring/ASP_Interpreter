@@ -64,6 +64,8 @@ namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph
 
             if (aHead.Identifier != bHead.Identifier) return false;
 
+            if (aHead.HasStrongNegation != bHead.HasStrongNegation) return false;
+
             if (aHead.Terms.Count != bHead.Terms.Count) return false;
 
             return true;

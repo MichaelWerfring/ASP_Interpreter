@@ -1,33 +1,30 @@
-﻿test(X) :- not test2(X, Y).
-test(X) :- test([]).
-test(X).
-test2(X, Y) :- Y \= 1, not test3(X).
-test2(X, 1) :- not test3(X).
-test3(X) :- not test(X).
+﻿% Given 3 birds, which can fly?
 
-male(bob).
-male(bo).
-male(ben).
+penguin(sam). % sam is a penguin
+wounded_bird(john). % john is wounded
+bird(tweety). % tweety is just a bird
 
-female(may).
-female(jill).
-female(sam).
+% penguines and wounded birds are still birds
+bird(X) :- penguin(X).
+bird(X) :- wounded_bird(X).
 
-father(bob,jill).
-father(bob,bo).
-father(ben,sam).
+% penguins and wounded birds are abnormal
+ab(X) :- penguin(X).
+ab(X) :- wounded_bird(X).
 
-mother(may,jill).
-mother(may,bo).
-mother(jill,sam).
+% birds can fly if they are not abnormal
+flies(X) :- bird(X), not ab(X).
 
-parent(X,Y) :- father(X,Y).
-parent(X,Y) :- mother(X,Y).
+% explicit closed world assumptions
+-flies(X) :- ab(X).
+-flies(X) :- -bird(X).
 
-% Get lineage from X to Y
-ancestor(X,Y,[X,Y]) :- parent(X,Y).
-ancestor(X,Y,[X|T]) :- parent(X,Z),ancestor(Z,Y,T).
+-wounded_bird(X) :- not wounded_bird(X).
 
-arith(Z) :- Z is 2 ** 2.
+-bird(X) :- not bird(X).
 
-?- ancestor(bob,sam,X), arith(Z).
+-penguin(X) :- not penguin(X).
+
+-ab(X) :- not ab(X).
+
+?- flies(A), -flies(B), not flies(C), not -flies(D).

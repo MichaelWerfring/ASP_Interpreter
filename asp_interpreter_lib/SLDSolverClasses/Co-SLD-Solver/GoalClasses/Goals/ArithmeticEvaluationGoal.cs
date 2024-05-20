@@ -138,18 +138,15 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
         {
             return new None<GoalSolution>();
         }
-        else
-        {
-            return new Some<GoalSolution>
+        return new Some<GoalSolution>
+        (
+            new GoalSolution
             (
-                new GoalSolution
-                (
-                    _state.CHS,
-                    _state.Mapping,
-                    _state.Callstack, 
-                    _state.NextInternalVariableIndex
-                )
-            );
-        }
+                _state.CHS,
+                _state.Mapping,
+                _state.Callstack,
+                _state.NextInternalVariableIndex
+            )
+        );
     }
 }

@@ -68,6 +68,8 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
             yield break;
         }
 
+        var b =_predicate.Invoke(5, 0);
+       
         if (!_predicate(leftInteger.Value, rightEvaluationMaybe.GetValueOrThrow()))
         {
             yield break;

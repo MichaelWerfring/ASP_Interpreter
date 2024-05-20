@@ -97,7 +97,8 @@ public class ForallGoal : ICoSLDGoal
 
             // get the "new version" of the variable:
             // forall(X, p(X)) would have X renamed during unification with database clause.
-            var updatedVar = initialForallSolution.ResultMapping.Resolve(_variable, false).GetValueOrThrow();
+            var updatedVarMapping = initialForallSolution.ResultMapping.Resolve(_variable, false).GetValueOrThrow();
+            var updatedVar = (Variable)((TermBinding)updatedVarMapping).Term;
 
             // construct new goals where variable in goalTerm is substituted by each prohibited value of variable.
             var constraintSubstitutedGoals = prohibitedValuesForVariable.ProhibitedValues
@@ -105,7 +106,7 @@ public class ForallGoal : ICoSLDGoal
             (
                 new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
                 {
-                    {(Variable)((TermBinding)updatedVar).Term, prohibitedTerm }
+                    {updatedVar, prohibitedTerm }
                 })
             );
 
@@ -140,6 +141,4 @@ public class ForallGoal : ICoSLDGoal
             }
         }
     }
-
- 
 }
