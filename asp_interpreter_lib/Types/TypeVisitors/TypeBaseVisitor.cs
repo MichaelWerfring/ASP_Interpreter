@@ -63,4 +63,6 @@ public class TypeBaseVisitor<T>
     public virtual IOption<T> Visit(RecursiveList _) => new None<T>();
     
     public virtual IOption<T> Visit(ConventionalList _) => new None<T>();
+
+    public virtual IOption<T> Visit(IsNot _) => new None<T>();
 }

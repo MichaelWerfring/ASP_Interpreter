@@ -30,12 +30,6 @@ public class GoalNegator
                 actualLiteral.Terms.Select(t=> t.Accept(_termCopyVisitor).
                     GetValueOrThrow("Failed to parse term!")).ToList();
 
-            //return new Literal(
-            //    actualLiteral.Identifier.ToString(),
-            //    !actualLiteral.HasNafNegation,
-            //    actualLiteral.HasStrongNegation,
-            //    terms);
-
             if (!wrapInNot)
             {
                 return new Literal(

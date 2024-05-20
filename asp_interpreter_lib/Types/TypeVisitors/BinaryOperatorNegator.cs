@@ -37,6 +37,11 @@ public class BinaryOperatorNegator : TypeBaseVisitor<BinaryOperator>
 
     public override IOption<BinaryOperator> Visit(Is _)
     {
+        return new Some<BinaryOperator>(new IsNot());
+    }
+
+    public override IOption<BinaryOperator> Visit(IsNot _)
+    {
         return new Some<BinaryOperator>(new Is());
     }
 }

@@ -477,4 +477,28 @@ public class DualRuleTest
             Assert.That(duals[2].ToString() == "not b.");
         });
     }
+    
+    [Test]
+    public void DualConverterConvertsIsToIsNot()
+    {
+        string code = """
+                      abs(X, X) :- X >= 0.
+                      abs(X, Y) :- X < 0, Y is X * -1.
+                      """;
+
+        var program = AspExtensions.GetProgram(code, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+
+        var duals = dualRuleConverter.GetDualRules(program.Statements);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(duals.Count == 5);
+            Assert.That(duals[0].ToString(), Is.EqualTo("not abs(V1, V2) :- not abs1(V1, V2), not abs2(V1, V2)."));
+            Assert.That(duals[1].ToString(), Is.EqualTo("not abs1(X, V1) :- V1 \\= X."));
+            Assert.That(duals[2].ToString(), Is.EqualTo("not abs1(X, V1) :- V1 = X, X < 0."));
+            Assert.That(duals[3].ToString(), Is.EqualTo("not abs2(X, Y) :- X >= 0."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not abs2(X, Y) :- X < 0, Y is not X * NegatedTerm(1)."));
+        });
+    }
 }
