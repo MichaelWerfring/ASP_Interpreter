@@ -13,7 +13,7 @@ public record FunctorTableRecord
     public string Parenthesis { get; init; } = "#()";
 
     // variables 
-    public string AnonymusVariable { get; init; } = "_AnonVar";
+    public string AnonymusVariable { get; init; } = "#AnonVar";
 
     public string InternalVariable { get; init; } = "#Var";
 

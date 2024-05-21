@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.Unification.Constructive.CaseDetermination;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
@@ -16,6 +17,9 @@ namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.C
 /// </summary>
 public class ConstructiveDisunifier
 {
+    // function providers
+    private readonly CaseDeterminer _caseDeterminer;
+
     // input by constructor
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
@@ -36,18 +40,21 @@ public class ConstructiveDisunifier
         bool doDisunifyUnboundVariables, 
         ISimpleTerm left, 
         ISimpleTerm right, 
-        IImmutableDictionary<Variable, ProhibitedValuesBinding> mapping
+        IImmutableDictionary<Variable, ProhibitedValuesBinding> mapping,
+        CaseDeterminer caseDeterminer
     )
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
+        ArgumentNullException.ThrowIfNull(caseDeterminer, nameof(caseDeterminer));
 
         _doGroundednessCheck = doGroundednessCheck;
         _doDisunifyUnboundVariables = doDisunifyUnboundVariables;
         _left = left;
         _right = right;
         _prohibitedValues = mapping;
+        _caseDeterminer = caseDeterminer;
     }
 
     public IEither<DisunificationException, IEnumerable<DisunificationResult>> Disunify()

@@ -181,11 +181,8 @@ public class Application(
 
         var appendedQuery = convertedQuery.Append(new Structure("_nmr_check", []));
 
-        var sw = new Stopwatch();
-        sw.Start();
         foreach (var solution in solver.Solve(appendedQuery))
         {
-            Console.WriteLine(sw.Elapsed.TotalMinutes);
             PrintSolution(solution);
         }    
     }

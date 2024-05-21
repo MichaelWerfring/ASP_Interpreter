@@ -4,19 +4,21 @@ using asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 using asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using System.Collections.Immutable;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.Unification.Constructive.CaseDetermination;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard;
 
 public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunificationAlgorithm
 {
+    private readonly CaseDeterminer _caseDeterminer;
+
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
 
     public StandardConstructiveDisunificationAlgorithm(bool doGroundednessCheck, bool doDisunifyUnboundVariables)
     {
+        _caseDeterminer = new();
+
         _doGroundednessCheck = doGroundednessCheck;
         _doDisunifyUnboundVariables = doDisunifyUnboundVariables;
     }
@@ -27,7 +29,14 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
 
         // create new disunifier instance
         var constructiveDisunifier = new ConstructiveDisunifier
-            (_doGroundednessCheck, _doDisunifyUnboundVariables,target.Left, target.Right, target.Mapping);
+        (
+            _doGroundednessCheck,
+            _doDisunifyUnboundVariables,
+            target.Left,
+            target.Right,
+            target.Mapping,
+            _caseDeterminer
+        );
 
         // if error during disunification, return error.
         var disunifiersEither = constructiveDisunifier.Disunify();

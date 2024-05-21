@@ -7,19 +7,21 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using System.Collections.Immutable;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.Unification.Constructive.CaseDetermination.Cases;
+using asp_interpreter_lib.Unification.Constructive.CaseDetermination;
 
 namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 /// <summary>
 /// An instance class to provide context for the unification algorithm.
 /// </summary>
-internal class ConstructiveUnifier
+internal class ConstructiveUnifier : IBinaryTermCaseVisitor
 {
     // function providers
     private readonly ConstructiveVariableSubstitutor _maybeSubstitutor;
     private readonly SubstitutionApplier _subApplier;
     private readonly ProhibitedValuesUpdater _varUpdater;
-
+    private readonly CaseDeterminer _caseDeterminer;
 
     // input by constructor args
     private readonly bool _doOccursCheck;
@@ -39,17 +41,20 @@ internal class ConstructiveUnifier
         ConstructiveTarget target,
         ConstructiveVariableSubstitutor maybeSubstituter,
         SubstitutionApplier subApplier,
-        ProhibitedValuesUpdater varUpdater
+        ProhibitedValuesUpdater varUpdater,
+        CaseDeterminer caseDeterminer
     )
     {
         ArgumentNullException.ThrowIfNull(target);
         ArgumentNullException.ThrowIfNull(maybeSubstituter);
         ArgumentNullException.ThrowIfNull (subApplier);
         ArgumentNullException.ThrowIfNull (varUpdater);
+        ArgumentNullException.ThrowIfNull(caseDeterminer);
 
         _maybeSubstitutor = maybeSubstituter;
         _subApplier = subApplier;
         _varUpdater = varUpdater;
+        _caseDeterminer = caseDeterminer;
 
         _doOccursCheck = doOccursCheck;
         _left = target.Left;
@@ -74,6 +79,7 @@ internal class ConstructiveUnifier
 
     private void TryUnify(ISimpleTerm left, ISimpleTerm right)
     {
+        // stop if we have failed
         if (!_hasSucceded)
         {
             return;
@@ -83,45 +89,31 @@ internal class ConstructiveUnifier
         ISimpleTerm currentLeft = _maybeSubstitutor.TryGetSubstitution(left, _mapping);
         ISimpleTerm currentRight = _maybeSubstitutor.TryGetSubstitution(right, _mapping);
 
-        // determine case
-        if (currentLeft is Variable leftVariable)
-        {
-            if (currentRight is Variable rightVariable)
-            {
-                LeftIsVarRightIsVar(leftVariable, rightVariable);
-            }
-            else if (currentRight is IStructure rightStructure)
-            {
-                LeftIsVarRightIsStruct(leftVariable, rightStructure);
-            }
-            else
-            {
-                throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
-            }
-        }
-        else if (currentLeft is IStructure leftStructure)
-        {
-            if (currentRight is Variable rightVariable)
-            {
-                LeftIsStructRightIsVar(leftStructure, rightVariable);
-            }
-            else if (currentRight is IStructure rightStructure)
-            {
-                LeftIsStructRightIsStruct(leftStructure, rightStructure);
-            }
-            else
-            {
-                throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
-            }
-        }
-        else
-        {
-            throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
-        }
+        // determine case and resolve.
+        _caseDeterminer.DetermineCase(currentLeft, currentRight).Accept(this);
     }
 
-    // cases
-    private void LeftIsStructRightIsStruct(IStructure left, IStructure right)
+    public void Visit(VariableVariableCase currentCase)
+    {
+        ResolveVariableVariableCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(VariableStructureCase currentCase)
+    {
+        ResolveVariableStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureStructure currentCase)
+    {
+        ResolveStructureStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureVariableCase unificationCase)
+    {
+        ResolveVariableStructureCase(unificationCase.Right, unificationCase.Left);
+    }
+
+    private void ResolveStructureStructureCase(IStructure left, IStructure right)
     {
         var reductionMaybe = TermFuncs.Reduce(left, right);
         if (!reductionMaybe.HasValue)
@@ -138,12 +130,7 @@ internal class ConstructiveUnifier
         }
     }
 
-    private void LeftIsStructRightIsVar(IStructure left, Variable right)
-    {
-        LeftIsVarRightIsStruct(right, left);
-    }
-
-    private void LeftIsVarRightIsStruct(Variable left, IStructure right)
+    private void ResolveVariableStructureCase(Variable left, IStructure right)
     {
         // do occurs check if asked for
         if (_doOccursCheck && right.Contains(left))
@@ -164,7 +151,7 @@ internal class ConstructiveUnifier
         _mapping = _subApplier.ApplySubstitutionComposition(_mapping, left, right);
     }
 
-    private void LeftIsVarRightIsVar(Variable left, Variable right)
+    private void ResolveVariableVariableCase(Variable left, Variable right)
     {
         // if both are equal, do nothing
         if (left.IsEqualTo(right))

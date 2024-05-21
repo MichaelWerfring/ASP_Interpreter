@@ -4,28 +4,44 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
-namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard
+namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
+
+internal class SubstitutionApplier : IVariableBindingArgumentVisitor<IVariableBinding, IDictionary<Variable, ISimpleTerm>>
 {
-    internal class SubstitutionApplier
+    public VariableMapping ApplySubstitutionComposition(VariableMapping oldMapping, Variable var, ISimpleTerm term)
     {
-        public VariableMapping ApplySubstitutionComposition(VariableMapping oldMapping, Variable var, ISimpleTerm term)
+        ArgumentNullException.ThrowIfNull(oldMapping);
+        ArgumentNullException.ThrowIfNull(var);
+        ArgumentNullException.ThrowIfNull(term);
+
+        var dictForSubstitution = new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
         {
-            var dictForSubstitution = new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
-            {
-                { var, term }
-            };
+            { var, term }
+        };
 
-            VariableMapping newMap = oldMapping;
+        var newMap = oldMapping;
 
-            foreach (var pair in oldMapping)
-            {
-                if (pair.Value is TermBinding binding)
-                {
-                    newMap = newMap.SetItem(pair.Key, new TermBinding(binding.Term.Substitute(dictForSubstitution)));
-                }
-            }
-
-            return newMap.SetItem(var, new TermBinding(term));
+        foreach (var pair in oldMapping)
+        {
+            newMap = newMap.SetItem(pair.Key, pair.Value.Accept(this, dictForSubstitution));
         }
+
+        return newMap.SetItem(var, new TermBinding(term));
+    }
+
+    public IVariableBinding Visit(ProhibitedValuesBinding binding, IDictionary<Variable, ISimpleTerm> substitution)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(substitution);
+
+        return binding;
+    }
+
+    public IVariableBinding Visit(TermBinding binding, IDictionary<Variable, ISimpleTerm> substitution)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(substitution);
+
+        return new TermBinding(binding.Term.Substitute(substitution));
     }
 }

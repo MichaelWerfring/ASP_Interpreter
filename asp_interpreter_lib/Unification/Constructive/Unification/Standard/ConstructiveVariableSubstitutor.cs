@@ -27,11 +27,17 @@ public class ConstructiveVariableSubstitutor : IVariableBindingArgumentVisitor<I
 
     public ISimpleTerm Visit(ProhibitedValuesBinding binding, Variable args)
     {
+        ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(args);
+
         return args;
     }
 
     public ISimpleTerm Visit(TermBinding binding, Variable args)
     {
+        ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(args);
+
         return binding.Term;
     }
 }

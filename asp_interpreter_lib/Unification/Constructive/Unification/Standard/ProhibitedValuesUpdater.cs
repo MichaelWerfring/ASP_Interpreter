@@ -15,20 +15,19 @@ internal class ProhibitedValuesUpdater
         ArgumentNullException.ThrowIfNull(right);
         ArgumentNullException.ThrowIfNull(mapping);
 
-        ProhibitedValuesBinding leftVals = 
-            (ProhibitedValuesBinding)mapping[left] 
+        var leftVals = 
+            mapping[left] as ProhibitedValuesBinding
             ??
             throw new ArgumentException($"Must map to an instance of {nameof(ProhibitedValuesBinding)}", nameof(left));
 
-        ProhibitedValuesBinding rightVals = (ProhibitedValuesBinding)mapping[right]
+        var rightVals = mapping[right] as ProhibitedValuesBinding
             ??
             throw new ArgumentException($"Must map to an instance of {nameof(ProhibitedValuesBinding)}", nameof(right));
 
 
-        ImmutableSortedSet<ISimpleTerm> union = leftVals.ProhibitedValues
-                                                    .Union(rightVals.ProhibitedValues);
+        var union = leftVals.ProhibitedValues.Union(rightVals.ProhibitedValues);
 
-       return mapping.SetItem
+        return mapping.SetItem
         (
             right,
             new ProhibitedValuesBinding(union)

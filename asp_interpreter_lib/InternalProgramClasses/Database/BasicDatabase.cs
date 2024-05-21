@@ -4,7 +4,7 @@ namespace asp_interpreter_lib.InternalProgramClasses.Database;
 
 public class BasicDatabase : IDatabase
 {
-    private IEnumerable<IEnumerable<Structure>> _clauses;
+    private readonly IEnumerable<IEnumerable<Structure>> _clauses;
 
     public BasicDatabase(IEnumerable<IEnumerable<Structure>> clauses)
     {
