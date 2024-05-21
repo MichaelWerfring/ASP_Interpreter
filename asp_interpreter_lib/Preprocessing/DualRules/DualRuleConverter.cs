@@ -346,7 +346,7 @@ public class DualRuleConverter
     public Dictionary<(string, int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
     {
         ArgumentNullException.ThrowIfNull(rules);
-        //heads mapped to all bodies occuring in the program
+        //heads mapped to all bodies occurring in the program
         Dictionary<(string, int, bool), List<Statement>> disjunctions = [];
         _logger.LogTrace("Started preprocessing for dual rules.");
 

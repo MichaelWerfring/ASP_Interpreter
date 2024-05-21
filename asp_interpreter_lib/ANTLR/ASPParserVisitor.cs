@@ -56,11 +56,11 @@ public interface IASPParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStatement([NotNull] ASPParser.StatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.explaination"/>.
+	/// Visit a parse tree produced by <see cref="ASPParser.explanation"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitExplaination([NotNull] ASPParser.ExplainationContext context);
+	Result VisitExplanation([NotNull] ASPParser.ExplanationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.exp_text"/>.
 	/// </summary>

@@ -3,6 +3,7 @@ using System.Data;
 using System.Reflection.Metadata.Ecma335;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.BinaryOperations;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Util;
@@ -71,9 +72,6 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         
         duals.Insert(0, nmrCheck);
 
-        _logger.LogDebug("NMR check for programm: ");
-        duals.ForEach(d => _logger.LogDebug(d.ToString()));
-
         return duals;
     }
 
@@ -116,7 +114,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         Statement nmrCheck = new();
         nmrCheck.AddHead(new Literal("_nmr_check", false, false, []));
 
-        // 4) add modified duals to the NMR check goal if it is not already in there
+        // add modified duals to the NMR check goal if it is not already in there
         var nmrBody = new List<Goal>();
         foreach (var rule in olonRules)
         {
@@ -138,31 +136,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             return olonRules;
         }
 
-        // 1) append negation of OLON Rule to its body (If not already present)
-        //int emptyHeadCount = 0;
-        //foreach (var rule in olonRules)
-        //{
-        //    if (!rule.HasHead)
-        //    {
-        //        string name = _options.EmptyHeadPrefix + emptyHeadCount++;
-        //        rule.AddHead(new Literal(name, false, false, []));
-        //        continue;
-        //    }
-        //    
-        //    var head = rule.Head.GetValueOrThrow("Could not parse head!");
-        //
-        //    var negatedHead = head.Accept(new LiteralCopyVisitor(
-        //        new TermCopyVisitor())).GetValueOrThrow("Could not parse negated head!");
-        //    negatedHead.HasNafNegation = !negatedHead.HasNafNegation;
-        //    
-        //    bool containsHead = rule.Body.Find(b => b.ToString() == negatedHead.ToString()) != null;
-        //
-        //    if (!containsHead)
-        //    {
-        //        rule.Body.Add(negatedHead);
-        //    }
-        //}
-
+        //append negation of OLON Rule to its body(If not already present)
         for (int i = 0; i < olonRules.Count; i++)
         {
             Statement rule = olonRules[i];

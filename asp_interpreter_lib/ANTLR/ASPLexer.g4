@@ -36,7 +36,7 @@ IS : 'is';
 ID : [a-z][a-zA-Z0-9_]*;
 VARIABLE : [A-Z][a-zA-Z0-9_]*;
 
-// ~ means match evereything except ...
+// ~ means match everything except ...
 COMMENT		: '%' ~[\r?\n]* [\r?\n] -> skip;
 MULTI_LINE_COMMENT : '%*' .*? '*%' -> skip;
 NEWLINE		: [\r?\n] -> skip ;

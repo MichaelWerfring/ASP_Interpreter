@@ -75,7 +75,7 @@ public partial class ASPParserBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// <return>The visitor result.</return>
 	public virtual Result VisitStatement([NotNull] ASPParser.StatementContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ASPParser.explaination"/>.
+	/// Visit a parse tree produced by <see cref="ASPParser.explanation"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -83,7 +83,7 @@ public partial class ASPParserBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitExplaination([NotNull] ASPParser.ExplainationContext context) { return VisitChildren(context); }
+	public virtual Result VisitExplanation([NotNull] ASPParser.ExplanationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.exp_text"/>.
 	/// <para>

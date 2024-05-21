@@ -8,7 +8,7 @@ using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.Preprocessing.DualRules;
 
-//returns the term to be used at the occuring position (or same as before if no change)
+//returns the term to be used at the occurring position (or same as before if no change)
 //and a goal to be added to the body (else its none)
 public class HeadAtomEliminator : TypeBaseVisitor<(ITerm, List<Goal>)>
 {

@@ -111,7 +111,7 @@ public class ConstructiveDisunifier
             }
             else
             {
-                throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
+                throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
             }
         }
         else if (left is IStructure leftStruct)
@@ -126,12 +126,12 @@ public class ConstructiveDisunifier
             }
             else
             {
-                throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
+                throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
             }
         }
         else
         {
-            throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
+            throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
         }
     }
 

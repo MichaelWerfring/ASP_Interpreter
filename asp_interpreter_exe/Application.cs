@@ -141,6 +141,8 @@ public class Application(
         //NMR 
         var nmrChecker = new NmrChecker(_prefixes, _logger);
         var subcheck = nmrChecker.GetSubCheckRules(olonRules.Duplicate());
+        _logger.LogDebug("NMR-Check:");
+        subcheck.ForEach(i => _logger.LogDebug(i.ToString()));
 
         return new Right<string, AspProgram>(new AspProgram(
             [.. program.Statements, .. dual, .. subcheck]

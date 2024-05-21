@@ -3,12 +3,12 @@ options { tokenVocab=ASPLexer; }
 program : statements query?;
 query : QUERY_SYMBOL goal(COMMA goal)* DOT;
 
-statements : (explaination? statement)*;
+statements : (explanation? statement)*;
 statement 
     : CONS goal (COMMA goal)* DOT
     | literal (CONS (goal (COMMA goal)*))? DOT;
 
-explaination : literal EXP_OPEN (exp_text|exp_var)+ EXP_CLOSE ;
+explanation : literal EXP_OPEN (exp_text|exp_var)+ EXP_CLOSE ;
 exp_text: EXP_TEXT;
 exp_var: EXP_VAR_OPEN EXP_VAR EXP_VAR_CLOSE;
 
