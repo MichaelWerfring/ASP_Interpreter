@@ -44,7 +44,7 @@ public class GoalSolver
 
         ICoSLDGoal goal = goalToSolveMaybe.GetValueOrThrow();
         
-        // for each way the goal can be satisified..
+        // for each way the goal can be satisfied..
         foreach (GoalSolution solution in goal.TrySatisfy())
         {
             CoSldSolverState nextState = UpdatAfterGoalFulfilled(inputState, solution);

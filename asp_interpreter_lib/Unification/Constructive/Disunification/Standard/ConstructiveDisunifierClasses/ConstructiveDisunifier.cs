@@ -8,6 +8,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.Unification.Constructive.CaseDetermination;
+using asp_interpreter_lib.Unification.Constructive.CaseDetermination.Cases;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
@@ -15,7 +16,7 @@ namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.C
 /// An instance-based disunification algorithm,
 /// as to provide the algorithm with a context through its fields.
 /// </summary>
-public class ConstructiveDisunifier
+public class ConstructiveDisunifier : IBinaryTermCaseVisitor
 {
     // function providers
     private readonly CaseDeterminer _caseDeterminer;
@@ -105,45 +106,30 @@ public class ConstructiveDisunifier
             return; 
         }
 
-        // determine case
-        if (left is Variable leftVar)
-        {
-            if (right is Variable rightVar)
-            {
-                LeftIsVarRightIsVar(leftVar, rightVar);
-            }
-            else if (right is IStructure rightStruct)
-            {
-                LeftIsVarRightIsStruct(leftVar, rightStruct);
-            }
-            else
-            {
-                throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
-            }
-        }
-        else if (left is IStructure leftStruct)
-        {
-            if (right is Variable rightVar)
-            {
-                LeftIsStructRightIsVar(leftStruct, rightVar);
-            }
-            else if (right is IStructure rightStruct)
-            {
-                LeftIsStructRightIsStruct(leftStruct, rightStruct);
-            }
-            else
-            {
-                throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
-            }
-        }
-        else
-        {
-            throw new ArgumentException("The type hierarchy has been modifie so that not every term is either a variable or a structure!");
-        }
+        _caseDeterminer.DetermineCase(left, right).Accept(this);
     }
 
-    // cases
-    private void LeftIsStructRightIsStruct(IStructure leftStruct, IStructure rightStruct)
+    public void Visit(VariableVariableCase currentCase)
+    {
+        ResolveVariableVariableCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(VariableStructureCase currentCase)
+    {
+        ResolveVariableStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureStructure currentCase)
+    {
+        ResolveStructureStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureVariableCase currentCase)
+    {
+        ResolveVariableStructureCase(currentCase.Right, currentCase.Left);
+    }
+
+    private void ResolveStructureStructureCase(IStructure leftStruct, IStructure rightStruct)
     {
         IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> reductionMaybe = TermFuncs.Reduce(leftStruct, rightStruct);
 
@@ -161,12 +147,12 @@ public class ConstructiveDisunifier
         }
     }
 
-    private void LeftIsStructRightIsVar(IStructure left, Variable right)
+    private void ResolveStructureVariableCase(IStructure left, Variable right)
     {
-        LeftIsVarRightIsStruct(right, left);
+        ResolveVariableStructureCase(right, left);
     }
 
-    private void LeftIsVarRightIsStruct(Variable left, IStructure right)
+    private void ResolveVariableStructureCase(Variable left, IStructure right)
     {
         // do groundedness check if asked for
         if (_doGroundednessCheck && right.ExtractVariables().Any())
@@ -196,8 +182,8 @@ public class ConstructiveDisunifier
 
         _disunifiers.Add(new DisunificationResult(left, right, false));
     }
-
-    private void LeftIsVarRightIsVar(Variable left, Variable right)
+    
+    private void ResolveVariableVariableCase(Variable left, Variable right)
     {
         if (!_doDisunifyUnboundVariables)
         {

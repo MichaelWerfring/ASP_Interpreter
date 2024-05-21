@@ -45,11 +45,11 @@ public partial class ASPParser : Parser {
 		EXP_CLOSE=40, EXP_VAR_OPEN=41, EXP_VAR_CLOSE=42;
 	public const int
 		RULE_program = 0, RULE_query = 1, RULE_statements = 2, RULE_statement = 3, 
-		RULE_explaination = 4, RULE_exp_text = 5, RULE_exp_var = 6, RULE_goal = 7, 
+		RULE_explanation = 4, RULE_exp_text = 5, RULE_exp_var = 6, RULE_goal = 7, 
 		RULE_binary_operation = 8, RULE_literal = 9, RULE_binary_operator = 10, 
 		RULE_terms = 11, RULE_term = 12, RULE_list = 13, RULE_arithop = 14;
 	public static readonly string[] ruleNames = {
-		"program", "query", "statements", "statement", "explaination", "exp_text", 
+		"program", "query", "statements", "statement", "explanation", "exp_text", 
 		"exp_var", "goal", "binary_operation", "literal", "binary_operator", "terms", 
 		"term", "list", "arithop"
 	};
@@ -230,11 +230,11 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
 			return GetRuleContext<StatementContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExplainationContext[] explaination() {
-			return GetRuleContexts<ExplainationContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public ExplanationContext[] explanation() {
+			return GetRuleContexts<ExplanationContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExplainationContext explaination(int i) {
-			return GetRuleContext<ExplainationContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExplanationContext explanation(int i) {
+			return GetRuleContext<ExplanationContext>(i);
 		}
 		public StatementsContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -269,7 +269,7 @@ public partial class ASPParser : Parser {
 				case 1:
 					{
 					State = 45;
-					explaination();
+					explanation();
 					}
 					break;
 				}
@@ -415,7 +415,7 @@ public partial class ASPParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ExplainationContext : ParserRuleContext {
+	public partial class ExplanationContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public LiteralContext literal() {
 			return GetRuleContext<LiteralContext>(0);
 		}
@@ -433,23 +433,23 @@ public partial class ASPParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public Exp_varContext exp_var(int i) {
 			return GetRuleContext<Exp_varContext>(i);
 		}
-		public ExplainationContext(ParserRuleContext parent, int invokingState)
+		public ExplanationContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_explaination; } }
+		public override int RuleIndex { get { return RULE_explanation; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IASPParserVisitor<TResult> typedVisitor = visitor as IASPParserVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitExplaination(this);
+			if (typedVisitor != null) return typedVisitor.VisitExplanation(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ExplainationContext explaination() {
-		ExplainationContext _localctx = new ExplainationContext(Context, State);
-		EnterRule(_localctx, 8, RULE_explaination);
+	public ExplanationContext explanation() {
+		ExplanationContext _localctx = new ExplanationContext(Context, State);
+		EnterRule(_localctx, 8, RULE_explanation);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);

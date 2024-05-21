@@ -53,7 +53,7 @@ public class GoalNegator
                 , actualLiteral.Terms)]);
         }
 
-        //Convert goal to bino operation
+        //Convert goal to binary operation
         var binaryOperation = goal.Accept(_binOpConverter)
             .GetValueOrThrow("The value must be either a literal or a binary operation!");
         

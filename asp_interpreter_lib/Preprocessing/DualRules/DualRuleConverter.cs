@@ -5,6 +5,7 @@ using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
+using asp_interpreter_lib.Util;
 using asp_interpreter_lib.Util.ErrorHandling;
 using System.Runtime.InteropServices;
 using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
@@ -75,10 +76,7 @@ public class DualRuleConverter
 
     public IEnumerable<Statement> ToDisjunction(Statement rule, string prefix = "")
     {
-        if (rule is null)
-        {
-            throw new ArgumentNullException(nameof(rule));
-        }
+        ArgumentNullException.ThrowIfNull(rule);
 
         if (!rule.HasHead)
         {
@@ -288,7 +286,7 @@ public class DualRuleConverter
                 disjunction.Key.Item1,
                 false,
                 disjunction.Key.Item3,
-                GenerateVariables(disjunction.Key.Item2))));
+                AspExtensions.GenerateVariables(disjunction.Key.Item2, _options.VariablePrefix))));
         }
         else
         {
@@ -297,7 +295,7 @@ public class DualRuleConverter
                 disjunction.Key.Item1,
                 true,
                 disjunction.Key.Item3,
-                GenerateVariables(disjunction.Key.Item2)
+                AspExtensions.GenerateVariables(disjunction.Key.Item2, _options.VariablePrefix)
             ));
         }
 
@@ -317,7 +315,7 @@ public class DualRuleConverter
                 .GetValueOrThrow("Cannot copy rule!");
 
             copy.Terms.Clear();
-            copy.Terms.AddRange(GenerateVariables(disjunction.Key.Item2));
+            copy.Terms.AddRange(AspExtensions.GenerateVariables(disjunction.Key.Item2, _options.VariablePrefix));
             
             copy.Identifier = prefix + copy.Identifier;
 
@@ -348,7 +346,7 @@ public class DualRuleConverter
     public Dictionary<(string, int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
     {
         ArgumentNullException.ThrowIfNull(rules);
-        //heads mapped to all bodies occuring in the program
+        //heads mapped to all bodies occurring in the program
         Dictionary<(string, int, bool), List<Statement>> disjunctions = [];
         _logger.LogTrace("Started preprocessing for dual rules.");
 
@@ -424,17 +422,6 @@ public class DualRuleConverter
         }
 
         return statements;
-    }
-
-    private List<ITerm> GenerateVariables(int number)
-    {
-        List<ITerm> vars = [];
-        for (int i = 0; i < number; i++)
-        {
-            vars.Add(new VariableTerm(_options.VariablePrefix + (i + 1)));
-        }
-
-        return vars;
     }
 
     private List<string> GetBodyVariables(Statement rule)

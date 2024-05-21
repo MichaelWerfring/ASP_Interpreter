@@ -20,7 +20,7 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<asp_interpreter_l
         _textVisitor = new ExplanationTextVisitor();
     }
 
-    public override IOption<Explanation> VisitExplaination(ASPParser.ExplainationContext context)
+    public override IOption<Explanation> VisitExplanation(ASPParser.ExplanationContext context)
     {
         var optionLiteral = context.literal().Accept(_literalVisitor);
         if (optionLiteral == null || !optionLiteral.HasValue)

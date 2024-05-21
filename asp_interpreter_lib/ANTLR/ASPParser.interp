@@ -93,7 +93,7 @@ program
 query
 statements
 statement
-explaination
+explanation
 exp_text
 exp_var
 goal
