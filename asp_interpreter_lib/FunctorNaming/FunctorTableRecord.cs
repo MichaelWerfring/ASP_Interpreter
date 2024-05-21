@@ -4,6 +4,7 @@ public record FunctorTableRecord
 {
     // arithmetic
     public string ArithmeticEvaluation { get; init; } = "#is";
+    public string ArithmeticEvaluationNegated { get; init; } = "#isnt";
     public string Addition { get; init; } = "+";
     public string Subtraction { get; init; } = "-";
     public string Multiplication { get; init; } = "*";
@@ -27,7 +28,7 @@ public record FunctorTableRecord
     public string Disunification { get; init; } = "\\=";
 
     // negation
-    public string NegationAsFailure { get; init; } = "not";
+    public string NegationAsFailure { get; init; } = "#not";
     public string ClassicalNegation { get; init; } = "~";
 
     // list

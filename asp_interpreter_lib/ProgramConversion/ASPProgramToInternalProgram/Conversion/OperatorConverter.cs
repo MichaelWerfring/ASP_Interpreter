@@ -76,6 +76,11 @@ public class OperatorConverter : TypeBaseVisitor<string>
         return new Some<string>(_functorTable.ArithmeticEvaluation);
     }
 
+    public override IOption<string> Visit(IsNot op)
+    {
+        return new Some<string>(_functorTable.ArithmeticEvaluationNegated);
+    }
+
     public override IOption<string> Visit(LessOrEqualThan op)
     {
         return new Some<string>(_functorTable.LessOrEqualThan);

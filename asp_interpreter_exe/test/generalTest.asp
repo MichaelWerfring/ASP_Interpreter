@@ -1,30 +1,44 @@
-﻿% Given 3 birds, which can fly?
+﻿% 4-queens: ((1,2),(2,4),(3,1),(4,3)) and ((1,3),(2,1),(3,4),(4,2))
+% Retargetable N-queens program.
 
-penguin(sam). % sam is a penguin
-wounded_bird(john). % john is wounded
-bird(tweety). % tweety is just a bird
+n_queens(N, Q) :-
+        nqueens(N, N, [], Q).
 
-% penguines and wounded birds are still birds
-bird(X) :- penguin(X).
-bird(X) :- wounded_bird(X).
+% Pick queens one at a time and test against all previous queens.
+nqueens(X, N, Qi, Qo) :-
+        X > 0,
+        pickqueen(X, Y, N),
+        not attack(X, Y, Qi),
+        X1 is X - 1,
+        nqueens(X1, N, [q(X, Y) | Qi], Qo).
+nqueens(0, _, Q, Q).
 
-% penguins and wounded birds are abnormal
-ab(X) :- penguin(X).
-ab(X) :- wounded_bird(X).
 
-% birds can fly if they are not abnormal
-flies(X) :- bird(X), not ab(X).
+% pick a queen for row X.
+pickqueen(X, Y, Y) :-
+        Y > 0,
+        q(X, Y).
+pickqueen(X, Y, N) :-
+        N > 1,
+        N1 is N - 1,
+        pickqueen(X, Y, N1).
 
-% explicit closed world assumptions
--flies(X) :- ab(X).
--flies(X) :- -bird(X).
+% check if a queen can attack any previously selected queen.
+attack(X, _, [q(X, _) | _]). % same row
+attack(_, Y, [q(_, Y) | _]). % same col
+attack(X, Y, [q(X2, Y2) | _]) :- % same diagonal
+        Xd is X2 - X,
+        abs(Xd, Xd2),
+        Yd is Y2 - Y,
+        abs(Yd, Yd2),
+        Xd2 = Yd2.
+attack(X, Y, [_ | T]) :-
+        attack(X, Y, T).
 
--wounded_bird(X) :- not wounded_bird(X).
+q(X, Y) :- not negq(X, Y).
+negq(X, Y) :- not q(X, Y).
 
--bird(X) :- not bird(X).
+abs(X, X) :- X >= 0.
+abs(X, Y) :- X < 0, Y is X * -1.
 
--penguin(X) :- not penguin(X).
-
--ab(X) :- not ab(X).
-
-?- flies(A), -flies(B), not flies(C), not -flies(D).
+?- n_queens(4, Q).
