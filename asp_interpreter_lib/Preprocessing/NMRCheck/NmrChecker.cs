@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.Reflection.Metadata.Ecma335;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
@@ -27,11 +28,12 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
 
         var withoutAnonymous = statements.Select(_converter.Replacer.Replace);
         var headComputed = withoutAnonymous.Select(_converter.ComputeHead).ToList();
-        
-        var disjunctions = _converter.PreprocessRules(headComputed);
-        foreach (var disjunction in disjunctions)
+
+        foreach (var statement in statements)
         {
-            duals.AddRange(_converter.ToConjunction(disjunction, "_chk_"));
+            var head = statement.Head.GetValueOrThrow("Constraint rules must be given a head!");
+            var kv = new KeyValuePair<(string, int, bool), List<Statement>>((head.Identifier, head.Terms.Count, head.HasStrongNegation), [statement]);
+            duals.AddRange(_converter.ToConjunction(kv));
         }
 
         duals.ForEach(d => _logger.LogDebug(d.ToString()));
@@ -62,7 +64,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         List<Statement> duals = [];
         // 3) assign unique head (e.g. chk0) 
         duals = GetDualsForCheck(olonRules.ToList());
-        AddMissingPrefixes(duals, "_chk_");
+        AddMissingPrefixes(duals, "_");
         
         Statement nmrCheck = GetCheckRule(tempOlonRules, notAsName);
         AddForallToCheck(nmrCheck);
@@ -119,7 +121,6 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         foreach (var rule in olonRules)
         {
             var head = rule.Head.GetValueOrThrow();
-            head.Identifier = "_" + _options.CheckPrefix + head.Identifier;
             head.HasNafNegation = !notAsName;
             nmrBody.Add(DualRuleConverter.WrapInNot(head));
         }
@@ -136,33 +137,59 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         {
             return olonRules;
         }
-        
+
         // 1) append negation of OLON Rule to its body (If not already present)
-        int emptyHeadCount = 0;
-        foreach (var rule in olonRules)
+        //int emptyHeadCount = 0;
+        //foreach (var rule in olonRules)
+        //{
+        //    if (!rule.HasHead)
+        //    {
+        //        string name = _options.EmptyHeadPrefix + emptyHeadCount++;
+        //        rule.AddHead(new Literal(name, false, false, []));
+        //        continue;
+        //    }
+        //    
+        //    var head = rule.Head.GetValueOrThrow("Could not parse head!");
+        //
+        //    var negatedHead = head.Accept(new LiteralCopyVisitor(
+        //        new TermCopyVisitor())).GetValueOrThrow("Could not parse negated head!");
+        //    negatedHead.HasNafNegation = !negatedHead.HasNafNegation;
+        //    
+        //    bool containsHead = rule.Body.Find(b => b.ToString() == negatedHead.ToString()) != null;
+        //
+        //    if (!containsHead)
+        //    {
+        //        rule.Body.Add(negatedHead);
+        //    }
+        //}
+
+        for (int i = 0; i < olonRules.Count; i++)
         {
+            Statement rule = olonRules[i];
             if (!rule.HasHead)
             {
-                string name = _options.EmptyHeadPrefix + emptyHeadCount++;
+                string name = "_" +_options.CheckPrefix + (i+1) + "_";
                 rule.AddHead(new Literal(name, false, false, []));
                 continue;
             }
             
             var head = rule.Head.GetValueOrThrow("Could not parse head!");
-
+        
             var negatedHead = head.Accept(new LiteralCopyVisitor(
                 new TermCopyVisitor())).GetValueOrThrow("Could not parse negated head!");
             negatedHead.HasNafNegation = !negatedHead.HasNafNegation;
             
             bool containsHead = rule.Body.Find(b => b.ToString() == negatedHead.ToString()) != null;
-
+        
             if (!containsHead)
             {
                 rule.Body.Add(negatedHead);
             }
+
+            head.Identifier = "_" + _options.CheckPrefix + (i + 1) + "_";
         }
 
-        return olonRules;
+            return olonRules;
     }
 
     private static void AddForallToCheck(Statement statement)

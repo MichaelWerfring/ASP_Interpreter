@@ -67,6 +67,10 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
             },
             {
                 (functors.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger))
+            },
+            {
+                (functors.ArithmeticEvaluationNegated, 2),
+                new NegatedArithmeticEvaluationGoalBuilder(new ArithmeticEvaluator(functors), new StandardConstructiveDisunificationAlgorithm(false, false), logger) 
             }
         };
 

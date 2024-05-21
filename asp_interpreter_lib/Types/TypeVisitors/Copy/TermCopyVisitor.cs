@@ -46,14 +46,14 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 
     public override IOption<ITerm> Visit(NegatedTerm term)
     {
-        var innerTerm = term.Accept(this);
+        var innerTerm = term.Term.Accept(this);
         return new Some<ITerm>(new NegatedTerm(
             innerTerm.GetValueOrThrow("The inner term cannot be copied!")));
     }
 
     public override IOption<ITerm> Visit(ParenthesizedTerm term)
     {
-        var innerTerm = term.Accept(this);
+        var innerTerm = term.Term.Accept(this);
         return new Some<ITerm>(new ParenthesizedTerm(
             innerTerm.GetValueOrThrow("The inner term cannot be copied!")));
     }

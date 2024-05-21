@@ -4,6 +4,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 using asp_interpreter_lib.Solving;
 using asp_interpreter_lib.Types;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Types.TypeVisitors.Copy;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
@@ -138,8 +139,9 @@ public static class AspExtensions
         return sb.ToString();
     }
 
-    public static List<Statement> PrefixNestedTerms(this  List<Statement> statements, string prefix)
+    public static List<Statement> PrefixNestedTerms(this List<Statement> statements, string prefix)
     {
+        ArgumentNullException.ThrowIfNull(statements);
         ArgumentNullException.ThrowIfNull(prefix);
 
         var result = new List<Statement>();
@@ -153,5 +155,20 @@ public static class AspExtensions
         }
 
         return result;
+    }
+
+    public static List<ITerm> GenerateVariables(int numberOfVariables, string variableName)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(variableName);
+        ArgumentOutOfRangeException.ThrowIfNegative(numberOfVariables);
+
+        List<ITerm> vars = [];
+
+        for (int i = 0; i < numberOfVariables; i++)
+        {
+            vars.Add(new VariableTerm(variableName + (i + 1)));
+        }
+
+        return vars;
     }
 }
