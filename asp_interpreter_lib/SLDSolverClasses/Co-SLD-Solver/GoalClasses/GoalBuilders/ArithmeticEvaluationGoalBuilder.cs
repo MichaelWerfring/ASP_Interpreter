@@ -59,7 +59,6 @@ public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
             evaluationStruct.Children.ElementAt(1),
             currentState.SolutionState,
             _algorithm,
-            _logger
-        );
+            _logger);
     }
 }

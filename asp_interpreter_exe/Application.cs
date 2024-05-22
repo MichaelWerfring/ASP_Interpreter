@@ -120,7 +120,7 @@ public class Application(
 
     private IEither<string, AspProgram> LoadProgram()
     {
-        //Read
+        // Read
         var code = FileReader.ReadFile(_config.Path);
 
         if (!code.IsRight) 
@@ -128,18 +128,21 @@ public class Application(
             return new Left<string, AspProgram>(code.GetLeftOrThrow());
         }
 
-        //Program
+        // Program
         var program = GetProgram(code.GetRightOrThrow());
 
-        //Dual
+        // Dual
         var dualGenerator = new DualRuleConverter(_prefixes, _logger);
         var dual = dualGenerator.GetDualRules(program.Duplicate().Statements, "_");
 
-        //OLON
+        // OLON
         List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
 
-        //NMR 
+        // NMR 
         var nmrChecker = new NmrChecker(_prefixes, _logger);
+        var constraints = nmrChecker.GetConstraintRules(program);
+        olonRules.AddRange(constraints);
+
         var subcheck = nmrChecker.GetSubCheckRules(olonRules.Duplicate());
         _logger.LogDebug("NMR-Check:");
         subcheck.ForEach(i => _logger.LogDebug(i.ToString()));

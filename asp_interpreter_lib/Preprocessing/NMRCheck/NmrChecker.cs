@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices;
+using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals;
 using asp_interpreter_lib.Solving.DualRules;
 using asp_interpreter_lib.Types;
 using asp_interpreter_lib.Types.BinaryOperations;
@@ -22,6 +25,74 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
     private static readonly GoalToLiteralConverter _goalToLiteralConverter = new();
 
     private readonly DualRuleConverter _converter = new DualRuleConverter(options, logger.GetDummy(), true);
+
+    public List<Statement> GetConstraintRules(AspProgram program)
+    {
+        ArgumentNullException.ThrowIfNull(program);
+
+        List<Statement> statements = new List<Statement>();
+        // Dictionary<(string, int), List<Literal>> distinctRules = new Dictionary<(string, int), List<Literal>>();
+        HashSet<(bool, string, int)> literals = new HashSet<(bool, string, int)>();
+
+        var literalConverter = new GoalToLiteralConverter();
+
+        // Find literals in query
+        if (program.Query.HasValue)
+        {
+            foreach (var goal in program.Query.GetValueOrThrow().Goals)
+            {
+                goal.Accept(literalConverter).IfHasValue(
+                    v => literals.Add((v.HasStrongNegation, v.Identifier, v.Terms.Count)));
+            }
+        }
+
+        // Find literals in rules
+        foreach (var rule in program.Statements)
+        {
+            if (rule.HasHead)
+            {
+                rule.Head.GetValueOrThrow().Accept(literalConverter).IfHasValue(
+                    v => literals.Add((v.HasStrongNegation, v.Identifier, v.Terms.Count)));
+            }
+
+            foreach (var goal in rule.Body)
+            {
+                goal.Accept(literalConverter).IfHasValue(
+                       v => literals.Add((v.HasStrongNegation, v.Identifier, v.Terms.Count)));
+            }
+        }
+
+        // Find constraints
+        foreach (var literal in literals)
+        {
+            // Check for same name and arity but different negation
+            if (!literals.Contains((!literal.Item1, literal.Item2, literal.Item3)))
+            {
+                continue;
+            }
+
+            Statement constraint = new Statement();
+            Literal positive = new Literal(
+                literal.Item2,
+                false,
+                false,
+                AspExtensions.GenerateVariables(literal.Item3, this._options.VariablePrefix));
+
+            Literal negative = new Literal(
+                literal.Item2,
+                false,
+                true,
+                AspExtensions.GenerateVariables(literal.Item3, this._options.VariablePrefix));
+
+            constraint.AddBody([negative, positive]);
+            statements.Add(constraint);
+
+            // Remove or its found twice
+            literals.Remove(literal);
+        }
+
+        return statements;
+    }
 
     private List<Statement> GetDualsForCheck(List<Statement> statements)
     {

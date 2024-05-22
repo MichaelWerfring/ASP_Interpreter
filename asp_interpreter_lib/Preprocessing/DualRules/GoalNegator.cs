@@ -49,8 +49,9 @@ public class GoalNegator
             }
 
             return new Literal("not", false, false,
-                [new BasicTerm((actualLiteral.HasStrongNegation ? "-" : "") + actualLiteral.Identifier.ToString()
-                , actualLiteral.Terms)]);
+                [new BasicTerm(
+                    (actualLiteral.HasStrongNegation ? "-" : "") + actualLiteral.Identifier.ToString(),
+                    actualLiteral.Terms)]);
         }
 
         //Convert goal to binary operation
