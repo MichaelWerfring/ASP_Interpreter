@@ -43,7 +43,6 @@ public class PredicateGoalBuilder : IGoalBuilder
 
         if (!currentState.CurrentGoals.Any())
         {
-            _logger.LogError("Failed to build predicate goal: state did not contain any goals.");
             throw new ArgumentException("Must contain at least one goal.",nameof(currentState)); 
         }
 
@@ -56,7 +55,6 @@ public class PredicateGoalBuilder : IGoalBuilder
         }
         catch
         {
-            _logger.LogError($"Failed to build predicate goal: goalterm {goalTerm} was not a structure.");
             throw new ArgumentException("Predicate goal must be a structure." ,nameof(currentState));
         }
 

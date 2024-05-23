@@ -31,7 +31,6 @@ internal class ArithmeticComparisonGoalBuilder : IGoalBuilder
 
         if (!currentState.CurrentGoals.Any())
         {
-            _logger.LogError("Failed to build arithmetic comparison goal: state did not contain any goals.");
             throw new ArgumentException("Must contain at least one term in current goals.", nameof(currentState)); 
         }
 
@@ -39,8 +38,6 @@ internal class ArithmeticComparisonGoalBuilder : IGoalBuilder
 
         if (goalTerm is not Structure comparisonStruct || comparisonStruct.Children.Count != 2)
         {
-            _logger.LogError($"Failed to build arithmetic comparison goal:" +
-                $" Goalterm {goalTerm} was not of type struct or did not contain 2 children.");
             throw new ArgumentException("Goal must contain a structure term with two children.", nameof(currentState)); 
         }
 

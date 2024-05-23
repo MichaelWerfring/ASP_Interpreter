@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Util.ErrorHandling;
@@ -9,7 +8,6 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 public class GoalSolver
 {
     private readonly CoSLDGoalMapper _goalMapper;
-
     private readonly ILogger _logger;
 
     public GoalSolver(CoSLDGoalMapper goalMapper, ILogger logger)

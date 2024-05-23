@@ -16,17 +16,11 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOption<GoalSolution>, int>
 {
     private readonly SolverStateUpdater _updater;
-
     private readonly ArithmeticEvaluator _evaluator;
-
     private readonly ISimpleTerm _left;
-
     private readonly ISimpleTerm _right;
-
     private readonly SolutionState _state;
-
     private readonly IConstructiveUnificationAlgorithm _algorithm;
-
     private readonly ILogger _logger;
 
     public ArithmeticEvaluationGoal
@@ -80,13 +74,16 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
             yield break;
         }
 
+        _logger.LogInfo($"Solved arithmetic evaluation goal: {_left}, {_right}");
+
         yield return solutionMaybe.GetValueOrThrow();
     }
 
     public IOption<GoalSolution> Visit(Variable var, int integer)
     {
-        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
+        ArgumentNullException.ThrowIfNull(var);
 
+        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
         if(!targetEither.IsRight)
         {
             _logger.LogError(targetEither.GetLeftOrThrow().Message);
@@ -95,15 +92,14 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
 
         var target = targetEither.GetRightOrThrow();
 
-        IOption<VariableMapping> unificationMaybe = _algorithm.Unify(target);
-
-        if (!unificationMaybe.HasValue)
+        IOption<VariableMapping> unificationResult = _algorithm.Unify(target);
+        if (!unificationResult.HasValue)
         {
             return new None<GoalSolution>();
         }
 
-        VariableMapping unification = unificationMaybe.GetValueOrThrow();
-        _logger.LogDebug($"Unifying mapping is {unification}");
+        VariableMapping unification = unificationResult.GetValueOrThrow();
+        _logger.LogTrace($"Unifying mapping is {unification}");
 
         var updatedMapping = _state.Mapping.Update(unification).GetValueOrThrow();
         _logger.LogTrace($"Updated mapping is {updatedMapping}");
@@ -112,8 +108,10 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
         _logger.LogTrace($"Flattened mapping is {flattenedMapping}");
 
         CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_state.CHS, flattenedMapping);
+        _logger.LogTrace($"Updated CHS is {updatedCHS}");
 
         CallStack updatedStack = _updater.UpdateCallstack(_state.Callstack, flattenedMapping);
+        _logger.LogTrace($"Updated callstack is {updatedStack}");
 
         return new Some<GoalSolution>
         (
@@ -129,15 +127,21 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
 
     public IOption<GoalSolution> Visit(Structure _, int __)
     {
+        ArgumentNullException.ThrowIfNull(_);
+
+
         return new None<GoalSolution>();
     }
 
     public IOption<GoalSolution> Visit(Integer integer, int rightEval)
     {
+        ArgumentNullException.ThrowIfNull(integer);
+
         if (integer.Value != rightEval)
         {
             return new None<GoalSolution>();
         }
+
         return new Some<GoalSolution>
         (
             new GoalSolution

@@ -42,9 +42,6 @@ public class DatabaseUnifier
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(currentMapping, nameof(currentMapping));
 
-        _logger.LogInfo($"Trying to find clauses that unify with {target}");
-        _logger.LogDebug($"Current mapping is {currentMapping}");
-
         foreach (IEnumerable<Structure> potentialUnification in _database.GetPotentialUnifications(target))
         {
             _logger.LogInfo($"Trying to unify {target} with head of clause {potentialUnification.ToList().ListToString()}");
@@ -56,11 +53,7 @@ public class DatabaseUnifier
 
             // try build target
             var constructiveTargetEither = ConstructiveTargetBuilder.Build(target, renamingResult.RenamedClause.First(), currentMapping);
-            if (!constructiveTargetEither.IsRight)
-            {
-                _logger.LogError($"Failed to build constructive target for {target} and {potentialUnification.First()}:" +
-                    $" {constructiveTargetEither.GetLeftOrThrow().Message}");
-            }
+
             ConstructiveTarget constructiveTarget = constructiveTargetEither.GetRightOrThrow();
 
             // try unify
@@ -69,10 +62,11 @@ public class DatabaseUnifier
             {
                 continue;
             }
-            VariableMapping unificationResult = unificationResultMaybe.GetValueOrThrow();
 
-            _logger.LogInfo($"{target} unified with clause {potentialUnification.ToList().ListToString()}");
-            _logger.LogDebug($"Unifying mapping is {unificationResult}");
+            _logger.LogInfo($"Unified {target} with head of clause {potentialUnification.ToList().ListToString()}");
+
+            VariableMapping unificationResult = unificationResultMaybe.GetValueOrThrow();
+            _logger.LogTrace($"Unifying mapping is {unificationResult}");
 
             var updatedMapping = currentMapping.Update(unificationResult).GetValueOrThrow();
             _logger.LogTrace($"Updated mapping is {updatedMapping}");

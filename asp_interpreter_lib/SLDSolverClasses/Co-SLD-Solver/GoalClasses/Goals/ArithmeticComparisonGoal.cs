@@ -10,15 +10,10 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.C
 public class ArithmeticComparisonGoal : ICoSLDGoal
 {
     private readonly ArithmeticEvaluator _evaluator;
-
     private readonly ISimpleTerm _left;
-
     private readonly ISimpleTerm _right;
-
     private readonly Func<int, int, bool> _predicate;
-
     private readonly SolutionState _inputstate;
-
     private readonly ILogger _logger;
 
     public ArithmeticComparisonGoal
@@ -74,6 +69,8 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
         {
             yield break;
         }
+
+        _logger.LogInfo($"Solved arithmetic comparison goal: {_left}, {_right}");
 
         yield return new GoalSolution
         (

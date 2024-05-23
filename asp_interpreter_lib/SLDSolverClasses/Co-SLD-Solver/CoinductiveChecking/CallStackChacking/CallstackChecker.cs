@@ -16,11 +16,8 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 public class CallstackChecker
 {
     private readonly ExactMatchChecker _checker;
-
     private readonly StandardConstructiveUnificationAlgorithm _unificationAlgorithm;
-
     private readonly FunctorTableRecord _functors;
-
     private readonly ILogger _logger;
 
     public CallstackChecker   

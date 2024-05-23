@@ -1,5 +1,4 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
@@ -11,17 +10,17 @@ namespace asp_interpreter_lib.Unification.Constructive.Target.Builder;
 
 public static class ConstructiveTargetBuilder
 {
+    private static readonly ValueRetriever _retriever = new();
+
     public static IEither<TargetBuildingException, ConstructiveTarget> Build(ISimpleTerm left, ISimpleTerm right, VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        var variables = left.ExtractVariables()
-            .Union(right.ExtractVariables(), TermFuncs.GetSingletonVariableComparer());
+        var variables = left.ExtractVariables().Union(right.ExtractVariables(), TermFuncs.GetSingletonVariableComparer());
 
-        var newMapping = ImmutableDictionary.Create<Variable, ProhibitedValuesBinding>
-            (TermFuncs.GetSingletonVariableComparer());
+        var newMapping = ImmutableDictionary.Create<Variable, ProhibitedValuesBinding>(TermFuncs.GetSingletonVariableComparer());
 
         foreach (Variable variable in variables)
         {
@@ -33,20 +32,14 @@ public static class ConstructiveTargetBuilder
                 continue;
             }
 
-            if (value is TermBinding tb)
+            var valueEither = _retriever.GetProhibitedValuesOrError(variable, mapping);
+
+            if (!valueEither.IsRight)
             {
-                return new Left<TargetBuildingException, ConstructiveTarget>
-                    (new TargetBuildingException($"Variable {variable} was bound to term {tb.Term}"));
+                return new Left<TargetBuildingException, ConstructiveTarget>(valueEither.GetLeftOrThrow());
             }
-            else if (value is ProhibitedValuesBinding pb)
-            {
-                newMapping = newMapping.SetItem(variable, pb);
-            }
-            else
-            {
-                throw new InvalidDataException
-                    ($"Binding class hierarchy has changed so not every binding is {nameof(ProhibitedValuesBinding)} or {nameof(TermBinding)}");
-            }
+
+            newMapping = newMapping.SetItem(variable, valueEither.GetRightOrThrow());
         }
 
         return new Right<TargetBuildingException, ConstructiveTarget>

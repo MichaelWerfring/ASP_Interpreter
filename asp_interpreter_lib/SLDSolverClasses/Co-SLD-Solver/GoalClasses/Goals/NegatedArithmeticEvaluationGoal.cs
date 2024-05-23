@@ -7,6 +7,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Disunification;
+using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Unification.Constructive.Unification;
 using asp_interpreter_lib.Util.ErrorHandling;
@@ -16,15 +17,10 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals;
 internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOption<GoalSolution>, int>
 {
     private readonly ArithmeticEvaluator _evaluator;
-
     private readonly ISimpleTerm _left;
-
     private readonly ISimpleTerm _right;
-
     private readonly SolutionState _state;
-
     private readonly IConstructiveDisunificationAlgorithm _algorithm;
-
     private readonly ILogger _logger;
 
     public NegatedArithmeticEvaluationGoal
@@ -75,34 +71,35 @@ internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisi
             yield break;
         }
 
+        _logger.LogInfo($"Solved negated arithmetic evaluation goal: {_left}, {_right}");
+
         yield return solutionMaybe.GetValueOrThrow();
     }
 
     public IOption<GoalSolution> Visit(Variable var, int integer)
     {
-        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
+        ArgumentNullException.ThrowIfNull(integer, nameof(integer));
 
+        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
         if (!targetEither.IsRight)
         {
             _logger.LogError(targetEither.GetLeftOrThrow().Message);
             throw new ArgumentException(nameof(_state));
         }
 
-        var target = targetEither.GetRightOrThrow();
+        ConstructiveTarget target = targetEither.GetRightOrThrow();
 
         var resultEither  =_algorithm.Disunify(target);
-
         if (!resultEither.IsRight)
         {
             return new None<GoalSolution>();
         }
 
-        var disunifyingMapping = resultEither.GetRightOrThrow().First();
+        VariableMapping disunifyingMapping = resultEither.GetRightOrThrow().First();
+        _logger.LogTrace($"Disunifying mapping is {disunifyingMapping}");
 
-        _logger.LogDebug($"Disunifying mapping is {disunifyingMapping}");
-
-        var newMapping = _state.Mapping.Update(resultEither.GetRightOrThrow().First()).GetValueOrThrow();
-        _logger.LogDebug($"New mapping is {newMapping}");
+        VariableMapping newMapping = _state.Mapping.Update(resultEither.GetRightOrThrow().First()).GetValueOrThrow();
+        _logger.LogTrace($"New mapping is {newMapping}");
 
         return new Some<GoalSolution>
         (
@@ -118,11 +115,15 @@ internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisi
 
     public IOption<GoalSolution> Visit(Structure _, int __)
     {
+        ArgumentNullException.ThrowIfNull(_);
+
         return new None<GoalSolution>();
     }
 
     public IOption<GoalSolution> Visit(Integer integer, int rightEval)
     {
+        ArgumentNullException.ThrowIfNull(integer, nameof(integer));
+
         if (integer.Value == rightEval)
         {
             return new None<GoalSolution>();

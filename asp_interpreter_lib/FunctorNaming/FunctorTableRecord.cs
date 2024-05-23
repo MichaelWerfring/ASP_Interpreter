@@ -28,7 +28,7 @@ public record FunctorTableRecord
     public string Disunification { get; init; } = "\\=";
 
     // negation
-    public string NegationAsFailure { get; init; } = "#not";
+    public string NegationAsFailure { get; init; } = "not";
     public string ClassicalNegation { get; init; } = "~";
 
     // list
@@ -37,6 +37,4 @@ public record FunctorTableRecord
 
     // sasp
     public string Forall { get; init; } = "#forall";
-
-    public string LessOrEqualTerm { get; init; } = "@<";
 }

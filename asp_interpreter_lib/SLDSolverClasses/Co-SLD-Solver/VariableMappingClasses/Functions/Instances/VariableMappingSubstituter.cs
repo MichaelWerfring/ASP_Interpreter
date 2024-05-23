@@ -2,6 +2,8 @@
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses;
@@ -14,7 +16,7 @@ public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Va
     /// <param name="term"></param>
     /// <param name="mapping"></param>
     /// <returns></returns>
-    public ISimpleTerm Substitute(ISimpleTerm term, VariableMapping mapping)
+    public ISimpleTerm SubstituteTerm(ISimpleTerm term, VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(term);
         ArgumentNullException.ThrowIfNull(mapping);
@@ -22,32 +24,62 @@ public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Va
         return term.Accept(this, mapping);
     }
 
-    public ISimpleTerm Visit(Variable variableTerm, VariableMapping map)
+    public Structure SubstituteStructure(Structure term, VariableMapping map)
     {
-        if (map.TryGetValue(variableTerm, out IVariableBinding? value) && value is TermBinding tb)
-        {
-            return tb.Term;
-        }
-        else
-        {
-            return variableTerm;
-        }
-    }
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
 
-    public ISimpleTerm Visit(Structure basicTerm, VariableMapping map)
-    {
-        var newChildren = new ISimpleTerm[basicTerm.Children.Count];
+        var newChildren = new ISimpleTerm[term.Children.Count];
 
         Parallel.For(0, newChildren.Length, index =>
         {
-            newChildren[index] = basicTerm.Children.ElementAt(index).Accept(this, map);
+            newChildren[index] = term.Children.ElementAt(index).Accept(this, map);
         });
 
-        return new Structure(basicTerm.Functor, newChildren);
+        return new Structure(term.Functor, newChildren);
     }
 
-    public ISimpleTerm Visit(Integer integer, VariableMapping map)
+    public ISimpleTerm SubstituteVariable(Variable term, VariableMapping map)
     {
-        return integer;
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        if (!map.TryGetValue(term, out IVariableBinding? value))
+        {
+            return term;
+        }
+
+        var tbMaybe = VarMappingFunctions.ReturnTermbindingOrNone(value);
+
+        if (!tbMaybe.HasValue)
+        {
+            return term;
+        }
+
+        return tbMaybe.GetValueOrThrow().Term;
+    }
+
+    public ISimpleTerm Visit(Variable term, VariableMapping map)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        return SubstituteVariable(term, map);
+    }
+
+    public ISimpleTerm Visit(Structure term, VariableMapping map)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        return SubstituteStructure(term, map);
+    }
+
+    public ISimpleTerm Visit(Integer term, VariableMapping map)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        return term;
     }
 }

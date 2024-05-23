@@ -7,8 +7,8 @@ using System.Collections.Immutable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.Unification.Constructive.CaseDetermination;
-using asp_interpreter_lib.Unification.Constructive.CaseDetermination.Cases;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
@@ -18,22 +18,22 @@ namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.C
 /// </summary>
 public class ConstructiveDisunifier : IBinaryTermCaseVisitor
 {
-    // function providers
-    private readonly CaseDeterminer _caseDeterminer;
-
     // input by constructor
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
+
     private readonly ISimpleTerm _left;
     private readonly ISimpleTerm _right;
+
     private readonly IImmutableDictionary<Variable, ProhibitedValuesBinding> _prohibitedValues;
 
+    // mutated during execution.
     // disunifier mapping
     private readonly List<DisunificationResult> _disunifiers = [];
 
     // flags
-    private bool _dontUnifyAnyway = false;
-    private DisunificationException? _disunificationError = null;
+    private bool _dontUnifyAnyway;
+    private DisunificationException? _disunificationError;
 
     public ConstructiveDisunifier
     (
@@ -41,21 +41,23 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
         bool doDisunifyUnboundVariables, 
         ISimpleTerm left, 
         ISimpleTerm right, 
-        IImmutableDictionary<Variable, ProhibitedValuesBinding> mapping,
-        CaseDeterminer caseDeterminer
+        IImmutableDictionary<Variable, ProhibitedValuesBinding> mapping
     )
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
-        ArgumentNullException.ThrowIfNull(caseDeterminer, nameof(caseDeterminer));
 
         _doGroundednessCheck = doGroundednessCheck;
         _doDisunifyUnboundVariables = doDisunifyUnboundVariables;
         _left = left;
         _right = right;
         _prohibitedValues = mapping;
-        _caseDeterminer = caseDeterminer;
+
+        _disunifiers = [];
+
+        _dontUnifyAnyway = false;
+        _disunificationError = null;
     }
 
     public IEither<DisunificationException, IEnumerable<DisunificationResult>> Disunify()
@@ -98,6 +100,68 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
         return new Right<DisunificationException, IEnumerable<DisunificationResult>>(filteredDisunifiers);
     }
 
+    public void Visit(VariableVariableCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveVariableVariableCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(VariableStructureCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveVariableStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureStructureCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveStructureStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureVariableCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveVariableStructureCase(currentCase.Right, currentCase.Left);
+    }
+    public void Visit(IntegerIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
+    public void Visit(IntegerStructureCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
+    public void Visit(IntegerVariableCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
+    }
+
+    public void Visit(StructureIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
+    public void Visit(VariableIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
     private void TryDisunify(ISimpleTerm left, ISimpleTerm right)
     {
         // check if mismatch encountered or error
@@ -106,27 +170,10 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
             return; 
         }
 
-        _caseDeterminer.DetermineCase(left, right).Accept(this);
-    }
+        // determine case and continue based on case.
+        IBinaryTermCase typeCase = TermFuncs.DetermineCase(left, right);
 
-    public void Visit(VariableVariableCase currentCase)
-    {
-        ResolveVariableVariableCase(currentCase.Left, currentCase.Right);
-    }
-
-    public void Visit(VariableStructureCase currentCase)
-    {
-        ResolveVariableStructureCase(currentCase.Left, currentCase.Right);
-    }
-
-    public void Visit(StructureStructure currentCase)
-    {
-        ResolveStructureStructureCase(currentCase.Left, currentCase.Right);
-    }
-
-    public void Visit(StructureVariableCase currentCase)
-    {
-        ResolveVariableStructureCase(currentCase.Right, currentCase.Left);
+        typeCase.Accept(this);
     }
 
     private void ResolveStructureStructureCase(IStructure leftStruct, IStructure rightStruct)
@@ -145,11 +192,6 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
         {
             TryDisunify(pair.Item1, pair.Item2);
         }
-    }
-
-    private void ResolveStructureVariableCase(IStructure left, Variable right)
-    {
-        ResolveVariableStructureCase(right, left);
     }
 
     private void ResolveVariableStructureCase(Variable left, IStructure right)

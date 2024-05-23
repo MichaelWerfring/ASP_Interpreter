@@ -39,8 +39,8 @@ public class CoinductiveSLDSolver
 
         foreach (var querySolution in _goalSolver.SolveGoals(initialSolverState))
         {
-            _logger.LogInfo("Found Solution: { " + querySolution.ResultSet.ToList().ListToString() + " }");
-            _logger.LogDebug("Mapping for Solution: " + AspExtensions.SimplifyMapping(querySolution.ResultMapping));
+            _logger.LogInfo($"Found Solution: {querySolution.ResultSet.ToList().ListToString()}");
+            _logger.LogDebug($"Mapping for Solution: {querySolution.ResultMapping}");
 
             var postprocessedSolution = _postprocessor.Postprocess(querySolution);
 

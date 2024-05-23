@@ -34,6 +34,12 @@ public class PredicateGoalStateUpdater
         int nextInternal
     )
     {
+        ArgumentNullException.ThrowIfNull(inputSet);
+        ArgumentNullException.ThrowIfNull(inputStack);
+        ArgumentNullException.ThrowIfNull(unifyingMapping);
+        ArgumentNullException.ThrowIfNull(renamedClause);
+        ArgumentNullException.ThrowIfNull(constrainedTarget);
+
         // update chs by updating all the variables in it.
         var newCHS =  _updater.UpdateCHS(inputSet, unifyingMapping);
 
@@ -63,6 +69,9 @@ public class PredicateGoalStateUpdater
 
     public GoalSolution ConstructCoinductiveSuccessSolution(SolutionState state, VariableMapping result)
     {
+        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(state);
+
         return new GoalSolution
         (
             _updater.UpdateCHS(state.CHS, result),
@@ -77,6 +86,9 @@ public class PredicateGoalStateUpdater
     /// </summary>
     public GoalSolution UpdateGoalSolution(GoalSolution subgoalSolution, Structure target)
     {
+        ArgumentNullException.ThrowIfNull(subgoalSolution);
+        ArgumentNullException.ThrowIfNull(target);
+
         var substitutedTarget = subgoalSolution.ResultMapping.ApplySubstitution(target);
 
         var entry = new CHSEntry(substitutedTarget, true);

@@ -1,5 +1,4 @@
 ﻿using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Unification.Constructive.CaseDetermination;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -9,18 +8,9 @@ public class StandardConstructiveUnificationAlgorithm : IConstructiveUnification
 {
     private readonly bool _doOccursCheck;
 
-    private readonly ConstructiveVariableSubstitutor _substituter;
-    private readonly SubstitutionApplier _subApplier;
-    private readonly ProhibitedValuesUpdater _prohibsUpdater;
-    private readonly CaseDeterminer _caseDeterminer;
-
     public StandardConstructiveUnificationAlgorithm(bool doOccursCheck)
     {
         _doOccursCheck = doOccursCheck;
-        _substituter = new();
-        _subApplier = new();
-        _prohibsUpdater = new();
-        _caseDeterminer = new();
     }
 
     /// <summary>
@@ -34,11 +24,7 @@ public class StandardConstructiveUnificationAlgorithm : IConstructiveUnification
         var constructiveUnifier = new ConstructiveUnifier
         (
             _doOccursCheck,
-            target,
-            _substituter,
-            _subApplier,
-            _prohibsUpdater,
-            _caseDeterminer
+            target
         );
 
         return constructiveUnifier.Unify();

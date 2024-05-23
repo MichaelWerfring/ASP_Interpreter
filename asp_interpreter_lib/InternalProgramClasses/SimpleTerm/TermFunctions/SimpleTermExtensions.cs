@@ -12,11 +12,8 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 public static class SimpleTermExtensions
 {
     private static readonly SimpleTermEnumerator _flattener = new();
-
     private static readonly SimpleTermComparer _comparer = new();
-
     private static readonly SimpleTermContainsChecker _containsChecker = new();
-
     private static readonly VariableSubstituter _variableSubstituter = new();
 
     public static bool IsEqualTo(this ISimpleTerm simpleTerm, ISimpleTerm other)

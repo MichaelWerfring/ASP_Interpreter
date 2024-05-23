@@ -11,19 +11,21 @@ public class VariableMappingPostprocessor
 {
     public VariableMapping Postprocess(VariableMapping mapping)
     {
+        ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
+
         return Postprocess(mapping, mapping.Keys.Where(x => !x.Identifier.StartsWith('#')));
     }
 
-    public VariableMapping Postprocess(VariableMapping variableMapping, IEnumerable<Variable> variablesToKeep)
+    public VariableMapping Postprocess(VariableMapping map, IEnumerable<Variable> variablesToKeep)
     {
-        ArgumentNullException.ThrowIfNull(variableMapping, nameof(variableMapping));
+        ArgumentNullException.ThrowIfNull(map, nameof(map));
         ArgumentNullException.ThrowIfNull(variablesToKeep, nameof(variablesToKeep));
 
         // make a new binding, add noninternal variables and their simplified internalVariablesInTerms.
         var newBinding = new Dictionary<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
         foreach (var variable in variablesToKeep)
         {
-            newBinding.Add(variable, variableMapping.Resolve(variable, true).GetValueOrThrow());
+            newBinding.Add(variable, map.Resolve(variable, true).GetValueOrThrow());
         }
 
         // get all variables from all the term bindings.
@@ -36,7 +38,7 @@ public class VariableMappingPostprocessor
         // for all the variables in the termbindings: add their values as well, if they have any.
         foreach (var variable in internalVariablesInTerms)
         {
-            if (variableMapping.TryGetValue(variable, out IVariableBinding? bindings))
+            if (map.TryGetValue(variable, out IVariableBinding? bindings))
             {
                 newBinding.Add(variable, bindings);
             }

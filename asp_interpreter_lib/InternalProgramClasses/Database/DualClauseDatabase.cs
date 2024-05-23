@@ -7,9 +7,7 @@ namespace asp_interpreter_lib.InternalProgramClasses.Database;
 public class DualClauseDatabase : IDatabase
 {
     private readonly FunctorTableRecord _functors;
-
     private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _standardClauses;
-
     private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _dualClauses;
 
     public DualClauseDatabase(IEnumerable<IEnumerable<Structure>> clauses, FunctorTableRecord functors)
@@ -17,7 +15,7 @@ public class DualClauseDatabase : IDatabase
         ArgumentNullException.ThrowIfNull(clauses);
         ArgumentNullException.ThrowIfNull(functors);
 
-        if (clauses.Any((clause) => clause == null || !clause.Any()))
+        if (clauses.Any(clause => clause == null || !clause.Any()))
         {
             throw new ArgumentException("Must not contain null clauses, or clauses with not at least one term");
         }

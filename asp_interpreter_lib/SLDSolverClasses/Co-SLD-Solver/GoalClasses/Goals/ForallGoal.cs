@@ -9,16 +9,12 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
-public class ForallGoal : ICoSLDGoal
+public class ForallGoal : ICoSLDGoal, IVariableBindingVisitor<IEnumerable<GoalSolution>>
 {
     private readonly GoalSolver _solver;
-
     private readonly Variable _variable;
-
     private readonly ISimpleTerm _goalTerm;
-
     private readonly SolutionState _inputState;
-
     private readonly ILogger _logger;
 
     public ForallGoal
@@ -52,8 +48,7 @@ public class ForallGoal : ICoSLDGoal
 
         foreach (GoalSolution initialForallSolution in _solver.SolveGoals(initialState))
         {
-            _logger.LogInfo("Initial forall solution solution found!");
-            _logger.LogTrace($"{initialForallSolution}");
+            _logger.LogDebug("Initial forall solution solution found!");
 
             // get binding. transitive resolving is necessary because through unification,
             // you could have something like X -> Y -> \={1,2}, where
@@ -123,7 +118,7 @@ public class ForallGoal : ICoSLDGoal
                 )
             );
 
-            _logger.LogInfo($"Attempting to solve constraint-substituted goals {constraintSubstitutedGoals.ToList().ListToString()}");
+            _logger.LogDebug($"Attempting to solve constraint-substituted goals {constraintSubstitutedGoals.ToList().ListToString()}");
 
             IEnumerable<GoalSolution> solutions = _solver.SolveGoals(initialSolvingState);
 
@@ -140,5 +135,21 @@ public class ForallGoal : ICoSLDGoal
                  yield return newSolution;
             }
         }
+    }
+
+    public IEnumerable<GoalSolution> Visit(ProhibitedValuesBinding binding)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
+
+        throw new NotImplementedException();
+
+    }
+
+    public IEnumerable<GoalSolution> Visit(TermBinding binding)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
+
+
+        throw new NotImplementedException();
     }
 }

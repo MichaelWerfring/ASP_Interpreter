@@ -8,29 +8,28 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class UnificationGoal : ICoSLDGoal
 {
-    private readonly SolverStateUpdater _updater = new();
-
+    private readonly SolverStateUpdater _updater;
     private readonly ConstructiveTarget _target;
-
     private readonly IConstructiveUnificationAlgorithm _algorithm;
-
     private readonly SolutionState _solutionState;
-
     private readonly ILogger _logger;
 
     public UnificationGoal
     (
+        SolverStateUpdater updater,
         ConstructiveTarget target,
         IConstructiveUnificationAlgorithm algorithm,
         SolutionState solutionState,
         ILogger logger
     )
     {
+        ArgumentNullException.ThrowIfNull(updater, nameof(updater));
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
+        _updater = updater;
         _target = target;
         _algorithm = algorithm;
         _solutionState = solutionState;
@@ -48,18 +47,23 @@ public class UnificationGoal : ICoSLDGoal
             yield break;
         }
 
+        _logger.LogInfo($"Solved unification goal: {_target}");
+
         var unifyingMapping = unificationMaybe.GetValueOrThrow();
-        _logger.LogDebug($"Unifying mapping is {unifyingMapping}");
+        _logger.LogTrace($"Unifying mapping is {unifyingMapping}");
 
         var updatedMapping = _solutionState.Mapping.Update(unifyingMapping).GetValueOrThrow();
-        _logger.LogDebug($"Updated mapping is {updatedMapping}");
+        _logger.LogTrace($"Updated mapping is {updatedMapping}");
 
         var flattenedMapping = updatedMapping.Flatten();
-        _logger.LogDebug($"Flattened mapping is {updatedMapping}");
+        _logger.LogTrace($"Flattened mapping is {updatedMapping}");
 
         CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_solutionState.CHS, flattenedMapping);
+        _logger.LogTrace($"Updated CHS is {updatedCHS}");
 
         CallStack updatedCallstack = _updater.UpdateCallstack(_solutionState.Callstack, flattenedMapping);
+        _logger.LogTrace($"Updated callstack is {updatedCallstack}");
+
 
         yield return new GoalSolution       
         (

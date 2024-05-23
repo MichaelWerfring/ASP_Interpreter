@@ -22,7 +22,9 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
 {
     private readonly ImmutableDictionary<(string, int), IGoalBuilder> _mapping;
 
-    private readonly PredicateGoalBuilder _dbGoalBuilder;
+    private readonly PredicateGoalBuilder _predicateGoalBuilder;
+
+    private readonly ILogger _logger;
 
     public CoSLDGoalMapper(FunctorTableRecord functors, IDatabase database, ILogger logger)
     {
@@ -43,11 +45,11 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
             },
             {
                 (functors.Unification, 2),
-                new UnificationGoalBuilder(new StandardConstructiveUnificationAlgorithm(false), logger)
+                new UnificationGoalBuilder(new(), new StandardConstructiveUnificationAlgorithm(false), logger)
             },
             {
                 (functors.Disunification, 2),
-                new DisunificationGoalBuilder(new StandardConstructiveDisunificationAlgorithm(true, false), logger)
+                new DisunificationGoalBuilder(new(), new StandardConstructiveDisunificationAlgorithm(true, false), logger)
             },
             {
                 (functors.LessThan, 2),
@@ -76,7 +78,7 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
 
         _mapping = goalBuilderDict.ToImmutableDictionary();
 
-        _dbGoalBuilder = new PredicateGoalBuilder
+        _predicateGoalBuilder = new PredicateGoalBuilder
          (
             new CoinductiveChecker
             (
@@ -101,6 +103,8 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
             new PredicateGoalStateUpdater(new SolverStateUpdater()),
             logger
          );
+
+        _logger = logger;
     }
 
     public IOption<ICoSLDGoal> GetGoal(CoSldSolverState state)
@@ -120,25 +124,38 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
         return currentGoalTerm.Accept(this, state);
     }
 
-    public IOption<ICoSLDGoal> Visit(Integer integer, CoSldSolverState arguments)
+    public IOption<ICoSLDGoal> Visit(Integer term, CoSldSolverState state)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(state);
+
+        _logger.LogError($"Error: cannot solve Integer {term.Value} as predicate.");
+
         return new None<ICoSLDGoal>();
     }
 
-    public IOption<ICoSLDGoal> Visit(Variable variableTerm, CoSldSolverState arguments)
+    public IOption<ICoSLDGoal> Visit(Variable term, CoSldSolverState state)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(state);
+
+        _logger.LogError($"Error: cannot solve Variable {term.Identifier} as predicate.");
+
         return new None<ICoSLDGoal>();
     }
 
-    public IOption<ICoSLDGoal> Visit(Structure basicTerm, CoSldSolverState arguments)
+    public IOption<ICoSLDGoal> Visit(Structure term, CoSldSolverState state)
     {
-        _mapping.TryGetValue((basicTerm.Functor, basicTerm.Children.Count), out IGoalBuilder? goalBuilder);
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(state);
 
-        if (goalBuilder != null)
+        _mapping.TryGetValue((term.Functor, term.Children.Count), out IGoalBuilder? goalBuilder);
+
+        if (goalBuilder == null)
         {
-            return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(arguments));
+            return new Some<ICoSLDGoal>(_predicateGoalBuilder.BuildGoal(state));
         }
 
-        return new Some<ICoSLDGoal>(_dbGoalBuilder.BuildGoal(arguments));
+        return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(state));
     }
 }
