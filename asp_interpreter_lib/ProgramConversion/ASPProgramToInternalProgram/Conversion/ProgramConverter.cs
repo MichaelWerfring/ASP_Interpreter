@@ -10,15 +10,14 @@ namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conv
 public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
 {
     private readonly ILogger _logger;
-
-    private readonly GoalConverter _converter;
+    private readonly FunctorTableRecord _functors;
 
     public ProgramConverter(FunctorTableRecord functorTable, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(functorTable);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _converter = new GoalConverter(functorTable);
+        _functors = functorTable;
         _logger = logger;
     }
 
@@ -26,26 +25,30 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        return query.Goals.Select(x => _converter.Convert(x).GetValueOrThrow()).ToList();
+        var converter = new GoalConverter(_functors);
+
+        return query.Goals.Select(x => converter.Convert(x).GetValueOrThrow()).ToList();
     }
 
     public IEnumerable<Structure> ConvertStatement(Statement statement)
-    {
+    {   
         ArgumentNullException.ThrowIfNull(statement);
         if (!statement.HasHead)
         {
             throw new ArgumentException("Must have a head!", nameof(statement));
         }
 
+        var converter = new GoalConverter(_functors);
+
         var list = new List<Structure>();
 
-        var convertedHead = _converter.Convert(statement.Head.GetValueOrThrow()).GetValueOrThrow();
+        var convertedHead = converter.Convert(statement.Head.GetValueOrThrow()).GetValueOrThrow();
 
         list.Add(convertedHead);
 
         foreach (var goal in statement.Body)
         {
-            var convertedGoalMaybe = _converter.Convert(goal);
+            var convertedGoalMaybe = converter.Convert(goal);
             if (!convertedGoalMaybe.HasValue)
             {
                 throw new Exception("Could not convert goal!");

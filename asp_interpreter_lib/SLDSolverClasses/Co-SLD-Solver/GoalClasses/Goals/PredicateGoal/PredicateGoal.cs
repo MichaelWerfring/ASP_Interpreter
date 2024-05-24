@@ -50,7 +50,6 @@ internal class PredicateGoal : ICoSLDGoal
         _logger.LogInfo($"Attempting to solve predicate goal {_inputTarget}");
         _logger.LogTrace($"Input state is: {_inputState}");
 
-
         // for each way the input can "survive" the coinductive check..
         foreach (CoinductiveCheckingResult checkingResult in _checker.Check(_inputTarget, _inputState))
         {
@@ -73,7 +72,6 @@ internal class PredicateGoal : ICoSLDGoal
         if (checkingResult.SuccessType == SuccessType.NonDeterministicSuccess)
         {
             yield return _stateUpdater.ConstructCoinductiveSuccessSolution(_inputState, checkingResult.Mapping);
-
         }
 
         IEnumerable<DBUnificationResult> dbunifications = _databaseUnifier.GetDatabaseUnificationResults
@@ -109,7 +107,7 @@ internal class PredicateGoal : ICoSLDGoal
         // enumerate each way the subgoal can be satisfied. Update and yield return.
         foreach (GoalSolution subgoalSolution in _goalSolver.SolveGoals(nextState))
         {
-            var updatedSolution = _stateUpdater.UpdateGoalSolution(subgoalSolution, _inputTarget);
+            GoalSolution updatedSolution = _stateUpdater.UpdateGoalSolution(subgoalSolution, _inputTarget);
 
             yield return updatedSolution;
         }

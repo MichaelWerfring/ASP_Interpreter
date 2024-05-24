@@ -4,9 +4,7 @@ using asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 using asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 using asp_interpreter_lib.Util.ErrorHandling.Either;
 using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using System.Collections.Immutable;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard;
 
@@ -15,10 +13,10 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
 
-    public StandardConstructiveDisunificationAlgorithm(bool doGroundednessCheck, bool doDisunifyUnboundVariables)
+    public StandardConstructiveDisunificationAlgorithm(bool doGroundednessCheck, bool doDisunifyVariables)
     {
         _doGroundednessCheck = doGroundednessCheck;
-        _doDisunifyUnboundVariables = doDisunifyUnboundVariables;
+        _doDisunifyUnboundVariables = doDisunifyVariables;
     }
 
     public IEither<DisunificationException, IEnumerable<VariableMapping>> Disunify(ConstructiveTarget target)
@@ -27,7 +25,13 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
 
         // create new disunifier instance
         var constructiveDisunifier = new ConstructiveDisunifier
-            (_doGroundednessCheck, _doDisunifyUnboundVariables,target.Left, target.Right, target.Mapping);
+        (
+            _doGroundednessCheck,
+            _doDisunifyUnboundVariables,
+            target.Left,
+            target.Right,
+            target.Mapping
+        );
 
         // if error during disunification, return error.
         var disunifiersEither = constructiveDisunifier.Disunify();
@@ -52,29 +56,24 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
         }
 
         // create a new mapping for every disunifier where the value is updated by the disunifier value.
-        List<VariableMapping> mappings = [];
-        foreach (var disunifier in disunifiers)
+        var newMappings = disunifiers.Select(disunifier =>
         {
-            VariableMapping newMapping;
-
             if (disunifier.IsPositive)
             {
-                newMapping = inputMappingAsVariableMapping.SetItem(disunifier.Variable, new TermBinding(disunifier.Term));
+                return inputMappingAsVariableMapping.SetItem(disunifier.Variable, new TermBinding(disunifier.Term));
             }
             else
             {
                 var prohibitedValueList = target.Mapping[disunifier.Variable];
 
-                newMapping = inputMappingAsVariableMapping.SetItem
+                return inputMappingAsVariableMapping.SetItem
                 (
                     disunifier.Variable,
                     new ProhibitedValuesBinding(prohibitedValueList.ProhibitedValues.Add(disunifier.Term))
                 );
             }
+        });
 
-            mappings.Add(newMapping);
-        }
-
-        return new Right<DisunificationException, IEnumerable<VariableMapping>>(mappings);
+        return new Right<DisunificationException, IEnumerable<VariableMapping>>(newMappings);
     }
 }

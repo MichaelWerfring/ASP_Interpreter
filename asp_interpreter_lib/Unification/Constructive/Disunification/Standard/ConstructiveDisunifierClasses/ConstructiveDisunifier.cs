@@ -7,6 +7,8 @@ using System.Collections.Immutable;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
 
 namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
@@ -14,21 +16,24 @@ namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.C
 /// An instance-based disunification algorithm,
 /// as to provide the algorithm with a context through its fields.
 /// </summary>
-public class ConstructiveDisunifier
+public class ConstructiveDisunifier : IBinaryTermCaseVisitor
 {
     // input by constructor
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
+
     private readonly ISimpleTerm _left;
     private readonly ISimpleTerm _right;
+
     private readonly IImmutableDictionary<Variable, ProhibitedValuesBinding> _prohibitedValues;
 
+    // mutated during execution.
     // disunifier mapping
     private readonly List<DisunificationResult> _disunifiers = [];
 
     // flags
-    private bool _dontUnifyAnyway = false;
-    private DisunificationException? _disunificationError = null;
+    private bool _dontUnifyAnyway;
+    private DisunificationException? _disunificationError;
 
     public ConstructiveDisunifier
     (
@@ -48,6 +53,11 @@ public class ConstructiveDisunifier
         _left = left;
         _right = right;
         _prohibitedValues = mapping;
+
+        _disunifiers = [];
+
+        _dontUnifyAnyway = false;
+        _disunificationError = null;
     }
 
     public IEither<DisunificationException, IEnumerable<DisunificationResult>> Disunify()
@@ -90,6 +100,68 @@ public class ConstructiveDisunifier
         return new Right<DisunificationException, IEnumerable<DisunificationResult>>(filteredDisunifiers);
     }
 
+    public void Visit(VariableVariableCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveVariableVariableCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(VariableStructureCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveVariableStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureStructureCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveStructureStructureCase(currentCase.Left, currentCase.Right);
+    }
+
+    public void Visit(StructureVariableCase currentCase)
+    {
+        ArgumentNullException.ThrowIfNull(currentCase);
+
+        ResolveVariableStructureCase(currentCase.Right, currentCase.Left);
+    }
+    public void Visit(IntegerIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
+    public void Visit(IntegerStructureCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
+    public void Visit(IntegerVariableCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
+    }
+
+    public void Visit(StructureIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
+    public void Visit(VariableIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
+    }
+
     private void TryDisunify(ISimpleTerm left, ISimpleTerm right)
     {
         // check if mismatch encountered or error
@@ -98,45 +170,13 @@ public class ConstructiveDisunifier
             return; 
         }
 
-        // determine case
-        if (left is Variable leftVar)
-        {
-            if (right is Variable rightVar)
-            {
-                LeftIsVarRightIsVar(leftVar, rightVar);
-            }
-            else if (right is IStructure rightStruct)
-            {
-                LeftIsVarRightIsStruct(leftVar, rightStruct);
-            }
-            else
-            {
-                throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
-            }
-        }
-        else if (left is IStructure leftStruct)
-        {
-            if (right is Variable rightVar)
-            {
-                LeftIsStructRightIsVar(leftStruct, rightVar);
-            }
-            else if (right is IStructure rightStruct)
-            {
-                LeftIsStructRightIsStruct(leftStruct, rightStruct);
-            }
-            else
-            {
-                throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
-            }
-        }
-        else
-        {
-            throw new ArgumentException("The type hierarchy has been modified so that not every term is either a variable or a structure!");
-        }
+        // determine case and continue based on case.
+        IBinaryTermCase typeCase = TermFuncs.DetermineCase(left, right);
+
+        typeCase.Accept(this);
     }
 
-    // cases
-    private void LeftIsStructRightIsStruct(IStructure leftStruct, IStructure rightStruct)
+    private void ResolveStructureStructureCase(IStructure leftStruct, IStructure rightStruct)
     {
         IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> reductionMaybe = TermFuncs.Reduce(leftStruct, rightStruct);
 
@@ -154,12 +194,7 @@ public class ConstructiveDisunifier
         }
     }
 
-    private void LeftIsStructRightIsVar(IStructure left, Variable right)
-    {
-        LeftIsVarRightIsStruct(right, left);
-    }
-
-    private void LeftIsVarRightIsStruct(Variable left, IStructure right)
+    private void ResolveVariableStructureCase(Variable left, IStructure right)
     {
         // do groundedness check if asked for
         if (_doGroundednessCheck && right.ExtractVariables().Any())
@@ -189,8 +224,8 @@ public class ConstructiveDisunifier
 
         _disunifiers.Add(new DisunificationResult(left, right, false));
     }
-
-    private void LeftIsVarRightIsVar(Variable left, Variable right)
+    
+    private void ResolveVariableVariableCase(Variable left, Variable right)
     {
         if (!_doDisunifyUnboundVariables)
         {

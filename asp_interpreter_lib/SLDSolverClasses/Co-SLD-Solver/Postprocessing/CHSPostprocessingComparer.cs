@@ -8,7 +8,7 @@ internal class CHSPostprocessingComparer : IComparer<CHSEntry>
 {
     private FunctorTableRecord _functors;
 
-    private TermPostprocessingComparer _comparer = new TermPostprocessingComparer();
+    private PostprocessingTermComparer _comparer = new();
 
     public CHSPostprocessingComparer(FunctorTableRecord functors)
     {

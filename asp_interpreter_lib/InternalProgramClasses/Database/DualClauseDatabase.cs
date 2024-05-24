@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using System.Collections.Immutable;
 
@@ -7,9 +8,7 @@ namespace asp_interpreter_lib.InternalProgramClasses.Database;
 public class DualClauseDatabase : IDatabase
 {
     private readonly FunctorTableRecord _functors;
-
     private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _standardClauses;
-
     private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _dualClauses;
 
     public DualClauseDatabase(IEnumerable<IEnumerable<Structure>> clauses, FunctorTableRecord functors)
@@ -17,7 +16,7 @@ public class DualClauseDatabase : IDatabase
         ArgumentNullException.ThrowIfNull(clauses);
         ArgumentNullException.ThrowIfNull(functors);
 
-        if (clauses.Any((clause) => clause == null || !clause.Any()))
+        if (clauses.Any(clause => clause == null || !clause.Any()))
         {
             throw new ArgumentException("Must not contain null clauses, or clauses with not at least one term");
         }
@@ -30,16 +29,11 @@ public class DualClauseDatabase : IDatabase
         {
             var clauseHead = clause.First();
 
-            if
-            (
-                clauseHead.Functor == functors.NegationAsFailure
-                &&
-                clauseHead.Children.Count == 1
-                &&
-                clauseHead.Children[0] is Structure innerStruct
-            )
+            if (clauseHead.IsNegated(functors))
             {
-                AddToDict(clause, (innerStruct.Functor, innerStruct.Children.Count), dualDict);
+                Structure innerTerm = clauseHead.NegateTerm(functors);
+
+                AddToDict(clause, (innerTerm.Functor, innerTerm.Children.Count), dualDict);
             }
             else
             {
@@ -59,15 +53,10 @@ public class DualClauseDatabase : IDatabase
         ArgumentNullException.ThrowIfNull(term, nameof(term));
 
         IEnumerable<IEnumerable<Structure>> matchingClauses;
-        if
-        (
-            term.Functor == _functors.NegationAsFailure
-            &&
-            term.Children.Count == 1
-            &&
-            term.Children[0] is Structure innerStruct
-        )
+        if (term.IsNegated(_functors))
         {
+            Structure innerStruct = term.NegateTerm(_functors);
+
             matchingClauses = GetMatches(innerStruct, _dualClauses);
         }
         else

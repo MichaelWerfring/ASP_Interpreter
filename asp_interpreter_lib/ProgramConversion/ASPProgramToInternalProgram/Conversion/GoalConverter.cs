@@ -27,13 +27,15 @@ public class GoalConverter : TypeBaseVisitor<Structure>
 
     public IOption<Structure> Convert(Goal goal)
     {
-        ArgumentNullException.ThrowIfNull(goal, nameof(goal));
+        ArgumentNullException.ThrowIfNull(goal);
 
         return goal.Accept(this);
     }
 
     public override IOption<Structure> Visit(Forall goal)
     {
+        ArgumentNullException.ThrowIfNull(goal);
+
         var leftMaybe = goal.VariableTerm.Accept(_termConverter);
         if(!leftMaybe.HasValue)
         {
@@ -54,6 +56,8 @@ public class GoalConverter : TypeBaseVisitor<Structure>
 
     public override IOption<Structure> Visit(Literal goal)
     {
+        ArgumentNullException.ThrowIfNull(goal);
+
         var children = goal.Terms.Select(_termConverter.Convert).ToArray();
 
         var convertedTerm = new Structure(goal.Identifier.GetCopy(),children);
@@ -73,6 +77,8 @@ public class GoalConverter : TypeBaseVisitor<Structure>
 
     public override IOption<Structure> Visit(BinaryOperation goal)
     {
+        ArgumentNullException.ThrowIfNull(goal);
+
         var leftMaybe = goal.Left.Accept(_termConverter);
 
         var rightMaybe = goal.Right.Accept(_termConverter);

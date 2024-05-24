@@ -7,8 +7,11 @@ public class VariableComparer : IEqualityComparer<Variable>
 {
     public bool Equals(Variable? x, Variable? y)
     {
-        ArgumentNullException.ThrowIfNull(x, nameof(x));
-        ArgumentNullException.ThrowIfNull(y, nameof(y));
+        if (x == null && y == null) return true;
+
+        if (x == null) return false;
+
+        if (y == null) return false;
 
         return x.Identifier == y.Identifier;
     }

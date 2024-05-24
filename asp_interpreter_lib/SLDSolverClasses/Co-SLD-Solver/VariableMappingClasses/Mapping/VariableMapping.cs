@@ -14,6 +14,7 @@ namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 /// Variables are mapped to either a prohibited value set or a single term.
 /// This is a concretization of ImmutableDictionary to make sure that it always has the right comparer:
 /// All the methods just call the inner dictionary and wrap them in a NewMapping before returning.
+/// VariableMapping implements IImmutableDictionary instead of wrapping one simply to make the calling code easier to read.
 /// </summary>
 public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 {
@@ -110,7 +111,6 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
     public IEnumerator<KeyValuePair<Variable, IVariableBinding>> GetEnumerator() => 
         _mapping.GetEnumerator();
 
-    //explicit interface implementation so the compiler will shut up.
     IEnumerator IEnumerable.GetEnumerator()
     {
         return _mapping.GetEnumerator();

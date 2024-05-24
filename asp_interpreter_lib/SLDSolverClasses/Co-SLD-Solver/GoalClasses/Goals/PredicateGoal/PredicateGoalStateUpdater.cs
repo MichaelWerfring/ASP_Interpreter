@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
@@ -29,11 +28,17 @@ public class PredicateGoalStateUpdater
         CoinductiveHypothesisSet inputSet,
         CallStack inputStack,
         VariableMapping unifyingMapping,
-        IEnumerable<ISimpleTerm> renamedClause, 
+        IEnumerable<Structure> renamedClause, 
         Structure constrainedTarget,
         int nextInternal
     )
     {
+        ArgumentNullException.ThrowIfNull(inputSet);
+        ArgumentNullException.ThrowIfNull(inputStack);
+        ArgumentNullException.ThrowIfNull(unifyingMapping);
+        ArgumentNullException.ThrowIfNull(renamedClause);
+        ArgumentNullException.ThrowIfNull(constrainedTarget);
+
         // update chs by updating all the variables in it.
         var newCHS =  _updater.UpdateCHS(inputSet, unifyingMapping);
 
@@ -63,6 +68,9 @@ public class PredicateGoalStateUpdater
 
     public GoalSolution ConstructCoinductiveSuccessSolution(SolutionState state, VariableMapping result)
     {
+        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(state);
+
         return new GoalSolution
         (
             _updater.UpdateCHS(state.CHS, result),
@@ -77,6 +85,9 @@ public class PredicateGoalStateUpdater
     /// </summary>
     public GoalSolution UpdateGoalSolution(GoalSolution subgoalSolution, Structure target)
     {
+        ArgumentNullException.ThrowIfNull(subgoalSolution);
+        ArgumentNullException.ThrowIfNull(target);
+
         var substitutedTarget = subgoalSolution.ResultMapping.ApplySubstitution(target);
 
         var entry = new CHSEntry(substitutedTarget, true);

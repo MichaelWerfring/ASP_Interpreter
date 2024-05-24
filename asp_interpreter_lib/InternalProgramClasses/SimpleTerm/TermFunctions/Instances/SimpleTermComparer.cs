@@ -1,6 +1,5 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
@@ -9,7 +8,7 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.In
 /// Variables < Numbers < Compounds
 /// Compounds : check arity, check functor, then check children from left to right
 /// </summary>
-public class SimpleTermComparer : IComparer<ISimpleTerm>, ISimpleTermArgsVisitor<int, ISimpleTerm>
+public class SimpleTermComparer : IComparer<ISimpleTerm>, IBinaryTermCaseVisitor<int>
 {
     public int Compare(ISimpleTerm? x, ISimpleTerm? y)
     {
@@ -19,89 +18,87 @@ public class SimpleTermComparer : IComparer<ISimpleTerm>, ISimpleTermArgsVisitor
 
         if (y == null) { return 1; }
 
-        return x.Accept(this, y);
+        return TermFuncs.DetermineCase(x, y).Accept(this);
+    }
+    public int Visit(IntegerIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return binaryCase.Left.Value.CompareTo(binaryCase.Right.Value);
     }
 
-    public int Visit(Variable left, ISimpleTerm right)
+    public int Visit(IntegerStructureCase binaryCase)
     {
-        if (right is Variable rightVar)
-        {
-            return left.Identifier.CompareTo(rightVar.Identifier);
-        }
-        else if (right is Integer)
-        {
-            return -1;
-        }
-        else if (right is Structure)
-        {
-            return -1;
-        }
-        else
-        {
-            throw new Exception("New types have been added to the type hierarchy!");
-        }
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return -1;
     }
 
-    public int Visit(Structure left, ISimpleTerm right)
+    public int Visit(IntegerVariableCase binaryCase)
     {
-        if (right is Variable)
-        {
-            return 1;
-        }
-        else if (right is Integer)
-        {
-            return 1;
-        }
-        else if (right is Structure rightStructure)
-        {
-            return CompareStructures(left, rightStructure);
-        }
-        else
-        {
-            throw new Exception("New types have been added to the type hierarchy!");
-        }
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return 1;
     }
 
-    public int Visit(Integer left, ISimpleTerm right)
+    public int Visit(StructureIntegerCase binaryCase)
     {
-        if (right is Variable)
-        {
-            return 1;
-        }
-        else if (right is Integer rightInteger)
-        {
-            return left.Value.CompareTo(rightInteger.Value);
-        }
-        else if (right is Structure)
-        {
-            return -1;
-        }
-        else
-        {
-            throw new Exception("New types have been added to the type hierarchy!");
-        }
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return 1;
     }
 
-    private int CompareStructures(Structure left, Structure right)
+    public int Visit(StructureStructureCase binaryCase)
     {
-        var childCountComparison = left.Children.Count.CompareTo(right.Children.Count);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        if (childCountComparison != 0) {return childCountComparison;}
+        var childCountComparison = binaryCase.Left.Children.Count.CompareTo(binaryCase.Right.Children.Count);
 
-        var functorComparions = left.Functor.CompareTo(right.Functor);
+        if (childCountComparison != 0) { return childCountComparison; }
+        var functorComparions = binaryCase.Left.Functor.CompareTo(binaryCase.Right.Functor);
 
-        if (functorComparions != 0) {  return functorComparions;}
+        if (functorComparions != 0) { return functorComparions; }
 
-        for(int i = 0; i < left.Children.Count; i++)
+        for (int i = 0; i < binaryCase.Left.Children.Count; i++)
         {
-            var currentChildrenComparison = left.Children.ElementAt(i).Accept(this, right.Children.ElementAt(i));
+            var currentChildrenComparison = TermFuncs.DetermineCase
+                (binaryCase.Left.Children.ElementAt(i), binaryCase.Right.Children.ElementAt(i))
+                .Accept(this);
 
-            if (currentChildrenComparison!= 0)
+            if (currentChildrenComparison != 0)
             {
                 return currentChildrenComparison;
             }
         }
 
         return 0;
+    }
+
+    public int Visit(StructureVariableCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return 1;
+    }
+
+    public int Visit(VariableIntegerCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return -1;
+    }
+
+    public int Visit(VariableVariableCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return binaryCase.Left.Identifier.CompareTo(binaryCase.Right.Identifier);
+    }
+
+    public int Visit(VariableStructureCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
+        return -1;
     }
 }

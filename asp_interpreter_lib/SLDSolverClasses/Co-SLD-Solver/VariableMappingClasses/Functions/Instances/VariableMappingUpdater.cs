@@ -1,6 +1,7 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Instances.CaseDetermination.Cases;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 using System.Collections.Immutable;
@@ -18,7 +19,7 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClas
 /// if left is term and right is prohib, fail.
 /// if left is term and right is term, fail if they are different or just take right.
 /// </summary>
-internal class VariableMappingUpdater
+internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOption<IVariableBinding>>
 {
     public IOption<VariableMapping> Update(VariableMapping left, VariableMapping right)
     {
@@ -56,6 +57,40 @@ internal class VariableMappingUpdater
         return new Some<VariableMapping>(new VariableMapping(newValues));
     }
 
+    public IOption<IVariableBinding> Visit(ProhibValsProhibValsCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
+
+        return new Some<IVariableBinding>
+            (new ProhibitedValuesBinding(binaryCase.Left.ProhibitedValues.Union(binaryCase.Right.ProhibitedValues)));
+    }
+
+    public IOption<IVariableBinding> Visit(ProhibValsTermBindingCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
+
+        return new Some<IVariableBinding>(binaryCase.Right);
+    }
+
+    public IOption<IVariableBinding> Visit(TermBindingProhibValsCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
+
+        return new None<IVariableBinding>();
+    }
+
+    public IOption<IVariableBinding> Visit(TermBindingTermBindingCase binaryCase)
+    {
+        ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
+
+        if (!binaryCase.Left.Term.IsEqualTo(binaryCase.Right.Term))
+        {
+            return new None<IVariableBinding>();
+        }
+
+        return new Some<IVariableBinding>(binaryCase.Right);
+    }
+
     private IOption<IVariableBinding> Resolve(Variable variable, VariableMapping left, VariableMapping right)
     {
         if (!left.TryGetValue(variable, out IVariableBinding? leftVal))
@@ -68,51 +103,8 @@ internal class VariableMappingUpdater
             return new Some<IVariableBinding>(left[variable]);
         }
 
-        return ResolveClash(leftVal, rightVal);
-    }
+        var typeCase = VarMappingFunctions.DetermineCase(leftVal, rightVal);
 
-    private IOption<IVariableBinding> ResolveClash(IVariableBinding leftVal, IVariableBinding rightVal)
-    {
-        if (leftVal is ProhibitedValuesBinding leftProhibs)
-        {
-            if (rightVal is ProhibitedValuesBinding rightProhibs)
-            {
-                return new Some<IVariableBinding>
-                    (new ProhibitedValuesBinding(leftProhibs.ProhibitedValues.Union(rightProhibs.ProhibitedValues)));
-            }
-            else if (rightVal is TermBinding rightTermbinding)
-            {
-                return new Some<IVariableBinding>(rightTermbinding);
-            }
-            else
-            {
-                return new None<IVariableBinding>();
-            }
-        }
-        else if (leftVal is TermBinding leftTermbinding)
-        {
-            if (rightVal is ProhibitedValuesBinding)
-            {
-                return new None<IVariableBinding>();
-            }
-            else if (rightVal is TermBinding rightTermbinding)
-            {
-                if (!leftTermbinding.Term.IsEqualTo(rightTermbinding.Term))
-                {
-                    return new None<IVariableBinding>();
-                }
-
-                return new Some<IVariableBinding>(rightTermbinding);
-            }
-            else
-            {
-                return new None<IVariableBinding>();
-
-            }
-        }
-        else
-        {
-            return new None<IVariableBinding>();
-        }
+        return typeCase.Accept(this);
     }
 }

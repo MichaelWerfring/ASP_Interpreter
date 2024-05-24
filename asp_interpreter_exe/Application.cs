@@ -144,8 +144,6 @@ public class Application(
         olonRules.AddRange(constraints);
 
         var subcheck = nmrChecker.GetSubCheckRules(olonRules.Duplicate());
-        _logger.LogDebug("NMR-Check:");
-        subcheck.ForEach(i => _logger.LogDebug(i.ToString()));
 
         return new Right<string, AspProgram>(new AspProgram(
             [.. program.Statements, .. dual, .. subcheck]
@@ -186,11 +184,8 @@ public class Application(
 
         var appendedQuery = convertedQuery.Append(new Structure("_nmr_check", []));
 
-        var sw = new Stopwatch();
-        sw.Start();
         foreach (var solution in solver.Solve(appendedQuery))
         {
-            Console.WriteLine(sw.Elapsed.TotalMinutes);
             PrintSolution(solution);
         }    
     }

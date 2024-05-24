@@ -21,21 +21,17 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
         _record = record;
     }
 
-    public ISimpleTerm Convert(NegatedTerm negatedTerm)
+    public IOption<ISimpleTerm> Convert(NegatedTerm negatedTerm)
     {
-        ArgumentNullException.ThrowIfNull(negatedTerm, nameof(negatedTerm));
+        ArgumentNullException.ThrowIfNull(negatedTerm);
 
-        var result = negatedTerm.Term.Accept(this);
-        if (!result.HasValue)
-        {
-            throw new ArgumentException("Inner term was unconvertable!");
-        }
-
-        return result.GetValueOrThrow();
+        return negatedTerm.Term.Accept(this);
     }
 
     public override IOption<ISimpleTerm> Visit(BasicTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         var convertedStructure = _converter.Convert(term);
 
         return new Some<ISimpleTerm>(new Structure(_record.ClassicalNegation, [convertedStructure]));
@@ -43,6 +39,8 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(NegatedTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         var convertedTerm = _converter.Convert(term.Term);
 
         return new Some<ISimpleTerm>(convertedTerm);
@@ -50,6 +48,8 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(NumberTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         var negatedInteger = new Integer(term.Value * -1);
 
         return new Some<ISimpleTerm>(negatedInteger);
@@ -58,36 +58,50 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
     // unconvertible terms : these should not be inside a negated term
     public override IOption<ISimpleTerm> Visit(AnonymousVariableTerm _)
     {
+        ArgumentNullException.ThrowIfNull(_);
+
         return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(ArithmeticOperationTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(ConventionalList term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(ParenthesizedTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(RecursiveList term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(StringTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new None<ISimpleTerm>();
     }
 
     public override IOption<ISimpleTerm> Visit(VariableTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new None<ISimpleTerm>();
     }
 }

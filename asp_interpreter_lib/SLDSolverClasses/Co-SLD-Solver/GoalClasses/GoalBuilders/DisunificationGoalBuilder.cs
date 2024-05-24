@@ -1,6 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Unification.Constructive.Disunification;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Target.Builder;
@@ -10,14 +8,17 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
 public class DisunificationGoalBuilder : IGoalBuilder
 {
+    private readonly SolverStateUpdater _stateUpdater;
     private readonly IConstructiveDisunificationAlgorithm _algorithm;
     private readonly ILogger _logger;
 
-    public DisunificationGoalBuilder(IConstructiveDisunificationAlgorithm algorithm, ILogger logger)
+    public DisunificationGoalBuilder(SolverStateUpdater updater, IConstructiveDisunificationAlgorithm algorithm, ILogger logger)
     {
+        ArgumentNullException.ThrowIfNull(updater);
         ArgumentNullException.ThrowIfNull(algorithm);
         ArgumentNullException.ThrowIfNull(logger);
 
+        _stateUpdater = updater;
         _algorithm = algorithm;
         _logger = logger;
     }
@@ -28,38 +29,34 @@ public class DisunificationGoalBuilder : IGoalBuilder
 
         if (!currentState.CurrentGoals.Any())
         {
-            _logger.LogError("Failed to build arithmetic evaluation goal: state did not contain any goals.");
             throw new ArgumentException("Must contain at least one goal.", nameof(currentState)); 
         }
 
-        ISimpleTerm goalTerm = currentState.CurrentGoals.First();
+        Structure goalTerm = currentState.CurrentGoals.First();
 
-        if (goalTerm is not Structure disunificationStruct || disunificationStruct.Children.Count != 2)
+        if (goalTerm.Children.Count != 2)
         {
-            _logger.LogError($"Failed to build disunification goal:" +
-                             $" Goalterm {goalTerm} was not of type struct or did not contain 2 children.");
             throw new ArgumentException("Next goal must be a structure term with two children.", nameof(currentState)); 
         }
 
-        var targetMaybe = ConstructiveTargetBuilder.Build
+        var targetEither = ConstructiveTargetBuilder.Build
         (
-           disunificationStruct.Children.ElementAt(0),
-           disunificationStruct.Children.ElementAt(1),
+           goalTerm.Children.ElementAt(0),
+           goalTerm.Children.ElementAt(1),
            currentState.SolutionState.Mapping
         );
 
         ConstructiveTarget target;
         try
         {
-            target = targetMaybe.GetRightOrThrow();
+            target = targetEither.GetRightOrThrow();
         }
         catch
         {
-            _logger.LogError($"Failed to build disunification goal: {targetMaybe.GetLeftOrThrow().Message}");
             throw new ArgumentException
-                ($"{nameof(currentState.SolutionState.Mapping)} contained term bindings : {targetMaybe.GetLeftOrThrow().Message}");
+                ($"{nameof(currentState.SolutionState.Mapping)} contained term bindings : {targetEither.GetLeftOrThrow().Message}");
         }
 
-        return new DisunificationGoal(target,_algorithm, currentState.SolutionState, _logger);
+        return new DisunificationGoal(_stateUpdater, target,_algorithm, currentState.SolutionState, _logger);
     }
 }

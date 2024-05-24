@@ -1,37 +1,41 @@
-﻿using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+﻿//-----------------------------------------------------------------------
+// <copyright file="StandardConstructiveUnificationAlgorithm.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 public class StandardConstructiveUnificationAlgorithm : IConstructiveUnificationAlgorithm
 {
-    private readonly ConstructiveVariableSubstitutor _substituter;
     private readonly bool _doOccursCheck;
-    private readonly SubstitutionApplier _subApplier;
-    private readonly ProhibitedValuesUpdater _prohibsUpdater;
 
-    public StandardConstructiveUnificationAlgorithm
-    (
-        bool doOccursCheck
-    )
+    public StandardConstructiveUnificationAlgorithm(bool doOccursCheck)
     {
         _doOccursCheck = doOccursCheck;
-        _substituter = new();
-        _subApplier = new();
-        _prohibsUpdater = new();
     }
 
     /// <summary>
     /// Try to unify two terms, based on mapping of variables to prohibited value lists.
     /// Exceptions are thrown if mapping does not contain a value for each variable in left and right.
     /// </summary>
+    /// <returns></returns>
     public IOption<VariableMapping> Unify(ConstructiveTarget target)
     {
         ArgumentNullException.ThrowIfNull(target);
 
         var constructiveUnifier = new ConstructiveUnifier
-            (_doOccursCheck, target, _substituter, _subApplier, _prohibsUpdater);
+        (
+            _doOccursCheck,
+            target
+        );
 
         return constructiveUnifier.Unify();
     }

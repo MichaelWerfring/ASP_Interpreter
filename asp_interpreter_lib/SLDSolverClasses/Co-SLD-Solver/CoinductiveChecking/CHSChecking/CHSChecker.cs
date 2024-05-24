@@ -17,13 +17,9 @@ namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
 public class CHSChecker
 {
     private readonly ExactMatchChecker _checker;
-
     private readonly StandardConstructiveUnificationAlgorithm _algorithm;
-
     private readonly FunctorTableRecord _functors;
-
     private readonly GoalSolver _goalSolver;
-
     private readonly ILogger _logger;
 
     public CHSChecker
@@ -54,34 +50,26 @@ public class CHSChecker
         ArgumentNullException.ThrowIfNull(state);
 
         _logger.LogInfo($"Checking CHS for {termToCheck}");
-        _logger.LogDebug($"CHS is: {state.CHS}");
+        _logger.LogTrace($"CHS is: {state.CHS}");
         _logger.LogTrace($"Current mapping is: {state.Mapping}");
 
         // construct negatedTerm
-        Structure negation = termToCheck.NegateTerm(_functors);
+        Structure negatedTerm = termToCheck.NegateTerm(_functors);
 
-        // check for exact matches for negation of term
-        _logger.LogInfo($"Checking for exact matches for negation of term..");
-        if (HasExactMatch(negation, state.CHS, state.Mapping, false))
+        // check for exact matches for negatedTerm of term
+        if (HasExactMatch(negatedTerm, state.CHS, state.Mapping, false))
         {
-            _logger.LogInfo($"Found exact match for negation. Deterministic failure.");
             return new CHSDeterministicFailureResult();
         }
-        _logger.LogInfo($"No exact matches for negation found!");
 
         // check for exact matches for term
-        _logger.LogInfo($"Checking for exact matches for term..");
         if (HasExactMatch(termToCheck, state.CHS, state.Mapping, true))
         {
-            _logger.LogInfo($"Found exact match for term. Deterministic success.");
-
             return new CHSDeterministicSuccessResult();
         }
-        _logger.LogInfo($"No exact matches for term found!");
 
-        // get all terms that unify with the negation of input entry.
-        IEnumerable<Structure> termsUnifyingWithNegation = GetUnifyingTerms(negation, state.CHS, state.Mapping);
-        _logger.LogDebug($"Terms unifying with negation of input term: {termsUnifyingWithNegation.ToList().ListToString()}");
+        // get all terms that unify with the negatedTerm of input entry.
+        IEnumerable<Structure> termsUnifyingWithNegation = GetUnifyingTerms(negatedTerm, state.CHS, state.Mapping);
 
         // construct disunification goals
         IEnumerable<Structure> disunificationGoals = termsUnifyingWithNegation.AsParallel()
@@ -94,19 +82,8 @@ public class CHSChecker
             new SolutionState(state.Callstack, state.CHS, state.Mapping, state.NextInternalVariableIndex)
         );
 
-        if (termsUnifyingWithNegation.Any())
-        {
-            _logger.LogInfo($"Found unifying negations: {termsUnifyingWithNegation.ToList().ListToString()}");
-            _logger.LogInfo($"Attempting to disunify {termToCheck} with them");
-        }
-        else
-        {
-            _logger.LogInfo($"No negations for term {termToCheck}. No match.");
-        }
-
         // return all the ways that all these disunifications can be solved.
-        return new CHSNoMatchOrConstrainmentResult
-            (_goalSolver.SolveGoals(newSolverState).Select(x => x.ResultMapping));
+        return new CHSNoMatchOrConstrainmentResult(_goalSolver.SolveGoals(newSolverState).Select(x => x.ResultMapping));
     }
 
     private bool HasExactMatch(ISimpleTerm term, CoinductiveHypothesisSet set, VariableMapping mapping, bool mustHaveSucceeded)
@@ -120,17 +97,8 @@ public class CHSChecker
                     return false;
                 }
 
-                ConstructiveTarget target;
-                try
-                {
-                    target = ConstructiveTargetBuilder.Build(term, entry.Term, mapping).GetRightOrThrow();
-                }
-                catch
-                {
-                    _logger.LogError($"Could not build constructive target for {term} and {entry.Term}");
-                    throw new Exception();
-                }
-
+                ConstructiveTarget target = ConstructiveTargetBuilder.Build(term, entry.Term, mapping).GetRightOrThrow();
+ 
                 return _checker.AreExactMatch(target);
             }))
             {

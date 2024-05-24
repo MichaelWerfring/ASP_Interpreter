@@ -3,6 +3,9 @@ using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Instances.Splitter;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -18,9 +21,12 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
     /// </summary>
     private readonly bool _doProhibitedValuesBindingResolution;
 
+    private readonly TermBindingChecker _termbindingFilterer;
+
     public TransitiveVariableMappingResolver(bool doProhibitedValuesBindingResolution)
     {
         _doProhibitedValuesBindingResolution = doProhibitedValuesBindingResolution;
+        _termbindingFilterer = new();
     }
 
     /// <summary>
@@ -40,63 +46,94 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return new Some<IVariableBinding>(value.Accept(this, mapping));
     }
 
-    public IVariableBinding Visit(ProhibitedValuesBinding binding, VariableMapping args)
+    public IVariableBinding Visit(ProhibitedValuesBinding binding, VariableMapping map)
     {
+        ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(map);
+
         return binding;
     }
 
-    public IVariableBinding Visit(TermBinding binding, VariableMapping args)
+    public IVariableBinding Visit(TermBinding binding, VariableMapping map)
     {
-        return binding.Term.Accept(this, args);      
+        ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(map);
+
+        return binding.Term.Accept(this, map);      
     }
 
-    public IVariableBinding Visit(Variable variableTerm, VariableMapping map)
+    public IVariableBinding Visit(Variable term, VariableMapping map)
     {
-        if (!map.TryGetValue(variableTerm, out IVariableBinding? binding))
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        if (!map.TryGetValue(term, out IVariableBinding? binding))
         {
-            return new TermBinding(variableTerm);
+            return new TermBinding(term);
         }
 
-        if (!_doProhibitedValuesBindingResolution && binding is ProhibitedValuesBinding)
+        if (!_doProhibitedValuesBindingResolution && VarMappingFunctions.ReturnProhibitedValueBindingOrNone(binding).HasValue)
         {
-            return new TermBinding(variableTerm);
+            return new TermBinding(term);
         }
 
         return binding.Accept(this, map);
     }
 
-    public IVariableBinding Visit(Structure structure, VariableMapping map)
+    public IVariableBinding Visit(Structure term, VariableMapping map)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
         // get variables in term
-        var variablesInTerm = structure.ExtractVariables();
+        var variablesInTerm = term.ExtractVariables();
 
         // filter out all variables where you have something like this : X => s(X).
-        // Var must:
-        // Map to something
-        // and map to a termbinding that is not the input termbinding.
         var filteredVariables = variablesInTerm.Where
         (
             x =>
-            map.TryGetValue(x, out IVariableBinding? varBinding)
-            &&
-            (varBinding is TermBinding tb && !tb.Term.IsEqualTo(structure))
+            {
+                if (!map.TryGetValue(x, out IVariableBinding? value))
+                {
+                    return false;
+                }
+
+                var tbMaybe = VarMappingFunctions.ReturnTermbindingOrNone(value);
+
+                if (!tbMaybe.HasValue) 
+                {
+                    return false; 
+                }
+
+                if (tbMaybe.GetValueOrThrow().Term.IsEqualTo(term))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
         );
 
         // resolve those variables : get only the termbindings. Build mapping.
         var resolvedVars = filteredVariables
             .Select(x => (x, Visit(new TermBinding(x), map)))
-            .Where(pair => pair.Item2 is TermBinding)
-            .Select(pair => (pair.x, ((TermBinding)pair.Item2).Term))
+            .Select(pair => (pair.x, _termbindingFilterer.ReturnTermbindingOrNone(pair.Item2)))
+            .Where(pair => pair.Item2.HasValue)
+            .Select(pair => (pair.x, pair.Item2.GetValueOrThrow().Term))
             .ToDictionary(TermFuncs.GetSingletonVariableComparer());
 
         // substitute using that dictionary.
-        var substitutedStruct = structure.Substitute(resolvedVars);
+        var substitutedStruct = term.Substitute(resolvedVars);
 
         return new TermBinding(substitutedStruct);
     }
 
-    public IVariableBinding Visit(Integer integer, VariableMapping arguments)
+    public IVariableBinding Visit(Integer term, VariableMapping map)
     {
-        return new TermBinding(integer);
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        return new TermBinding(term);
     }
 }

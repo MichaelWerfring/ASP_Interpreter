@@ -1,6 +1,6 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
@@ -31,7 +31,7 @@ public class CoinductiveSLDSolver
         _logger = logger;
     }
 
-    public IEnumerable<CoSLDSolution> Solve(IEnumerable<ISimpleTerm> query)
+    public IEnumerable<CoSLDSolution> Solve(IEnumerable<Structure> query)
     {
         ArgumentNullException.ThrowIfNull(query, nameof(query));
 
@@ -39,8 +39,8 @@ public class CoinductiveSLDSolver
 
         foreach (var querySolution in _goalSolver.SolveGoals(initialSolverState))
         {
-            _logger.LogInfo("Found Solution: { " + querySolution.ResultSet.ToList().ListToString() + " }");
-            _logger.LogDebug("Mapping for Solution: " + AspExtensions.SimplifyMapping(querySolution.ResultMapping));
+            _logger.LogInfo($"Found Solution: {querySolution.ResultSet.ToList().ListToString()}");
+            _logger.LogDebug($"Mapping for Solution: {querySolution.ResultMapping}");
 
             var postprocessedSolution = _postprocessor.Postprocess(querySolution);
 

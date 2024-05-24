@@ -16,6 +16,9 @@ public class SimpleTermContainsChecker : ISimpleTermArgsVisitor<bool, ISimpleTer
 
     public bool Visit(Structure term, ISimpleTerm other)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(other);
+
         var areEqual = term.IsEqualTo(other);
 
         if (areEqual)
@@ -33,11 +36,17 @@ public class SimpleTermContainsChecker : ISimpleTermArgsVisitor<bool, ISimpleTer
 
     public bool Visit(Variable term, ISimpleTerm other)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(other);
+
         return term.IsEqualTo(other);
     }
 
     public bool Visit(Integer term, ISimpleTerm other)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(other);
+
         return term.IsEqualTo(other);
     }
 }

@@ -1,7 +1,12 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Util;
+using asp_interpreter_lib.Util.ErrorHandling.Either;
 using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.Unification.Constructive.Target;

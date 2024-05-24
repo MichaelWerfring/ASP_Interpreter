@@ -3,14 +3,14 @@ man(father).
 man(son).
 woman(grandmother).
 woman(mother).
-woman(daughter).
+woman(daugther).
 
 parentOf(granddad, father).
 parentOf(grandmother, father).
 parentOf(father, son).
-parentOf(father, daughter).
+parentOf(father, daugther).
 parentOf(mother, son).
-parentOf(mother, daughter).
+parentOf(mother, daugther).
 
 siblings(X, Y) :- X \= Y, parentOf(P, X), parentOf(P, Y).
 

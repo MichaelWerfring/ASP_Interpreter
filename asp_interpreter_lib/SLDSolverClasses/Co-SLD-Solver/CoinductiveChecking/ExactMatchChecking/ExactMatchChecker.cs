@@ -29,7 +29,10 @@ public class ExactMatchChecker
         // if they dont unify at all, then they are not an exact match.
         IOption<VariableMapping> unificationMaybe = _algorithm.Unify(target);
 
-        if (!unificationMaybe.HasValue) { return false; }
+        if (!unificationMaybe.HasValue)
+        {
+            return false;
+        }
 
         VariableMapping unification = unificationMaybe.GetValueOrThrow();
 
