@@ -40,9 +40,9 @@ public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
             throw new ArgumentException("Must contain at least one goal.", nameof(currentState)); 
         }
 
-        var goalTerm = currentState.CurrentGoals.First();
+        Structure goalTerm = currentState.CurrentGoals.First();
 
-        if (goalTerm is not Structure evaluationStruct || evaluationStruct.Children.Count != 2)
+        if (goalTerm.Children.Count != 2)
         {
             throw new ArgumentException("Next goal must be a structure term with two children.", nameof(currentState)); 
         }
@@ -51,8 +51,8 @@ public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
         (
             _updater,
             _evaluator,
-            evaluationStruct.Children.ElementAt(0),
-            evaluationStruct.Children.ElementAt(1),
+            goalTerm.Children.ElementAt(0),
+            goalTerm.Children.ElementAt(1),
             currentState.SolutionState,
             _algorithm,
             _logger

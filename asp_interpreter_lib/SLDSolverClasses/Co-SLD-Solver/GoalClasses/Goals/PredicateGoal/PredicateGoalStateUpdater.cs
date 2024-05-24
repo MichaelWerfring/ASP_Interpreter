@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
@@ -29,7 +28,7 @@ public class PredicateGoalStateUpdater
         CoinductiveHypothesisSet inputSet,
         CallStack inputStack,
         VariableMapping unifyingMapping,
-        IEnumerable<ISimpleTerm> renamedClause, 
+        IEnumerable<Structure> renamedClause, 
         Structure constrainedTarget,
         int nextInternal
     )

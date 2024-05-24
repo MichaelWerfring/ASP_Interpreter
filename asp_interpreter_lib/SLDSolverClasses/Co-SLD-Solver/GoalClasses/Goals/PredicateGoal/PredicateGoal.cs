@@ -72,7 +72,6 @@ internal class PredicateGoal : ICoSLDGoal
         if (checkingResult.SuccessType == SuccessType.NonDeterministicSuccess)
         {
             yield return _stateUpdater.ConstructCoinductiveSuccessSolution(_inputState, checkingResult.Mapping);
-
         }
 
         IEnumerable<DBUnificationResult> dbunifications = _databaseUnifier.GetDatabaseUnificationResults

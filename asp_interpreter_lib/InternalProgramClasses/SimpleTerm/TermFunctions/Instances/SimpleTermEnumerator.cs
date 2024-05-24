@@ -8,22 +8,28 @@ public class SimpleTermEnumerator : ISimpleTermVisitor<IEnumerable<ISimpleTerm>>
 {
     public IEnumerable<ISimpleTerm> Enumerate(ISimpleTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         foreach (var t in term.Accept(this))
         {
             yield return t;
         }
     }
 
-    public IEnumerable<ISimpleTerm> Visit(Variable variableTerm)
+    public IEnumerable<ISimpleTerm> Visit(Variable variable)
     {
-       yield return variableTerm;
+        ArgumentNullException.ThrowIfNull(variable);
+
+        yield return variable;
     }
 
-    public IEnumerable<ISimpleTerm> Visit(Structure basicTerm)
+    public IEnumerable<ISimpleTerm> Visit(Structure structure)
     {
-        yield return basicTerm;
+        ArgumentNullException.ThrowIfNull(structure);
 
-        foreach (var childTerm in basicTerm.Children)
+        yield return structure;
+
+        foreach (var childTerm in structure.Children)
         {
             foreach(var term in childTerm.Accept(this))
             {
@@ -34,6 +40,8 @@ public class SimpleTermEnumerator : ISimpleTermVisitor<IEnumerable<ISimpleTerm>>
 
     public IEnumerable<ISimpleTerm> Visit(Integer integer)
     {
+        ArgumentNullException.ThrowIfNull(integer);
+
         yield return integer;
     }
 }

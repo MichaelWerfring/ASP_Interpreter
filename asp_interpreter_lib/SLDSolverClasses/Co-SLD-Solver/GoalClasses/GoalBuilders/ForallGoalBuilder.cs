@@ -1,5 +1,5 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
@@ -8,14 +8,16 @@ public class ForallGoalBuilder : IGoalBuilder
 {
     private readonly ILogger _logger;
     private readonly GoalSolver _solverForForallGoal;
+    private readonly int _maxSolutionCount;
 
-    public ForallGoalBuilder(ILogger logger, GoalSolver solver)
+    public ForallGoalBuilder(ILogger logger, GoalSolver solver, int maxSolutionCount)
     {
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
         ArgumentNullException.ThrowIfNull(solver, nameof(solver));
 
         _logger = logger;
         _solverForForallGoal = solver;
+        _maxSolutionCount = maxSolutionCount;
     }
 
     public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
@@ -27,30 +29,33 @@ public class ForallGoalBuilder : IGoalBuilder
             throw new ArgumentException("Must contain at least one goal.", nameof(currentState)); 
         }
 
-        var goalTerm = currentState.CurrentGoals.First();
+        Structure goalTerm = currentState.CurrentGoals.First();
 
-        if (goalTerm is not Structure forallStruct || forallStruct.Children.Count != 2)
+        if (goalTerm.Children.Count != 2)
         {
             throw new ArgumentException("Next goal must be a structure term with two children.", nameof(currentState)); 
         }
 
-        if (forallStruct.Children.ElementAt(0) is not Variable var)
+        var variableAtPositionOneMaybe = TermFuncs.ReturnVariableOrNone(goalTerm.Children[0]);
+        if (!variableAtPositionOneMaybe.HasValue)
         {
             throw new ArgumentException("First child must be a variable.");
         }
 
-        if (forallStruct.Children.ElementAt(1) is not Structure structure)
+        var structureAtPositionTwoMaybe = TermFuncs.ReturnStructureOrNone(goalTerm.Children[1]);
+        if (!structureAtPositionTwoMaybe.HasValue)
         {
-            throw new ArgumentException("First child must be a variable.");
+            throw new ArgumentException("Second child must be a structure.");
         }
 
         return new ForallGoal
         (
             _solverForForallGoal,
-            var,
-            structure,
+            variableAtPositionOneMaybe.GetValueOrThrow(),
+            structureAtPositionTwoMaybe.GetValueOrThrow(),
             currentState.SolutionState,
-            _logger
+            _logger,
+            _maxSolutionCount
         );
     }
 }

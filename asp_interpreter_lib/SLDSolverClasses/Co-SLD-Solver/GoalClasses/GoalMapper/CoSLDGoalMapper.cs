@@ -11,6 +11,7 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.GoalBuilders;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Unification.Constructive.Disunification.Standard;
 using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 using asp_interpreter_lib.Util.ErrorHandling;
@@ -18,7 +19,7 @@ using System.Collections.Immutable;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
-public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSldSolverState>
+public class CoSLDGoalMapper
 {
     private readonly ImmutableDictionary<(string, int), IGoalBuilder> _mapping;
 
@@ -68,11 +69,12 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
                 new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functors), logger)
             },
             {
-                (functors.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger))
+                (functors.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger), 1)
             },
             {
                 (functors.ArithmeticEvaluationNegated, 2),
-                new NegatedArithmeticEvaluationGoalBuilder(new ArithmeticEvaluator(functors), new StandardConstructiveDisunificationAlgorithm(false, false), logger) 
+                new NegatedArithmeticEvaluationGoalBuilder(new ArithmeticEvaluator(functors),
+                new StandardConstructiveDisunificationAlgorithm(false, false), logger) 
             }
         };
 
@@ -111,45 +113,14 @@ public class CoSLDGoalMapper : ISimpleTermArgsVisitor<IOption<ICoSLDGoal>, CoSld
     {
         ArgumentNullException.ThrowIfNull(state);
 
-        ISimpleTerm? currentGoalTerm;
-        try
-        {
-            currentGoalTerm = state.CurrentGoals.First();
-        }
-        catch
+        if (!state.CurrentGoals.Any())
         {
             throw new ArgumentException($"{nameof(state)} must contain at least one term in {nameof(state.CurrentGoals)}", nameof(state));
         }
 
-        return currentGoalTerm.Accept(this, state);
-    }
+        Structure goalTerm = state.CurrentGoals.First();
 
-    public IOption<ICoSLDGoal> Visit(Integer term, CoSldSolverState state)
-    {
-        ArgumentNullException.ThrowIfNull(term);
-        ArgumentNullException.ThrowIfNull(state);
-
-        _logger.LogError($"Error: cannot solve Integer {term.Value} as predicate.");
-
-        return new None<ICoSLDGoal>();
-    }
-
-    public IOption<ICoSLDGoal> Visit(Variable term, CoSldSolverState state)
-    {
-        ArgumentNullException.ThrowIfNull(term);
-        ArgumentNullException.ThrowIfNull(state);
-
-        _logger.LogError($"Error: cannot solve Variable {term.Identifier} as predicate.");
-
-        return new None<ICoSLDGoal>();
-    }
-
-    public IOption<ICoSLDGoal> Visit(Structure term, CoSldSolverState state)
-    {
-        ArgumentNullException.ThrowIfNull(term);
-        ArgumentNullException.ThrowIfNull(state);
-
-        _mapping.TryGetValue((term.Functor, term.Children.Count), out IGoalBuilder? goalBuilder);
+        _mapping.TryGetValue((goalTerm.Functor, goalTerm.Children.Count), out IGoalBuilder? goalBuilder);
 
         if (goalBuilder == null)
         {

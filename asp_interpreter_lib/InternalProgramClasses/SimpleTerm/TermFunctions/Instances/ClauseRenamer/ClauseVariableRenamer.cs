@@ -1,5 +1,6 @@
 using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 
 namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
@@ -15,7 +16,7 @@ public class ClauseVariableRenamer
         _functors = functors;
     }
 
-    public RenamingResult RenameVariables(IEnumerable<ISimpleTerm> clause, int currentInternalIndex)
+    public RenamingResult RenameVariables(IEnumerable<Structure> clause, int currentInternalIndex)
     {
         ArgumentNullException.ThrowIfNull(clause);
 

@@ -34,9 +34,9 @@ internal class ArithmeticComparisonGoalBuilder : IGoalBuilder
             throw new ArgumentException("Must contain at least one term in current goals.", nameof(currentState)); 
         }
 
-        ISimpleTerm goalTerm = currentState.CurrentGoals.First();
+        Structure goalTerm = currentState.CurrentGoals.First();
 
-        if (goalTerm is not Structure comparisonStruct || comparisonStruct.Children.Count != 2)
+        if (goalTerm.Children.Count != 2)
         {
             throw new ArgumentException("Goal must contain a structure term with two children.", nameof(currentState)); 
         }
@@ -44,8 +44,8 @@ internal class ArithmeticComparisonGoalBuilder : IGoalBuilder
         return new ArithmeticComparisonGoal
         (
             _evaluator,
-            comparisonStruct.Children.ElementAt(0),
-            comparisonStruct.Children.ElementAt(1),
+            goalTerm.Children.ElementAt(0),
+            goalTerm.Children.ElementAt(1),
             _predicate,
             currentState.SolutionState,
             _logger

@@ -7,53 +7,69 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.In
 
 public class StructureReducer : ISimpleTermArgsVisitor<IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>>, IStructure>
 {
-    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> TryReduce(IStructure a, IStructure b)
+    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> TryReduce(IStructure term, IStructure other)
     {
-        ArgumentNullException.ThrowIfNull(a);
-        ArgumentNullException.ThrowIfNull(b);
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(other);
 
-        return a.Accept(this, b);
+        return term.Accept(this, other);
     }
 
-    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> Visit(Structure basicTerm, IStructure arguments)
+    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> Visit(Structure term, IStructure other)
     {
-        Structure b;
-        try
-        {
-            b = (Structure)arguments;
-        }
-        catch
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(other);
+
+        var otherAsStructureMaybe = TermFuncs.ReturnStructureOrNone(other);
+
+        if (!otherAsStructureMaybe.HasValue)
         {
             return new None<IEnumerable<(ISimpleTerm, ISimpleTerm)>>();
         }
 
-        if
-        (
-            basicTerm.Functor != b.Functor
-            ||
-            basicTerm.Children.Count != b.Children.Count
-        )
+        Structure otherAsStructure = otherAsStructureMaybe.GetValueOrThrow();
+
+        if (term.Functor != otherAsStructure.Functor)
         {
             return new None<IEnumerable<(ISimpleTerm, ISimpleTerm)>>();
         }
 
-        return new Some<IEnumerable<(ISimpleTerm, ISimpleTerm)>>(basicTerm.Children.Zip(b.Children));
-    }
-
-    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> Visit(Integer integer, IStructure arguments)
-    {
-        if (arguments is Integer b && integer.Value == b.Value)
-        {
-            return new Some<IEnumerable<(ISimpleTerm, ISimpleTerm)>>([]);
-        }
-        else
+        if (term.Children.Count != otherAsStructure.Children.Count)
         {
             return new None<IEnumerable<(ISimpleTerm, ISimpleTerm)>>();
         }
+
+        return new Some<IEnumerable<(ISimpleTerm, ISimpleTerm)>>(term.Children.Zip(otherAsStructure.Children));
     }
 
-    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> Visit(Variable variableTerm, IStructure arguments)
+    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> Visit(Integer term, IStructure other)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(other);
+
+        var otherAsIntegerMaybe = TermFuncs.ReturnIntegerOrNone(other);
+
+        if (!otherAsIntegerMaybe.HasValue)
+        {
+            return new None<IEnumerable<(ISimpleTerm, ISimpleTerm)>>();
+        }
+
+        Integer otherAsInteger = otherAsIntegerMaybe.GetValueOrThrow();
+
+        if (term.Value != otherAsInteger.Value)
+        {
+            return new None<IEnumerable<(ISimpleTerm, ISimpleTerm)>>();
+        }
+
+        return new Some<IEnumerable<(ISimpleTerm, ISimpleTerm)>>([]);
+
+    }
+
+    public IOption<IEnumerable<(ISimpleTerm, ISimpleTerm)>> Visit(Variable term, IStructure other)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(other);
+
         return new None<IEnumerable<(ISimpleTerm, ISimpleTerm)>>();
     }
 }

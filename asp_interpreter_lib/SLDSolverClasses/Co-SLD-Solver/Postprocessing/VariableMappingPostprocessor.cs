@@ -40,7 +40,7 @@ public class VariableMappingPostprocessor
         {
             if (map.TryGetValue(variable, out IVariableBinding? bindings))
             {
-                newBinding.Add(variable, bindings);
+                newBinding.TryAdd(variable, bindings);
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 
-
 public interface ICallstackCheckingResultVisitor
 {
     public void Visit(CallstackDeterministicFailureResult result);
@@ -8,7 +7,7 @@ public interface ICallstackCheckingResultVisitor
     public void Visit(CallstackDeterministicSuccessResult result);
 
     public void Visit(CallstackNondeterministicSuccessResult result);
-    void Visit(CallStackNoMatchResult callStackNoMatchResult);
+    public void Visit(CallStackNoMatchResult callStackNoMatchResult);
 }
 
 public interface ICallstackCheckingResultVisitor<T>

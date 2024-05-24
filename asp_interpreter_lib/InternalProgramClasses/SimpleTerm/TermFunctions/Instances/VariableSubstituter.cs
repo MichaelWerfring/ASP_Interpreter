@@ -6,41 +6,58 @@ namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.In
 
 public class VariableSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, IDictionary<Variable, ISimpleTerm>>
 {
-    public ISimpleTerm Substitute(ISimpleTerm term, IDictionary<Variable, ISimpleTerm> mapping)
+    public ISimpleTerm Substitute(ISimpleTerm term, IDictionary<Variable, ISimpleTerm> map)
     {
         ArgumentNullException.ThrowIfNull(term);
-        ArgumentNullException.ThrowIfNull(mapping);
+        ArgumentNullException.ThrowIfNull(map);
 
-        return term.Accept(this, mapping);
+        return term.Accept(this, map);
     }
 
-    public ISimpleTerm Visit(Structure term, IDictionary<Variable, ISimpleTerm> mapping)
+    public Structure SubsituteStructure(Structure term, IDictionary<Variable, ISimpleTerm> map)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
         var newChildren = new ISimpleTerm[term.Children.Count];
 
         Parallel.For(0, newChildren.Length, index =>
         {
-            newChildren[index] = term.Children.ElementAt(index).Accept(this, mapping);
+            newChildren[index] = term.Children.ElementAt(index).Accept(this, map);
         });
 
         return new Structure(term.Functor, newChildren);
     }
 
-    public ISimpleTerm Visit(Variable variable, IDictionary<Variable, ISimpleTerm> mapping)
+    public ISimpleTerm Visit(Structure term, IDictionary<Variable, ISimpleTerm> map)
     {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        return SubsituteStructure(term, map);
+    }
+
+    public ISimpleTerm Visit(Variable term, IDictionary<Variable, ISimpleTerm> map)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
         ISimpleTerm? value;
-        mapping.TryGetValue(variable, out value);
+        map.TryGetValue(term, out value);
 
         if (value == null)
         {
-            return variable;
+            return term;
         }
 
         return value;
     }
 
-    public ISimpleTerm Visit(Integer integer, IDictionary<Variable, ISimpleTerm> arguments)
+    public ISimpleTerm Visit(Integer term, IDictionary<Variable, ISimpleTerm> map)
     {
-        return integer;
+        ArgumentNullException.ThrowIfNull(term);
+        ArgumentNullException.ThrowIfNull(map);
+
+        return term;
     }
 }

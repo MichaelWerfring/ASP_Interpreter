@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
 namespace asp_interpreter_lib.InternalProgramClasses.Database;
 

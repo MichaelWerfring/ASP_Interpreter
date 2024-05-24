@@ -1,9 +1,9 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.Comparison;
 
@@ -46,15 +46,13 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
         _logger.LogInfo($"Attempting to solve arithmetic comparison goal: {_left}, {_right}");
         _logger.LogTrace($"Input state is: {_inputstate}");
 
-        Integer leftInteger;
-        try
-        {
-            leftInteger = (Integer)_left;
-        }
-        catch
+        var leftIntegerMaybe = TermFuncs.ReturnIntegerOrNone( _left );
+        if (!leftIntegerMaybe.HasValue)
         {
             yield break;
         }
+
+        var leftInteger = leftIntegerMaybe.GetValueOrThrow();
 
         var rightEvaluationMaybe = _evaluator.Evaluate(_right);
 
@@ -62,8 +60,6 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
         {
             yield break;
         }
-
-        var b =_predicate.Invoke(5, 0);
        
         if (!_predicate(leftInteger.Value, rightEvaluationMaybe.GetValueOrThrow()))
         {

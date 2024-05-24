@@ -50,6 +50,8 @@ public class SimpleTermComparer : IComparer<ISimpleTerm>, IBinaryTermCaseVisitor
 
     public int Visit(StructureStructureCase binaryCase)
     {
+        ArgumentNullException.ThrowIfNull(binaryCase);
+
         var childCountComparison = binaryCase.Left.Children.Count.CompareTo(binaryCase.Right.Children.Count);
 
         if (childCountComparison != 0) { return childCountComparison; }

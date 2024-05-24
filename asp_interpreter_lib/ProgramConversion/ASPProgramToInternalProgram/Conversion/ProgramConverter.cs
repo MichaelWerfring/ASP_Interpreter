@@ -38,7 +38,6 @@ public class ProgramConverter : TypeBaseVisitor<ISimpleTerm>
             throw new ArgumentException("Must have a head!", nameof(statement));
         }
 
-
         var converter = new GoalConverter(_functors);
 
         var list = new List<Structure>();

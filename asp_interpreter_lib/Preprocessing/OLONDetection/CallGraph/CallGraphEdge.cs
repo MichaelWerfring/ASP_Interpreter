@@ -1,5 +1,4 @@
 ﻿using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.Terms;
 using QuikGraph;
 using System.Text;
 
@@ -11,12 +10,7 @@ namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 /// <typeparam name="TVertex">The vertex type</typeparam>
 public class CallGraphEdge : IEdge<Statement>
 {
-    public CallGraphEdge
-    (
-        Statement source,
-        Statement target,
-        Literal transitionLiteral
-    )
+    public CallGraphEdge(Statement source, Statement target, Literal transitionLiteral)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
@@ -27,11 +21,11 @@ public class CallGraphEdge : IEdge<Statement>
         TransitionLiteral = transitionLiteral;
     }
 
-    public Statement Source { get; private set; }
+    public Statement Source { get; }
 
-    public Literal TransitionLiteral { get; private set; }
+    public Literal TransitionLiteral { get; }
 
-    public Statement Target { get; private set; }
+    public Statement Target { get; }
 
     public override string ToString()
     {

@@ -1,6 +1,7 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.Types.ArithmeticOperations;
 using asp_interpreter_lib.Types.BinaryOperations;
+using asp_interpreter_lib.Types.Terms;
 using asp_interpreter_lib.Types.TypeVisitors;
 using asp_interpreter_lib.Util.ErrorHandling;
 
@@ -33,66 +34,92 @@ public class OperatorConverter : TypeBaseVisitor<string>
 
     public override IOption<string> Visit(Divide op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.Division);
     }
 
     public override IOption<string> Visit(Plus op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.Addition);
     }
 
     public override IOption<string> Visit(Minus op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.Subtraction);
     }
 
     public override IOption<string> Visit(Multiply op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.Multiplication);
     }
 
     public override IOption<string> Visit(Disunification op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.Disunification);
     }
 
     public override IOption<string> Visit(Equality op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.Unification);
     }
 
     public override IOption<string> Visit(GreaterOrEqualThan op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.GreaterOrEqualThan);
     }
 
     public override IOption<string> Visit(GreaterThan op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.GreaterThan);
     }
 
     public override IOption<string> Visit(Is op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.ArithmeticEvaluation);
     }
 
     public override IOption<string> Visit(IsNot op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.ArithmeticEvaluationNegated);
     }
 
     public override IOption<string> Visit(LessOrEqualThan op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.LessOrEqualThan);
     }
 
     public override IOption<string> Visit(LessThan op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.LessThan);
     }
 
     public override IOption<string> Visit(Power op)
     {
+        ArgumentNullException.ThrowIfNull(op);
+
         return new Some<string>(_functorTable.Power);
     }
 }

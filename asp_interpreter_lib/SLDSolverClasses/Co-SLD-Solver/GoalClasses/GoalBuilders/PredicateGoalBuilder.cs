@@ -1,5 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
@@ -46,24 +45,14 @@ public class PredicateGoalBuilder : IGoalBuilder
             throw new ArgumentException("Must contain at least one goal.",nameof(currentState)); 
         }
 
-        ISimpleTerm goalTerm = currentState.CurrentGoals.ElementAt(0);
-
-        Structure goalStruct;
-        try
-        {
-            goalStruct = (Structure) goalTerm;
-        }
-        catch
-        {
-            throw new ArgumentException("Predicate goal must be a structure." ,nameof(currentState));
-        }
+        Structure goalTerm = currentState.CurrentGoals.ElementAt(0);
 
         return new PredicateGoal
         (
             _checker,
             _unifier,
             _solver,
-            goalStruct,
+            goalTerm,
             currentState.SolutionState,
             _stateUpdater,
             _logger

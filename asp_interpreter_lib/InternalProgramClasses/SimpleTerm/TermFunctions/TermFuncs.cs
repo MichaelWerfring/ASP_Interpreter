@@ -30,25 +30,11 @@ public static class TermFuncs
         return _reducer.TryReduce(structure, other);
     }
 
-    public static RenamingResult RenameClause(IEnumerable<ISimpleTerm> clause, int nextInternalIndex)
+    public static RenamingResult RenameClause(IEnumerable<Structure> clause, int nextInternalIndex)
     {
         ArgumentNullException.ThrowIfNull(clause);
 
         return _renamer.RenameVariables(clause, nextInternalIndex);
-    }
-
-    /// <summary>
-    /// Gets a singleton variable comparer instance. 
-    /// VariableComparer works by hashing so its faster than regular comparer.
-    /// </summary>
-    public static VariableComparer GetSingletonVariableComparer()
-    {
-        return _varComparer;
-    }
-
-    public static SimpleTermComparer GetSingletonTermComparer()
-    {
-        return _termComparer;
     }
 
     public static IBinaryTermCase DetermineCase(ISimpleTerm left, ISimpleTerm right)
@@ -78,5 +64,19 @@ public static class TermFuncs
         ArgumentNullException.ThrowIfNull(term);
 
         return _structureChecker.ReturnStructureOrNone(term);
+    }
+
+    /// <summary>
+    /// Gets a singleton variable comparer instance. 
+    /// VariableComparer works by hashing so its faster than regular comparer.
+    /// </summary>
+    public static VariableComparer GetSingletonVariableComparer()
+    {
+        return _varComparer;
+    }
+
+    public static SimpleTermComparer GetSingletonTermComparer()
+    {
+        return _termComparer;
     }
 }

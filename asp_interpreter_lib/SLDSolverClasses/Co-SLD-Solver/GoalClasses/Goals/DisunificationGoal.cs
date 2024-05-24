@@ -70,7 +70,7 @@ public class DisunificationGoal : ICoSLDGoal
             _logger.LogTrace($"updated CHS is {updatedCHS}");
 
             CallStack updatedCallstack = _updater.UpdateCallstack(_inputState.Callstack, flattenedMapping);
-            _logger.LogTrace($"updated callstck is {updatedCallstack}");
+            _logger.LogTrace($"updated callstack is {updatedCallstack}");
 
             yield return new GoalSolution
             (

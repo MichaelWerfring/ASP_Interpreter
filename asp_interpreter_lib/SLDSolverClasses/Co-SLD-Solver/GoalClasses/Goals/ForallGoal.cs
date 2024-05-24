@@ -4,26 +4,31 @@ using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using asp_interpreter_lib.Util.ErrorHandling;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using asp_interpreter_lib.Util;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
-public class ForallGoal : ICoSLDGoal, IVariableBindingVisitor<IEnumerable<GoalSolution>>
+public class ForallGoal : ICoSLDGoal, IVariableBindingArgumentVisitor<IEnumerable<GoalSolution>, GoalSolution>
 {
     private readonly GoalSolver _solver;
     private readonly Variable _variable;
-    private readonly ISimpleTerm _goalTerm;
+    private readonly Structure _goalTerm;
     private readonly SolutionState _inputState;
     private readonly ILogger _logger;
+    private readonly int _maxSolutionCount;
+
+    private int _alreadyreturnedSolutionCount;
 
     public ForallGoal
     (
         GoalSolver solver,
         Variable variable,
-        ISimpleTerm goalTerm,
+        Structure goalTerm,
         SolutionState state,
-        ILogger logger
+        ILogger logger,
+        int maxSolutionCount
     )
     {
         ArgumentNullException.ThrowIfNull(solver, nameof(solver));
@@ -37,119 +42,113 @@ public class ForallGoal : ICoSLDGoal, IVariableBindingVisitor<IEnumerable<GoalSo
         _goalTerm = goalTerm;
         _inputState = state;
         _logger = logger;
+
+        _alreadyreturnedSolutionCount = 0;
+        _maxSolutionCount = maxSolutionCount;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
         _logger.LogInfo($"Attempting to solve forall goal with var {_variable}, goal {_goalTerm}");
-        _logger.LogTrace($"Input state is: {_inputState}");
 
         var initialState = new CoSldSolverState([_goalTerm], _inputState);
 
         foreach (GoalSolution initialForallSolution in _solver.SolveGoals(initialState))
         {
-            _logger.LogDebug("Initial forall solution solution found!");
-
             // get binding. transitive resolving is necessary because through unification,
-            // you could have something like X -> Y -> \={1,2}, where
-            IVariableBinding? mappingForForallVariable = null;
-            try
+            // you could have something like X -> Y -> \={1,2}
+            IOption<IVariableBinding> mappingForForallVariableMaybe = initialForallSolution.ResultMapping.Resolve(_variable, true);
+            
+            if (!mappingForForallVariableMaybe.HasValue)
             {
-                mappingForForallVariable = initialForallSolution.ResultMapping.Resolve(_variable, true).GetValueOrThrow();
-            }
-            catch 
-            {
-            }
-
-            // if no binding, succeed.
-            if (mappingForForallVariable == null)
-            {
-                _logger.LogInfo($"Variable {_variable} contained no value: success!");
                 yield return initialForallSolution;
                 yield break;
             }
 
-            // if bound to term, fail.
-            if (mappingForForallVariable is TermBinding tb)
+            IVariableBinding mappingForForallVariable = mappingForForallVariableMaybe.GetValueOrThrow();
+
+            // visit the variable binding type, enumerate solutions (if any).
+            IEnumerable<GoalSolution> solutions = mappingForForallVariable.Accept(this, initialForallSolution);
+
+
+            foreach (var solution in solutions)
             {
-                _logger.LogInfo($"Variable {_variable} was bound to term {tb.Term}: failure.");
-                continue;
-            }
-
-            // now we know it is a prohibited values binding.
-            var prohibitedValuesForVariable = (mappingForForallVariable as ProhibitedValuesBinding)!;
-
-            // if no prohibited values(unconstrained), then succeed.
-            if (prohibitedValuesForVariable.ProhibitedValues.Count == 0)
-            {
-                _logger.LogInfo($"Variable {_variable} is unconstrained: success!");
-                yield return initialForallSolution;
-                yield break;
-            }
-
-            // update goal with whatever we have found out about its vars during initial forall execution.
-            var updatedGoal = initialForallSolution.ResultMapping.ApplySubstitution(_goalTerm);
-
-            // get the "new version" of the variable:
-            // forall(X, p(X)) would have X renamed during unification with database clause.
-            var updatedVarMapping = initialForallSolution.ResultMapping.Resolve(_variable, false).GetValueOrThrow();
-            var updatedVar = (Variable)((TermBinding)updatedVarMapping).Term;
-
-            // construct new goals where variable in goalTerm is substituted by each prohibited value of variable.
-            var constraintSubstitutedGoals = prohibitedValuesForVariable.ProhibitedValues
-            .Select(prohibitedTerm => updatedGoal.Substitute
-            (
-                new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
+                if (_alreadyreturnedSolutionCount >= _maxSolutionCount)
                 {
-                    {updatedVar, prohibitedTerm }
-                })
-            );
+                    yield break;
+                }
 
-            // construct new solver state
-            var initialSolvingState = new CoSldSolverState
-            (
-                constraintSubstitutedGoals,
-                new SolutionState
-                (
-                    initialForallSolution.Stack,
-                    initialForallSolution.ResultSet,
-                    initialForallSolution.ResultMapping, 
-                    initialForallSolution.NextInternalVariable
-                )
-            );
+                yield return solution;
 
-            _logger.LogDebug($"Attempting to solve constraint-substituted goals {constraintSubstitutedGoals.ToList().ListToString()}");
-
-            IEnumerable<GoalSolution> solutions = _solver.SolveGoals(initialSolvingState);
-
-            foreach (GoalSolution solution in solutions ) 
-            {
-                var newSolution = new GoalSolution
-                (
-                    solution.ResultSet, 
-                    solution.ResultMapping.SetItem(_variable, new ProhibitedValuesBinding()),
-                    solution.Stack,
-                    solution.NextInternalVariable
-                );
-
-                 yield return newSolution;
+                _alreadyreturnedSolutionCount += 1;
             }
         }
     }
 
-    public IEnumerable<GoalSolution> Visit(ProhibitedValuesBinding binding)
+    public IEnumerable<GoalSolution> Visit(ProhibitedValuesBinding binding, GoalSolution initialSolution)
     {
         ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(initialSolution);
 
-        throw new NotImplementedException();
+        // if no prohibited values(unconstrained), then succeed.
+        if (binding.ProhibitedValues.Count == 0)
+        {
+            yield return initialSolution;
+            yield break;
+        }
 
+        // update goal with whatever we have found out about its vars during initial forall execution.
+        var updatedGoal = initialSolution.ResultMapping.ApplySubstitution(_goalTerm);
+
+        // get the "new version" of the variable:
+        // During the initial forall execution, variable might have been renamed during unification.
+        var updatedVarMapping = initialSolution.ResultMapping.Resolve(_variable, false).GetValueOrThrow();
+        var updatedVar = TermFuncs.ReturnVariableOrNone(VarMappingFunctions.ReturnTermbindingOrNone(updatedVarMapping).GetValueOrThrow().Term).GetValueOrThrow();
+
+        // construct new goals where variable in goalTerm is substituted by each prohibited value of variable.
+        var constraintSubstitutedGoals = binding.ProhibitedValues
+        .Select(prohibitedTerm => updatedGoal.Substitute
+        (
+            new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
+            {
+                    {updatedVar, prohibitedTerm }
+            })
+        );
+
+        // construct new solver state
+        var initialSolvingState = new CoSldSolverState
+        (
+            constraintSubstitutedGoals,
+            new SolutionState
+            (
+                initialSolution.Stack,
+                initialSolution.ResultSet,
+                initialSolution.ResultMapping,
+                initialSolution.NextInternalVariable
+            )
+        );
+
+        IEnumerable<GoalSolution> solutions = _solver.SolveGoals(initialSolvingState);
+
+        foreach (var solution in solutions)
+        {
+            var newSolution = new GoalSolution
+            (
+                solution.ResultSet,
+                solution.ResultMapping.SetItem(_variable, new ProhibitedValuesBinding()),
+                solution.Stack,
+                solution.NextInternalVariable
+            );
+
+            yield return newSolution;
+        }      
     }
 
-    public IEnumerable<GoalSolution> Visit(TermBinding binding)
+    public IEnumerable<GoalSolution> Visit(TermBinding binding, GoalSolution initialSolution)
     {
         ArgumentNullException.ThrowIfNull(binding);
+        ArgumentNullException.ThrowIfNull(initialSolution);
 
-
-        throw new NotImplementedException();
+        yield break;
     }
 }

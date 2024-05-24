@@ -1,6 +1,5 @@
 ﻿using asp_interpreter_lib.FunctorNaming;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
@@ -9,7 +8,6 @@ using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.Util.ErrorHandling.Either;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
@@ -51,7 +49,7 @@ public class CallstackChecker
 
         int numberOfNegations = 0;
 
-        foreach (ISimpleTerm term in callstack)
+        foreach (Structure term in callstack)
         {
             _logger.LogDebug($"Checking term in callstack: {term}");
 
@@ -59,8 +57,6 @@ public class CallstackChecker
 
             if (!targetEither.IsRight)
             {
-                _logger.LogError(
-                    $"Could not build constructive target for {termToCheck} and {term}: {targetEither.GetLeftOrThrow().Message}");
                 throw targetEither.GetLeftOrThrow();
             }
 
@@ -70,7 +66,6 @@ public class CallstackChecker
             {
                 if (_checker.AreExactMatch(target))
                 {
-                    _logger.LogInfo($"Found exact match with 0 negations: {term}. Det. failure!");
                     return new CallstackDeterministicFailureResult();
                 }
             }
@@ -78,14 +73,11 @@ public class CallstackChecker
             {
                 if (_checker.AreExactMatch(target))
                 {
-                    _logger.LogInfo($"Found exact match with {numberOfNegations} negations: {term}. Det. success!");
                     return new CallstackDeterministicSuccessResult();
                 }
 
                 if (_unificationAlgorithm.Unify(target).HasValue)
                 {
-                    _logger.LogInfo($"Found regular match with {numberOfNegations} negations: {term}. Nondet. success!");
-
                     return new CallstackNondeterministicSuccessResult();
                 }
             }
@@ -95,8 +87,6 @@ public class CallstackChecker
                 numberOfNegations += 1;
             }
         }
-
-        _logger.LogInfo($"Found no match for {termToCheck}");
 
         return new CallStackNoMatchResult();
     }

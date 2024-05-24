@@ -36,6 +36,9 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(AnonymousVariableTerm _)
     {
+        ArgumentNullException.ThrowIfNull(_);
+
+
         var variable = new Variable($"{_functorTable.AnonymusVariable}{_nextAnonymousVariableIndex}");
         _nextAnonymousVariableIndex += 1;
 
@@ -44,6 +47,8 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(ArithmeticOperationTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         var leftMaybe = term.Left.Accept(this);
 
         var rightMaybe = term.Right.Accept(this);
@@ -59,6 +64,8 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(BasicTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         var newChildrenMaybes = term.Terms.Select((term) => term.Accept(this));
         if(newChildrenMaybes.Any((maybe) => !maybe.HasValue)) 
         {
@@ -72,23 +79,31 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(ConventionalList term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new Some<ISimpleTerm>(ConvertConventionalList(term.Terms));
     }
 
     public override IOption<ISimpleTerm> Visit(NegatedTerm term)
     {
-        var convertedTerm = _negatedTermConverter.Convert(term);
+        ArgumentNullException.ThrowIfNull(term);
 
-        return new Some<ISimpleTerm>(convertedTerm);
+        var convertedTermMaybe = _negatedTermConverter.Convert(term);
+
+        return convertedTermMaybe;
     }
 
     public override IOption<ISimpleTerm> Visit(NumberTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new Some<ISimpleTerm>(new Integer(term.Value));
     }
 
     public override IOption<ISimpleTerm> Visit(ParenthesizedTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         var inner = term.Term.Accept(this);
         try
         {
@@ -102,6 +117,8 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(RecursiveList term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         var convertedList = ConvertRecursiveList(term);
 
         return new Some<ISimpleTerm>(convertedList);
@@ -109,11 +126,15 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
     public override IOption<ISimpleTerm> Visit(StringTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new Some<ISimpleTerm>(ConvertString(term.Value));
     }
 
     public override IOption<ISimpleTerm> Visit(VariableTerm term)
     {
+        ArgumentNullException.ThrowIfNull(term);
+
         return new Some<ISimpleTerm>(new Variable(term.Identifier));
     }
 

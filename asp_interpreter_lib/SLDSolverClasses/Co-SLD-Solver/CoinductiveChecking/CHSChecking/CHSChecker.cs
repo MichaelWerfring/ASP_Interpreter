@@ -83,8 +83,7 @@ public class CHSChecker
         );
 
         // return all the ways that all these disunifications can be solved.
-        return new CHSNoMatchOrConstrainmentResult
-            (_goalSolver.SolveGoals(newSolverState).Select(x => x.ResultMapping));
+        return new CHSNoMatchOrConstrainmentResult(_goalSolver.SolveGoals(newSolverState).Select(x => x.ResultMapping));
     }
 
     private bool HasExactMatch(ISimpleTerm term, CoinductiveHypothesisSet set, VariableMapping mapping, bool mustHaveSucceeded)
@@ -98,17 +97,8 @@ public class CHSChecker
                     return false;
                 }
 
-                ConstructiveTarget target;
-                try
-                {
-                    target = ConstructiveTargetBuilder.Build(term, entry.Term, mapping).GetRightOrThrow();
-                }
-                catch
-                {
-                    _logger.LogError($"Could not build constructive target for {term} and {entry.Term}");
-                    throw new Exception();
-                }
-
+                ConstructiveTarget target = ConstructiveTargetBuilder.Build(term, entry.Term, mapping).GetRightOrThrow();
+ 
                 return _checker.AreExactMatch(target);
             }))
             {

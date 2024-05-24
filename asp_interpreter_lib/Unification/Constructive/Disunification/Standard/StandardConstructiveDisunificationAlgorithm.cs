@@ -13,10 +13,10 @@ public class StandardConstructiveDisunificationAlgorithm : IConstructiveDisunifi
     private readonly bool _doGroundednessCheck;
     private readonly bool _doDisunifyUnboundVariables;
 
-    public StandardConstructiveDisunificationAlgorithm(bool doGroundednessCheck, bool doDisunifyUnboundVariables)
+    public StandardConstructiveDisunificationAlgorithm(bool doGroundednessCheck, bool doDisunifyVariables)
     {
         _doGroundednessCheck = doGroundednessCheck;
-        _doDisunifyUnboundVariables = doDisunifyUnboundVariables;
+        _doDisunifyUnboundVariables = doDisunifyVariables;
     }
 
     public IEither<DisunificationException, IEnumerable<VariableMapping>> Disunify(ConstructiveTarget target)

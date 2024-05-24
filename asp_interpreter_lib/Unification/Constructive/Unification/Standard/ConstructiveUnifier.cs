@@ -60,6 +60,7 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
         return new Some<VariableMapping>(VarMappingFunctions.Merge(_prohibitedValues, _termBindings));
     }
 
+    // cases
     public void Visit(VariableVariableCase currentCase)
     {
         ArgumentNullException.ThrowIfNull(currentCase);
@@ -198,6 +199,8 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
         var rightProhibs = _prohibitedValues[right].ProhibitedValues;
 
         var union = leftProhibs.Union(rightProhibs);
+
+        _prohibitedValues.Remove(left);
 
         _prohibitedValues[right] = new ProhibitedValuesBinding(union);
     }

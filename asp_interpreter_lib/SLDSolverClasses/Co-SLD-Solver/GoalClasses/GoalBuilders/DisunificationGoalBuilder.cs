@@ -1,6 +1,4 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using asp_interpreter_lib.Unification.Constructive.Disunification;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Target.Builder;
@@ -34,29 +32,29 @@ public class DisunificationGoalBuilder : IGoalBuilder
             throw new ArgumentException("Must contain at least one goal.", nameof(currentState)); 
         }
 
-        ISimpleTerm goalTerm = currentState.CurrentGoals.First();
+        Structure goalTerm = currentState.CurrentGoals.First();
 
-        if (goalTerm is not Structure disunificationStruct || disunificationStruct.Children.Count != 2)
+        if (goalTerm.Children.Count != 2)
         {
             throw new ArgumentException("Next goal must be a structure term with two children.", nameof(currentState)); 
         }
 
-        var targetMaybe = ConstructiveTargetBuilder.Build
+        var targetEither = ConstructiveTargetBuilder.Build
         (
-           disunificationStruct.Children.ElementAt(0),
-           disunificationStruct.Children.ElementAt(1),
+           goalTerm.Children.ElementAt(0),
+           goalTerm.Children.ElementAt(1),
            currentState.SolutionState.Mapping
         );
 
         ConstructiveTarget target;
         try
         {
-            target = targetMaybe.GetRightOrThrow();
+            target = targetEither.GetRightOrThrow();
         }
         catch
         {
             throw new ArgumentException
-                ($"{nameof(currentState.SolutionState.Mapping)} contained term bindings : {targetMaybe.GetLeftOrThrow().Message}");
+                ($"{nameof(currentState.SolutionState.Mapping)} contained term bindings : {targetEither.GetLeftOrThrow().Message}");
         }
 
         return new DisunificationGoal(_stateUpdater, target,_algorithm, currentState.SolutionState, _logger);

@@ -41,4 +41,4 @@ negq(X, Y) :- not q(X, Y).
 abs(X, X) :- X >= 0.
 abs(X, Y) :- X < 0, Y is X * -1.
 
-?- n_queens(4, Q).
+?- n_queens(1, Q).
