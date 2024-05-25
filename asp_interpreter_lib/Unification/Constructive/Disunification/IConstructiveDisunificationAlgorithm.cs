@@ -1,9 +1,9 @@
-﻿using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
-using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.Util.ErrorHandling.Either;
+﻿using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
+using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.Util.ErrorHandling.Either;
 
-namespace asp_interpreter_lib.Unification.Constructive.Disunification;
+namespace Asp_interpreter_lib.Unification.Constructive.Disunification;
 
 public interface IConstructiveDisunificationAlgorithm
 {

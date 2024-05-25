@@ -1,13 +1,13 @@
-﻿using asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Util.ErrorHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.Preprocessing.OLONDetection;
+namespace Asp_interpreter_lib.Preprocessing.OLONDetection;
 
 public class OLONRulesFilterer(ILogger logger)
 {

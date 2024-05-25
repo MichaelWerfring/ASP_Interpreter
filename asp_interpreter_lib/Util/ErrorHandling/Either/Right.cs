@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace asp_interpreter_lib.Util.ErrorHandling.Either;
+namespace Asp_interpreter_lib.Util.ErrorHandling.Either;
 
 public class Right<TLeft, TRight> : IEither<TLeft, TRight>
 {

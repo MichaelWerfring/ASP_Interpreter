@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Util;
+namespace Asp_interpreter_lib.Util;
 
 public class ProgramConfig
 {

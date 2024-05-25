@@ -1,6 +1,6 @@
 ﻿using Antlr4.Runtime;
 
-namespace asp_interpreter_lib.Util.ErrorHandling;
+namespace Asp_interpreter_lib.Util.ErrorHandling;
 
 public interface ILogger
 {

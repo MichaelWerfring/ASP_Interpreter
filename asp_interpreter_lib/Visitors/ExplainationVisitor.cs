@@ -1,10 +1,10 @@
 ﻿using Antlr4.Runtime.Tree;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util.ErrorHandling;
-namespace asp_interpreter_lib.Visitors;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
+namespace Asp_interpreter_lib.Visitors;
 
-public class ExplanationVisitor : ASPParserBaseVisitor<IOption<asp_interpreter_lib.Types.Explanation>>
+public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Asp_interpreter_lib.Types.Explanation>>
 {
     private readonly ILogger _logger;
     private readonly ASPParserBaseVisitor<IOption<Literal>> _literalVisitor;

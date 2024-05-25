@@ -1,9 +1,9 @@
 ﻿using System.Runtime.InteropServices;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.BinaryOperations;
-using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.BinaryOperations;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Visitors;
+namespace Asp_interpreter_lib.Visitors;
 
 public class BinaryOperationVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<BinaryOperation>>
 {
@@ -15,14 +15,23 @@ public class BinaryOperationVisitor(ILogger logger) : ASPParserBaseVisitor<IOpti
         var op = context.binary_operator().Accept(new BinaryOperatorVisitor(_logger));
         var left = context.term(0).Accept(new TermVisitor(_logger));
         var right = context.term(1).Accept(new TermVisitor(_logger));
-        
-        op.IfHasNoValue(() => _logger.LogError("Cannot parse binary operator!", context));
-        left.IfHasNoValue(() => _logger.LogError("Cannot parse left term!", context));
-        right.IfHasNoValue(() => _logger.LogError("Cannot parse right term!", context));
 
-        if (!op.HasValue || !left.HasValue || !right.HasValue)
+        if (op == null || !op.HasValue)
         {
-            return new None<BinaryOperation>();   
+            _logger.LogError("Cannot parse binary operator!", context);
+            return new None<BinaryOperation>();
+        }
+
+        if (left == null || !left.HasValue)
+        {
+            _logger.LogError("Cannot parse left term!", context);
+            return new None<BinaryOperation>();
+        }
+
+        if (right == null || !right.HasValue)
+        {
+            _logger.LogError("Cannot parse right term!", context);
+            return new None<BinaryOperation>();
         }
         
         return new Some<BinaryOperation>(new BinaryOperation(

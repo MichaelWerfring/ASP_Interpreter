@@ -1,7 +1,7 @@
-﻿using asp_interpreter_lib.Types.BinaryOperations;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.BinaryOperations;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.TypeVisitors
+namespace Asp_interpreter_lib.Types.TypeVisitors
 {
     internal class BinopToTextConverter : TypeBaseVisitor<string>
     {

@@ -1,17 +1,17 @@
 ﻿using System.Text;
 using Antlr4.Runtime;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
-using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Types.TypeVisitors.Copy;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.Visitors;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Types.TypeVisitors.Copy;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Visitors;
+using Asp_interpreter_lib.Preprocessing;
 
-namespace asp_interpreter_lib.Util;
+namespace Asp_interpreter_lib.Util;
 
 public static class AspExtensions
 {
@@ -170,5 +170,45 @@ public static class AspExtensions
         }
 
         return vars;
+    }
+
+    public static bool CompareGoal(Goal goal, bool naf, bool neg, string id, string[] terms)
+    {
+        ArgumentNullException.ThrowIfNull(id);
+        ArgumentNullException.ThrowIfNull(terms);
+        ArgumentNullException.ThrowIfNull(goal);
+
+        var maybeLiteral = goal.Accept(new GoalToLiteralConverter());
+
+        if (!maybeLiteral.HasValue)
+        {
+            return false;
+        }
+
+        var literal = maybeLiteral.GetValueOrThrow();
+
+        if (literal.HasNafNegation != naf ||
+            literal.HasStrongNegation != neg ||
+            literal.Identifier != id)
+        {
+            return false;
+        }
+
+        if (terms.Length != literal.Terms.Count)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < literal.Terms.Count; i++)
+        {
+            ITerm term = literal.Terms[i];
+
+            if (term.ToString() != terms[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

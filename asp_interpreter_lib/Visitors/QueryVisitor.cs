@@ -1,8 +1,8 @@
 ﻿using System.Reflection.Metadata.Ecma335;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Visitors;
+namespace Asp_interpreter_lib.Visitors;
 
 public class QueryVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<Query>>
 {

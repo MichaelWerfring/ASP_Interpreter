@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.Types.ArithmeticOperations;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.ArithmeticOperations;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.Terms;
+namespace Asp_interpreter_lib.Types.Terms;
 
 public class ArithmeticOperationTerm : ITerm
 {

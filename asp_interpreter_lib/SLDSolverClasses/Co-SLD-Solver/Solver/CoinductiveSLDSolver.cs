@@ -1,14 +1,14 @@
-﻿using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.Database;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
 
 public class CoinductiveSLDSolver
 {

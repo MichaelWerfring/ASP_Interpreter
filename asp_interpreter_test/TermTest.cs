@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.Types.ArithmeticOperations;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
+﻿using Asp_interpreter_lib.Types.ArithmeticOperations;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
 
-namespace asp_interpreter_test;
+namespace Asp_interpreter_test;
 
 public class TermTest
 {

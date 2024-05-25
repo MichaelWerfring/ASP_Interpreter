@@ -1,7 +1,7 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
 /// <summary>
 /// Compares terms, based on the SWI-Prolog "Standard Order of Terms":

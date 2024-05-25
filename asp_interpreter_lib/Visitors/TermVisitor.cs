@@ -1,7 +1,7 @@
-﻿using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Visitors;
+namespace Asp_interpreter_lib.Visitors;
 
 public class TermVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<ITerm>>
 {
@@ -67,7 +67,7 @@ public class TermVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<ITerm>>
     {
         var left = context.term(0).Accept(this);
         var right = context.term(1).Accept(this);
-        var operation = context.arithop().Accept(new ArithmeticOperationVisitor(_logger));
+        var operation = context.arithop().Accept(new ArithmeticOperationVisitor());
         
         if (!left.HasValue || !right.HasValue || !operation.HasValue)
         {

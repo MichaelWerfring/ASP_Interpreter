@@ -3,23 +3,23 @@ using System.Data;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
-using asp_interpreter_lib.SLDSolverClasses.Basic.SLDNFSolver.GoalClasses.Goals;
-using asp_interpreter_lib.Solving.DualRules;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.BinaryOperations;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Types.TypeVisitors.Copy;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.BinaryOperations;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Types.TypeVisitors.Copy;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Preprocessing;
+using Asp_interpreter_lib.Preprocessing.DualRules;
 
-namespace asp_interpreter_lib.Solving.NMRCheck;
+namespace Asp_interpreter_lib.Preprocessing.NMRCheck;
 
 public class NmrChecker(PrefixOptions options, ILogger logger)
 {
-    private readonly PrefixOptions _options = options ?? 
+    private readonly PrefixOptions _options = options ??
         throw new ArgumentNullException(nameof(options), "The given argument must not be null!");
 
-    private readonly ILogger _logger = logger ?? 
+    private readonly ILogger _logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
     private static readonly GoalToLiteralConverter _goalToLiteralConverter = new();
@@ -111,7 +111,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         duals.ForEach(d => _logger.LogDebug(d.ToString()));
 
         return duals;
-    } 
+    }
 
     public List<Statement> GetSubCheckRules(List<Statement> olonRules, bool notAsName = true)
     {
@@ -125,10 +125,10 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             emptyCheck.AddHead(new Literal("_nmr_check", false, false, []));
             return [emptyCheck];
         }
-        
+
         // 1) append negation of OLON Rule to its body (If not already present)
         List<Statement> preprocessedRules = PreprocessRules(olonRules);
-        
+
         // 2) generate dual for modified rules
         var tempOlonRules =
             preprocessedRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow()).ToList();
@@ -137,10 +137,10 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         // 3) assign unique head (e.g. chk0) 
         duals = GetDualsForCheck(olonRules.ToList());
         AddMissingPrefixes(duals, "_");
-        
+
         Statement nmrCheck = GetCheckRule(tempOlonRules, notAsName);
         AddForallToCheck(nmrCheck);
-        
+
         duals.Insert(0, nmrCheck);
 
         return duals;
@@ -162,7 +162,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
                 {
                     throw new InvalidOperationException("Expected exactly one term in the not literal");
                 }
-                
+
                 var basicTerm = head.Terms[0].Accept(new TermToBasicTermConverter()).GetValueOrThrow();
 
                 if (!basicTerm.Identifier.StartsWith(prefix))
@@ -193,7 +193,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             head.HasNafNegation = !notAsName;
             nmrBody.Add(DualRuleConverter.WrapInNot(head));
         }
-        
+
         nmrCheck.AddBody(nmrBody);
         return nmrCheck;
     }
@@ -201,7 +201,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
     private List<Statement> PreprocessRules(List<Statement> olonRules)
     {
         ArgumentNullException.ThrowIfNull(olonRules);
-        
+
         if (olonRules.Count == 0)
         {
             return olonRules;
@@ -213,19 +213,19 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             Statement rule = olonRules[i];
             if (!rule.HasHead)
             {
-                string name = "_" +_options.CheckPrefix + (i+1) + "_";
+                string name = "_" + _options.CheckPrefix + (i + 1) + "_";
                 rule.AddHead(new Literal(name, false, false, []));
                 continue;
             }
-            
+
             var head = rule.Head.GetValueOrThrow("Could not parse head!");
-        
+
             var negatedHead = head.Accept(new LiteralCopyVisitor(
                 new TermCopyVisitor())).GetValueOrThrow("Could not parse negated head!");
             negatedHead.HasNafNegation = !negatedHead.HasNafNegation;
-            
+
             bool containsHead = rule.Body.Find(b => b.ToString() == negatedHead.ToString()) != null;
-        
+
             if (!containsHead)
             {
                 rule.Body.Add(negatedHead);
@@ -234,19 +234,19 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             head.Identifier = "_" + _options.CheckPrefix + (i + 1) + "_";
         }
 
-            return olonRules;
+        return olonRules;
     }
 
     private static void AddForallToCheck(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
-        
+
         VariableFinder variableFinder = new();
 
         for (var i = 0; i < statement.Body.Count; i++)
         {
             var literal = statement.Body[i].Accept(_goalToLiteralConverter);
-            
+
             if (!literal.HasValue)
             {
                 continue;
@@ -260,7 +260,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             {
                 continue;
             }
-            
+
             var forall = DualRuleConverter.NestForall(variablesInGoal, innerGoal);
             statement.Body[i] = forall;
         }

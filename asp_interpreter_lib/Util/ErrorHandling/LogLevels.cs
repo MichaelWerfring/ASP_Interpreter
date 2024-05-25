@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.Util.ErrorHandling
+namespace Asp_interpreter_lib.Util.ErrorHandling
 {
     public enum LogLevel
     {

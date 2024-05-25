@@ -1,9 +1,9 @@
-﻿using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using System.Collections.Immutable;
 
-namespace asp_interpreter_lib.InternalProgramClasses.Database;
+namespace Asp_interpreter_lib.InternalProgramClasses.Database;
 
 public class DualClauseDatabase : IDatabase
 {

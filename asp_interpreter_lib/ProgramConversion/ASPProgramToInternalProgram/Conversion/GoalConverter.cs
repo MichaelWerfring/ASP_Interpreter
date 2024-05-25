@@ -1,12 +1,12 @@
-﻿using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.TypeVisitors;
+﻿using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.TypeVisitors;
 using System.Text;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.FunctorNaming;
 
-namespace asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+namespace Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
 public class GoalConverter : TypeBaseVisitor<Structure>
 {

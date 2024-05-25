@@ -1,10 +1,9 @@
-﻿using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Types.ArithmeticOperations;
-using asp_interpreter_lib.Types.BinaryOperations;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.ArithmeticOperations;
+using Asp_interpreter_lib.Types.BinaryOperations;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.TypeVisitors;
+namespace Asp_interpreter_lib.Types.TypeVisitors;
 
 public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
 {

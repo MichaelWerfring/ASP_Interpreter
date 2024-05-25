@@ -1,12 +1,12 @@
-﻿using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.BinaryOperations;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Types.TypeVisitors.Copy;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.BinaryOperations;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Types.TypeVisitors.Copy;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Preprocessing;
 
-namespace asp_interpreter_lib.Preprocessing.DualRules;
+namespace Asp_interpreter_lib.Preprocessing.DualRules;
 
 //returns the term to be used at the occurring position (or same as before if no change)
 //and a goal to be added to the body (else its none)

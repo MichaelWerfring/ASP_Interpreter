@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.TypeVisitors;
+namespace Asp_interpreter_lib.Types.TypeVisitors;
 
 public class GoalToLiteralConverter : TypeBaseVisitor<Literal>
 {

@@ -1,10 +1,10 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.Unification.Constructive.Disunification;
-using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.Unification.Constructive.Target.Builder;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.Unification.Constructive.Disunification;
+using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.Unification.Constructive.Target.Builder;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
 public class DisunificationGoalBuilder : IGoalBuilder
 {

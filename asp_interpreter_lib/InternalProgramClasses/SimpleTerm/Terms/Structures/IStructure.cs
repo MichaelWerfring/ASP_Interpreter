@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
 public interface IStructure : ISimpleTerm
 {

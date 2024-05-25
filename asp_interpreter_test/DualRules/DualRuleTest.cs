@@ -1,17 +1,17 @@
 ﻿using System.Linq;
-using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Solving.DualRules;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Preprocessing;
 using NUnit.Framework;
+using Asp_interpreter_lib.Preprocessing.DualRules;
 
-namespace asp_interpreter_test.DualRules;
+namespace Asp_interpreter_test.DualRules;
 
 public class DualRuleTest
 {
     private readonly PrefixOptions _prefixes = AspExtensions.CommonPrefixes;
 
-    private readonly ILogger _logger = new TestingLogger(LogLevel.Error);
+    private readonly ILogger logger = new TestingLogger(LogLevel.Error);
 
     [Test]
     public void ForallSkipsEmptyHeads()
@@ -21,8 +21,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var dual = dualRuleConverter.AddForall(program.Statements[0]).ToList();
 
@@ -38,8 +38,8 @@ public class DualRuleTest
                       ?- b(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var dual = dualRuleConverter.AddForall(program.Statements[0]).ToList();
 
@@ -60,8 +60,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -87,8 +87,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -114,8 +114,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -143,8 +143,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -169,9 +169,9 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
 
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
         //Solution was verified with s(CASP)
@@ -199,8 +199,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -225,8 +225,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -253,8 +253,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -278,8 +278,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -307,8 +307,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -332,8 +332,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -359,8 +359,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -388,8 +388,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -419,8 +419,8 @@ public class DualRuleTest
                       a :- b.
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -442,8 +442,8 @@ public class DualRuleTest
                       a.
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -463,8 +463,8 @@ public class DualRuleTest
                       a :- b.
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -486,8 +486,8 @@ public class DualRuleTest
                       abs(X, Y) :- X < 0, Y is X * -1.
                       """;
 
-        var program = AspExtensions.GetProgram(code, _logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+        var program = AspExtensions.GetProgram(code, logger);
+        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 

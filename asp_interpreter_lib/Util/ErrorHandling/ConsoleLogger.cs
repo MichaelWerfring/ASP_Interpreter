@@ -3,7 +3,7 @@ using System.Globalization;
 using Antlr4.Runtime;
 using Microsoft.Extensions.Logging;
 
-namespace asp_interpreter_lib.Util.ErrorHandling;
+namespace Asp_interpreter_lib.Util.ErrorHandling;
 
 public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogger
 {

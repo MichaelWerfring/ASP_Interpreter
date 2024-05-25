@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 
 public class Variable : ISimpleTerm
 {

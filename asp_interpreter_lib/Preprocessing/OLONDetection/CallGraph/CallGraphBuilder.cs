@@ -1,15 +1,15 @@
-﻿using asp_interpreter_lib.Types;
+﻿using Asp_interpreter_lib.Types;
 using QuikGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Types.TypeVisitors;
 using System.Dynamic;
-using asp_interpreter_lib.Types.BinaryOperations;
+using Asp_interpreter_lib.Types.BinaryOperations;
 
-namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
+namespace Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 
 public class CallGraphBuilder
 {

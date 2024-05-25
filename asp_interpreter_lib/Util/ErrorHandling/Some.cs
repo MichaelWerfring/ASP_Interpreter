@@ -1,4 +1,4 @@
-﻿namespace asp_interpreter_lib.Util.ErrorHandling;
+﻿namespace Asp_interpreter_lib.Util.ErrorHandling;
 
 public class Some<T> : IOption<T>
 {

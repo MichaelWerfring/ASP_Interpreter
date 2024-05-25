@@ -1,10 +1,10 @@
-﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.Unification.Constructive.Unification;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
+using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.Unification.Constructive.Unification;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class UnificationGoal : ICoSLDGoal
 {

@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Util.ErrorHandling;
 using QuikGraph;
 
-namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
+namespace Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 
 /// <summary>
 /// A class for finding simple cycles in a call graph,
