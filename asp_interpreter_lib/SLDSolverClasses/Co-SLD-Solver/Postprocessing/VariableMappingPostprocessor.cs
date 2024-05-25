@@ -21,7 +21,7 @@ public class VariableMappingPostprocessor
         ArgumentNullException.ThrowIfNull(map, nameof(map));
         ArgumentNullException.ThrowIfNull(variablesToKeep, nameof(variablesToKeep));
 
-        // make a new binding, add noninternal variables and their simplified internalVariablesInTerms.
+        // make a new binding, add variables and their simplified terms.
         var newBinding = new Dictionary<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
         foreach (var variable in variablesToKeep)
         {

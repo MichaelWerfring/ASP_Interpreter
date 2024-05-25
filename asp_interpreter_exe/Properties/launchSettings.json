@@ -2,7 +2,7 @@
   "profiles": {
     "asp_interpreter_exe": {
       "commandName": "Project",
-      "commandLineArgs": "-p C:\\Users\\micha\\Desktop\\prelude.asp -l 3 --interactive"
+      "commandLineArgs": "-p \"D:\\FH\\Semester 4\\Logikprogrammierung ILV\\SASP-Projekt\\ASP_Interpreter\\asp_interpreter_test\\test\\generalTest.asp\" -l 4"
     }
   }
 }

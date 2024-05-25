@@ -1,12 +1,13 @@
-﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.GoalBuilders;
+
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
-using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.Unification.Constructive.Disunification;
 using Asp_interpreter_lib.Util.ErrorHandling;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.GoalBuilders;
 
 internal class NegatedArithmeticEvaluationGoalBuilder : IGoalBuilder
 {
@@ -30,20 +31,14 @@ internal class NegatedArithmeticEvaluationGoalBuilder : IGoalBuilder
         _logger = logger;
     }
 
-    public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
+    public ICoSLDGoal BuildGoal(Structure goalTerm, SolutionState state)
     {
-        ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
-
-        if (!currentState.CurrentGoals.Any())
-        {
-            throw new ArgumentException("Must contain at least one goal.", nameof(currentState));
-        }
-
-        Structure goalTerm = currentState.CurrentGoals.First();
+        ArgumentNullException.ThrowIfNull(goalTerm);
+        ArgumentNullException.ThrowIfNull(state);
 
         if (goalTerm.Children.Count != 2)
         {
-            throw new ArgumentException("Next goal must be a structure term with two children.", nameof(currentState));
+            throw new ArgumentException("Next goal must be a structure term with two children.", nameof(goalTerm));
         }
 
         return new NegatedArithmeticEvaluationGoal
@@ -51,7 +46,7 @@ internal class NegatedArithmeticEvaluationGoalBuilder : IGoalBuilder
             _evaluator,
             goalTerm.Children.ElementAt(0),
             goalTerm.Children.ElementAt(1),
-            currentState.SolutionState,
+            state,
             _algorithm,
             _logger
         );

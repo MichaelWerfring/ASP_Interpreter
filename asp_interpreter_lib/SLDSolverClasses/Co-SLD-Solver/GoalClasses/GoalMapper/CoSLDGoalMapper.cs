@@ -1,9 +1,9 @@
-﻿using Asp_interpreter_lib.FunctorNaming;
+﻿namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using Asp_interpreter_lib.FunctorNaming;
 using Asp_interpreter_lib.InternalProgramClasses.Database;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using Asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
@@ -11,13 +11,10 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.GoalBuilders;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
-using Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Unification.Constructive.Disunification.Standard;
 using Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 using Asp_interpreter_lib.Util.ErrorHandling;
 using System.Collections.Immutable;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class CoSLDGoalMapper
 {
@@ -124,9 +121,9 @@ public class CoSLDGoalMapper
 
         if (goalBuilder == null)
         {
-            return new Some<ICoSLDGoal>(_predicateGoalBuilder.BuildGoal(state));
+            return new Some<ICoSLDGoal>(_predicateGoalBuilder.BuildGoal(goalTerm, state.SolutionState));
         }
 
-        return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(state));
+        return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(goalTerm, state.SolutionState));
     }
 }

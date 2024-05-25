@@ -15,7 +15,6 @@ using Asp_interpreter_lib.Util.ErrorHandling.Either;
 using Asp_interpreter_lib.Visitors;
 using Asp_interpreter_lib.Preprocessing;
 using System.Diagnostics;
-using System.Net.Http.Headers;
 using Asp_interpreter_lib.Preprocessing.NMRCheck;
 using Asp_interpreter_lib.Preprocessing.DualRules;
 
@@ -185,8 +184,11 @@ public class Application(
 
         var appendedQuery = convertedQuery.Append(new Structure("_nmr_check", []));
 
+        var sw = new Stopwatch();
+        sw.Start();
         foreach (var solution in solver.Solve(appendedQuery))
         {
+            Console.WriteLine(sw.Elapsed.ToString());
             PrintSolution(solution);
         }
     }
