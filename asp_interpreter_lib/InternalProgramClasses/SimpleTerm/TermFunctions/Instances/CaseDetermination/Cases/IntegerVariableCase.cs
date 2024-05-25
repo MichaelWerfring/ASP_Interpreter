@@ -1,12 +1,12 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
 
 public class IntegerVariableCase : IBinaryTermCase
 {

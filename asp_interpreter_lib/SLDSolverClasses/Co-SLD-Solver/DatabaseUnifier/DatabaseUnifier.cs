@@ -1,17 +1,17 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.Unification.Constructive.Target.Builder;
-using asp_interpreter_lib.Unification.Constructive.Unification;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.InternalProgramClasses.Database;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.Unification.Constructive.Target.Builder;
+using Asp_interpreter_lib.Unification.Constructive.Unification;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 
 public class DatabaseUnifier
 {

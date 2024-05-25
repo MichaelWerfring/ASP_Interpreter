@@ -1,43 +1,53 @@
-﻿using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Util.ErrorHandling;
-
-namespace asp_interpreter_lib.Visitors;
-
-public class GoalVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<Goal>>
+﻿namespace Asp_interpreter_lib.Visitors
 {
-    private readonly ILogger _logger = logger ??
-        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+    using Asp_interpreter_lib.Types;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
-    public override IOption<Goal> VisitGoal(ASPParser.GoalContext context)
-    { 
-        return context.children.ElementAt(0).Accept(this);
-    }
-
-    public override IOption<Goal> VisitBinary_operation(ASPParser.Binary_operationContext context)
+    public class GoalVisitor : ASPParserBaseVisitor<IOption<Goal>>
     {
-        var visitor = new BinaryOperationVisitor(_logger);
-
-        var result = visitor.VisitBinary_operation(context);
-        if (!result.HasValue)
+        public GoalVisitor(ILogger logger)
         {
-            _logger.LogError("Cannot parse binary operation!", context);
-            return new None<Goal>();
+            this.logger = logger ??
+                throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
         }
 
-        return new Some<Goal>(result.GetValueOrThrow());
-    }
+        private readonly ILogger logger;
 
-    public override IOption<Goal> VisitLiteral(ASPParser.LiteralContext context)
-    {
-        var visitor = new LiteralVisitor(_logger);
-
-        var result = visitor.VisitLiteral(context);
-        if (!result.HasValue) 
+        public override IOption<Goal> VisitGoal(ASPParser.GoalContext context)
         {
-            _logger.LogError("Cannot parse literal!", context); 
-            return new None<Goal>();
+            ArgumentNullException.ThrowIfNull(context);
+            return context.children.ElementAt(0).Accept(this);
         }
 
-        return new Some<Goal>(result.GetValueOrThrow());
+        public override IOption<Goal> VisitBinary_operation(ASPParser.Binary_operationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+
+            var visitor = new BinaryOperationVisitor(this.logger);
+
+            var result = visitor.VisitBinary_operation(context);
+            if (!result.HasValue)
+            {
+                this.logger.LogError("Cannot parse binary operation!", context);
+                return new None<Goal>();
+            }
+
+            return new Some<Goal>(result.GetValueOrThrow());
+        }
+
+        public override IOption<Goal> VisitLiteral(ASPParser.LiteralContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            var visitor = new LiteralVisitor(this.logger);
+
+            var result = visitor.VisitLiteral(context);
+            if (!result.HasValue)
+            {
+                this.logger.LogError("Cannot parse literal!", context);
+                return new None<Goal>();
+            }
+
+            return new Some<Goal>(result.GetValueOrThrow());
+        }
     }
 }

@@ -1,16 +1,17 @@
 ﻿using Antlr4.Runtime.Tree;
 using Antlr4.Runtime.Tree.Xpath;
-using asp_interpreter_lib.Preprocessing.DualRules;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Types.TypeVisitors.Copy;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Preprocessing.DualRules;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Types.TypeVisitors.Copy;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Preprocessing;
 using System.Runtime.InteropServices;
-using VariableTerm = asp_interpreter_lib.Types.Terms.VariableTerm;
+using VariableTerm = Asp_interpreter_lib.Types.Terms.VariableTerm;
 
-namespace asp_interpreter_lib.Solving.DualRules;
+namespace Asp_interpreter_lib.Preprocessing.DualRules;
 
 public class DualRuleConverter
 {
@@ -19,7 +20,7 @@ public class DualRuleConverter
     private readonly PrefixOptions _options;
 
     private readonly AnonymousVariableReplacer _replacer;
-    
+
     private readonly ILogger _logger;
 
     private readonly bool _wrapInNot;
@@ -57,7 +58,7 @@ public class DualRuleConverter
 
         var statements = rules.ToList();
         var withoutAnonymous = statements.Select(_replacer.Replace);
-        
+
         var headComputed = withoutAnonymous.Select(ComputeHead).ToList();
         var t = GetGoalsOnlyAppearingInBody(headComputed);
         var disjunctions = PreprocessRules(headComputed);
@@ -236,7 +237,7 @@ public class DualRuleConverter
 
         //append body with (nested) forall
         rule.Body.Clear();
-        rule.Body.AddRange(( [NestForall([.. bodyVariables], innerGoal)]));
+        rule.Body.AddRange([NestForall([.. bodyVariables], innerGoal)]);
 
         // prefix like dual
         var head = rule.Head.GetValueOrThrow();
@@ -270,7 +271,7 @@ public class DualRuleConverter
 
         return new Forall(new VariableTerm(v), result);
     }
-    
+
     public IEnumerable<Statement> ToConjunction(
         KeyValuePair<(string, int, bool), List<Statement>> disjunction, string prefix = "")
     {
@@ -306,7 +307,7 @@ public class DualRuleConverter
             // 2) rename old rule heads
             var goal = disjunction.Value[i];
             var head = goal.Head.GetValueOrThrow();
-            head.Identifier += (i + 1);
+            head.Identifier += i + 1;
 
             // 3) add heads to body of new rule
 
@@ -316,7 +317,7 @@ public class DualRuleConverter
 
             copy.Terms.Clear();
             copy.Terms.AddRange(AspExtensions.GenerateVariables(disjunction.Key.Item2, _options.VariablePrefix));
-            
+
             copy.Identifier = prefix + copy.Identifier;
 
             if (_wrapInNot)

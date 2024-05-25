@@ -1,4 +1,4 @@
-﻿namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
 public interface ISimpleTerm
 {

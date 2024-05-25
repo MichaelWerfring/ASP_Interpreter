@@ -1,7 +1,7 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class CoSldSolverState
 {

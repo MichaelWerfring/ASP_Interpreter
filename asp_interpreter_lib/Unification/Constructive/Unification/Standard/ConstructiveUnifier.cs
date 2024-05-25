@@ -1,19 +1,19 @@
-﻿using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using System.Collections.Immutable;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Antlr4.Runtime.Misc;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
 
-namespace asp_interpreter_lib.Unification.Constructive.Unification.Standard;
+namespace Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 
 /// <summary>
 /// An instance class to provide context for the unification algorithm.

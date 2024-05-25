@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.Types.TypeVisitors;
+﻿using Asp_interpreter_lib.Types.TypeVisitors;
 
-namespace asp_interpreter_lib.Types.Terms;
+namespace Asp_interpreter_lib.Types.Terms;
 
 public interface ITerm : IVisitableType
 {

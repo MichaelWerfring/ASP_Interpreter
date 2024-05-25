@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.BinaryOperations;
+namespace Asp_interpreter_lib.Types.BinaryOperations;
 
 public class LessOrEqualThan : BinaryOperator, IVisitableType
 {

@@ -1,9 +1,9 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Util.ErrorHandling.Either;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Util.ErrorHandling.Either;
 
-namespace asp_interpreter_lib.Unification.Constructive.Target.Builder;
+namespace Asp_interpreter_lib.Unification.Constructive.Target.Builder;
 
 internal class ValueRetriever : IVariableBindingVisitor<IEither<TargetBuildingException, ProhibitedValuesBinding>>
 {

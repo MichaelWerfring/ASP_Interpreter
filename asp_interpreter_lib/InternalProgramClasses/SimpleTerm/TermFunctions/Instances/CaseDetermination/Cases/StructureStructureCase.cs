@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
 
 public class StructureStructureCase : IBinaryTermCase
 {

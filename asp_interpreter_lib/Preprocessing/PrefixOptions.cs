@@ -1,4 +1,4 @@
-﻿namespace asp_interpreter_lib.Solving;
+﻿namespace Asp_interpreter_lib.Preprocessing;
 
 public class PrefixOptions(
     string forallPrefix,
@@ -8,12 +8,12 @@ public class PrefixOptions(
     string variablePrefix)
 {
     public string ForallPrefix { get; } = forallPrefix;
-    
+
     public string EmptyHeadPrefix { get; } = emptyHeadPrefix;
-    
+
     public string CheckPrefix { get; } = checkPrefix;
-    
+
     public string DualPrefix { get; } = dualPrefix;
-    
+
     public string VariablePrefix { get; } = variablePrefix;
 }

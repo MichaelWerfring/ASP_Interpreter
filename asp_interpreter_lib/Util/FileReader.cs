@@ -1,7 +1,7 @@
-﻿using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.Util.ErrorHandling.Either;
+﻿using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Util.ErrorHandling.Either;
 
-namespace asp_interpreter_lib.Util;
+namespace Asp_interpreter_lib.Util;
 
 public static class FileReader
 {

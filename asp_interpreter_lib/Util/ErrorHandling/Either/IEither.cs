@@ -1,4 +1,4 @@
-﻿namespace asp_interpreter_lib.Util.ErrorHandling.Either;
+﻿namespace Asp_interpreter_lib.Util.ErrorHandling.Either;
 
 public interface IEither<TLeft, TRight>
 {

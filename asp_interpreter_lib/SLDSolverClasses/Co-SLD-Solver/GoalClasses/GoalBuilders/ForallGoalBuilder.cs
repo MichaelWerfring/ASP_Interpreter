@@ -1,9 +1,10 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.Util.ErrorHandling;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class ForallGoalBuilder : IGoalBuilder
 {

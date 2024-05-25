@@ -1,9 +1,9 @@
-﻿using asp_interpreter_lib.Types.TypeVisitors;
+﻿using Asp_interpreter_lib.Types.TypeVisitors;
 using System.Text;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.Terms;
+namespace Asp_interpreter_lib.Types.Terms;
 
 public class BasicTerm: ITerm
 {

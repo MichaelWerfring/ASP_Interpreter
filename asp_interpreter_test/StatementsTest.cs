@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.Types;
+﻿using Asp_interpreter_lib.Types;
 
-namespace asp_interpreter_test;
+namespace Asp_interpreter_test;
 
 public class StatementsTest
 {
@@ -8,8 +8,8 @@ public class StatementsTest
     public void CreatesEmptyStatementPerDefault()
     {
         var statement = new Statement();
-        
-        Assert.That(statement is { HasBody: false, HasHead: false});
+
+        Assert.That(!statement.HasBody && !statement.HasHead);
     }
     
     [Test]
@@ -19,8 +19,8 @@ public class StatementsTest
         List<Goal> body = [];
         
         statement.AddBody(body);
-        
-        Assert.That(statement is { HasBody: false, HasHead: false});
+
+        Assert.That(!statement.HasHead && statement.Body.Count == 0);
     }
     
     [Test]
@@ -30,8 +30,8 @@ public class StatementsTest
         var head = new Literal("a", false,false, []);
         
         statement.AddHead(head);
-        
-        Assert.That(statement is { HasBody: false, HasHead: true});
+
+        Assert.That(statement.HasHead && !statement.HasBody);
     }
     
     [Test]
@@ -42,8 +42,8 @@ public class StatementsTest
         List<Goal> body = [literal];
         
         statement.AddBody(body);
-        
-        Assert.That(statement is { HasBody: true, HasHead: false});
+
+        Assert.That(!statement.HasHead && statement.HasBody && statement.Body.Count == 1);
     }
     
     [Test]
@@ -56,8 +56,8 @@ public class StatementsTest
         
         statement.AddHead(head);
         statement.AddBody(body);
-        
-        Assert.That(statement is { HasBody: true, HasHead: true});
+
+        Assert.That(statement.HasHead && statement.HasBody && statement.Body.Count == 1); 
     }
     
     [Test]

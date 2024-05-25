@@ -1,11 +1,11 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
-using asp_interpreter_lib.Util;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
+using Asp_interpreter_lib.Util;
 using Medallion.Collections;
 using System.Collections;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class CoinductiveHypothesisSet : IEnumerable<CHSEntry>
 {

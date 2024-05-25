@@ -1,15 +1,15 @@
-﻿using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Solving.DualRules;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Asp_interpreter_lib.Preprocessing;
+using Asp_interpreter_lib.Preprocessing.DualRules;
 
-namespace asp_interpreter_test.DualRules
+namespace Asp_interpreter_test.DualRules
 {
     internal class ComputeHeadsTest
     {

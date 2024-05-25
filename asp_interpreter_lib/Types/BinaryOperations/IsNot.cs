@@ -1,12 +1,12 @@
-﻿using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.Types.BinaryOperations
+namespace Asp_interpreter_lib.Types.BinaryOperations
 {
     public class IsNot : BinaryOperator, IVisitableType
     {

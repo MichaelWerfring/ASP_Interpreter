@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
+namespace Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 
 public static class CycleStringifier
 {

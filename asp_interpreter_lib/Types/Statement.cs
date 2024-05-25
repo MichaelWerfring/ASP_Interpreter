@@ -1,16 +1,16 @@
 ﻿using System.Globalization;
 using System.Text;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types;
+namespace Asp_interpreter_lib.Types;
 
-public class Statement: IVisitableType
+public class Statement : IVisitableType
 {
     public bool HasBody => Body.Count != 0;
     public bool HasHead => Head.HasValue;
     
-    //Empty per default
+    // Empty per default
     public IOption<Literal> Head { get; set; } = new None<Literal>();
     public List<Goal> Body { get; private set; } = new([]);
 
@@ -20,8 +20,7 @@ public class Statement: IVisitableType
         if (HasHead)
         {
             throw new ArgumentException("A statement can only have one head");
-        }
-        
+        }        
         Head = new Some<Literal>(head);
     }
     
@@ -37,7 +36,7 @@ public class Statement: IVisitableType
 
     public override string ToString()
     {
-        if(HasBody && HasHead)
+        if (HasBody && HasHead)
         {
             return $"{Head.GetValueOrThrow().ToString()} :- {GetBodyAsString()}.";
         }
@@ -47,7 +46,7 @@ public class Statement: IVisitableType
             return ":- " + GetBodyAsString() + ".";
         }
         
-        if(!HasBody  && !HasHead)
+        if(!this.HasBody && !this.HasHead)
         {
             return string.Empty;
         }

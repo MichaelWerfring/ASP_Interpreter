@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.TypeVisitors.Copy;
+namespace Asp_interpreter_lib.Types.TypeVisitors.Copy;
 
 public class LiteralCopyVisitor(TypeBaseVisitor<ITerm> termCopyVisitor) : TypeBaseVisitor<Literal>
 {

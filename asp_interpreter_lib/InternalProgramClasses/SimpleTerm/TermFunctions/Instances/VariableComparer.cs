@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
 public class VariableComparer : IEqualityComparer<Variable>
 {

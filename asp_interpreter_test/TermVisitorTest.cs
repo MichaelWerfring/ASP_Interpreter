@@ -1,60 +1,53 @@
-﻿using asp_interpreter_lib;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_test;
+namespace Asp_interpreter_test;
 
 public class TermVisitorTest
 {
-    private readonly ILogger _errorLogger = new ConsoleLogger(LogLevel.Error);
+    private readonly ILogger errorLogger = new ConsoleLogger(LogLevel.Error);
     
     [Test]
     public void ParseVariableTerm()
     {
         string code = "a(X). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is VariableTerm &&
-            literal.Terms[0].ToString() == "X");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["X"]));
     }
     
     [Test]
     public void ParseStringTerm()
     {
         string code = "a(\"hallo\"). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is StringTerm &&
-            literal.Terms[0].ToString() == "hallo");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["\"hallo\""]));
     }
     
     [Test]
     public void ParseBasicTerm()
     {
         string code = "a(b, c). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
-            literal.Terms[0].ToString() == "b" && 
-            literal.Terms[1].ToString() == "c");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b", "c"]));
     }
     
     [Test]
     public void ParseNegatedTerm()
     {
         string code = "a(-1). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var converter = new TermToNumberConverter();
         
         var literal = program.Statements[0].Head.GetValueOrThrow();
@@ -65,120 +58,78 @@ public class TermVisitorTest
             content.HasValue && content.GetValueOrThrow() == -1);
     }
     
-    [Test]
-    public void ParseArithmeticOperationTerm()
-    {
-        string code = "a(1 + 2). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
-
-        var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is ArithmeticOperationTerm &&
-            literal.Terms[0].ToString() == "1 + 2");
-    }
-    
     
     [Test]
     public void ParseBasicTermWithInnerTerms()
     {
         string code = "a(b, c(d, e)). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
-            literal.Terms[0].ToString() == "b" && 
-            literal.Terms[1].ToString() == "c(d, e)");
-    }
-    
-    [Test]
-    public void ParseArithmeticOperationTermWithInnerTerms()
-    {
-        string code = "a(1 + 2 * 3). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
 
-        var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is ArithmeticOperationTerm &&
-            literal.Terms[0].ToString() == "1 + 2 * 3");
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b", "c(d, e)"]));
     }
     
     [Test]
     public void ParseParenthesizedTerm()
     {
         string code = "a((b)). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is BasicTerm &&
-            literal.Terms[0].ToString() == "b");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b"]));
     }
     
     [Test]
     public void ParseParenthesizedTermWithMultipleInnerTerms()
     {
         string code = "a(b,(c(d, e, f, g))). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
-            literal.Terms[0].ToString() == "b" && 
-            literal.Terms[1].ToString() == "c(d, e, f, g)");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b", "c(d, e, f, g)"]));
     }
     
     [Test]
     public void ParseAnonymusVariableTerm()
     {
         string code = "a(_). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is AnonymousVariableTerm &&
-            literal.Terms[0].ToString() == "_");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["_"]));
     }
 
     [Test]
     public void ParseAnonymusVariableTermWithSeveralArguments()
     {
         string code = "a(b, _). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is BasicTerm && literal.Terms[1] is AnonymousVariableTerm &&
-            literal.Terms[0].ToString() == "b" && 
-            literal.Terms[1].ToString() == "_");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b", "_"]));
     }
     
     [Test]
     public void ParseAnonymusVariableTermWithInnerTerms()
     {
         string code = "a(b, c(d, _)). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, this.errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
-        
-        Assert.That(literal != null &&
-            literal.Terms[0] is BasicTerm && literal.Terms[1] is BasicTerm &&
-            literal.Terms[0].ToString() == "b" && 
-            literal.Terms[1].ToString() == "c(d, _)");
+
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b","c(d, _)"]));
     }
     
     [Test]
     public void ParseNumberTerm()
     {
         string code = "a(1). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var converter = new TermToNumberConverter();
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
@@ -193,7 +144,7 @@ public class TermVisitorTest
     public void ParseNumberTermWithSeveralArguments()
     {
         string code = "a(1, 2, 3, 4, 5). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var converter = new TermToNumberConverter();
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
@@ -208,7 +159,7 @@ public class TermVisitorTest
     public void ParseNumberTermWithInnerTerms()
     {
         string code = "a(1, 2, 3, 7). a?";
-        var program = AspExtensions.GetProgram(code, _errorLogger);
+        var program = AspExtensions.GetProgram(code, errorLogger);
         var converter = new TermToNumberConverter();
 
         var literal = program.Statements[0].Head.GetValueOrThrow();

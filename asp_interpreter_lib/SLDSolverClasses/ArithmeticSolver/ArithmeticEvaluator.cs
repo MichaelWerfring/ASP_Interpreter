@@ -1,12 +1,12 @@
-﻿using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Util.ErrorHandling;
 using System.Collections.Immutable;
 
-namespace asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
+namespace Asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 
 public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 {

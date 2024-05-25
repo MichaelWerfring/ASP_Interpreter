@@ -1,7 +1,15 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿//-----------------------------------------------------------------------
+// <copyright file="RenamingResult.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
 
 public class RenamingResult
 {
@@ -9,8 +17,8 @@ public class RenamingResult
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        RenamedClause = clause;
-        NextInternalIndex = nextInternalIndex;
+        this.RenamedClause = clause;
+        this.NextInternalIndex = nextInternalIndex;
     }
 
     public IEnumerable<Structure> RenamedClause { get; }

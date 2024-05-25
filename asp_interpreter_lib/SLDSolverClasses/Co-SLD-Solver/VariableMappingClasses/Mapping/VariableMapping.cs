@@ -1,13 +1,13 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.Util;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.Util;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 
-namespace asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+namespace Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
 /// <summary>
 /// Represents a mapping for the co-sld-resolution:

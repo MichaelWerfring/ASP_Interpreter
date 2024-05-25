@@ -1,6 +1,6 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿namespace Asp_interpreter_lib.InternalProgramClasses.Database;
 
-namespace asp_interpreter_lib.InternalProgramClasses.Database;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
 public interface IDatabase
 {

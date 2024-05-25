@@ -1,9 +1,9 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.Util;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.Util;
 
-namespace asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
 public class Structure : IStructure
 {

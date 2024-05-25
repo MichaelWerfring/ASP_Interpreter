@@ -1,10 +1,10 @@
 ﻿using Antlr4.Runtime.Tree;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util.ErrorHandling;
-namespace asp_interpreter_lib.Visitors;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
+namespace Asp_interpreter_lib.Visitors;
 
-public class ExplanationVisitor : ASPParserBaseVisitor<IOption<asp_interpreter_lib.Types.Explanation>>
+public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Asp_interpreter_lib.Types.Explanation>>
 {
     private readonly ILogger _logger;
     private readonly ASPParserBaseVisitor<IOption<Literal>> _literalVisitor;
@@ -16,12 +16,13 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<asp_interpreter_l
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _literalVisitor = literalVisitor ?? throw new ArgumentNullException(nameof(literalVisitor));
-        _variableVisitor = new ExplanationVariableVisitor();
-        _textVisitor = new ExplanationTextVisitor();
+        _variableVisitor = new ExplanationVariableVisitor(_logger);
+        _textVisitor = new ExplanationTextVisitor(_logger);
     }
 
     public override IOption<Explanation> VisitExplanation(ASPParser.ExplanationContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
         var optionLiteral = context.literal().Accept(_literalVisitor);
         if (optionLiteral == null || !optionLiteral.HasValue)
         {

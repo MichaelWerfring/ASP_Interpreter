@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
 
 public class DBUnificationResult
 {

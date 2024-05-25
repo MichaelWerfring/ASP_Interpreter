@@ -1,5 +1,5 @@
-﻿using asp_interpreter_lib.Types.Terms;
-using asp_interpreter_lib.Types.TypeVisitors;
+﻿using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace asp_interpreter_lib.Types
+namespace Asp_interpreter_lib.Types
 {
     public class Explanation
     {

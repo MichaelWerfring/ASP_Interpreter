@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
+﻿using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
 
 internal class CHSPostprocessingComparer : IComparer<CHSEntry>
 {

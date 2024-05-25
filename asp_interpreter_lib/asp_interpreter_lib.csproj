@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
     <PackageReference Include="ImmutableLinkedList" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Build" Version="17.8.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0-preview.2.24128.5" />
     <PackageReference Include="QuikGraph" Version="2.5.0" />
   </ItemGroup>

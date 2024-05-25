@@ -1,10 +1,10 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 
 public class PredicateGoalStateUpdater
 {

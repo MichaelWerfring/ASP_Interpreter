@@ -1,7 +1,7 @@
-﻿using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.Types.Terms;
+namespace Asp_interpreter_lib.Types.Terms;
 
 public class StringTerm: ITerm
 {
@@ -21,7 +21,7 @@ public class StringTerm: ITerm
     
     public override string ToString()
     {
-        return Value;
+        return "\"" + Value + "\"";
     }
 
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)

@@ -1,18 +1,18 @@
-﻿using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Unification.Constructive.Target;
-using asp_interpreter_lib.Unification.Constructive.Target.Builder;
-using asp_interpreter_lib.Unification.Constructive.Unification.Standard;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ExactMatchChecking;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.Unification.Constructive.Target.Builder;
+using Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.ConductiveChecking;
 
 public class CHSChecker
 {

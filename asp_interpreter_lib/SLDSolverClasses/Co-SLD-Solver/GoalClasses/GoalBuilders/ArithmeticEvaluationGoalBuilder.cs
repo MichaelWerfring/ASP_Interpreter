@@ -1,10 +1,11 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using asp_interpreter_lib.Unification.Constructive.Unification;
-using asp_interpreter_lib.Util.ErrorHandling;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+using Asp_interpreter_lib.Unification.Constructive.Unification;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 
 public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
 {
@@ -50,7 +51,6 @@ public class ArithmeticEvaluationGoalBuilder : IGoalBuilder
             goalTerm.Children.ElementAt(1),
             state,
             _algorithm,
-            _logger
-        );
+            _logger);
     }
 }

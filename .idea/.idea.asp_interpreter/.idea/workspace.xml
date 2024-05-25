@@ -10,20 +10,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.asp_interpreter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/Application.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/Application.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_exe/test/ancestor.asp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_exe/test/ancestor.asp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.g4" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.g4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.interp" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParser.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParserBaseVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParserBaseVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParserVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/ANTLR/ASPParserVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/HeadAtomEliminator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/DualRules/HeadAtomEliminator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/NMRCheck/NmrChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Preprocessing/NMRCheck/NmrChecker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/SLDSolverClasses/Co-SLD-Solver/GoalClasses/GoalSolver/GoalSolver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/SLDSolverClasses/Co-SLD-Solver/GoalClasses/GoalSolver/GoalSolver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/asp_interpreter_lib/Unification/Constructive/Disunification/Standard/ConstructiveDisunifierClasses/ConstructiveDisunifier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/asp_interpreter_lib/Unification/Constructive/Disunification/Standard/ConstructiveDisunifierClasses/ConstructiveDisunifier.cs" afterDir="false" />
-    </list>
+    <list default="true" id="07af0637-1393-4f61-a7ec-870b45259e25" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -75,37 +62,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.asp_interpreter_exe.executor&quot;: &quot;Debug&quot;,
-    &quot;.NET Project.asp_interpreter_exe.executor&quot;: &quot;Debug&quot;,
-    &quot;2c241dbb-8852-45d0-a65e-c36107ad94e8.executor&quot;: &quot;Debug&quot;,
-    &quot;81d340e1-43c4-41f9-b550-4d618793a8c2.executor&quot;: &quot;Debug&quot;,
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;aadd37ac-83d9-421d-80be-890da7df604c.executor&quot;: &quot;Debug&quot;,
-    &quot;ba91a5d0-6c99-41b2-b5c8-ac5b4c96a6f6.executor&quot;: &quot;Debug&quot;,
-    &quot;ea61b83f-6d9b-409e-8e9e-6b0fdd58b875.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.asp_interpreter_exe.executor": "Debug",
+    ".NET Project.asp_interpreter_exe.executor": "Debug",
+    "2c241dbb-8852-45d0-a65e-c36107ad94e8.executor": "Debug",
+    "81d340e1-43c4-41f9-b550-4d618793a8c2.executor": "Debug",
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "aadd37ac-83d9-421d-80be-890da7df604c.executor": "Debug",
+    "ba91a5d0-6c99-41b2-b5c8-ac5b4c96a6f6.executor": "Debug",
+    "ea61b83f-6d9b-409e-8e9e-6b0fdd58b875.executor": "Debug",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\micha\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\micha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\micha\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Project.asp_interpreter_exe">
     <configuration name="asp_interpreter_exe: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/asp_interpreter_exe/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="-8308708857670188800" uuid_low="-8333207306001444164" />
@@ -254,6 +241,7 @@
       <workItem from="1715965308852" duration="283000" />
       <workItem from="1716319945659" duration="103000" />
       <workItem from="1716320176066" duration="28000" />
+      <workItem from="1716322020368" duration="251000" />
     </task>
     <task id="LOCAL-00011" summary="#36 - Non Variable Terms are also part of generation, also changed tests to cover those cases.">
       <option name="closed" value="true" />

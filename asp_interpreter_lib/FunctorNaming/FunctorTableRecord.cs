@@ -1,4 +1,4 @@
-﻿namespace asp_interpreter_lib.FunctorNaming;
+﻿namespace Asp_interpreter_lib.FunctorNaming;
 
 public record FunctorTableRecord
 {

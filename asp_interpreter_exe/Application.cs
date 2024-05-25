@@ -1,28 +1,28 @@
 ﻿using Antlr4.Runtime;
-using asp_interpreter_lib.FunctorNaming;
-using asp_interpreter_lib.InternalProgramClasses.Database;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using asp_interpreter_lib.Preprocessing.OLONDetection;
-using asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Solving.DualRules;
-using asp_interpreter_lib.Solving.NMRCheck;
-using asp_interpreter_lib.Types;
-using asp_interpreter_lib.Types.TypeVisitors;
-using asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.Util.ErrorHandling.Either;
-using asp_interpreter_lib.Visitors;
+using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.Database;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.Preprocessing.OLONDetection;
+using Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Util.ErrorHandling.Either;
+using Asp_interpreter_lib.Visitors;
+using Asp_interpreter_lib.Preprocessing;
 using System.Diagnostics;
-using System.Net.Http.Headers;
+using Asp_interpreter_lib.Preprocessing.NMRCheck;
+using Asp_interpreter_lib.Preprocessing.DualRules;
 
-namespace asp_interpreter_lib.Util;
+namespace Asp_interpreter_exe;
 
 public class Application(
     ILogger logger,
-    ProgramVisitor programVisitor, 
+    ProgramVisitor programVisitor,
     ProgramConfig config)
 {
     private readonly ILogger _logger = logger;
@@ -60,7 +60,7 @@ public class Application(
                 return;
             }
 
-            SolveAutomatic(program);        
+            SolveAutomatic(program);
             return;
         }
 
@@ -78,7 +78,7 @@ public class Application(
             }
             if (input == "reload")
             {
-                var either= LoadProgram();
+                var either = LoadProgram();
                 if (!either.IsRight)
                 {
                     _logger.LogError(either.GetLeftOrThrow());
@@ -103,7 +103,7 @@ public class Application(
     {
         var code = FileReader.ReadFile(_config.Path);
 
-        if(!code.IsRight)
+        if (!code.IsRight)
         {
             _logger.LogError(code.GetLeftOrThrow());
             return;
@@ -120,26 +120,29 @@ public class Application(
 
     private IEither<string, AspProgram> LoadProgram()
     {
-        //Read
+        // Read
         var code = FileReader.ReadFile(_config.Path);
 
-        if (!code.IsRight) 
+        if (!code.IsRight)
         {
             return new Left<string, AspProgram>(code.GetLeftOrThrow());
         }
 
-        //Program
+        // Program
         var program = GetProgram(code.GetRightOrThrow());
 
-        //Dual
+        // Dual
         var dualGenerator = new DualRuleConverter(_prefixes, _logger);
         var dual = dualGenerator.GetDualRules(program.Duplicate().Statements, "_");
 
-        //OLON
+        // OLON
         List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
 
-        //NMR 
+        // NMR 
         var nmrChecker = new NmrChecker(_prefixes, _logger);
+        var constraints = nmrChecker.GetConstraintRules(program);
+        olonRules.AddRange(constraints);
+
         var subcheck = nmrChecker.GetSubCheckRules(olonRules.Duplicate());
 
         return new Right<string, AspProgram>(new AspProgram(
@@ -187,7 +190,7 @@ public class Application(
         {
             Console.WriteLine(sw.Elapsed.ToString());
             PrintSolution(solution);
-        }    
+        }
     }
 
     private void InteractiveSolve(List<Statement> rules, List<Goal> query)
@@ -249,5 +252,5 @@ public class Application(
         }
 
         return program.GetValueOrThrow();
-    } 
+    }
 }

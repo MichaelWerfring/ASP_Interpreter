@@ -1,10 +1,10 @@
-﻿using asp_interpreter_lib;
-using asp_interpreter_lib.Solving;
-using asp_interpreter_lib.Solving.NMRCheck;
-using asp_interpreter_lib.Util;
-using asp_interpreter_lib.Util.ErrorHandling;
+﻿using Asp_interpreter_lib;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Preprocessing;
+using Asp_interpreter_lib.Preprocessing.NMRCheck;
 
-namespace asp_interpreter_test;
+namespace Asp_interpreter_test;
 
 public class NmrCheckerTest
 {

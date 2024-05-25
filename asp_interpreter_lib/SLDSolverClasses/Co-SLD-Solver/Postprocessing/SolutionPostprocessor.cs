@@ -1,8 +1,8 @@
-﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
+﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 
-namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
 
 internal class SolutionPostprocessor
 {

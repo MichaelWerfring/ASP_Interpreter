@@ -1,16 +1,16 @@
-﻿using asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using asp_interpreter_lib.Util.ErrorHandling.Either;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.Util.ErrorHandling.Either;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using System.Collections.Immutable;
-using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using asp_interpreter_lib.Util.ErrorHandling;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
-using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
 
-namespace asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
+namespace Asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
 /// <summary>
 /// An instance-based disunification algorithm,
