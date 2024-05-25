@@ -1,39 +1,36 @@
-﻿using Asp_interpreter_lib.Util.ErrorHandling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Asp_interpreter_lib.Util
+﻿namespace Asp_interpreter_lib.Util
 {
-    public class CommandLineParser(Dictionary<string, Func<int, ProgramConfig, string[], ProgramConfig>> actions)
+    public class CommandLineParser
     {
-        //Function should take current position in args, current program config and args and return updated config
-        private Dictionary<string, Func<int, ProgramConfig, string[], ProgramConfig>> _actions = actions ??
-            throw new ArgumentNullException(nameof(actions),"The given argument must not be null!");
+        public CommandLineParser(Dictionary<string, Func<int, ProgramConfig, string[], ProgramConfig>> actions)
+        {
+            // Function should take current position in args, current program config and args and return updated config
+            this.actions = actions ??
+                throw new ArgumentNullException(nameof(actions), "The given argument must not be null!");
+        }
+
+        private Dictionary<string, Func<int, ProgramConfig, string[], ProgramConfig>> actions;
 
         public ProgramConfig Parse(string[] args)
         {
+            ArgumentNullException.ThrowIfNull(args);
+
             ProgramConfig config = new();
             for (int i = 0; i < args.Length; i++)
             {
                 var arg = args[i];
 
                 Func<int, ProgramConfig, string[], ProgramConfig> action;
-                if (!_actions.TryGetValue(arg, out action))
+                if (!this.actions.TryGetValue(arg, out action))
                 {
-                    //just skip unknown for simplicity
+                    // just skip unknown for simplicity
                     continue;
                 }
-                
+
                 action.Invoke(i,config, args);
             }
 
             return config;
         }
-
-        
     }
 }

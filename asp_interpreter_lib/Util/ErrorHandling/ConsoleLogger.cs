@@ -1,98 +1,121 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using Antlr4.Runtime;
-using Microsoft.Extensions.Logging;
-
-namespace Asp_interpreter_lib.Util.ErrorHandling;
-
-public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogger
+﻿namespace Asp_interpreter_lib.Util.ErrorHandling
 {
-    public void LogTrace(string message)
-    {
-        ArgumentNullException.ThrowIfNull(message, nameof(message));
+    using Antlr4.Runtime;
 
-        if (logLevel <= LogLevel.Trace)
+    public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogger
+    {
+        public void LogTrace(string message)
         {
-            if (logTimestamp) LogTimestamp();
-            
+            ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+            if (logLevel > LogLevel.Trace)
+            {
+                return;
+            }
+
+            if (logTimestamp)
+            {
+                LogTimestamp();
+            }
+
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write($"Trace: ");
             Console.ResetColor();
             Console.WriteLine(message);
         }
-    }
-    
-    public void LogDebug(string message)
-    {
-        ArgumentNullException.ThrowIfNull(message, nameof(message));
-        
-        if (logLevel <= LogLevel.Debug)
+
+        public void LogDebug(string message)
         {
-            if (logTimestamp) LogTimestamp();
-            
+            ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+            if (logLevel > LogLevel.Debug)
+            {
+                return;
+            }
+
+            if (logTimestamp)
+            {
+                LogTimestamp();
+            }
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write($"Debug: ");
             Console.ResetColor();
             Console.WriteLine(message);
         }
-    }
 
-    public void LogInfo(string message)
-    {
-        ArgumentNullException.ThrowIfNull(message, nameof(message));
-
-        if (logLevel <= LogLevel.Info)
+        public void LogInfo(string message)
         {
-            if (logTimestamp) LogTimestamp();
-            
+            ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+            if (logLevel > LogLevel.Info)
+            {
+                return;
+            }
+
+            if (logTimestamp)
+            {
+                LogTimestamp();
+            }
+
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write($"Info: ");
             Console.ResetColor();
             Console.WriteLine(message);
         }
-    }
 
-    public void LogError(string message)
-    {
-        ArgumentNullException.ThrowIfNull(message, nameof(message));
-
-        if (logLevel <= LogLevel.Error)
+        public void LogError(string message)
         {
-            if (logTimestamp) LogTimestamp();
-            
+            ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+            if (logLevel > LogLevel.Error)
+            {
+                return;
+            }
+
+            if (logTimestamp)
+            {
+                LogTimestamp();
+            }
+
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write($"Error: ");
             Console.ResetColor();
             Console.WriteLine(message);
         }
-    }
 
-    public void LogError(string message, ParserRuleContext context)
-    {
-        ArgumentNullException.ThrowIfNull(message, nameof(message));
-        ArgumentNullException.ThrowIfNull(context);
-              
-        if (logLevel <= LogLevel.Error)
+        public void LogError(string message, ParserRuleContext context)
         {
-            if (logTimestamp) LogTimestamp();
-            
+            ArgumentNullException.ThrowIfNull(message, nameof(message));
+            ArgumentNullException.ThrowIfNull(context);
+
+            if (logLevel > LogLevel.Error)
+            {
+                return;
+            }
+
+            if (logTimestamp)
+            {
+                LogTimestamp();
+            }
+
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write($"Error: ");
             Console.ResetColor();
             Console.WriteLine($"{message} at line {context.Start.Line} column {context.Start.Column}");
         }
-    }
 
-    public ILogger GetDummy()
-    {
-        return new ConsoleLogger(LogLevel.None);
-    }
-    
-    private static void LogTimestamp()
-    {
-        Console.Write(DateTime.Now.Hour + ":" +
-                      DateTime.Now.Minute + ":" +
-                      DateTime.Now.Second + " " +
-                      DateTime.Now.Millisecond + "ms ");
+        public ILogger GetDummy()
+        {
+            return new ConsoleLogger(LogLevel.None);
+        }
+
+        private static void LogTimestamp()
+        {
+            Console.Write(DateTime.Now.Hour + ":" +
+                          DateTime.Now.Minute + ":" +
+                          DateTime.Now.Second + " " +
+                          DateTime.Now.Millisecond + "ms ");
+        }
     }
 }

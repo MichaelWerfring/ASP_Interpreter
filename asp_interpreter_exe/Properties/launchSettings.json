@@ -2,7 +2,7 @@
   "profiles": {
     "asp_interpreter_exe": {
       "commandName": "Project",
-      "commandLineArgs": "-p C:\\Users\\micha\\Desktop\\graph.asp -l 3 --interactive"
+      "commandLineArgs": "-p C:\\Users\\micha\\Desktop\\prelude.asp -l 3 --interactive"
     }
   }
 }

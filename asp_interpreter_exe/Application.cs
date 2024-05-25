@@ -36,7 +36,7 @@ public class Application(
 
     public void Run()
     {
-        if (_config.Explain)
+        if (_config.DisplayExplanation)
         {
             ExplainProgram();
             return;
@@ -53,7 +53,7 @@ public class Application(
         var program = eitherProgram.GetRightOrThrow();
 
         //Interactive if needed else just solve
-        if (!_config.Interactive)
+        if (!_config.RunInteractive)
         {
             if (!program.Query.HasValue)
             {
@@ -102,7 +102,7 @@ public class Application(
 
     private void ExplainProgram()
     {
-        var code = FileReader.ReadFile(_config.Path);
+        var code = FileReader.ReadFile(_config.FilePath);
 
         if (!code.IsRight)
         {
@@ -122,7 +122,7 @@ public class Application(
     private IEither<string, AspProgram> LoadProgram()
     {
         // Read
-        var code = FileReader.ReadFile(_config.Path);
+        var code = FileReader.ReadFile(_config.FilePath);
 
         if (!code.IsRight)
         {
