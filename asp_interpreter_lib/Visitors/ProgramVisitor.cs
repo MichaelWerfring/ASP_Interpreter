@@ -10,7 +10,7 @@ namespace Asp_interpreter_lib.Visitors
         public ProgramVisitor(ILogger logger)
         {
             this.logger = logger ??
-            throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+                throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
         }
 
         public override IOption<AspProgram> VisitProgram(ASPParser.ProgramContext context)

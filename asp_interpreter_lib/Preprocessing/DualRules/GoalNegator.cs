@@ -1,33 +1,40 @@
-﻿using Antlr4.Runtime.Atn;
-using Asp_interpreter_lib.Types;
-using Asp_interpreter_lib.Types.BinaryOperations;
-using Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Types.TypeVisitors;
-using Asp_interpreter_lib.Types.TypeVisitors.Copy;
-
-namespace Asp_interpreter_lib.Preprocessing.DualRules;
-
-public class GoalNegator
+﻿namespace Asp_interpreter_lib.Preprocessing.DualRules
 {
-    private static GoalToBinaryOperationConverter _binOpConverter = new();
+    using Asp_interpreter_lib.Types;
+    using Asp_interpreter_lib.Types.BinaryOperations;
+    using Asp_interpreter_lib.Types.Terms;
+    using Asp_interpreter_lib.Types.TypeVisitors;
+    using Asp_interpreter_lib.Types.TypeVisitors.Copy;
 
-    private static GoalToLiteralConverter _literalConverter = new();
-
-    private static BinaryOperatorNegator _binaryOperatorNegator = new();
-
-    private static TermCopyVisitor _termCopyVisitor = new();
-
-    public static Goal Negate(Goal goal, bool wrapInNot = false)
+    public class GoalNegator
     {
-        var literal = goal.Accept(_literalConverter);
-
-        if (literal.HasValue)
+        public static Goal Negate(Goal goal, bool wrapInNot = false)
         {
+            ArgumentNullException.ThrowIfNull(goal);
+
+            var literal = goal.Accept(new GoalToLiteralConverter());
+
+            if (!literal.HasValue)
+            {
+                //Convert goal to binary operation
+                var binaryOperation = goal.Accept(new GoalToBinaryOperationConverter())
+                    .GetValueOrThrow("The value must be either a literal or a binary operation!");
+
+                //Create new Binary Operation and negate just the operator
+                var newBinaryOperation = new BinaryOperation(
+                    binaryOperation.Left,
+                    binaryOperation.BinaryOperator.Accept(new BinaryOperatorNegator()).
+                        GetValueOrThrow("Failed to negate binary operator!"),
+                    binaryOperation.Right);
+
+                return newBinaryOperation;
+            }
+
             var actualLiteral = literal.GetValueOrThrow();
 
             //Copy the terms
             var terms =
-                actualLiteral.Terms.Select(t => t.Accept(_termCopyVisitor).
+                actualLiteral.Terms.Select(t => t.Accept(new TermCopyVisitor()).
                     GetValueOrThrow("Failed to parse term!")).ToList();
 
             if (!wrapInNot)
@@ -50,21 +57,9 @@ public class GoalNegator
 
             return new Literal("not", false, false,
                 [new BasicTerm(
-                    (actualLiteral.HasStrongNegation ? "-" : "") + actualLiteral.Identifier.ToString(),
+                    (actualLiteral.HasStrongNegation ? "-" : "")
+                    + actualLiteral.Identifier.ToString(),
                     actualLiteral.Terms)]);
         }
-
-        //Convert goal to binary operation
-        var binaryOperation = goal.Accept(_binOpConverter)
-            .GetValueOrThrow("The value must be either a literal or a binary operation!");
-
-        //Create new Binary Operation and negate just the operator
-        var newBinaryOperation = new BinaryOperation(
-            binaryOperation.Left,
-            binaryOperation.BinaryOperator.Accept(_binaryOperatorNegator).
-                GetValueOrThrow("Failed to negate binary operator!"),
-            binaryOperation.Right);
-
-        return newBinaryOperation;
     }
 }

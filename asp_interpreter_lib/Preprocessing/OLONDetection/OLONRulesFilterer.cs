@@ -1,67 +1,71 @@
-﻿using Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
-using Asp_interpreter_lib.Types;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Asp_interpreter_lib.Preprocessing.OLONDetection;
-
-public class OLONRulesFilterer(ILogger logger)
+﻿namespace Asp_interpreter_lib.Preprocessing.OLONDetection
 {
-    private readonly ILogger _logger = logger ??
-        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+    using Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
+    using Asp_interpreter_lib.Types;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
-    private readonly CallGraphBuilder _callGraphBuilder = new CallGraphBuilder();
-
-    private readonly CallGraphCycleFinder _cycleFinder = new CallGraphCycleFinder(logger);
-    
-    public List<Statement> FilterOlonRules(List<Statement> rules)
+    public class OLONRulesFilterer
     {
-        ArgumentNullException.ThrowIfNull(rules, nameof(rules));
-        _logger.LogInfo("Filtering OLON rules...");
+        private readonly ILogger logger;
 
-        List<Statement> filteredStatements = new List<Statement>();
+        private readonly CallGraphBuilder callGraphBuilder;
 
-        // add all rules without a head.
-        foreach (var rule in rules)
+        private readonly CallGraphCycleFinder cycleFinder;
+
+        public OLONRulesFilterer(ILogger logger)
         {
-            if (!rule.HasHead)
-            {
-                filteredStatements.Add(rule);
-            }
+            ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+            this.logger = logger;
+            this.callGraphBuilder = new CallGraphBuilder();
+            this.cycleFinder = new CallGraphCycleFinder(logger);
         }
 
-        var callGraph = _callGraphBuilder.BuildCallGraph(rules);
-        var statementToCyclesMapping = _cycleFinder.FindAllCycles(callGraph);
-
-        // add statement if it any of its cycles are OLON.
-        foreach (var mapping in statementToCyclesMapping)
+        public List<Statement> FilterOlonRules(List<Statement> rules)
         {
-            if (mapping.Value.Any((cycle) => CountNegations(cycle) % 2 != 0))
+            ArgumentNullException.ThrowIfNull(rules, nameof(rules));
+            logger.LogInfo("Filtering OLON rules...");
+
+            List<Statement> filteredStatements = new List<Statement>();
+
+            // add all rules without a head.
+            foreach (var rule in rules)
             {
-                filteredStatements.Add(mapping.Key);
+                if (!rule.HasHead)
+                {
+                    filteredStatements.Add(rule);
+                }
             }
+
+            var callGraph = callGraphBuilder.BuildCallGraph(rules);
+            var statementToCyclesMapping = cycleFinder.FindAllCycles(callGraph);
+
+            // add statement if it any of its cycles are OLON.
+            foreach (var mapping in statementToCyclesMapping)
+            {
+                if (mapping.Value.Any((cycle) => CountNegations(cycle) % 2 != 0))
+                {
+                    filteredStatements.Add(mapping.Key);
+                }
+            }
+
+            filteredStatements.ForEach(s => logger.LogDebug(s.ToString()));
+            return filteredStatements;
         }
 
-        filteredStatements.ForEach(s => _logger.LogDebug(s.ToString()));
-        return filteredStatements;
+        private int CountNegations(List<CallGraphEdge> cycle)
+        {
+            int count = 0;
+
+            foreach (var edge in cycle)
+            {
+                if (edge.TransitionLiteral.HasNafNegation)
+                {
+                    count += 1;
+                }
+            }
+
+            return count;
+        }
     }
 
-    private int CountNegations(List<CallGraphEdge> cycle)
-    {
-        int count = 0;
-
-        foreach (var edge in cycle)
-        {
-            if (edge.TransitionLiteral.HasNafNegation)
-            {
-                count += 1;
-            }
-        }
-
-        return count;
-    }
 }

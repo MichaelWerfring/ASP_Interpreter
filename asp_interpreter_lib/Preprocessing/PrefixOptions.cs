@@ -1,19 +1,35 @@
-﻿namespace Asp_interpreter_lib.Preprocessing;
-
-public class PrefixOptions(
-    string forallPrefix,
-    string emptyHeadPrefix,
-    string checkPrefix,
-    string dualPrefix,
-    string variablePrefix)
+﻿namespace Asp_interpreter_lib.Preprocessing
 {
-    public string ForallPrefix { get; } = forallPrefix;
+    public class PrefixOptions
+    {
+        public PrefixOptions(
+            string forallPrefix,
+            string emptyHeadPrefix,
+            string checkPrefix,
+            string dualPrefix,
+            string variablePrefix)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(forallPrefix, nameof(forallPrefix));
+            ArgumentException.ThrowIfNullOrEmpty(emptyHeadPrefix, nameof(emptyHeadPrefix));
+            ArgumentException.ThrowIfNullOrEmpty(checkPrefix, nameof(checkPrefix));
+            ArgumentException.ThrowIfNullOrEmpty(dualPrefix, nameof(dualPrefix));
+            ArgumentException.ThrowIfNullOrEmpty(variablePrefix, nameof(variablePrefix));
 
-    public string EmptyHeadPrefix { get; } = emptyHeadPrefix;
+            this.ForallPrefix = forallPrefix;
+            this.EmptyHeadPrefix = emptyHeadPrefix;
+            this.CheckPrefix = checkPrefix;
+            this.DualPrefix = dualPrefix;
+            this.VariablePrefix = variablePrefix;
+        }
 
-    public string CheckPrefix { get; } = checkPrefix;
+        public string ForallPrefix { get; }
 
-    public string DualPrefix { get; } = dualPrefix;
+        public string EmptyHeadPrefix { get; }
 
-    public string VariablePrefix { get; } = variablePrefix;
+        public string CheckPrefix { get; }
+
+        public string DualPrefix { get; }
+
+        public string VariablePrefix { get; }
+    }
 }

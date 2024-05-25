@@ -15,15 +15,15 @@ namespace Asp_interpreter_lib.Preprocessing.DualRules;
 
 public class DualRuleConverter
 {
-    private readonly VariableFinder _variableFinder;
+    private readonly VariableFinder variableFinder;
 
-    private readonly PrefixOptions _options;
+    private readonly PrefixOptions options;
 
-    private readonly AnonymousVariableReplacer _replacer;
+    private readonly AnonymousVariableReplacer replacer;
 
-    private readonly ILogger _logger;
+    private readonly ILogger logger;
 
-    private readonly bool _wrapInNot;
+    private readonly bool wrapInNot;
 
     public DualRuleConverter(
         PrefixOptions options,
@@ -32,45 +32,56 @@ public class DualRuleConverter
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _options = options;
-        _logger = logger;
-        _wrapInNot = wrapInNot;
-        _replacer = new AnonymousVariableReplacer(options);
-        _variableFinder = new VariableFinder();
+        this.options = options;
+        this.logger = logger;
+        this.wrapInNot = wrapInNot;
+        this.replacer = new AnonymousVariableReplacer(options);
+        this.variableFinder = new VariableFinder();
     }
 
-    public AnonymousVariableReplacer Replacer { get { return _replacer; } }
+    public AnonymousVariableReplacer Replacer
+    {
+        get
+        {
+            return this.replacer;
+        }
+    }
 
     public Statement ComputeHead(Statement rule)
     {
-        string oldRule = rule.ToString();
-        HeadAtomEliminator rewriter = new(_options, rule);
+        ArgumentNullException.ThrowIfNull(rule);
+
+        HeadAtomEliminator rewriter = new(this.options, rule);
         var statement = rewriter.Rewrite(rule);
-        _logger.LogTrace("Rewrite head from: " + oldRule + " to: " + statement.ToString());
+
+        this.logger.LogTrace("Rewrite head from: " + rule.ToString() + " to: " + statement.ToString());
         return statement;
     }
 
     public List<Statement> GetDualRules(IEnumerable<Statement> rules, string prefix = "")
     {
-        _logger.LogInfo("Generating dual rules...");
+        ArgumentNullException.ThrowIfNull(rules);
+        ArgumentNullException.ThrowIfNull(prefix);
+
+        this.logger.LogInfo("Generating dual rules...");
 
         List<Statement> duals = [];
 
         var statements = rules.ToList();
-        var withoutAnonymous = statements.Select(_replacer.Replace);
+        var withoutAnonymous = statements.Select(replacer.Replace);
 
-        var headComputed = withoutAnonymous.Select(ComputeHead).ToList();
-        var t = GetGoalsOnlyAppearingInBody(headComputed);
-        var disjunctions = PreprocessRules(headComputed);
+        var headComputed = withoutAnonymous.Select(this.ComputeHead).ToList();
+        var t = this.GetGoalsOnlyAppearingInBody(headComputed);
+        var disjunctions = this.PreprocessRules(headComputed);
         foreach (var disjunction in disjunctions)
         {
-            duals.AddRange(ToConjunction(disjunction, prefix));
+            duals.AddRange(this.ToConjunction(disjunction, prefix));
         }
 
         duals.AddRange(t);
 
-        _logger.LogDebug("The dual rules for program: ");
-        duals.ForEach(d => _logger.LogDebug(d.ToString()));
+        this.logger.LogDebug("The dual rules for program: ");
+        duals.ForEach(d => this.logger.LogDebug(d.ToString()));
 
         return duals;
     }
@@ -78,6 +89,7 @@ public class DualRuleConverter
     public IEnumerable<Statement> ToDisjunction(Statement rule, string prefix = "")
     {
         ArgumentNullException.ThrowIfNull(rule);
+        ArgumentNullException.ThrowIfNull(prefix);
 
         if (!rule.HasHead)
         {
@@ -87,12 +99,12 @@ public class DualRuleConverter
         List<Statement> duals = [];
         var head = rule.Head.GetValueOrThrow();
 
-        //If it is a fact, just add the prefix
+        // If it is a fact, just add the prefix
         if (!rule.HasBody)
         {
             Literal newHead;
 
-            if (_wrapInNot)
+            if (this.wrapInNot)
             {
                 newHead = WrapInNot(head);
             }
@@ -118,17 +130,16 @@ public class DualRuleConverter
         {
             if (forallApplicable)
             {
-                duals.AddRange(AddForall(rule, prefix));
+                duals.AddRange(this.AddForall(rule, prefix));
                 continue;
             }
 
             var goal = rule.Body[i];
-            var dualGoal = GoalNegator.Negate(goal, _wrapInNot);
+            var dualGoal = GoalNegator.Negate(goal, this.wrapInNot);
 
             Literal newHead;
-            if (_wrapInNot)
+            if (this.wrapInNot)
             {
-                //newHead = WrapInNot(head);
                 newHead = WrapInNot(new Literal(
                     prefix + head.Identifier,
                     true,
@@ -146,8 +157,8 @@ public class DualRuleConverter
 
             var body = new List<Goal>();
 
-            //Add preceding
-            if (_wrapInNot)
+            // Add preceding goals
+            if (this.wrapInNot)
             {
                 body = rule.Body[0..i].Select(WrapInNot).ToList();
             }
@@ -158,7 +169,7 @@ public class DualRuleConverter
 
             body.Add(dualGoal);
 
-            //Add new statement to duals
+            // Add new statement to duals
             var dualStatement = new Statement();
             dualStatement.AddHead(newHead);
             dualStatement.AddBody(body);
@@ -171,8 +182,9 @@ public class DualRuleConverter
 
     private static Goal WrapInNot(Goal goal)
     {
-        GoalToLiteralConverter literalConverter = new GoalToLiteralConverter();
-        var literal = goal.Accept(literalConverter);
+        ArgumentNullException.ThrowIfNull(goal);
+
+        var literal = goal.Accept(new GoalToLiteralConverter());
 
         if (!literal.HasValue)
         {
@@ -203,26 +215,27 @@ public class DualRuleConverter
     public IEnumerable<Statement> AddForall(Statement rule, string prefix = "")
     {
         ArgumentNullException.ThrowIfNull(rule);
+        ArgumentNullException.ThrowIfNull(prefix);
 
-        var bodyVariables = GetBodyVariables(rule);
+        var bodyVariables = this.GetBodyVariables(rule);
 
-        //Headless statements are treated by the NMR Check
+        // Headless statements are treated by the NMR Check
         if (!rule.HasHead || bodyVariables.Count == 0)
         {
             return [rule];
         }
 
-        //Copy the statement before
+        // Copy the statement before
         var ruleCopy = rule.Accept(new StatementCopyVisitor()).GetValueOrThrow("Cannot copy rule!");
         var ruleCopyHead = ruleCopy.Head.GetValueOrThrow("Cannot retrieve head from copy!");
 
         // get all variables from body
-        var variables = ruleCopy.Accept(_variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
+        var variables = ruleCopy.Accept(this.variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
             .DistinctBy(v => v.Identifier);
 
         // put all variables form body into head
         ruleCopyHead.Terms = [];
-        ruleCopyHead.Identifier = _options.ForallPrefix + ruleCopyHead.Identifier;
+        ruleCopyHead.Identifier = this.options.ForallPrefix + ruleCopyHead.Identifier;
 
         foreach (var variable in variables)
         {
@@ -230,12 +243,12 @@ public class DualRuleConverter
         }
 
         // generate duals normally
-        var duals = ToDisjunction(ruleCopy, prefix).ToList();
+        var duals = this.ToDisjunction(ruleCopy, prefix).ToList();
 
         // add forall over the new predicate
         var innerGoal = duals.First().Head.GetValueOrThrow();
 
-        //append body with (nested) forall
+        // append body with (nested) forall
         rule.Body.Clear();
         rule.Body.AddRange([NestForall([.. bodyVariables], innerGoal)]);
 
@@ -243,7 +256,7 @@ public class DualRuleConverter
         var head = rule.Head.GetValueOrThrow();
         head.Identifier = prefix + head.Identifier;
 
-        if (_wrapInNot)
+        if (this.wrapInNot)
         {
             rule.Head = new Some<Literal>(WrapInNot(head));
         }
@@ -259,44 +272,48 @@ public class DualRuleConverter
 
     public static Goal NestForall(List<string> bodyVariables, Literal innerGoal)
     {
+        ArgumentNullException.ThrowIfNull(bodyVariables);
+        ArgumentNullException.ThrowIfNull(innerGoal);
+
         if (bodyVariables.Count == 0)
         {
             return innerGoal;
         }
 
-        string v = bodyVariables[0];
+        string variable = bodyVariables[0];
         bodyVariables.RemoveAt(0);
 
         var result = NestForall(bodyVariables, innerGoal);
 
-        return new Forall(new VariableTerm(v), result);
+        return new Forall(new VariableTerm(variable), result);
     }
 
     public IEnumerable<Statement> ToConjunction(
         KeyValuePair<(string, int, bool), List<Statement>> disjunction, string prefix = "")
     {
+        ArgumentNullException.ThrowIfNull(disjunction);
+        ArgumentNullException.ThrowIfNull(prefix);
+
         List<Statement> duals = [];
 
         // 1) generate new rule at top (named like input)
         Statement wrapper = new();
 
-        if (_wrapInNot)
+        if (this.wrapInNot)
         {
             wrapper.AddHead(WrapInNot(new Literal(
-                //prefix + disjunction.Key.Item1,
                 disjunction.Key.Item1,
                 false,
                 disjunction.Key.Item3,
-                AspExtensions.GenerateVariables(disjunction.Key.Item2, _options.VariablePrefix))));
+                AspExtensions.GenerateVariables(disjunction.Key.Item2, this.options.VariablePrefix))));
         }
         else
         {
             wrapper.AddHead(new Literal(
-                //prefix + disjunction.Key.Item1,
                 disjunction.Key.Item1,
                 true,
                 disjunction.Key.Item3,
-                AspExtensions.GenerateVariables(disjunction.Key.Item2, _options.VariablePrefix)
+                AspExtensions.GenerateVariables(disjunction.Key.Item2,this.options.VariablePrefix)
             ));
         }
 
@@ -316,11 +333,11 @@ public class DualRuleConverter
                 .GetValueOrThrow("Cannot copy rule!");
 
             copy.Terms.Clear();
-            copy.Terms.AddRange(AspExtensions.GenerateVariables(disjunction.Key.Item2, _options.VariablePrefix));
+            copy.Terms.AddRange(AspExtensions.GenerateVariables(disjunction.Key.Item2, this.options.VariablePrefix));
 
             copy.Identifier = prefix + copy.Identifier;
 
-            if (_wrapInNot)
+            if (wrapInNot)
             {
                 copy = WrapInNot(copy);
             }
@@ -335,7 +352,9 @@ public class DualRuleConverter
             // 5) add duals to list
             // If the goal is an atom we do not want its duals
             if (goal.HasBody)
-                duals.AddRange(ToDisjunction(goal, prefix));
+            {
+                duals.AddRange(this.ToDisjunction(goal, prefix));
+            }
         }
 
         wrapper.AddBody(wrapperBody);
@@ -347,38 +366,45 @@ public class DualRuleConverter
     public Dictionary<(string, int, bool), List<Statement>> PreprocessRules(IEnumerable<Statement> rules)
     {
         ArgumentNullException.ThrowIfNull(rules);
-        //heads mapped to all bodies occurring in the program
+
+        // heads mapped to all bodies occurring in the program
         Dictionary<(string, int, bool), List<Statement>> disjunctions = [];
-        _logger.LogTrace("Started preprocessing for dual rules.");
+        this.logger.LogTrace("Started preprocessing for dual rules.");
 
         foreach (var rule in rules)
         {
-            //Headless rules will be treated within nmr check
-            if (!rule.HasHead) continue;
+            // Headless rules will be treated within nmr check
+            if (!rule.HasHead)
+            {
+                continue;
+            }
+
             var head = rule.Head.GetValueOrThrow("Headless rules must be treated by the NMR check!");
 
             var signature = (head.Identifier, head.Terms.Count, head.HasStrongNegation);
 
-            var converted = ComputeHead(rule);
+            var converted = this.ComputeHead(rule);
 
             if (!disjunctions.TryAdd(signature, [converted]))
             {
                 disjunctions[signature].Add(converted);
-                _logger.LogTrace("Disjunction found: " +
+                this.logger.LogTrace("Disjunction found: " +
                                  signature.HasStrongNegation +
                                  signature.Identifier + "/" + signature.Count);
             }
         }
 
-        _logger.LogTrace("Finished preprocessing for dual rules.");
+        logger.LogTrace("Finished preprocessing for dual rules.");
         return disjunctions;
     }
 
     private IEnumerable<Statement> GetGoalsOnlyAppearingInBody(List<Statement> rules, bool appendPrefix = true)
     {
+        ArgumentNullException.ThrowIfNull(rules);
+
         HashSet<(string, int, bool)> heads = [];
 
-        //First find all heads
+        // First find all heads
         foreach (var rule in rules)
         {
             rule.Head.IfHasValue(h => heads.Add(
@@ -396,15 +422,22 @@ public class DualRuleConverter
             foreach (var goal in rule.Body)
             {
                 var literal = goal.Accept(literalVisitor);
-                if (!literal.HasValue) continue;
+                if (!literal.HasValue)
+                {
+                    continue;
+                }
 
                 var actual = literal.GetValueOrThrow();
-                if (heads.Contains(
-                        (actual.Identifier, actual.Terms.Count, actual.HasStrongNegation))) continue;
+
+                // Already found it
+                if (heads.Contains((actual.Identifier, actual.Terms.Count, actual.HasStrongNegation)))
+                {
+                    continue;
+                }
 
                 Statement newStatement = new();
 
-                if (_wrapInNot)
+                if (this.wrapInNot)
                 {
                     newStatement.AddHead(WrapInNot(actual));
                 }
@@ -427,12 +460,14 @@ public class DualRuleConverter
 
     private List<string> GetBodyVariables(Statement rule)
     {
+        ArgumentNullException.ThrowIfNull(rule);
+
         if (!rule.HasHead && rule.HasBody)
         {
             List<string> variables = [];
             foreach (var goal in rule.Body)
             {
-                variables.AddRange(goal.Accept(_variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
+                variables.AddRange(goal.Accept(this.variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
                     .Select(v => v.Identifier));
             }
 
@@ -449,11 +484,11 @@ public class DualRuleConverter
             List<string> bodyVar = [];
             foreach (var goal in rule.Body)
             {
-                bodyVar.AddRange(goal.Accept(_variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
+                bodyVar.AddRange(goal.Accept(this.variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
                     .Select(v => v.Identifier));
             }
 
-            var headVar = rule.Head.GetValueOrThrow().Accept(_variableFinder)
+            var headVar = rule.Head.GetValueOrThrow().Accept(this.variableFinder)
                 .GetValueOrThrow("Cannot retrieve variables from head!").Select(v => v.Identifier);
 
             return bodyVar.Except(headVar).ToList();
