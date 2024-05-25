@@ -2,6 +2,7 @@
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
@@ -36,16 +37,10 @@ public class PredicateGoalBuilder : IGoalBuilder
         _logger = logger;
     }
 
-    public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
+    public ICoSLDGoal BuildGoal(Structure goalTerm, SolutionState state)
     {
-        ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
-
-        if (!currentState.CurrentGoals.Any())
-        {
-            throw new ArgumentException("Must contain at least one goal.",nameof(currentState)); 
-        }
-
-        Structure goalTerm = currentState.CurrentGoals.ElementAt(0);
+        ArgumentNullException.ThrowIfNull(goalTerm);
+        ArgumentNullException.ThrowIfNull(state);
 
         return new PredicateGoal
         (
@@ -53,7 +48,7 @@ public class PredicateGoalBuilder : IGoalBuilder
             _unifier,
             _solver,
             goalTerm,
-            currentState.SolutionState,
+            state,
             _stateUpdater,
             _logger
        );

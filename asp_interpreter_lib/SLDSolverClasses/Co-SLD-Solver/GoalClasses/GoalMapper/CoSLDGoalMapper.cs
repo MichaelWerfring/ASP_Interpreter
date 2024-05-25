@@ -124,9 +124,9 @@ public class CoSLDGoalMapper
 
         if (goalBuilder == null)
         {
-            return new Some<ICoSLDGoal>(_predicateGoalBuilder.BuildGoal(state));
+            return new Some<ICoSLDGoal>(_predicateGoalBuilder.BuildGoal(goalTerm, state.SolutionState));
         }
 
-        return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(state));
+        return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(goalTerm, state.SolutionState));
     }
 }

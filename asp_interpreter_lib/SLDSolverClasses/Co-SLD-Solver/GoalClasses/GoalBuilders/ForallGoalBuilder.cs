@@ -1,5 +1,6 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
@@ -20,20 +21,14 @@ public class ForallGoalBuilder : IGoalBuilder
         _maxSolutionCount = maxSolutionCount;
     }
 
-    public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
+    public ICoSLDGoal BuildGoal(Structure goalTerm, SolutionState state)
     {
-        ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
-
-        if (!currentState.CurrentGoals.Any()) 
-        {
-            throw new ArgumentException("Must contain at least one goal.", nameof(currentState)); 
-        }
-
-        Structure goalTerm = currentState.CurrentGoals.First();
+        ArgumentNullException.ThrowIfNull(goalTerm);
+        ArgumentNullException.ThrowIfNull(state);
 
         if (goalTerm.Children.Count != 2)
         {
-            throw new ArgumentException("Next goal must be a structure term with two children.", nameof(currentState)); 
+            throw new ArgumentException("Next goal must be a structure term with two children.", nameof(goalTerm)); 
         }
 
         var variableAtPositionOneMaybe = TermFuncs.ReturnVariableOrNone(goalTerm.Children[0]);
@@ -53,7 +48,7 @@ public class ForallGoalBuilder : IGoalBuilder
             _solverForForallGoal,
             variableAtPositionOneMaybe.GetValueOrThrow(),
             structureAtPositionTwoMaybe.GetValueOrThrow(),
-            currentState.SolutionState,
+            state,
             _logger,
             _maxSolutionCount
         );

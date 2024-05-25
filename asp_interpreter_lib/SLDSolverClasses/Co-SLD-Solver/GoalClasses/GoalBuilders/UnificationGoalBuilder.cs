@@ -1,4 +1,5 @@
 ﻿using asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.Unification.Constructive.Target;
 using asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using asp_interpreter_lib.Unification.Constructive.Unification;
@@ -23,27 +24,21 @@ public class UnificationGoalBuilder : IGoalBuilder
         _logger = logger;
     }
 
-    public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
+    public ICoSLDGoal BuildGoal(Structure goalTerm, SolutionState state)
     {
-        ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
-
-        if (!currentState.CurrentGoals.Any())
-        {
-            throw new ArgumentException("Must contain at least one goal!", nameof(currentState)); 
-        }
-
-        Structure goalTerm = currentState.CurrentGoals.First();
+        ArgumentNullException.ThrowIfNull(goalTerm);
+        ArgumentNullException.ThrowIfNull(state);
 
         if (goalTerm.Children.Count != 2)
         {
-            throw new ArgumentException("Must contain a structure term with two children.", nameof(currentState)); 
+            throw new ArgumentException("Must contain a structure term with two children.", nameof(goalTerm)); 
         }
 
         var targetEither = ConstructiveTargetBuilder.Build
         (
            goalTerm.Children.ElementAt(0),
            goalTerm.Children.ElementAt(1),
-           currentState.SolutionState.Mapping
+           state.Mapping
         );
 
         ConstructiveTarget target;
@@ -53,9 +48,9 @@ public class UnificationGoalBuilder : IGoalBuilder
         }
         catch
         {
-            throw new ArgumentException($"{nameof(currentState.SolutionState.Mapping)} contained term bindings : {targetEither.GetLeftOrThrow().Message}");
+            throw new ArgumentException($"{nameof(state.Mapping)} contained term bindings : {targetEither.GetLeftOrThrow().Message}");
         }
 
-        return new UnificationGoal(_stateUpdater, target, _algorithm, currentState.SolutionState, _logger);
+        return new UnificationGoal(_stateUpdater, target, _algorithm, state, _logger);
     }
 }

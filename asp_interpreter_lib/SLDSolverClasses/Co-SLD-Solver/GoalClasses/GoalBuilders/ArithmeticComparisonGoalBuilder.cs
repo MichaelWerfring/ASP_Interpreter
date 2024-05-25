@@ -4,6 +4,7 @@ using asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.Comparison;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
+using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using asp_interpreter_lib.Util.ErrorHandling;
 
 namespace asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.GoalBuilders;
@@ -25,20 +26,14 @@ internal class ArithmeticComparisonGoalBuilder : IGoalBuilder
         _logger = logger;
     }
 
-    public ICoSLDGoal BuildGoal(CoSldSolverState currentState)
+    public ICoSLDGoal BuildGoal(Structure goalTerm, SolutionState state)
     {
-        ArgumentNullException.ThrowIfNull(currentState, nameof(currentState));
-
-        if (!currentState.CurrentGoals.Any())
-        {
-            throw new ArgumentException("Must contain at least one term in current goals.", nameof(currentState)); 
-        }
-
-        Structure goalTerm = currentState.CurrentGoals.First();
+        ArgumentNullException.ThrowIfNull(goalTerm);
+        ArgumentNullException.ThrowIfNull(state);
 
         if (goalTerm.Children.Count != 2)
         {
-            throw new ArgumentException("Goal must contain a structure term with two children.", nameof(currentState)); 
+            throw new ArgumentException("Goal must contain a structure term with two children.", nameof(goalTerm)); 
         }
 
         return new ArithmeticComparisonGoal
@@ -47,7 +42,7 @@ internal class ArithmeticComparisonGoalBuilder : IGoalBuilder
             goalTerm.Children.ElementAt(0),
             goalTerm.Children.ElementAt(1),
             _predicate,
-            currentState.SolutionState,
+            state,
             _logger
         );
     }

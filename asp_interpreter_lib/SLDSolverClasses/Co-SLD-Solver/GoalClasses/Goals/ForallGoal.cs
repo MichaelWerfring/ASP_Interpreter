@@ -103,7 +103,8 @@ public class ForallGoal : ICoSLDGoal, IVariableBindingArgumentVisitor<IEnumerabl
         // get the "new version" of the variable:
         // During the initial forall execution, variable might have been renamed during unification.
         var updatedVarMapping = initialSolution.ResultMapping.Resolve(_variable, false).GetValueOrThrow();
-        var updatedVar = TermFuncs.ReturnVariableOrNone(VarMappingFunctions.ReturnTermbindingOrNone(updatedVarMapping).GetValueOrThrow().Term).GetValueOrThrow();
+        var updatedVar = TermFuncs.ReturnVariableOrNone
+            (VarMappingFunctions.ReturnTermbindingOrNone(updatedVarMapping).GetValueOrThrow().Term).GetValueOrThrow();
 
         // construct new goals where variable in goalTerm is substituted by each prohibited value of variable.
         var constraintSubstitutedGoals = binding.ProhibitedValues
@@ -123,7 +124,8 @@ public class ForallGoal : ICoSLDGoal, IVariableBindingArgumentVisitor<IEnumerabl
             (
                 initialSolution.Stack,
                 initialSolution.ResultSet,
-                initialSolution.ResultMapping,
+                initialSolution.ResultMapping
+,
                 initialSolution.NextInternalVariable
             )
         );
@@ -135,7 +137,9 @@ public class ForallGoal : ICoSLDGoal, IVariableBindingArgumentVisitor<IEnumerabl
             var newSolution = new GoalSolution
             (
                 solution.ResultSet,
-                solution.ResultMapping.SetItem(_variable, new ProhibitedValuesBinding()),
+                solution.ResultMapping
+                                    .SetItem(_variable, new ProhibitedValuesBinding()),
+
                 solution.Stack,
                 solution.NextInternalVariable
             );
