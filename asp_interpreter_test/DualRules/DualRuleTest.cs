@@ -498,7 +498,7 @@ public class DualRuleTest
             Assert.That(duals[1].ToString(), Is.EqualTo("not abs1(X, V1) :- V1 \\= X."));
             Assert.That(duals[2].ToString(), Is.EqualTo("not abs1(X, V1) :- V1 = X, X < 0."));
             Assert.That(duals[3].ToString(), Is.EqualTo("not abs2(X, Y) :- X >= 0."));
-            Assert.That(duals[4].ToString(), Is.EqualTo("not abs2(X, Y) :- X < 0, Y is not X * NegatedTerm(1)."));
+            Assert.That(duals[4].ToString(), Is.EqualTo("not abs2(X, Y) :- X < 0, Y is not X * -1."));
         });
     }
 }

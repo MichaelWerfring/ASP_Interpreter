@@ -195,9 +195,20 @@ public class DualRuleConverter
                 literal.Terms.Select(t => t.Accept(new TermCopyVisitor()).
                     GetValueOrThrow("Failed to parse term!")).ToList();
 
+        if (literal.HasStrongNegation)
+        {
+            return new Literal("not", false, false,
+               [new NegatedTerm(new BasicTerm(literal.Identifier.ToString()
+                , literal.Terms))]);
+        }
+
         return new Literal("not", false, false,
-            [new BasicTerm((literal.HasStrongNegation ? "-" : "") + literal.Identifier.ToString()
+            [new BasicTerm(literal.Identifier.ToString()
                 , literal.Terms)]);
+
+        //return new Literal("not", false, false,
+        //    [new NegatedTerm(new ParenthesizedTerm(new BasicTerm((literal.HasStrongNegation ? "-" : "") + literal.Identifier.ToString()
+        //        , literal.Terms)))]);
     }
 
     public IEnumerable<Statement> AddForall(Statement rule, string prefix = "")

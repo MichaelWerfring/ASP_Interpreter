@@ -19,7 +19,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
     private readonly PrefixOptions _options = options ??
         throw new ArgumentNullException(nameof(options), "The given argument must not be null!");
 
-    private readonly ILogger _logger = logger ??
+    private readonly ILogger logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
     private static readonly GoalToLiteralConverter _goalToLiteralConverter = new();
@@ -104,26 +104,29 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
         foreach (var statement in statements)
         {
             var head = statement.Head.GetValueOrThrow("Constraint rules must be given a head!");
-            var kv = new KeyValuePair<(string, int, bool), List<Statement>>((head.Identifier, head.Terms.Count, head.HasStrongNegation), [statement]);
+            // instead of preprocessed statements just provide one for each rule 
+            // no matter if two rules have the same id
+            var kv = new KeyValuePair<(string, int, bool), List<Statement>>(
+                (head.Identifier, head.Terms.Count, head.HasStrongNegation), [statement]);
             duals.AddRange(_converter.ToConjunction(kv));
         }
 
-        duals.ForEach(d => _logger.LogDebug(d.ToString()));
+        duals.ForEach(d => logger.LogDebug(d.ToString()));
 
         return duals;
     }
 
-    public List<Statement> GetSubCheckRules(List<Statement> olonRules, bool notAsName = true)
+    public List<Statement> GetNmrCheckRules(List<Statement> olonRules, bool notAsName = true)
     {
         ArgumentNullException.ThrowIfNull(olonRules);
 
-        _logger.LogInfo("Generating NMR check...");
+        this.logger.LogInfo("Generating NMR check...");
         if (olonRules.Count == 0)
         {
-            _logger.LogDebug("Finished generation because no OLON rules found in program.");
+            this.logger.LogDebug("Finished generation because no OLON rules found in program.");
             var emptyCheck = new Statement();
             emptyCheck.AddHead(new Literal("_nmr_check", false, false, []));
-            return [emptyCheck];
+            return [ emptyCheck ];
         }
 
         // 1) append negation of OLON Rule to its body (If not already present)
@@ -135,10 +138,10 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
 
         List<Statement> duals = [];
         // 3) assign unique head (e.g. chk0) 
-        duals = GetDualsForCheck(olonRules.ToList());
-        AddMissingPrefixes(duals, "_");
+        duals = this.GetDualsForCheck(olonRules.ToList());
+        this.AddMissingPrefixes(duals, "_");
 
-        Statement nmrCheck = GetCheckRule(tempOlonRules, notAsName);
+        Statement nmrCheck = this.GetCheckRule(tempOlonRules, notAsName);
         AddForallToCheck(nmrCheck);
 
         duals.Insert(0, nmrCheck);
@@ -207,7 +210,7 @@ public class NmrChecker(PrefixOptions options, ILogger logger)
             return olonRules;
         }
 
-        //append negation of OLON Rule to its body(If not already present)
+        // append negation of OLON rules head to its body(If not already present)
         for (int i = 0; i < olonRules.Count; i++)
         {
             Statement rule = olonRules[i];
