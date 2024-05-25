@@ -10,7 +10,7 @@ public class Is : BinaryOperator, IVisitableType
     {
         return "is";
     }
-    
+
     public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor);
