@@ -1,22 +1,37 @@
-﻿using Antlr4.Runtime.Misc;
-using Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Asp_interpreter_lib.Visitors
+﻿namespace Asp_interpreter_lib.Visitors
 {
+    using Asp_interpreter_lib.Util.ErrorHandling;
+
     internal class ExplanationVariableVisitor : ASPParserBaseVisitor<string>
     {
-        public override string VisitExp_var([NotNull] ASPParser.Exp_varContext context)
+        private readonly ILogger logger;
+
+        public ExplanationVariableVisitor(ILogger logger)
+        {
+            ArgumentNullException.ThrowIfNull(logger);
+
+            this.logger = logger;
+        }
+
+        public override string VisitExp_var(ASPParser.Exp_varContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
 
-            return context.EXP_VAR().GetText();
+            if (context.EXP_VAR() == null)
+            {
+                this.logger.LogError("Cannot parse Variable!", context);
+                return string.Empty;
+            }
+
+            string text = context.EXP_VAR().GetText();
+
+            if (string.IsNullOrEmpty(text))
+            {
+                this.logger.LogError("Cannot parse Variable!", context);
+                return string.Empty;
+            }
+
+            return text;
         }
     }
 }

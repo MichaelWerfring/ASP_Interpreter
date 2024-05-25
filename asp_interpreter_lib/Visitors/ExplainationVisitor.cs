@@ -16,12 +16,13 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Asp_interpreter_l
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _literalVisitor = literalVisitor ?? throw new ArgumentNullException(nameof(literalVisitor));
-        _variableVisitor = new ExplanationVariableVisitor();
-        _textVisitor = new ExplanationTextVisitor();
+        _variableVisitor = new ExplanationVariableVisitor(_logger);
+        _textVisitor = new ExplanationTextVisitor(_logger);
     }
 
     public override IOption<Explanation> VisitExplanation(ASPParser.ExplanationContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
         var optionLiteral = context.literal().Accept(_literalVisitor);
         if (optionLiteral == null || !optionLiteral.HasValue)
         {

@@ -1,45 +1,53 @@
-﻿using Asp_interpreter_lib.Types.BinaryOperations;
-using Asp_interpreter_lib.Util.ErrorHandling;
-
-namespace Asp_interpreter_lib.Visitors;
-
-public class BinaryOperatorVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<BinaryOperator>>
+﻿namespace Asp_interpreter_lib.Visitors
 {
-    private readonly ILogger _logger = logger ??
-        throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+    using Asp_interpreter_lib.Types.BinaryOperations;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
-    public override IOption<BinaryOperator> VisitEqualityOperation(ASPParser.EqualityOperationContext context)
+    public class BinaryOperatorVisitor(ILogger logger) : ASPParserBaseVisitor<IOption<BinaryOperator>>
     {
-        return new Some<BinaryOperator>(new Equality());
-    }
+        private readonly ILogger _logger = logger ??
+            throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
-    public override IOption<BinaryOperator> VisitDisunificationOperation(ASPParser.DisunificationOperationContext context)
-    {
-        return new Some<BinaryOperator>(new Disunification());
-    }
+        public override IOption<BinaryOperator> VisitEqualityOperation(ASPParser.EqualityOperationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            return new Some<BinaryOperator>(new Equality());
+        }
 
-    public override IOption<BinaryOperator> VisitLessOperation(ASPParser.LessOperationContext context)
-    {
-        return new Some<BinaryOperator>(new LessThan());
-    }
+        public override IOption<BinaryOperator> VisitDisunificationOperation(ASPParser.DisunificationOperationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            return new Some<BinaryOperator>(new Disunification());
+        }
 
-    public override IOption<BinaryOperator> VisitGreaterOperation(ASPParser.GreaterOperationContext context)
-    {
-        return new Some<BinaryOperator>(new GreaterThan());
-    }
+        public override IOption<BinaryOperator> VisitLessOperation(ASPParser.LessOperationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            return new Some<BinaryOperator>(new LessThan());
+        }
 
-    public override IOption<BinaryOperator> VisitLessOrEqOperation(ASPParser.LessOrEqOperationContext context)
-    {
-        return new Some<BinaryOperator>(new LessOrEqualThan());
-    }
+        public override IOption<BinaryOperator> VisitGreaterOperation(ASPParser.GreaterOperationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            return new Some<BinaryOperator>(new GreaterThan());
+        }
 
-    public override IOption<BinaryOperator> VisitGreaterOrEqOperation(ASPParser.GreaterOrEqOperationContext context)
-    {
-        return new Some<BinaryOperator>(new GreaterOrEqualThan());
-    }
-    
-    public override IOption<BinaryOperator> VisitIsOperation(ASPParser.IsOperationContext context)
-    {
-        return new Some<BinaryOperator>(new Is());
+        public override IOption<BinaryOperator> VisitLessOrEqOperation(ASPParser.LessOrEqOperationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            return new Some<BinaryOperator>(new LessOrEqualThan());
+        }
+
+        public override IOption<BinaryOperator> VisitGreaterOrEqOperation(ASPParser.GreaterOrEqOperationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            return new Some<BinaryOperator>(new GreaterOrEqualThan());
+        }
+
+        public override IOption<BinaryOperator> VisitIsOperation(ASPParser.IsOperationContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            return new Some<BinaryOperator>(new Is());
+        }
     }
 }
