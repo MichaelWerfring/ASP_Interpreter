@@ -80,7 +80,7 @@ public class CoSLDGoalMapper
                 new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functorTable), logger)
             },
             {
-                (functorTable.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this), 100)
+                (functorTable.Forall, 2), new ForallGoalBuilder(logger, new GoalSolver(this), 1)
             },
             {
                 (functorTable.ArithmeticEvaluationNegated, 2),
