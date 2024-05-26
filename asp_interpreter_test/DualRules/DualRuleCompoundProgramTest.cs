@@ -112,17 +112,17 @@ namespace Asp_interpreter_test.DualRules
                 Assert.That(duals[11].ToString(), Is.EqualTo("not(flies(V1)) :- not(flies1(V1))."));
                 Assert.That(duals[12].ToString(), Is.EqualTo("not(flies1(X)) :- not(bird(X))."));
                 Assert.That(duals[13].ToString(), Is.EqualTo("not(flies1(X)) :- bird(X), ab(X)."));
-                Assert.That(duals[14].ToString(), Is.EqualTo("not(-flies(V1)) :- not(-flies1(V1)), not(-flies2(V1))."));
-                Assert.That(duals[15].ToString(), Is.EqualTo("not(-flies1(X)) :- not(ab(X))."));
-                Assert.That(duals[16].ToString(), Is.EqualTo("not(-flies2(X)) :- not(-bird(X))."));
-                Assert.That(duals[17].ToString(), Is.EqualTo("not(-wounded_bird(V1)) :- not(-wounded_bird1(V1))."));
-                Assert.That(duals[18].ToString(), Is.EqualTo("not(-wounded_bird1(X)) :- wounded_bird(X)."));
-                Assert.That(duals[19].ToString(), Is.EqualTo("not(-penguin(V1)) :- not(-penguin1(V1))."));
-                Assert.That(duals[20].ToString(), Is.EqualTo("not(-penguin1(X)) :- penguin(X)."));
-                Assert.That(duals[21].ToString(), Is.EqualTo("not(-ab(V1)) :- not(-ab1(V1))."));
-                Assert.That(duals[22].ToString(), Is.EqualTo("not(-ab1(X)) :- ab(X)."));
-                Assert.That(duals[23].ToString(), Is.EqualTo("not(-bird(V1)) :- not(-bird1(V1))."));
-                Assert.That(duals[24].ToString(), Is.EqualTo("not(-bird1(X)) :- bird(X)."));
+                Assert.That(duals[14].ToString(), Is.EqualTo("not(-(flies(V1))) :- not(-(flies1(V1))), not(-(flies2(V1)))."));
+                Assert.That(duals[15].ToString(), Is.EqualTo("not(-(flies1(X))) :- not(ab(X))."));
+                Assert.That(duals[16].ToString(), Is.EqualTo("not(-(flies2(X))) :- not(-(bird(X)))."));
+                Assert.That(duals[17].ToString(), Is.EqualTo("not(-(wounded_bird(V1))) :- not(-(wounded_bird1(V1)))."));
+                Assert.That(duals[18].ToString(), Is.EqualTo("not(-(wounded_bird1(X))) :- wounded_bird(X)."));
+                Assert.That(duals[19].ToString(), Is.EqualTo("not(-(penguin(V1))) :- not(-(penguin1(V1)))."));
+                Assert.That(duals[20].ToString(), Is.EqualTo("not(-(penguin1(X))) :- penguin(X)."));
+                Assert.That(duals[21].ToString(), Is.EqualTo("not(-(ab(V1))) :- not(-(ab1(V1)))."));
+                Assert.That(duals[22].ToString(), Is.EqualTo("not(-(ab1(X))) :- ab(X)."));
+                Assert.That(duals[23].ToString(), Is.EqualTo("not(-(bird(V1))) :- not(-(bird1(V1)))."));
+                Assert.That(duals[24].ToString(), Is.EqualTo("not(-(bird1(X))) :- bird(X)."));
             });
         }
 
