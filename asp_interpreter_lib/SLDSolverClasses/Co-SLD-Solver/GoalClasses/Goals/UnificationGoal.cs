@@ -1,10 +1,14 @@
-﻿using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+﻿// <copyright file="UnificationGoal.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using Asp_interpreter_lib.Unification.Constructive.Target;
 using Asp_interpreter_lib.Unification.Constructive.Unification;
 using Asp_interpreter_lib.Util.ErrorHandling;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class UnificationGoal : ICoSLDGoal
 {

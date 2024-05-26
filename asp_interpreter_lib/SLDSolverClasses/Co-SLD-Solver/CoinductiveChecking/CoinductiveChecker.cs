@@ -1,4 +1,10 @@
-﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿// <copyright file="CoinductiveChecker.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
+
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
@@ -7,8 +13,6 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using Asp_interpreter_lib.Util.ErrorHandling;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 
 public class CoinductiveChecker : ICHSCheckingResultArgumentsVisitor<IEnumerable<CoinductiveCheckingResult>, (Structure, SolutionState)>
 {

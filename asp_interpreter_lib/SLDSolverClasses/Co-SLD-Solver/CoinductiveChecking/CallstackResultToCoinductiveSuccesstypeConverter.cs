@@ -1,8 +1,12 @@
-﻿using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
-using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿// <copyright file="CallstackResultToCoinductiveSuccesstypeConverter.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
 
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking;
+
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
 internal class CallstackResultToCoinductiveSuccesstypeConverter : ICallstackCheckingResultVisitor<IOption<SuccessType>>
 {

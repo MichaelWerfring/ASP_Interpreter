@@ -1,4 +1,8 @@
-﻿namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+﻿// <copyright file="CoSLDGoalMapper.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 using asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals.GoalBuilders;
 using Asp_interpreter_lib.FunctorNaming;
@@ -66,7 +70,7 @@ public class CoSLDGoalMapper
                 new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functors), logger)
             },
             {
-                (functors.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger), 1)
+                (functors.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger), 100)
             },
             {
                 (functors.ArithmeticEvaluationNegated, 2),

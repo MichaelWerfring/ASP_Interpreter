@@ -1,8 +1,12 @@
-﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿// <copyright file="PostprocessingTermComparer.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
 
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
+
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
 internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermCaseVisitor<int>
 {

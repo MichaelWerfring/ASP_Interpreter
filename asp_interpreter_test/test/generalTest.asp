@@ -1,27 +1,9 @@
-﻿% fact for each vertex(N).
-vertex(0).
-vertex(1).
+﻿% From Baral Book pg 81
+eligible(X) :- highGPA(X).
+eligible(X) :- special(X), fairGPA(X).
+-eligible(X) :- -special(X), -highGPA(X).
+interview(X) :- not eligible(X), not -eligible(X).
+fairGPA(john).
+-highGPA(john).
 
-% fact for each edge edge(U, V).
-edge(0, 1).
-edge(1, 2).
-edge(2, 3).
-edge(3, 0).
-
-reachable(V) :- chosen(U, V), reachable(U).
-reachable(0) :- chosen(V, 0).
-
-% Every vertex must be reachable.
-:- vertex(U), not reachable(U).
-
-% Choose exactly one edge from each vertex.
-other(U, V) :-
-    vertex(U), vertex(V), vertex(W),
-    edge(U, W), V \= W, chosen(U, W).
-chosen(U, V) :-
-    edge(U, V), not other(U, V).
-
-% You cannot choose two edges to the same vertex
-:- chosen(U, W), chosen(V, W), U \= V.
-
-?- chosen(X, Y).
+?- interview(john).

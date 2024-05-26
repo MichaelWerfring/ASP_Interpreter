@@ -1,23 +1,24 @@
-﻿using Asp_interpreter_lib.Types;
-using QuikGraph;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Asp_interpreter_lib.Types.TypeVisitors;
-using System.Dynamic;
-using Asp_interpreter_lib.Types.BinaryOperations;
+﻿// <copyright file="CallGraphBuilder.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
 
 namespace Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 
+using Asp_interpreter_lib.Types;
+using QuikGraph;
+using Asp_interpreter_lib.Types.TypeVisitors;
+
+/// <summary>
+/// A class that builds a callgraph from a list of statements.
+/// </summary>
 public class CallGraphBuilder
 {
     /// <summary>
-    /// Resolve a callgraph from the rules of an ASP program. Ignores rules without a head.
+    /// Builds a callgraph from the rules of an ASP program. Ignores rules without a head.
     /// </summary>
-    /// <param name="program"></param>
+    /// <param name="statements">The list of statements.</param>
     /// <returns>An directed graph of statements, with edges indicating negation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="statements"/> is null.</exception>
     public AdjacencyGraph<Statement, CallGraphEdge> BuildCallGraph(List<Statement> statements)
     {
         ArgumentNullException.ThrowIfNull(statements, "Must not be null.");
@@ -41,7 +42,7 @@ public class CallGraphBuilder
                     continue;
                 }
 
-                var literalEdges = GetEdges(statement, literal, graph);
+                var literalEdges = this.GetEdges(statement, literal, graph);
 
                 graph.AddEdgeRange(literalEdges);
             }
@@ -51,20 +52,19 @@ public class CallGraphBuilder
     }
 
     /// <summary>
-    /// Based on a statement and a naf literal(from that statement's body), create all the necessary edges based on the given graph.
+    /// Based on a statement and a goal (from that statement's body), create all the necessary edges based on the given graph.
     /// </summary>
-    /// <param name="statement"></param>
-    /// <param name="nafLiteral"></param>
-    /// <param name="graph"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
+    /// <param name="statement">The current statement.</param>
+    /// <param name="goal">The current goal from the statement's body.</param>
+    /// <param name="graph">The call graph.</param>
+    /// <returns>A list of outgoind edges.</returns>
     private List<CallGraphEdge> GetEdges(Statement statement, Goal goal, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
         var literalConverter = new GoalToLiteralConverter();
         var literal = goal.Accept(literalConverter).
             GetValueOrThrow($"{nameof(goal)} must be a classical literal");
 
-        List<Statement> matchingStatements = GetMatchingStatements(literal, graph);
+        List<Statement> matchingStatements = this.GetMatchingStatements(literal, graph);
 
         List<CallGraphEdge> edges = new List<CallGraphEdge>();
 
@@ -79,9 +79,6 @@ public class CallGraphBuilder
     /// <summary>
     /// Based on a classical literal, get all matching statements(where statement head's functor, arity and classical negation are equal).
     /// </summary>
-    /// <param name="literal"></param>
-    /// <param name="graph"></param>
-    /// <returns>A list of matching statements.</returns>
     private List<Statement> GetMatchingStatements(Literal literal, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
         var matches = new List<Statement>();
@@ -104,6 +101,7 @@ public class CallGraphBuilder
             {
                 continue;
             }
+
             if (literal.Terms.Count != currentLiteral.Terms.Count)
             {
                 continue;

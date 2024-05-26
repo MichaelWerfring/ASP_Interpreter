@@ -1,8 +1,12 @@
-﻿using Asp_interpreter_lib.Types;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using QuikGraph;
+﻿// <copyright file="CallGraphCycleFinder.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
 
 namespace Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
+
+using Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using QuikGraph;
 
 /// <summary>
 /// A class for finding simple cycles in a call graph,
@@ -10,19 +14,25 @@ namespace Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 /// </summary>
 public class CallGraphCycleFinder(ILogger logger)
 {
-    private readonly ILogger _logger = logger ??
+    private readonly ILogger logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
+    /// <summary>
+    /// Finds all cycles in the graph.
+    /// </summary>
+    /// <param name="graph">The input graph.</param>
+    /// <returns>A mapping of statements to their respective cycles.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if graph is null.</exception>
     public Dictionary<Statement, List<List<CallGraphEdge>>> FindAllCycles(AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
         ArgumentNullException.ThrowIfNull(graph);
-        _logger.LogTrace("Looking for cyles in graph...");
+        this.logger.LogTrace("Looking for cyles in graph...");
 
         var vertexToCycleMapping = new Dictionary<Statement, List<List<CallGraphEdge>>>();
 
         foreach (Statement vertex in graph.Vertices)
         {
-            var cycles = FindCyclesInvolvingVertex(vertex, graph);
+            var cycles = this.FindCyclesInvolvingVertex(vertex, graph);
 
             vertexToCycleMapping.Add(vertex, cycles);
         }
@@ -32,11 +42,9 @@ public class CallGraphCycleFinder(ILogger logger)
 
     private List<List<CallGraphEdge>> FindCyclesInvolvingVertex(Statement vertex, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
-        if (!graph.ContainsVertex(vertex)) throw new ArgumentException(nameof(vertex));
-
         List<List<CallGraphEdge>> cycesList = new List<List<CallGraphEdge>>();
 
-        FindCycle(vertex, new List<CallGraphEdge>(), graph, cycesList);
+        this.FindCycle(vertex, new List<CallGraphEdge>(), graph, cycesList);
 
         return cycesList;
     }
@@ -44,42 +52,48 @@ public class CallGraphCycleFinder(ILogger logger)
     /// <summary>
     /// Checks if two heads are equal (same identifier, same arity).
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
     private bool HaveSameHead(Statement a, Statement b)
     {
         var aHead = a.Head.GetValueOrThrow("Head must be present");
         var bHead = b.Head.GetValueOrThrow("Head must be present");
 
-        if (aHead.Identifier != bHead.Identifier) return false;
+        if (aHead.Identifier != bHead.Identifier)
+        {
+            return false;
+        }
 
-        if (aHead.HasStrongNegation != bHead.HasStrongNegation) return false;
+        if (aHead.HasStrongNegation != bHead.HasStrongNegation)
+        {
+            return false;
+        }
 
-        if (aHead.Terms.Count != bHead.Terms.Count) return false;
+        if (aHead.Terms.Count != bHead.Terms.Count)
+        {
+            return false;
+        }
 
         return true;
     }
 
-    private void FindCycle
-    (
+    private void FindCycle(
         Statement vertex,
-        List<CallGraphEdge> accumulatedEdges, 
-        AdjacencyGraph<Statement, CallGraphEdge> graph, 
-        List<List<CallGraphEdge>> cyclesList
-    )
+        List<CallGraphEdge> accumulatedEdges,
+        AdjacencyGraph<Statement, CallGraphEdge> graph,
+        List<List<CallGraphEdge>> cyclesList)
     {
-        if (accumulatedEdges.Any((edge) => HaveSameHead(vertex, edge.Source)))
+        if (accumulatedEdges.Any((edge) => this.HaveSameHead(vertex, edge.Source)))
         {
-            CheckIfCycleInvolvingStart(accumulatedEdges, cyclesList);
+            this.CheckIfCycleInvolvingStart(accumulatedEdges, cyclesList);
             return;
         }
 
         IEnumerable<CallGraphEdge> edges;
 
         bool found = graph.TryGetOutEdges(vertex, out edges);
-        if (!found) { return; }
+        if (!found)
+        {
+            return;
+        }
 
         foreach (var edge in edges)
         {
@@ -87,13 +101,13 @@ public class CallGraphCycleFinder(ILogger logger)
 
             copiedList.Add(edge);
 
-            FindCycle(edge.Target, copiedList, graph, cyclesList);
+            this.FindCycle(edge.Target, copiedList, graph, cyclesList);
         }
     }
 
     private void CheckIfCycleInvolvingStart(List<CallGraphEdge> accumulatedEdges, List<List<CallGraphEdge>> cyclesList)
     {
-        if (accumulatedEdges[0].Source!.Equals(accumulatedEdges[accumulatedEdges.Count - 1].Target))
+        if (accumulatedEdges[0].Source.Equals(accumulatedEdges[accumulatedEdges.Count - 1].Target))
         {
             cyclesList.Add(accumulatedEdges);
         }

@@ -1,4 +1,10 @@
-﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+﻿// <copyright file="VariableMapping.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
@@ -7,12 +13,10 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-
 /// <summary>
 /// Represents a mapping for the co-sld-resolution:
 /// Variables are mapped to either a prohibited value set or a single term.
-/// This is a concretization of ImmutableDictionary to make sure that it always has the right comparer:
+/// This is a concretization of ImmutableDictionary to make sure that it always has the right Comparer:
 /// All the methods just call the inner dictionary and wrap them in a NewMapping before returning.
 /// VariableMapping implements IImmutableDictionary instead of wrapping one simply to make the calling code easier to read.
 /// </summary>

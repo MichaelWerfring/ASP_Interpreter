@@ -1,7 +1,11 @@
-﻿using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using System.Text;
+﻿// <copyright file="SolutionState.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
 
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
+
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using System.Text;
 
 public class SolutionState
 {

@@ -1,10 +1,14 @@
-﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+﻿// <copyright file="SolverStateUpdater.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
+
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using System.Collections.Immutable;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 
 public class SolverStateUpdater
 {

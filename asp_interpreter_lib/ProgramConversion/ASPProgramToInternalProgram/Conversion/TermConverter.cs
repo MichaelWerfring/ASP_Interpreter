@@ -1,4 +1,10 @@
-﻿using Asp_interpreter_lib.FunctorNaming;
+﻿// <copyright file="TermConverter.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+
+using Asp_interpreter_lib.FunctorNaming;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
@@ -6,27 +12,39 @@ using Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Types.TypeVisitors;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
-
+/// <summary>
+/// A class for converting terms.
+/// </summary>
 public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 {
-    private readonly FunctorTableRecord _functorTable;
+    private readonly FunctorTableRecord functorTable;
 
-    private readonly OperatorConverter _operatorConverter;
+    private readonly OperatorConverter operatorConverter;
 
-    private readonly NegatedTermConverter _negatedTermConverter;
+    private readonly NegatedTermConverter negatedTermConverter;
 
-    private int _nextAnonymousVariableIndex = 0;
+    private int nextAnonymousVariableIndex = 0;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TermConverter"/> class.
+    /// </summary>
+    /// <param name="functorTable">The table of functors to use for conversion.</param>
+    /// <exception cref="ArgumentNullException">Thrown if functorTable is null.</exception>
     public TermConverter(FunctorTableRecord functorTable)
     {
         ArgumentNullException.ThrowIfNull(functorTable, nameof(functorTable));
 
-        _functorTable = functorTable;
-        _operatorConverter = new OperatorConverter(functorTable);
-        _negatedTermConverter = new NegatedTermConverter(this, functorTable);
+        this.functorTable = functorTable;
+        this.operatorConverter = new OperatorConverter(functorTable);
+        this.negatedTermConverter = new NegatedTermConverter(this, functorTable);
     }
 
+    /// <summary>
+    /// Converts a term.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public ISimpleTerm Convert(ITerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -34,17 +52,28 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         return term.Accept(this).GetValueOrThrow();
     }
 
-    public override IOption<ISimpleTerm> Visit(AnonymousVariableTerm _)
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
+    public override IOption<ISimpleTerm> Visit(AnonymousVariableTerm term)
     {
-        ArgumentNullException.ThrowIfNull(_);
+        ArgumentNullException.ThrowIfNull(term);
 
-
-        var variable = new Variable($"{_functorTable.AnonymusVariable}{_nextAnonymousVariableIndex}");
-        _nextAnonymousVariableIndex += 1;
+        var variable = new Variable($"{this.functorTable.AnonymousVariable}{this.nextAnonymousVariableIndex}");
+        this.nextAnonymousVariableIndex += 1;
 
         return new Some<ISimpleTerm>(variable);
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(ArithmeticOperationTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -53,7 +82,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
         var rightMaybe = term.Right.Accept(this);
 
-        var functor = _operatorConverter.Convert(term.Operation);
+        var functor = this.operatorConverter.Convert(term.Operation);
 
         var children = new ISimpleTerm[] { leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow() };
 
@@ -62,12 +91,18 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         return new Some<ISimpleTerm>(structure);
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(BasicTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
         var newChildrenMaybes = term.Terms.Select((term) => term.Accept(this));
-        if(newChildrenMaybes.Any((maybe) => !maybe.HasValue)) 
+        if (newChildrenMaybes.Any((maybe) => !maybe.HasValue))
         {
             return new None<ISimpleTerm>();
         }
@@ -77,22 +112,40 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         return new Some<ISimpleTerm>(new Structure(term.Identifier, newChildren));
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(ConventionalList term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        return new Some<ISimpleTerm>(ConvertConventionalList(term.Terms));
+        return new Some<ISimpleTerm>(this.ConvertConventionalList(term.Terms));
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(NegatedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        var convertedTermMaybe = _negatedTermConverter.Convert(term);
+        var convertedTermMaybe = this.negatedTermConverter.Convert(term);
 
         return convertedTermMaybe;
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(NumberTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -100,6 +153,12 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         return new Some<ISimpleTerm>(new Integer(term.Value));
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(ParenthesizedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -107,7 +166,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         var inner = term.Term.Accept(this);
         try
         {
-            return new Some<ISimpleTerm>(new Structure(_functorTable.Parenthesis, [inner.GetValueOrThrow()]));
+            return new Some<ISimpleTerm>(new Structure(this.functorTable.Parenthesis, [inner.GetValueOrThrow()]));
         }
         catch
         {
@@ -115,22 +174,40 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         }
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(RecursiveList term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        var convertedList = ConvertRecursiveList(term);
+        var convertedList = this.ConvertRecursiveList(term);
 
         return new Some<ISimpleTerm>(convertedList);
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(StringTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        return new Some<ISimpleTerm>(ConvertString(term.Value));
+        return new Some<ISimpleTerm>(this.ConvertString(term.Value));
     }
 
+    /// <summary>
+    /// Visits a term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(VariableTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -142,13 +219,13 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
     {
         if (str.Equals(string.Empty))
         {
-            return new Structure(_functorTable.Nil, []);
+            return new Structure(this.functorTable.Nil, []);
         }
 
         var head = new Structure(str.First().ToString(), []);
-        var tail = ConvertString(new string(str.Skip(1).ToArray()));
+        var tail = this.ConvertString(new string(str.Skip(1).ToArray()));
 
-        return new Structure(_functorTable.List, [head, tail]);
+        return new Structure(this.functorTable.List, [head, tail]);
     }
 
     private Structure ConvertRecursiveList(RecursiveList term)
@@ -157,18 +234,18 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
         var rightMaybe = term.Tail.Accept(this);
 
-        return new Structure(_functorTable.List, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
+        return new Structure(this.functorTable.List, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
     }
 
     private Structure ConvertConventionalList(IEnumerable<ITerm> terms)
     {
         if (!terms.Any())
         {
-            return new Structure(_functorTable.Nil, []); 
+            return new Structure(this.functorTable.Nil, []);
         }
 
         var headMaybe = terms.ElementAt(0).Accept(this);
 
-        return new Structure(_functorTable.List, [headMaybe.GetValueOrThrow() ,ConvertConventionalList(terms.Skip(1))]);
+        return new Structure(this.functorTable.List, [headMaybe.GetValueOrThrow(), this.ConvertConventionalList(terms.Skip(1))]);
     }
 }

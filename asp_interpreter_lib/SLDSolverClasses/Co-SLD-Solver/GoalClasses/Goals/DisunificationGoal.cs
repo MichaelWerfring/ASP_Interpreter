@@ -1,4 +1,10 @@
-﻿using Asp_interpreter_lib.Unification.Constructive.Disunification;
+﻿// <copyright file="DisunificationGoal.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+
+using Asp_interpreter_lib.Unification.Constructive.Disunification;
 using Asp_interpreter_lib.Unification.Constructive.Target;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
@@ -6,8 +12,6 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using Asp_interpreter_lib.Util.ErrorHandling;
 using Asp_interpreter_lib.Util.ErrorHandling.Either;
 using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class DisunificationGoal : ICoSLDGoal
 {

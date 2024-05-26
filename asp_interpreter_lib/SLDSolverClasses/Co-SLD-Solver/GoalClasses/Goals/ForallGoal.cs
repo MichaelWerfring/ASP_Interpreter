@@ -1,4 +1,10 @@
-﻿using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+﻿// <copyright file="ForallGoal.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
+
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
@@ -7,8 +13,6 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
 public class ForallGoal : ICoSLDGoal, IVariableBindingArgumentVisitor<IEnumerable<GoalSolution>, GoalSolution>
 {

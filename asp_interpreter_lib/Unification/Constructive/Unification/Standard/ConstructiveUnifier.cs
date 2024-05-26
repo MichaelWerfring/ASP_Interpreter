@@ -1,19 +1,20 @@
-﻿using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using Asp_interpreter_lib.Unification.Constructive.Target;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using System.Collections.Immutable;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using Antlr4.Runtime.Misc;
-using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
-using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
+﻿// <copyright file="ConstructiveUnifier.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
 
 namespace Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
+
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions;
+using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using System.Collections.Immutable;
 
 /// <summary>
 /// An instance class to provide context for the unification algorithm.
@@ -21,120 +22,169 @@ namespace Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 internal class ConstructiveUnifier : IBinaryTermCaseVisitor
 {
     // input by constructor args
-    private readonly bool _doOccursCheck;
-    private readonly ISimpleTerm _left;
-    private readonly ISimpleTerm _right;
+    private readonly bool doOccursCheck;
+    private readonly ISimpleTerm left;
+    private readonly ISimpleTerm right;
 
     // mutated during execution
-    private IDictionary<Variable, ProhibitedValuesBinding> _prohibitedValues;
-    private IDictionary<Variable, TermBinding> _termBindings;
-    private bool _hasSucceded;
+    private IDictionary<Variable, ProhibitedValuesBinding> prohibitedValues;
+    private IDictionary<Variable, TermBinding> termBindings;
+    private bool hasSucceded;
 
     /// <summary>
-    /// Creates a new instance of the class. Should never be called directly, except by StandardConstructiveAlgorithm.
+    /// Initializes a new instance of the <see cref="ConstructiveUnifier"/> class.
     /// </summary>
+    /// <param name="doOccursCheck">Whether to do an occurs check before unifying a variable and a term.</param>
+    /// <param name="target">The constructive target that contains the two input terms and their prohibted values mapping.</param>
     public ConstructiveUnifier(bool doOccursCheck, ConstructiveTarget target)
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        _doOccursCheck = doOccursCheck;
+        this.doOccursCheck = doOccursCheck;
 
-        _left = target.Left;
-        _right = target.Right;
+        this.left = target.Left;
+        this.right = target.Right;
 
-        _prohibitedValues = target.Mapping.ToDictionary(TermFuncs.GetSingletonVariableComparer());
-        _termBindings = new Dictionary<Variable, TermBinding> (TermFuncs.GetSingletonVariableComparer());
+        this.prohibitedValues = target.Mapping.ToDictionary(TermFuncs.GetSingletonVariableComparer());
+        this.termBindings = new Dictionary<Variable, TermBinding>(TermFuncs.GetSingletonVariableComparer());
 
-        _hasSucceded = true;
+        this.hasSucceded = true;
     }
 
+    /// <summary>
+    /// Attempts to unify the target contained in this instance.
+    /// </summary>
+    /// <returns>A unifying mapping, or none.</returns>
     public IOption<VariableMapping> Unify()
     {
-        TryUnify(_left, _right);
+        this.TryUnify(this.left, this.right);
 
-        if (!_hasSucceded)
+        if (!this.hasSucceded)
         {
             return new None<VariableMapping>();
-        }
-        
-        return new Some<VariableMapping>(VarMappingFunctions.Merge(_prohibitedValues, _termBindings));
+        }        
+        return new Some<VariableMapping>(VarMappingFunctions.Merge(this.prohibitedValues, this.termBindings));
     }
 
-    // cases
-    public void Visit(VariableVariableCase currentCase)
+    /// <summary>
+    /// Visits a variable-variable case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(VariableVariableCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableVariableCase(currentCase.Left, currentCase.Right);
+        this.ResolveVariableVariableCase(binaryCase.Left, binaryCase.Right);
     }
 
-    public void Visit(VariableStructureCase currentCase)
+    /// <summary>
+    /// Visits a variable-structure case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(VariableStructureCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(currentCase.Left, currentCase.Right);
+        this.ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
-    public void Visit(StructureStructureCase currentCase)
+    /// <summary>
+    /// Visits a structure-structure case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(StructureStructureCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(currentCase.Left, currentCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
-    public void Visit(StructureVariableCase currentCase)
+    /// <summary>
+    /// Visits a structure-variable case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(StructureVariableCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(currentCase.Right, currentCase.Left);
+        this.ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
     }
 
+    /// <summary>
+    /// Visits a integer-integer case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(IntegerIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
+    /// <summary>
+    /// Visits a integer-structure case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(IntegerStructureCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
+    /// <summary>
+    /// Visits a integer-variable case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(IntegerVariableCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
+        this.ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
     }
 
+    /// <summary>
+    /// Visits a structure-integer case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(StructureIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
+    /// <summary>
+    /// Visits a variable-integer case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(VariableIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
     private void TryUnify(ISimpleTerm left, ISimpleTerm right)
     {
         // stop if we have failed
-        if (!_hasSucceded)
+        if (!this.hasSucceded)
         {
             return;
         }
 
         // get values of current terms if they are variables and they map to a term.
-        ISimpleTerm currentLeft = TryGetSubstitution(left);
-        ISimpleTerm currentRight = TryGetSubstitution(right);
+        ISimpleTerm currentLeft = this.TryGetSubstitution(left);
+        ISimpleTerm currentRight = this.TryGetSubstitution(right);
 
         // determine case and resolve.
         IBinaryTermCase typeCase = TermFuncs.DetermineCase(currentLeft, currentRight);
@@ -147,7 +197,7 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
         var reductionMaybe = TermFuncs.Reduce(left, right);
         if (!reductionMaybe.HasValue)
         {
-            _hasSucceded = false;
+            this.hasSucceded = false;
             return;
         }
 
@@ -155,29 +205,29 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
 
         foreach (var pair in reduction)
         {
-            TryUnify(pair.Item1, pair.Item2);
+            this.TryUnify(pair.LeftChild, pair.RightChild);
         }
     }
 
     private void ResolveVariableStructureCase(Variable left, IStructure right)
     {
         // do occurs check if asked for
-        if (_doOccursCheck && right.Contains(left))
+        if (this.doOccursCheck && right.Contains(left))
         {
-            _hasSucceded = false;
+            this.hasSucceded = false;
             return;
         }
 
         // check if right is in prohibited value list of left: if yes, then fail.
-        var prohibitedValuesOfLeft = _prohibitedValues[left];
+        var prohibitedValuesOfLeft = this.prohibitedValues[left];
         if (prohibitedValuesOfLeft.ProhibitedValues.Contains(right))
         {
-            _hasSucceded = false;
+            this.hasSucceded = false;
             return;
         }
 
         // now do substitution composition
-        ApplySubstitutionComposition(left, right);
+        this.ApplySubstitutionComposition(left, right);
     }
 
     private void ResolveVariableVariableCase(Variable left, Variable right)
@@ -188,43 +238,43 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
             return;
         }
 
-        UpdateProhibitedValues(left, right);
+        this.UpdateProhibitedValues(left, right);
 
-        ApplySubstitutionComposition(left, right);
+        this.ApplySubstitutionComposition(left, right);
     }
 
     private void UpdateProhibitedValues(Variable left, Variable right)
     {
-        var leftProhibs = _prohibitedValues[left].ProhibitedValues;
-        var rightProhibs = _prohibitedValues[right].ProhibitedValues;
+        var leftProhibs = this.prohibitedValues[left].ProhibitedValues;
+        var rightProhibs = this.prohibitedValues[right].ProhibitedValues;
 
         var union = leftProhibs.Union(rightProhibs);
 
-        _prohibitedValues.Remove(left);
+        this.prohibitedValues.Remove(left);
 
-        _prohibitedValues[right] = new ProhibitedValuesBinding(union);
+        this.prohibitedValues[right] = new ProhibitedValuesBinding(union);
     }
 
     private void ApplySubstitutionComposition(Variable var, ISimpleTerm term)
     {
         var dictForSubstitution = new Dictionary<Variable, ISimpleTerm>(TermFuncs.GetSingletonVariableComparer())
         {
-            { var, term }
+            { var, term },
         };
 
-        var newPairs = new KeyValuePair<Variable, TermBinding>[_termBindings.Count];
+        var newPairs = new KeyValuePair<Variable, TermBinding>[this.termBindings.Count];
 
-        Parallel.For(0, _termBindings.Count, index =>
+        Parallel.For(0, this.termBindings.Count, index =>
         {
-            var currentPair =_termBindings.ElementAt(index);
+            var currentPair = this.termBindings.ElementAt(index);
 
             newPairs[index] = new KeyValuePair<Variable, TermBinding>
                 (currentPair.Key, new TermBinding(currentPair.Value.Term.Substitute(dictForSubstitution)));
         });
 
-        _termBindings = newPairs.ToDictionary(TermFuncs.GetSingletonVariableComparer());
+        this.termBindings = newPairs.ToDictionary(TermFuncs.GetSingletonVariableComparer());
 
-        _termBindings[var] = new TermBinding(term);
+        this.termBindings[var] = new TermBinding(term);
     }
 
     private ISimpleTerm TryGetSubstitution(ISimpleTerm term)
@@ -236,7 +286,7 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
             return term;
         }
 
-        if (!_termBindings.TryGetValue(variableMaybe.GetValueOrThrow(), out TermBinding? value))
+        if (!this.termBindings.TryGetValue(variableMaybe.GetValueOrThrow(), out TermBinding? value))
         {
             return term;
         }

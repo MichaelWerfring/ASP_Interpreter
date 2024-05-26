@@ -1,16 +1,32 @@
-﻿namespace Asp_interpreter_lib.InternalProgramClasses.Database;
+﻿// <copyright file="DualClauseDatabase.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.InternalProgramClasses.Database;
 
 using Asp_interpreter_lib.FunctorNaming;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using System.Collections.Immutable;
 
+/// <summary>
+/// A class that acts as a database for fast lookup of clauses, with an additional seperation between normal clauses and dual clauses.
+/// </summary>
 public class DualClauseDatabase : IDatabase
 {
-    private readonly FunctorTableRecord _functors;
-    private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _standardClauses;
-    private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> _dualClauses;
+    private readonly FunctorTableRecord functors;
+    private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> standardClauses;
+    private readonly IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> dualClauses;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DualClauseDatabase"/> class.
+    /// </summary>
+    /// <param name="clauses"> The clauses for the database.</param>
+    /// <param name="functors">A record of functor, so the database knows what negation as failure looks like.</param>
+    /// <exception cref="ArgumentNullException">Thrown when..
+    /// .. <paramref name="clauses"/> is null.
+    /// .. <paramref name="functors"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="clauses"/> contains nulls, or empty clauses.</exception>
     public DualClauseDatabase(IEnumerable<IEnumerable<Structure>> clauses, FunctorTableRecord functors)
     {
         ArgumentNullException.ThrowIfNull(clauses);
@@ -33,35 +49,41 @@ public class DualClauseDatabase : IDatabase
             {
                 Structure innerTerm = clauseHead.NegateTerm(functors);
 
-                AddToDict(clause, (innerTerm.Functor, innerTerm.Children.Count), dualDict);
+                this.AddToDict(clause, (innerTerm.Functor, innerTerm.Children.Count), dualDict);
             }
             else
             {
-                AddToDict(clause, (clauseHead.Functor, clauseHead.Children.Count), standardDict);
+                this.AddToDict(clause, (clauseHead.Functor, clauseHead.Children.Count), standardDict);
             }
         }
 
-        _functors = functors;
+        this.functors = functors;
 
-        _standardClauses = standardDict.ToImmutableDictionary();
+        this.standardClauses = standardDict.ToImmutableDictionary();
 
-        _dualClauses = dualDict.ToImmutableDictionary();
+        this.dualClauses = dualDict.ToImmutableDictionary();
     }
 
+    /// <summary>
+    /// Enumerates potentially unifying clauses for the input term.
+    /// </summary>
+    /// <param name="term">A term to seek unfying clauses for.</param>
+    /// <returns>An enumeration of clauses that might unify with the input term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public IEnumerable<IEnumerable<Structure>> GetPotentialUnifications(Structure term)
     {
         ArgumentNullException.ThrowIfNull(term, nameof(term));
 
         IEnumerable<IEnumerable<Structure>> matchingClauses;
-        if (term.IsNegated(_functors))
+        if (term.IsNegated(this.functors))
         {
-            Structure innerStruct = term.NegateTerm(_functors);
+            Structure innerStruct = term.NegateTerm(this.functors);
 
-            matchingClauses = GetMatches(innerStruct, _dualClauses);
+            matchingClauses = this.GetMatches(innerStruct, this.dualClauses);
         }
         else
         {
-            matchingClauses = GetMatches(term, _standardClauses);
+            matchingClauses = this.GetMatches(term, this.standardClauses);
         }
 
         foreach (var clause in matchingClauses)
@@ -70,12 +92,10 @@ public class DualClauseDatabase : IDatabase
         }
     }
 
-    private void AddToDict
-    (
+    private void AddToDict(
         IEnumerable<Structure> clause,
-        (string, int) functorArityPair, 
-        Dictionary<(string, int), List<IEnumerable<Structure>>> dict
-    )
+        (string Functor, int Arity) functorArityPair, 
+        Dictionary<(string Functor, int Arity), List<IEnumerable<Structure>>> dict)
     {
         if (dict.TryGetValue(functorArityPair, out List<IEnumerable<Structure>>? list))
         {
@@ -87,11 +107,9 @@ public class DualClauseDatabase : IDatabase
         }
     }
 
-    private List<IEnumerable<Structure>> GetMatches
-    (
+    private List<IEnumerable<Structure>> GetMatches(
         Structure term,
-        IImmutableDictionary<(string, int), List<IEnumerable<Structure>>> dict
-    )
+        IImmutableDictionary<(string Functor, int Arity), List<IEnumerable<Structure>>> dict)
     {
         List<IEnumerable<Structure>>? matchingClauses;
         if (!dict.TryGetValue((term.Functor, term.Children.Count), out matchingClauses))

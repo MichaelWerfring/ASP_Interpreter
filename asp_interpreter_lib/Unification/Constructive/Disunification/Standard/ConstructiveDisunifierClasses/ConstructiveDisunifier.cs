@@ -1,4 +1,10 @@
-﻿using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
+﻿// <copyright file="ConstructiveDisunifier.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
+
+using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using Asp_interpreter_lib.Util.ErrorHandling.Either;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
@@ -7,89 +13,96 @@ using System.Collections.Immutable;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
 using Asp_interpreter_lib.Util.ErrorHandling;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
-
-namespace Asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
+using Asp_interpreter_lib.Unification.Constructive.Target;
 
 /// <summary>
 /// An instance-based disunification algorithm,
-/// as to provide the algorithm with a context through its fields.
+/// to provide the algorithm with a context through its fields.
 /// </summary>
 public class ConstructiveDisunifier : IBinaryTermCaseVisitor
 {
     // input by constructor
-    private readonly bool _doGroundednessCheck;
-    private readonly bool _doDisunifyUnboundVariables;
+    private readonly bool doGroundednessCheck;
+    private readonly bool doDisunifyUnboundVariables;
 
-    private readonly ISimpleTerm _left;
-    private readonly ISimpleTerm _right;
+    private readonly ISimpleTerm left;
+    private readonly ISimpleTerm right;
 
-    private readonly IImmutableDictionary<Variable, ProhibitedValuesBinding> _prohibitedValues;
+    private readonly IImmutableDictionary<Variable, ProhibitedValuesBinding> prohibitedValues;
 
     // mutated during execution.
     // disunifier mapping
-    private readonly List<DisunificationResult> _disunifiers = [];
+    private readonly List<DisunificationResult> disunifiers;
 
     // flags
-    private bool _dontUnifyAnyway;
-    private DisunificationException? _disunificationError;
+    private bool doesNotUnifyAnways;
+    private DisunificationException? disunificationError;
 
-    public ConstructiveDisunifier
-    (
-        bool doGroundednessCheck, 
-        bool doDisunifyUnboundVariables, 
-        ISimpleTerm left, 
-        ISimpleTerm right, 
-        IImmutableDictionary<Variable, ProhibitedValuesBinding> mapping
-    )
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConstructiveDisunifier"/> class.
+    /// </summary>
+    /// <param name="doGroundednessCheck">Whether to do a groundedness check in cases of variable-term.</param>
+    /// <param name="doDisunifyUnboundVariables">Whether to disunify a variable-variable case.</param>
+    /// <param name="target">The target to disunify.</param>
+    /// <exception cref="ArgumentNullException">Thrown if target is null.</exception>
+    public ConstructiveDisunifier(
+        bool doGroundednessCheck,
+        bool doDisunifyUnboundVariables,
+        ConstructiveTarget target)
     {
-        ArgumentNullException.ThrowIfNull(left, nameof(left));
-        ArgumentNullException.ThrowIfNull(right, nameof(right));
-        ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
+        ArgumentNullException.ThrowIfNull(target, nameof(target));
 
-        _doGroundednessCheck = doGroundednessCheck;
-        _doDisunifyUnboundVariables = doDisunifyUnboundVariables;
-        _left = left;
-        _right = right;
-        _prohibitedValues = mapping;
+        this.doGroundednessCheck = doGroundednessCheck;
+        this.doDisunifyUnboundVariables = doDisunifyUnboundVariables;
+        this.left = target.Left;
+        this.right = target.Right;
+        this.prohibitedValues = target.Mapping;
 
-        _disunifiers = [];
+        this.disunifiers = [];
 
-        _dontUnifyAnyway = false;
-        _disunificationError = null;
+        this.doesNotUnifyAnways = false;
+        this.disunificationError = null;
+
+        this.disunifiers = [];
     }
 
+    /// <summary>
+    /// Attempts to disunify the target contained in this instance.
+    /// </summary>
+    /// <returns>Either a disunification exception or an enumerable of disunification results.</returns>
     public IEither<DisunificationException, IEnumerable<DisunificationResult>> Disunify()
     {
-        TryDisunify(_left, _right);
+        this.TryDisunify(this.left, this.right);
 
         // if we encountered a fatal error, such as two variables disunifying, or occurs check.
-        if (_disunificationError != null)
+        if (this.disunificationError != null)
         {
-            return new Left<DisunificationException, IEnumerable<DisunificationResult>>
-                (_disunificationError);
+            return new Left<DisunificationException, IEnumerable<DisunificationResult>>(this.disunificationError);
         }
 
         // if they wouldnt unify anyway
-        if (_dontUnifyAnyway)
+        if (this.doesNotUnifyAnways)
         {
             return new Right<DisunificationException, IEnumerable<DisunificationResult>>([]);
         }
 
         // if there is no way that they can disunify
-        if (_disunifiers.Count == 0)
+        if (this.disunifiers.Count == 0)
         {
-            return new Left<DisunificationException, IEnumerable<DisunificationResult>>
-                (new CannotDisunifyException($"Terms {_left} and {_right} cannot be disunified."));
+            return new Left<DisunificationException, IEnumerable<DisunificationResult>>(
+                new CannotDisunifyException($"Terms {this.left} and {this.right} cannot be disunified."));
         }
 
         // filter for values that are already prohibited anyways
-        IEnumerable<DisunificationResult> filteredDisunifiers = _disunifiers.AsParallel().Where(disunifier =>
+        IEnumerable<DisunificationResult> filteredDisunifiers = this.disunifiers.AsParallel().Where(disunifier =>
         {
-            if (disunifier.IsPositive) { return true; };
+            if (disunifier.IsInstantiation)
+            {
+                return true;
+            }
 
-            if (_prohibitedValues[disunifier.Variable].ProhibitedValues.Contains(disunifier.Term))
+            if (this.prohibitedValues[disunifier.Variable].ProhibitedValues.Contains(disunifier.Term))
             {
                 return false;
             }
@@ -100,74 +113,120 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
         return new Right<DisunificationException, IEnumerable<DisunificationResult>>(filteredDisunifiers);
     }
 
-    public void Visit(VariableVariableCase currentCase)
+    /// <summary>
+    /// Visits a variable-variable case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(VariableVariableCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableVariableCase(currentCase.Left, currentCase.Right);
+        this.ResolveVariableVariableCase(binaryCase.Left, binaryCase.Right);
     }
 
-    public void Visit(VariableStructureCase currentCase)
+    /// <summary>
+    /// Visits a variable-structure case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(VariableStructureCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(currentCase.Left, currentCase.Right);
+        this.ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
-    public void Visit(StructureStructureCase currentCase)
+    /// <summary>
+    /// Visits a structure-structure case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(StructureStructureCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(currentCase.Left, currentCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
-    public void Visit(StructureVariableCase currentCase)
+    /// <summary>
+    /// Visits a structure-variable case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
+    public void Visit(StructureVariableCase binaryCase)
     {
-        ArgumentNullException.ThrowIfNull(currentCase);
+        ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(currentCase.Right, currentCase.Left);
+        this.ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
     }
+
+    /// <summary>
+    /// Visits a integer-integer case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(IntegerIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
+    /// <summary>
+    /// Visits a integer-structure case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(IntegerStructureCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
+    /// <summary>
+    /// Visits a integer-variable case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(IntegerVariableCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
+        this.ResolveVariableStructureCase(binaryCase.Right, binaryCase.Left);
     }
 
+    /// <summary>
+    /// Visits a structure-integer case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(StructureIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveStructureStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
+    /// <summary>
+    /// Visits a variable-integer case. Delegates to the appropriate private method.
+    /// </summary>
+    /// <param name="binaryCase">The input case.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public void Visit(VariableIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
 
-        ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
+        this.ResolveVariableStructureCase(binaryCase.Left, binaryCase.Right);
     }
 
     private void TryDisunify(ISimpleTerm left, ISimpleTerm right)
     {
         // check if mismatch encountered or error
-        if (_dontUnifyAnyway || _disunificationError != null)
+        if (this.doesNotUnifyAnways || this.disunificationError != null)
         {
-            return; 
+            return;
         }
 
         // determine case and continue based on case.
@@ -182,7 +241,7 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
 
         if (!reductionMaybe.HasValue)
         {
-            _dontUnifyAnyway = true;
+            this.doesNotUnifyAnways = true;
             return;
         }
 
@@ -190,28 +249,28 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
 
         foreach (var pair in reduction)
         {
-            TryDisunify(pair.Item1, pair.Item2);
+            this.TryDisunify(pair.Item1, pair.Item2);
         }
     }
 
     private void ResolveVariableStructureCase(Variable left, IStructure right)
     {
         // do groundedness check if asked for
-        if (_doGroundednessCheck && right.ExtractVariables().Any())
+        if (this.doGroundednessCheck && right.ExtractVariables().Any())
         {
-            _disunificationError = new NonGroundTermException
-                ($"Cannot disunify variable and nonground term: {left} and {right}");
+            this.disunificationError = new NonGroundTermException(
+                $"Cannot disunify variable and nonground term: {left} and {right}");
             return;
         }
 
-        IEnumerable<DisunificationResult> negativesInvolvingLeft = _disunifiers
-            .Where(disunifier => !disunifier.IsPositive && disunifier.Variable.IsEqualTo(left));
+        IEnumerable<DisunificationResult> negativesInvolvingLeft = this.disunifiers
+            .Where(disunifier => !disunifier.IsInstantiation && disunifier.Variable.IsEqualTo(left));
 
         // if any maps to another term already,
         // then it wont unify anyway.
         if (negativesInvolvingLeft.Any(disunifier => !disunifier.Term.IsEqualTo(right)))
         {
-            _dontUnifyAnyway = true;
+            this.doesNotUnifyAnways = true;
             return;
         }
 
@@ -222,40 +281,40 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
             return;
         }
 
-        _disunifiers.Add(new DisunificationResult(left, right, false));
+        this.disunifiers.Add(new DisunificationResult(left, right, false));
     }
-    
+
     private void ResolveVariableVariableCase(Variable left, Variable right)
     {
-        if (!_doDisunifyUnboundVariables)
+        if (!this.doDisunifyUnboundVariables)
         {
-            _disunificationError = new VariableDisunificationException
-                ($"Cannot disunify two variables: {left} and {right}");
+            this.disunificationError = new VariableDisunificationException(
+                $"Cannot disunify two variables: {left} and {right}");
             return;
         }
 
-        var leftProhibitedValues = _prohibitedValues[left].ProhibitedValues;
-        var rightProhibitedValues = _prohibitedValues[right].ProhibitedValues;
+        var leftProhibitedValues = this.prohibitedValues[left].ProhibitedValues;
+        var rightProhibitedValues = this.prohibitedValues[right].ProhibitedValues;
 
         var difference = leftProhibitedValues.Union(rightProhibitedValues)
                         .Except(leftProhibitedValues.Intersect(rightProhibitedValues));
 
         foreach (var term in difference)
         {
-            if (_doGroundednessCheck && term.ExtractVariables().Any())
+            if (this.doGroundednessCheck && term.ExtractVariables().Any())
             {
-                _disunificationError = new NonGroundTermException
-                    ($"Cannot disunify variable and nonground term: {left} and {right}");
+                this.disunificationError = new NonGroundTermException(
+                    $"Cannot disunify variable and nonground term: {left} and {right}");
                 return;
             }
 
             if (leftProhibitedValues.Contains(term))
             {
-                _disunifiers.Add(new DisunificationResult(right, term, true));
+                this.disunifiers.Add(new DisunificationResult(right, term, true));
             }
             else
             {
-                _disunifiers.Add(new DisunificationResult(left, term, true));
+                this.disunifiers.Add(new DisunificationResult(left, term, true));
             }
         }
     }

@@ -1,4 +1,10 @@
-﻿using Asp_interpreter_lib.InternalProgramClasses.Database;
+﻿// <copyright file="DatabaseUnifier.cs" company="FHWN">
+// Copyright (c) FHWN. All rights reserved.
+// </copyright>
+
+namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
+
+using Asp_interpreter_lib.InternalProgramClasses.Database;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.ClauseRenamer;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
@@ -10,8 +16,6 @@ using Asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using Asp_interpreter_lib.Unification.Constructive.Unification;
 using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
-
-namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 
 public class DatabaseUnifier
 {
