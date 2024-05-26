@@ -45,8 +45,8 @@ namespace Asp_interpreter_lib.Visitors
                     body.Add(parsedGoal.GetValueOrThrow());
                     continue;
                 }
-
-                goal.Accept(binaryOperationVisitor).IfHasValue(v => body.Add(v));
+                
+                goal.Accept(binaryOperationVisitor)?.IfHasValue(v => body.Add(v));
             }
 
             if (goals.Length != body.Count)
