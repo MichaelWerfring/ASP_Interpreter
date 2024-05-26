@@ -45,17 +45,17 @@ public class VisitorTest
     [TestCase("\r\n")]
     public void HandlesEmptyProgramCorrectly(string code)
     {
-        TestingLogger infoLogger = new TestingLogger(LogLevel.Info);
         var inputStream = new AntlrInputStream(code);
         var lexer = new ASPLexer(inputStream);
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var visitor = new ProgramVisitor(logger);
-        var program = AspExtensions.GetProgram(code, infoLogger);
+        var infoLogger = new TestingLogger(LogLevel.Info);
+        var visitor = new ProgramVisitor(infoLogger);
 
+        _ = visitor.VisitProgram(context);
         Assert.That(
-            infoLogger.Errors.Count == 0 && 
+            infoLogger.Errors.Count == 0 &&
             infoLogger.InfoMessages.Count > 0);
     }
     

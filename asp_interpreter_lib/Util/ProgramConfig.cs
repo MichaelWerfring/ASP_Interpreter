@@ -1,55 +1,58 @@
-﻿using Asp_interpreter_lib.Util.ErrorHandling;
-
-namespace Asp_interpreter_lib.Util;
-
-public class ProgramConfig
+﻿namespace Asp_interpreter_lib.Util
 {
-    private string path;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
-    public ProgramConfig()
+    public class ProgramConfig
     {
-    }
+        private string filePath;
 
-    public ProgramConfig(
-        string path, 
-        bool explain,
-        bool interactive,
-        bool timestamp,
-        bool help = false,
-        LogLevel logLevel = LogLevel.Error)
-    {
-        if (string.IsNullOrEmpty(path))
+        public ProgramConfig()
         {
-            throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
         }
 
-        Path = path;
-        Explain = explain;
-        Interactive = interactive;
-        Timestamp = timestamp;
-        Help = help;
-        LogLevel = logLevel;
-    }
-
-    public string Path
-    {
-        get
+        public ProgramConfig(
+            string filePath,
+            bool showExplanation,
+            bool runInteractive,
+            bool logTimestamp,
+            bool displayHelp = false,
+            LogLevel logLevel = LogLevel.Error)
         {
-            return path;
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException($"'{nameof(filePath)}' cannot be null or empty.", nameof(filePath));
+            }
+
+            this.FilePath = filePath;
+            this.DisplayExplanation = showExplanation;
+            this.RunInteractive = runInteractive;
+            this.LogTimestamp = logTimestamp;
+            this.DisplayHelp = displayHelp;
+            this.LogLevel = logLevel;
         }
 
-        set
+        public string FilePath
         {
-            ArgumentException.ThrowIfNullOrEmpty(nameof(value));
-            path = value;
+            get
+            {
+                return this.filePath;
+            }
+
+            set
+            {
+                ArgumentException.ThrowIfNullOrEmpty(nameof(value));
+                this.filePath = value;
+            }
         }
+
+        public bool DisplayExplanation { get; set; }
+
+        public bool LogTimestamp { get; set; }
+
+        public bool DisplayHelp { get; set; }
+
+        public LogLevel LogLevel { get; set; }
+
+        public bool RunInteractive { get; set; }
     }
-
-    public bool Explain { get; set; }
-    public bool Timestamp { get; set; }
-    public bool Help { get; set; }
-
-    public LogLevel LogLevel { get; set; }
-
-    public bool Interactive { get; set; }
 }

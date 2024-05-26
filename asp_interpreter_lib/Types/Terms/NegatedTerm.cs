@@ -27,6 +27,6 @@ public class NegatedTerm: ITerm
 
     public override string ToString()
     {
-        return $"NegatedTerm({Term.ToString()})";
+        return "-" + this.Term.ToString();
     }
 }

@@ -50,7 +50,7 @@ When starting the Interpreter in Interactive Mode, a console window will open up
 
 -`clear` clears the console window
 
--`reload` reloads the specified file
+-`reload` reloads the specified file (experimental, this feature might not behave as expected always)
 
 ### Developer Mode 
 The developer mode aims to simplify the Debugging process. When supplying the command `interpreter.exe /path/to/file.txt` it will be interpreted as `interpreter.exe --path /path/to/file.txt --log-level 1 --interactive` to automatically start in `Interactive Mode` and set the Log Level to `Debug`

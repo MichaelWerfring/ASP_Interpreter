@@ -15,7 +15,7 @@ internal class Program
         builder.Services.AddSingleton(AspExtensions.CommonPrefixes);
 
         var conf = GetConfig(args);
-        if (conf.Help)
+        if (conf.DisplayHelp)
         {
             DisplayHelp();
             Console.WriteLine("\nPress any key to close Application...");
@@ -23,7 +23,7 @@ internal class Program
             return;
         }
 
-        builder.Services.AddSingleton<ILogger>(new ConsoleLogger(conf.LogLevel, conf.Timestamp));
+        builder.Services.AddSingleton<ILogger>(new ConsoleLogger(conf.LogLevel, conf.LogTimestamp));
         builder.Services.AddTransient<ProgramVisitor>();
         builder.Services.AddSingleton(conf);
 
@@ -83,7 +83,7 @@ internal class Program
                 throw new InvalidOperationException("The parameter for the argument is not contained in the provided array!");
             }
 
-            conf.Path = args[i + 1];
+            conf.FilePath = args[i + 1];
 
             return conf;
         };
@@ -106,22 +106,22 @@ internal class Program
         };
         Func<int, ProgramConfig, string[], ProgramConfig> getHelp = (i, conf, args) =>
         {
-            conf.Help = true;
+            conf.DisplayHelp = true;
             return conf;
         };
         Func<int, ProgramConfig, string[], ProgramConfig> getInteractive = (i, conf, args) =>
         {
-            conf.Interactive = true;
+            conf.RunInteractive = true;
             return conf;
         };
         Func<int, ProgramConfig, string[], ProgramConfig> getTimestamp = (i, conf, args) =>
         {
-            conf.Timestamp = true;
+            conf.LogTimestamp = true;
             return conf;
         };
         Func<int, ProgramConfig, string[], ProgramConfig> getExplain = (i, conf, args) =>
         {
-            conf.Explain = true;
+            conf.DisplayExplanation = true;
             return conf;
         };
 

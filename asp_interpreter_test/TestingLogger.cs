@@ -20,41 +20,41 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public void LogError(string message, ParserRuleContext _)
     {
-        if(LogLevel == LogLevel.Error)
+        if(this.LogLevel <= LogLevel.Error)
         {
-            ErrorMessages.Add(message);
+            this.ErrorMessages.Add(message);
         }
     }
 
     public void LogTrace(string message)
     {
-        if (LogLevel == LogLevel.Trace)
+        if (this.LogLevel <= LogLevel.Trace)
         {
-            TraceMessages.Add(message);
+            this.TraceMessages.Add(message);
         }
     }
 
     public void LogDebug(string message)
     {
-        if (LogLevel == LogLevel.Debug)
+        if (this.LogLevel <= LogLevel.Debug)
         {
-            DebugMessages.Add(message);
+            this.DebugMessages.Add(message);
         }
     }
 
     public void LogInfo(string message)
     {
-        if (LogLevel == LogLevel.Info)
+        if (this.LogLevel <= LogLevel.Info)
         {
-            InfoMessages.Add(message);
+            this.InfoMessages.Add(message);
         }
     }
 
     public void LogError(string message)
     {
-        if (LogLevel == LogLevel.Error)
+        if (this.LogLevel <= LogLevel.Error)
         {
-            ErrorMessages.Add(message);
+            this.ErrorMessages.Add(message);
         }
     }
 

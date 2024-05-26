@@ -1,18 +1,19 @@
-﻿using Antlr4.Runtime;
-
-namespace Asp_interpreter_lib.Util.ErrorHandling;
-
-public interface ILogger
+﻿namespace Asp_interpreter_lib.Util.ErrorHandling
 {
-    void LogTrace(string message);
-    
-    void LogDebug(string message);
+    using Antlr4.Runtime;
 
-    void LogInfo(string message);
+    public interface ILogger
+    {
+        void LogTrace(string message);
 
-    void LogError(string message);
+        void LogDebug(string message);
 
-    void LogError(string message, ParserRuleContext context);
+        void LogInfo(string message);
 
-    ILogger GetDummy();
+        void LogError(string message);
+
+        void LogError(string message, ParserRuleContext context);
+
+        ILogger GetDummy();
+    }
 }

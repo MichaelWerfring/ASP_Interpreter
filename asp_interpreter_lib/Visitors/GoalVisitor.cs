@@ -16,7 +16,14 @@
         public override IOption<Goal> VisitGoal(ASPParser.GoalContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
-            return context.children.ElementAt(0).Accept(this);
+
+            if (context.children?.Count == 1)
+            {
+                return context.children.ElementAt(0).Accept(this);
+            }
+
+            this.logger.LogError("Cannot parse goal!", context);
+            return new None<Goal>();
         }
 
         public override IOption<Goal> VisitBinary_operation(ASPParser.Binary_operationContext context)

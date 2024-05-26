@@ -1,21 +1,43 @@
-﻿namespace Asp_interpreter_lib.Util.ErrorHandling;
-
-public class None<T> : IOption<T>
+﻿namespace Asp_interpreter_lib.Util.ErrorHandling
 {
-    public bool HasValue => false;
-
-    public T GetValueOrThrow() => throw new InvalidOperationException();
-    public T GetValueOrThrow(string message)
+    public class None<T> : IOption<T>
     {
-        if (string.IsNullOrWhiteSpace(message))
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(message));
+        public bool HasValue 
+        {
+            get => false;
+        }
 
-        throw new InvalidOperationException(message);
+        public T GetValueOrThrow()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public T GetValueOrThrow(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(message));
+            }
+
+            throw new InvalidOperationException(message);
+        }
+
+        public void IfHasValue(Action<T> action)
+        {
+            ArgumentNullException.ThrowIfNull(action);
+        }
+
+        public void IfHasNoValue(Action action)
+        {
+            ArgumentNullException.ThrowIfNull(action);
+            action();
+        }
+
+        public void IfHasValueElse(Action<T> hasValueAction, Action hasNoValueAction) 
+        {
+            ArgumentNullException.ThrowIfNull(hasValueAction);
+            ArgumentNullException.ThrowIfNull(hasNoValueAction);
+            hasNoValueAction();
+        }
     }
-
-    public void IfHasValue(Action<T> hasValue) { }
-
-    public void IfHasNoValue(Action hasNoValue) => hasNoValue();
-
-    public void IfHasValueElse(Action<T> hasValue, Action hasNoValue) => hasNoValue();
 }
