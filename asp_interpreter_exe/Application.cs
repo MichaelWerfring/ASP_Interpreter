@@ -29,13 +29,13 @@ public class Application(
 
     private readonly ProgramVisitor _programVisitor = programVisitor;
 
-    private readonly ProgramConfig _config = config;
+    private readonly ProgramConfig config = config;
 
     private readonly PrefixOptions _prefixes = new("fa_", "eh", "chk_", "not_", "V");
 
     public void Run()
     {
-        if (_config.DisplayExplanation)
+        if (config.DisplayExplanation)
         {
             ExplainProgram();
             return;
@@ -52,7 +52,7 @@ public class Application(
         var program = eitherProgram.GetRightOrThrow();
 
         //Interactive if needed else just solve
-        if (!_config.RunInteractive)
+        if (!config.RunInteractive)
         {
             if (!program.Query.HasValue)
             {
@@ -101,7 +101,7 @@ public class Application(
 
     private void ExplainProgram()
     {
-        var code = FileReader.ReadFile(_config.FilePath);
+        var code = FileReader.ReadFile(config.FilePath);
 
         if (!code.IsRight)
         {
@@ -120,8 +120,13 @@ public class Application(
 
     private IEither<string, AspProgram> LoadProgram()
     {
+        if (string.IsNullOrEmpty(config.FilePath))
+        {
+            return new Left<string, AspProgram>("No file path specified!");
+        }
+
         // Read
-        var code = FileReader.ReadFile(_config.FilePath);
+        var code = FileReader.ReadFile(config.FilePath);
 
         if (!code.IsRight)
         {

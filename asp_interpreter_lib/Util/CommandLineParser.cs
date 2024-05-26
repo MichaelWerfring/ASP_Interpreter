@@ -15,7 +15,7 @@
         {
             ArgumentNullException.ThrowIfNull(args);
 
-            ProgramConfig config = new();
+            ProgramConfig conf = new ProgramConfig();
             for (int i = 0; i < args.Length; i++)
             {
                 var arg = args[i];
@@ -27,10 +27,10 @@
                     continue;
                 }
 
-                action.Invoke(i,config, args);
+                action.Invoke(i, conf, args);
             }
 
-            return config;
+            return conf;
         }
     }
 }

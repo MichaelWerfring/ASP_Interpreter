@@ -15,7 +15,7 @@
             bool showExplanation,
             bool runInteractive,
             bool logTimestamp,
-            bool displayHelp = false,
+            bool displayHelp,
             LogLevel logLevel = LogLevel.Error)
         {
             if (string.IsNullOrEmpty(filePath))
