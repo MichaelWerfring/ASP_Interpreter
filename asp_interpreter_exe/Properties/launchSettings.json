@@ -2,7 +2,7 @@
   "profiles": {
     "asp_interpreter_exe": {
       "commandName": "Project",
-      "commandLineArgs": "-p C:\\Users\\micha\\Desktop\\bug.asp -l 3 -i"
+      "commandLineArgs": "-p C:\\Users\\micha\\FH\\4_Semester\\Logikprogrammierung\\ASP_Interpreter\\asp_interpreter_test\\test\\gpa.asp -l 3 -i"
     }
   }
 }
