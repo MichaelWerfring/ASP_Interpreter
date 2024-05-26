@@ -74,7 +74,7 @@ public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 
         _evaluationFunctions.TryGetValue(structure.Functor, out Func<int, int, IOption<int>>? func);
 
-        if (func is null)
+        if (func == null)
         {
             return new None<int>();
         }

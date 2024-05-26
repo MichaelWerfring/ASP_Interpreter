@@ -38,12 +38,12 @@ internal class VariableMappingMerger
         prohibs.TryGetValue(variable, out ProhibitedValuesBinding? prohibsValue);
         termbindings.TryGetValue(variable, out TermBinding? termBindingValue);
 
-        if (prohibsValue is not null && termBindingValue is not null)
+        if (prohibsValue != null && termBindingValue != null)
         {
             return termBindingValue;
         }
 
-        if (prohibsValue is not null)
+        if (prohibsValue != null)
         {
             return prohibsValue;
         }
