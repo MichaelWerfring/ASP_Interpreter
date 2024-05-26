@@ -46,20 +46,28 @@
                     terms);
             }
 
-            if (actualLiteral.HasNafNegation)
+            bool naf = !actualLiteral.HasNafNegation;
+
+            if (naf && actualLiteral.HasStrongNegation)
             {
-                return new Literal(
-                    actualLiteral.Identifier.ToString(),
-                    false,
-                    actualLiteral.HasStrongNegation,
-                    terms);
+                return new Literal("not", false, false, [ new NegatedTerm(new ParenthesizedTerm(new BasicTerm(actualLiteral.Identifier.ToString(), terms)))]);
             }
 
-            return new Literal("not", false, false,
-                [new BasicTerm(
-                    (actualLiteral.HasStrongNegation ? "-" : "")
-                    + actualLiteral.Identifier.ToString(),
-                    actualLiteral.Terms)]);
+            if (!naf && actualLiteral.HasStrongNegation)
+            {
+                return new Literal("-", false, false, [new BasicTerm(actualLiteral.Identifier.ToString(), terms)]);
+            }
+
+            if (naf && !actualLiteral.HasStrongNegation)
+            {
+                return new Literal("not", false, false, [new BasicTerm(actualLiteral.Identifier.ToString(), terms)]);
+            }
+
+            return new Literal(
+                    actualLiteral.Identifier.ToString(),
+                    false,
+                    false,
+                    terms);
         }
     }
 }

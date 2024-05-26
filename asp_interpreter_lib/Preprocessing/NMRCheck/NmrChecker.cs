@@ -105,8 +105,8 @@
 
             List<Statement> duals = [];
 
-            var withoutAnonymous = statements.Select(dualConverter.Replacer.Replace);
-            var headComputed = withoutAnonymous.Select(dualConverter.ComputeHead).ToList();
+            var withoutAnonymous = statements.Select(this.dualConverter.Replacer.Replace);
+            var headComputed = withoutAnonymous.Select(this.dualConverter.ComputeHead).ToList();
 
             foreach (var statement in statements)
             {
@@ -115,7 +115,7 @@
                 duals.AddRange(dualConverter.ToConjunction(kv));
             }
 
-            duals.ForEach(d => logger.LogDebug(d.ToString()));
+            duals.ForEach(d => this.logger.LogDebug(d.ToString()));
 
             return duals;
         }
@@ -124,17 +124,17 @@
         {
             ArgumentNullException.ThrowIfNull(olonRules);
 
-            logger.LogInfo("Generating NMR check...");
+            this.logger.LogInfo("Generating NMR check...");
             if (olonRules.Count == 0)
             {
-                logger.LogDebug("Finished generation because no OLON rules found in program.");
+                this.logger.LogDebug("Finished generation because no OLON rules found in program.");
                 var emptyCheck = new Statement();
                 emptyCheck.AddHead(new Literal("_nmr_check", false, false, []));
                 return [emptyCheck];
             }
 
             // 1) append negation of OLON Rule to its body (If not already present)
-            List<Statement> preprocessedRules = PreprocessRules(olonRules);
+            List<Statement> preprocessedRules = this.PreprocessRules(olonRules);
 
             // 2) generate dual for modified rules
             var tempOlonRules =
@@ -142,11 +142,11 @@
 
             List<Statement> duals = [];
             // 3) assign unique head (e.g. chk0) 
-            duals = GetDualsForCheck(olonRules.ToList());
-            AddMissingPrefixes(duals, "_");
+            duals = this.GetDualsForCheck(olonRules.ToList());
+            this.AddMissingPrefixes(duals, "_");
 
-            Statement nmrCheck = GetCheckRule(tempOlonRules, notAsName);
-            AddForallToCheck(nmrCheck);
+            Statement nmrCheck = this.GetCheckRule(tempOlonRules, notAsName);
+            this.AddForallToCheck(nmrCheck);
 
             duals.Insert(0, nmrCheck);
 

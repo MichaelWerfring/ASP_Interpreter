@@ -189,15 +189,14 @@
 
             var literal = optionLiteral.GetValueOrThrow();
 
-            if (literal.HasStrongNegation)
-            {
-                literal = new Literal("-", false, false, [new BasicTerm(literal.Identifier.ToString(), literal.Terms)]);
-            }
-
             if (literal.HasNafNegation)
             {
-                //return WrapInNot(literal.GetValueOrThrow());
-                literal = WrapInNot(optionLiteral.GetValueOrThrow());
+                return WrapInNot(literal);
+            }
+
+            if (literal.HasStrongNegation)
+            {
+                return new Literal("-", false, false, [new BasicTerm(literal.Identifier, literal.Terms)]);
             }
 
             return literal;
@@ -213,14 +212,18 @@
 
             if (literal.HasStrongNegation)
             {
-                return new Literal("not", false, false,
-                   [new NegatedTerm(new BasicTerm(literal.Identifier.ToString()
-                , literal.Terms))]);
+                return new Literal(
+                    "not",
+                    false,
+                    false,
+                    [new NegatedTerm(new ParenthesizedTerm(new BasicTerm(literal.Identifier.ToString(), terms)))]);
             }
 
-            return new Literal("not", false, false,
-                [new BasicTerm(literal.Identifier.ToString()
-                , literal.Terms)]);
+            return new Literal(
+                "not",
+                false,
+                false,
+                [new BasicTerm(literal.Identifier.ToString(), terms)]);
         }
 
         public IEnumerable<Statement> AddForall(Statement rule, string prefix = "")
