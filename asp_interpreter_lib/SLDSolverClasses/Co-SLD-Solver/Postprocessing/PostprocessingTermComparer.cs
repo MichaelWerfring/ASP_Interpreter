@@ -12,11 +12,20 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
 {
     public int Compare(ISimpleTerm? x, ISimpleTerm? y)
     {
-        if (x == null && y == null) { return 0; }
+        if (x == null && y == null)
+        {
+            return 0;
+        }
 
-        if (x == null) { return -1; }
+        if (x == null)
+        {
+            return -1;
+        }
 
-        if (y == null) { return 1; }
+        if (y == null)
+        {
+            return 1;
+        }
 
         var binaryCase = TermFuncs.DetermineCase(x, y);
 
@@ -57,15 +66,22 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
 
         var functorComparions = binaryCase.Left.Functor.CompareTo(binaryCase.Right.Functor);
 
-        if (functorComparions != 0) { return functorComparions; }
+        if (functorComparions != 0)
+        {
+            return functorComparions;
+        }
+
         var childCountComparison = binaryCase.Left.Children.Count.CompareTo(binaryCase.Right.Children.Count);
 
-        if (childCountComparison != 0) { return childCountComparison; }
+        if (childCountComparison != 0)
+        {
+            return childCountComparison;
+        }
 
         for (int i = 0; i < binaryCase.Left.Children.Count; i++)
         {
-            var currentChildrenComparison = TermFuncs.DetermineCase
-                (binaryCase.Left.Children.ElementAt(i), binaryCase.Right.Children.ElementAt(i))
+            var currentChildrenComparison = TermFuncs.DetermineCase(
+                binaryCase.Left.Children.ElementAt(i), binaryCase.Right.Children.ElementAt(i))
                 .Accept(this);
 
             if (currentChildrenComparison != 0)

@@ -16,32 +16,32 @@ using System.Collections.Immutable;
 
 internal static class VariableMappingExtensions
 {
-    private static readonly VariableMappingSplitter _splitter = new();
-    private static readonly VariableMappingSubstituter _substituter = new();
-    private static readonly VariableMappingFlattener _flattener = new();
-    private static readonly VariableMappingUpdater _updater = new();
-    private static readonly TransitiveVariableMappingResolver _toProhibResolver = new(true);
-    private static readonly TransitiveVariableMappingResolver _toLastVariableResolver = new(false);
+    private static readonly VariableMappingSplitter Splitter = new();
+    private static readonly VariableMappingSubstituter Substituter = new();
+    private static readonly VariableMappingFlattener Flattener = new();
+    private static readonly VariableMappingUpdater Updater = new();
+    private static readonly TransitiveVariableMappingResolver ToProhibResolver = new(true);
+    private static readonly TransitiveVariableMappingResolver ToLastVariableResolver = new(false);
 
     public static IImmutableDictionary<Variable, TermBinding> GetTermBindings(this VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        return _splitter.GetTermBindings(mapping);
+        return Splitter.GetTermBindings(mapping);
     }
 
     public static IImmutableDictionary<Variable, ProhibitedValuesBinding> GetProhibitedValueBindings(this VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        return _splitter.GetProhibitedValueBindings(mapping);
+        return Splitter.GetProhibitedValueBindings(mapping);
     }
 
     public static VariableMapping Flatten(this VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        return _flattener.Flatten(mapping);
+        return Flattener.Flatten(mapping);
     }
 
     public static IOption<VariableMapping> Update(this VariableMapping left, VariableMapping right)
@@ -49,7 +49,7 @@ internal static class VariableMappingExtensions
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));
 
-        return _updater.Update(left, right);
+        return Updater.Update(left, right);
     }
 
     public static IOption<IVariableBinding> Resolve(this VariableMapping mapping, Variable var, bool doProhibitedValueResolution)
@@ -59,11 +59,11 @@ internal static class VariableMappingExtensions
 
         if (doProhibitedValueResolution)
         {
-            return _toProhibResolver.Resolve(var, mapping);
+            return ToProhibResolver.Resolve(var, mapping);
         }
         else
         {
-            return _toLastVariableResolver.Resolve(var, mapping);
+            return ToLastVariableResolver.Resolve(var, mapping);
         }
     }
 
@@ -72,7 +72,7 @@ internal static class VariableMappingExtensions
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
         ArgumentNullException.ThrowIfNull(term, nameof(term));
 
-        return _substituter.SubstituteTerm(term, mapping);
+        return Substituter.SubstituteTerm(term, mapping);
     }
 
     public static Structure ApplySubstitution(this VariableMapping mapping, Structure term)
@@ -80,6 +80,6 @@ internal static class VariableMappingExtensions
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
         ArgumentNullException.ThrowIfNull(term, nameof(term));
 
-        return _substituter.SubstituteStructure(term, mapping);
+        return Substituter.SubstituteStructure(term, mapping);
     }
 }

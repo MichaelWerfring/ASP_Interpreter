@@ -19,22 +19,20 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOption<GoalSolution>, int>
 {
-    private readonly ArithmeticEvaluator _evaluator;
-    private readonly ISimpleTerm _left;
-    private readonly ISimpleTerm _right;
-    private readonly SolutionState _state;
-    private readonly IConstructiveDisunificationAlgorithm _algorithm;
-    private readonly ILogger _logger;
+    private readonly ArithmeticEvaluator evaluator;
+    private readonly ISimpleTerm left;
+    private readonly ISimpleTerm right;
+    private readonly SolutionState state;
+    private readonly IConstructiveDisunificationAlgorithm algorithm;
+    private readonly ILogger logger;
 
-    public NegatedArithmeticEvaluationGoal
-    (
+    public NegatedArithmeticEvaluationGoal(
         ArithmeticEvaluator evaluator,
         ISimpleTerm left,
         ISimpleTerm right,
         SolutionState state,
         IConstructiveDisunificationAlgorithm algorithm,
-        ILogger logger
-    )
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(evaluator);
         ArgumentNullException.ThrowIfNull(left);
@@ -43,20 +41,20 @@ internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisi
         ArgumentNullException.ThrowIfNull(algorithm);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _evaluator = evaluator;
-        _left = left;
-        _right = right;
-        _state = state;
-        _algorithm = algorithm;
-        _logger = logger;
+        this.evaluator = evaluator;
+        this.left = left;
+        this.right = right;
+        this.state = state;
+        this.algorithm = algorithm;
+        this.logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        _logger.LogInfo($"Attempting to solve negated arithmetic evaluation goal: {_left}, {_right}");
-        _logger.LogTrace($"Input state is: {_state}");
+        this.logger.LogInfo($"Attempting to solve negated arithmetic evaluation goal: {this.left}, {this.right}");
+        this.logger.LogTrace($"Input state is: {this.state}");
 
-        IOption<int> rightEvalMaybe = _evaluator.Evaluate(_right);
+        IOption<int> rightEvalMaybe = this.evaluator.Evaluate(this.right);
 
         int rightEval;
         try
@@ -68,13 +66,13 @@ internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisi
             yield break;
         }
 
-        var solutionMaybe = _left.Accept(this, rightEval);
+        var solutionMaybe = this.left.Accept(this, rightEval);
         if (!solutionMaybe.HasValue)
         {
             yield break;
         }
 
-        _logger.LogInfo($"Solved negated arithmetic evaluation goal: {_left}, {_right}");
+        this.logger.LogInfo($"Solved negated arithmetic evaluation goal: {this.left}, {this.right}");
 
         yield return solutionMaybe.GetValueOrThrow();
     }
@@ -83,42 +81,38 @@ internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisi
     {
         ArgumentNullException.ThrowIfNull(integer, nameof(integer));
 
-        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
+        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), this.state.Mapping);
         if (!targetEither.IsRight)
         {
-            _logger.LogError(targetEither.GetLeftOrThrow().Message);
-            throw new ArgumentException(nameof(_state));
+            this.logger.LogError(targetEither.GetLeftOrThrow().Message);
+            throw new ArgumentException(nameof(this.state));
         }
 
         ConstructiveTarget target = targetEither.GetRightOrThrow();
 
-        var resultEither  =_algorithm.Disunify(target);
+        var resultEither = this.algorithm.Disunify(target);
         if (!resultEither.IsRight)
         {
             return new None<GoalSolution>();
         }
 
         VariableMapping disunifyingMapping = resultEither.GetRightOrThrow().First();
-        _logger.LogTrace($"Disunifying mapping is {disunifyingMapping}");
+        this.logger.LogTrace($"Disunifying mapping is {disunifyingMapping}");
 
-        VariableMapping newMapping = _state.Mapping.Update(resultEither.GetRightOrThrow().First()).GetValueOrThrow();
-        _logger.LogTrace($"New mapping is {newMapping}");
+        VariableMapping newMapping = this.state.Mapping.Update(resultEither.GetRightOrThrow().First()).GetValueOrThrow();
+        this.logger.LogTrace($"New mapping is {newMapping}");
 
-        return new Some<GoalSolution>
-        (
-            new GoalSolution
-            (
-                _state.CHS,
+        return new Some<GoalSolution>(
+            new GoalSolution(
+                this.state.CHS,
                 newMapping,
-                _state.Callstack,
-                _state.NextInternalVariableIndex
-            )
-        );
+                this.state.Callstack,
+                this.state.NextInternalVariableIndex));
     }
 
-    public IOption<GoalSolution> Visit(Structure _, int __)
+    public IOption<GoalSolution> Visit(Structure structure, int integer)
     {
-        ArgumentNullException.ThrowIfNull(_);
+        ArgumentNullException.ThrowIfNull(structure);
 
         return new None<GoalSolution>();
     }
@@ -131,15 +125,12 @@ internal class NegatedArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisi
         {
             return new None<GoalSolution>();
         }
-        return new Some<GoalSolution>
-        (
-            new GoalSolution
-            (
-                _state.CHS,
-                _state.Mapping,
-                _state.Callstack,
-                _state.NextInternalVariableIndex
-            )
-        );
+
+        return new Some<GoalSolution>(
+            new GoalSolution(
+                this.state.CHS,
+                this.state.Mapping,
+                this.state.Callstack,
+                this.state.NextInternalVariableIndex));
     }
 }

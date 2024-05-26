@@ -17,43 +17,66 @@ using Asp_interpreter_lib.Unification.Constructive.Unification;
 using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
+/// <summary>
+/// A class for unifying an input term with clauses in a database.
+/// </summary>
 public class DatabaseUnifier
 {
-    private readonly IConstructiveUnificationAlgorithm _algorithm;
+    private readonly IConstructiveUnificationAlgorithm algorithm;
 
-    private readonly IDatabase _database;
+    private readonly IDatabase database;
 
-    private readonly ILogger _logger;
+    private readonly ILogger logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DatabaseUnifier"/> class.
+    /// </summary>
+    /// <param name="algorithm">The unification algorithm to use.</param>
+    /// <param name="database">The database to use.</param>
+    /// <param name="logger">A logger.</param>
+    /// <exception cref="ArgumentNullException">THrown if..
+    /// ..<paramref name="algorithm"/> is null,
+    /// ..<paramref name="database"/> is null,
+    /// <paramref name="logger"/> is null.</exception>
     public DatabaseUnifier(IConstructiveUnificationAlgorithm algorithm, IDatabase database, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
         ArgumentNullException.ThrowIfNull(database, nameof(database));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
-        _algorithm = algorithm;
-        _database = database;
-        _logger = logger;
+        this.algorithm = algorithm;
+        this.database = database;
+        this.logger = logger;
     }
 
+    /// <summary>
+    /// Attempts to unify the target with the head of a clause in the database.
+    /// </summary>
+    /// <param name="target">The target.</param>
+    /// <param name="currentMapping">The current of the solver state.</param>
+    /// <param name="nextInternal">The next internal variable.</param>
+    /// <returns>An enumeration of results.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="target"/> is null,
+    /// <paramref name="currentMapping"/> is null.</exception>
     public IEnumerable<DBUnificationResult> GetDatabaseUnificationResults
     (
         Structure target,
-        VariableMapping currentMapping, 
+        VariableMapping currentMapping,
         int nextInternal
     )
     {
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(currentMapping, nameof(currentMapping));
 
-        foreach (IEnumerable<Structure> potentialUnification in _database.GetPotentialUnifications(target))
+        foreach (IEnumerable<Structure> potentialUnification in this.database.GetPotentialUnifications(target))
         {
-            _logger.LogInfo($"Trying to unify {target} with head of clause {potentialUnification.ToList().ListToString()}");
+            this.logger.LogInfo($"Trying to unify {target} with head of clause {potentialUnification.ToList().ListToString()}");
 
             // rename potential goal clauses
             RenamingResult renamingResult = TermFuncs.RenameClause(potentialUnification, nextInternal);
 
-            _logger.LogTrace($"Renamed clause is: {renamingResult.RenamedClause}");
+            this.logger.LogTrace($"Renamed clause is: {renamingResult.RenamedClause}");
 
             // try build target
             var constructiveTargetEither = ConstructiveTargetBuilder.Build(target, renamingResult.RenamedClause.First(), currentMapping);
@@ -61,22 +84,22 @@ public class DatabaseUnifier
             ConstructiveTarget constructiveTarget = constructiveTargetEither.GetRightOrThrow();
 
             // try unify
-            var unificationResultMaybe = _algorithm.Unify(constructiveTarget);
+            var unificationResultMaybe = this.algorithm.Unify(constructiveTarget);
             if (!unificationResultMaybe.HasValue)
             {
                 continue;
             }
 
-            _logger.LogInfo($"Unified {target} with head of clause {potentialUnification.ToList().ListToString()}");
+            this.logger.LogInfo($"Unified {target} with head of clause {potentialUnification.ToList().ListToString()}");
 
             VariableMapping unificationResult = unificationResultMaybe.GetValueOrThrow();
-            _logger.LogTrace($"Unifying mapping is {unificationResult}");
+            this.logger.LogTrace($"Unifying mapping is {unificationResult}");
 
             var updatedMapping = currentMapping.Update(unificationResult).GetValueOrThrow();
-            _logger.LogTrace($"Updated mapping is {updatedMapping}");
+            this.logger.LogTrace($"Updated mapping is {updatedMapping}");
 
             var flattenedMapping = updatedMapping.Flatten();
-            _logger.LogTrace($"Flattened mapping is {flattenedMapping}");
+            this.logger.LogTrace($"Flattened mapping is {flattenedMapping}");
 
             yield return new DBUnificationResult(renamingResult.RenamedClause, flattenedMapping, renamingResult.NextInternalIndex);
         }

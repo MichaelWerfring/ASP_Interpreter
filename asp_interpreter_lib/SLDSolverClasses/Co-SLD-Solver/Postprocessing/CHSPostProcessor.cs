@@ -11,30 +11,26 @@ using Medallion.Collections;
 
 internal partial class CHSPostProcessor
 {
-    private readonly CHSPostprocessingComparer _comparer;
+    private readonly CHSPostprocessingComparer comparer;
 
     public CHSPostProcessor(FunctorTableRecord functors)
     {
         ArgumentNullException.ThrowIfNull(functors, nameof(functors));
 
-        _comparer = new CHSPostprocessingComparer(functors);
+        this.comparer = new CHSPostprocessingComparer(functors);
     }
 
     public CoinductiveHypothesisSet Postprocess(CoinductiveHypothesisSet set)
     {
         ArgumentNullException.ThrowIfNull(set, nameof(set));
 
-        var results = set.Where
-        (
+        var results = set.Where(
             entry => entry.Term.Enumerate().OfType<Structure>()
-                    .All(structure => !structure.Functor.StartsWith('_'))
-        )
+                    .All(structure => !structure.Functor.StartsWith('_')))
         .ToList();
 
-
-        results.Sort(_comparer);
+        results.Sort(this.comparer);
 
         return new CoinductiveHypothesisSet(results.ToImmutableLinkedList());
     }
-
 }

@@ -16,11 +16,11 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class CoinductiveSLDSolver
 {
-    private readonly GoalSolver _goalSolver;
+    private readonly GoalSolver goalSolver;
 
-    private readonly SolutionPostprocessor _postprocessor;
+    private readonly SolutionPostprocessor postprocessor;
 
-    private readonly ILogger _logger;
+    private readonly ILogger logger;
 
     public CoinductiveSLDSolver(IDatabase database, FunctorTableRecord functors, ILogger logger)
     {
@@ -28,11 +28,11 @@ public class CoinductiveSLDSolver
         ArgumentNullException.ThrowIfNull(functors, nameof(functors));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
-        _goalSolver = new GoalSolver(new CoSLDGoalMapper(functors, database, logger), logger);
+        this.goalSolver = new GoalSolver(new CoSLDGoalMapper(functors, database, logger), logger);
 
-        _postprocessor = new SolutionPostprocessor(new VariableMappingPostprocessor(), new CHSPostProcessor(functors));
+        this.postprocessor = new SolutionPostprocessor(new VariableMappingPostprocessor(), new CHSPostProcessor(functors));
 
-        _logger = logger;
+        this.logger = logger;
     }
 
     public IEnumerable<CoSLDSolution> Solve(IEnumerable<Structure> query)
@@ -41,12 +41,12 @@ public class CoinductiveSLDSolver
 
         var initialSolverState = new CoSldSolverState(query, new SolutionState([], [], [], 0));
 
-        foreach (var querySolution in _goalSolver.SolveGoals(initialSolverState))
+        foreach (var querySolution in this.goalSolver.SolveGoals(initialSolverState))
         {
-            _logger.LogInfo($"Found Solution: {querySolution.ResultSet.ToList().ListToString()}");
-            _logger.LogDebug($"Mapping for Solution: {querySolution.ResultMapping}");
+            this.logger.LogInfo($"Found Solution: {querySolution.ResultSet.ToList().ListToString()}");
+            this.logger.LogDebug($"Mapping for Solution: {querySolution.ResultMapping}");
 
-            var postprocessedSolution = _postprocessor.Postprocess(querySolution);
+            var postprocessedSolution = this.postprocessor.Postprocess(querySolution);
 
             yield return postprocessedSolution;
         }

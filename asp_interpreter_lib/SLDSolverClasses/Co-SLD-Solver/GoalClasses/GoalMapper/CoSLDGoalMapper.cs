@@ -20,97 +20,110 @@ using Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
 using Asp_interpreter_lib.Util.ErrorHandling;
 using System.Collections.Immutable;
 
+/// <summary>
+/// A class for mapping an input structure to a the appropriate goal.
+/// </summary>
 public class CoSLDGoalMapper
 {
-    private readonly ImmutableDictionary<(string, int), IGoalBuilder> _mapping;
+    private readonly ImmutableDictionary<(string, int), IGoalBuilder> mapping;
 
-    private readonly PredicateGoalBuilder _predicateGoalBuilder;
+    private readonly PredicateGoalBuilder predicateGoalBuilder;
 
-    private readonly ILogger _logger;
+    private readonly ILogger logger;
 
-    public CoSLDGoalMapper(FunctorTableRecord functors, IDatabase database, ILogger logger)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CoSLDGoalMapper"/> class.
+    /// </summary>
+    /// <param name="functorTable">Contains the functors that will be used to identify special goals.</param>
+    /// <param name="database">A database to use by a predicate goal.</param>
+    /// <param name="logger">A logger.</param>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="functorTable"/> is null,
+    /// ..<paramref name="database"/> is null,
+    /// ..<paramref name="logger"/> is null.</exception>
+    public CoSLDGoalMapper(FunctorTableRecord functorTable, IDatabase database, ILogger logger)
     {
-        ArgumentNullException.ThrowIfNull(functors);
+        ArgumentNullException.ThrowIfNull(functorTable);
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(logger);
 
         var goalBuilderDict = new Dictionary<(string, int), IGoalBuilder>()
         {
             {
-                (functors.ArithmeticEvaluation, 2),
-                new ArithmeticEvaluationGoalBuilder
-                (
+                (functorTable.ArithmeticEvaluation, 2),
+                new ArithmeticEvaluationGoalBuilder(
                     new SolverStateUpdater(),
-                    new ArithmeticEvaluator(functors), 
-                    new StandardConstructiveUnificationAlgorithm(false), logger
-                )
+                    new ArithmeticEvaluator(functorTable),
+                    new StandardConstructiveUnificationAlgorithm(false),
+                    logger)
             },
             {
-                (functors.Unification, 2),
+                (functorTable.Unification, 2),
                 new UnificationGoalBuilder(new(), new StandardConstructiveUnificationAlgorithm(false), logger)
             },
             {
-                (functors.Disunification, 2),
+                (functorTable.Disunification, 2),
                 new DisunificationGoalBuilder(new(), new StandardConstructiveDisunificationAlgorithm(true, false), logger)
             },
             {
-                (functors.LessThan, 2),
-                new ArithmeticComparisonGoalBuilder((left, right) => left < right, new ArithmeticEvaluator(functors), logger)
+                (functorTable.LessThan, 2),
+                new ArithmeticComparisonGoalBuilder((left, right) => left < right, new ArithmeticEvaluator(functorTable), logger)
             },
             {
-                (functors.LessOrEqualThan, 2),
-                new ArithmeticComparisonGoalBuilder((left, right) => left <= right, new ArithmeticEvaluator(functors), logger)
+                (functorTable.LessOrEqualThan, 2),
+                new ArithmeticComparisonGoalBuilder((left, right) => left <= right, new ArithmeticEvaluator(functorTable), logger)
             },
             {
-                (functors.GreaterThan, 2),
-                new ArithmeticComparisonGoalBuilder((left, right) => left > right, new ArithmeticEvaluator(functors), logger)
+                (functorTable.GreaterThan, 2),
+                new ArithmeticComparisonGoalBuilder((left, right) => left > right, new ArithmeticEvaluator(functorTable), logger)
             },
             {
-                (functors.GreaterOrEqualThan, 2),
-                new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functors), logger)
+                (functorTable.GreaterOrEqualThan, 2),
+                new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functorTable), logger)
             },
             {
-                (functors.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger), 100)
+                (functorTable.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger), 100)
             },
             {
-                (functors.ArithmeticEvaluationNegated, 2),
-                new NegatedArithmeticEvaluationGoalBuilder(new ArithmeticEvaluator(functors),
-                new StandardConstructiveDisunificationAlgorithm(false, false), logger) 
-            }
+                (functorTable.ArithmeticEvaluationNegated, 2),
+                new NegatedArithmeticEvaluationGoalBuilder(
+                    new ArithmeticEvaluator(functorTable),
+                    new StandardConstructiveDisunificationAlgorithm(false, false),
+                    logger)
+            },
         };
 
-        _mapping = goalBuilderDict.ToImmutableDictionary();
+        this.mapping = goalBuilderDict.ToImmutableDictionary();
 
-        _predicateGoalBuilder = new PredicateGoalBuilder
-         (
-            new CoinductiveChecker
-            (
-                new CHSChecker
-                (
+        this.predicateGoalBuilder = new PredicateGoalBuilder(
+            new CoinductiveChecker(
+                new CHSChecker(
                     new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(false)),
                     new StandardConstructiveUnificationAlgorithm(false),
-                    functors, 
+                    functorTable,
                     new GoalSolver(this, logger),
-                    logger
-                ),
-                new CallstackChecker
-                (
-                    functors,
-                    new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(true)), 
+                    logger),
+                new CallstackChecker(
+                    functorTable,
+                    new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(true)),
                     new StandardConstructiveUnificationAlgorithm(false),
-                    logger
-                )
-            ),
+                    logger)),
             new DatabaseUnifier(new StandardConstructiveUnificationAlgorithm(false), database, logger),
             new GoalSolver(this, logger),
             new PredicateGoalStateUpdater(new SolverStateUpdater()),
-            logger
-         );
+            logger);
 
-        _logger = logger;
+        this.logger = logger;
     }
 
-    public IOption<ICoSLDGoal> GetGoal(CoSldSolverState state)
+    /// <summary>
+    /// Builds a goal based on the current state of a solver.
+    /// </summary>
+    /// <param name="state">The state of the solver.</param>
+    /// <returns>A goal-</returns>
+    /// <exception cref="ArgumentException">Thrown if state does not contain at least one goal.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="state"/> is null.</exception>
+    public ICoSLDGoal GetGoal(CoSldSolverState state)
     {
         ArgumentNullException.ThrowIfNull(state);
 
@@ -121,13 +134,13 @@ public class CoSLDGoalMapper
 
         Structure goalTerm = state.CurrentGoals.First();
 
-        _mapping.TryGetValue((goalTerm.Functor, goalTerm.Children.Count), out IGoalBuilder? goalBuilder);
+        this.mapping.TryGetValue((goalTerm.Functor, goalTerm.Children.Count), out IGoalBuilder? goalBuilder);
 
         if (goalBuilder == null)
         {
-            return new Some<ICoSLDGoal>(_predicateGoalBuilder.BuildGoal(goalTerm, state.SolutionState));
+            return this.predicateGoalBuilder.BuildGoal(goalTerm, state.SolutionState);
         }
 
-        return new Some<ICoSLDGoal>(goalBuilder.BuildGoal(goalTerm, state.SolutionState));
+        return goalBuilder.BuildGoal(goalTerm, state.SolutionState);
     }
 }

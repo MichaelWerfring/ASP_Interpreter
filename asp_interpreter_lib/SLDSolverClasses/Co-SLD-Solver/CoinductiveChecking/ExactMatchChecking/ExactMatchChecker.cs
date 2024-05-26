@@ -15,23 +15,36 @@ using Asp_interpreter_lib.Unification.Constructive.Unification;
 using Asp_interpreter_lib.Util.ErrorHandling;
 using System.Collections.Immutable;
 
+/// <summary>
+/// A class for checking whether a constructive target unifies with an exact match.
+/// </summary>
 public class ExactMatchChecker
 {
-    private readonly IConstructiveUnificationAlgorithm _algorithm;
+    private readonly IConstructiveUnificationAlgorithm algorithm;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExactMatchChecker"/> class.
+    /// </summary>
+    /// <param name="algorithm">The unification algorithm to use.</param>
     public ExactMatchChecker(IConstructiveUnificationAlgorithm algorithm)
     {
         ArgumentNullException.ThrowIfNull(algorithm);
 
-        _algorithm = algorithm;
+        this.algorithm = algorithm;
     }
 
+    /// <summary>
+    /// Checks if the target unifies with an exact match.
+    /// </summary>
+    /// <param name="target">The target to check.</param>
+    /// <returns>A value indicating whether the target is an exact match.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="target"/> is null.</exception>
     public bool AreExactMatch(ConstructiveTarget target)
     {
         ArgumentNullException.ThrowIfNull(target, nameof(target));
 
         // if they dont unify at all, then they are not an exact match.
-        IOption<VariableMapping> unificationMaybe = _algorithm.Unify(target);
+        IOption<VariableMapping> unificationMaybe = this.algorithm.Unify(target);
 
         if (!unificationMaybe.HasValue)
         {
@@ -47,9 +60,9 @@ public class ExactMatchChecker
         // Transitively resolve: this is necessary
         // because through constructive unification, there could be cases such as:
         // X => Y => \= {1, 2}.
-        var varsToResolvedValues = variables.AsParallel().Select
-            (var => new KeyValuePair<Variable, IVariableBinding>(var, unification.Resolve(var, true).GetValueOrThrow()));
-                                           
+        var varsToResolvedValues = variables.AsParallel().Select(
+            var => new KeyValuePair<Variable, IVariableBinding>(var, unification.Resolve(var, true).GetValueOrThrow()));
+
         // wrap into variablemapping for convenience.
         var mapping = new VariableMapping(varsToResolvedValues.ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer()));
 

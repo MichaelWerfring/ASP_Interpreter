@@ -23,8 +23,7 @@ internal class VariableMappingFlattener
         {
             var currentVariable = mapping.Keys.ElementAt(index);
 
-            newMapping[index] = new KeyValuePair<Variable, IVariableBinding>
-                (currentVariable, mapping.Resolve(currentVariable, false).GetValueOrThrow());
+            newMapping[index] = new KeyValuePair<Variable, IVariableBinding>(currentVariable, mapping.Resolve(currentVariable, false).GetValueOrThrow());
         });
 
         return new VariableMapping(newMapping.ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer()));

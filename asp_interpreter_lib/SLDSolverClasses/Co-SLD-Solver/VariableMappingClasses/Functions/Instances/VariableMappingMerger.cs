@@ -26,18 +26,16 @@ internal class VariableMappingMerger
         var dict = ImmutableDictionary.Create<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
         foreach (var variable in variables)
         {
-            dict = dict.SetItem(variable, GetAppropriateBinding(variable, prohibs, termbindings));
+            dict = dict.SetItem(variable, this.GetAppropriateBinding(variable, prohibs, termbindings));
         }
 
         return new VariableMapping(dict);
     }
 
-    private IVariableBinding GetAppropriateBinding
-    (
+    private IVariableBinding GetAppropriateBinding(
         Variable variable,
         IDictionary<Variable, ProhibitedValuesBinding> prohibs,
-        IDictionary<Variable, TermBinding> termbindings
-    )
+        IDictionary<Variable, TermBinding> termbindings)
     {
         prohibs.TryGetValue(variable, out ProhibitedValuesBinding? prohibsValue);
         termbindings.TryGetValue(variable, out TermBinding? termBindingValue);

@@ -23,7 +23,7 @@ public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Va
     {
         ArgumentNullException.ThrowIfNull(term);
         ArgumentNullException.ThrowIfNull(mapping);
-            
+
         return term.Accept(this, mapping);
     }
 
@@ -67,7 +67,7 @@ public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Va
         ArgumentNullException.ThrowIfNull(term);
         ArgumentNullException.ThrowIfNull(map);
 
-        return SubstituteVariable(term, map);
+        return this.SubstituteVariable(term, map);
     }
 
     public ISimpleTerm Visit(Structure term, VariableMapping map)
@@ -75,7 +75,7 @@ public class VariableMappingSubstituter : ISimpleTermArgsVisitor<ISimpleTerm, Va
         ArgumentNullException.ThrowIfNull(term);
         ArgumentNullException.ThrowIfNull(map);
 
-        return SubstituteStructure(term, map);
+        return this.SubstituteStructure(term, map);
     }
 
     public ISimpleTerm Visit(Integer term, VariableMapping map)

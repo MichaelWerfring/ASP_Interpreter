@@ -12,7 +12,7 @@ public class TermBinding : IVariableBinding
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        Term = term;
+        this.Term = term;
     }
 
     public ISimpleTerm Term { get; }
@@ -38,8 +38,8 @@ public class TermBinding : IVariableBinding
         return visitor.Visit(this, arguments);
     }
 
-    public override string ToString() 
+    public override string ToString()
     {
-        return $"Term:{Term.ToString()}";
+        return $"Term:{this.Term.ToString()}";
     }
 }

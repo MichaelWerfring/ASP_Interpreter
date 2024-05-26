@@ -12,13 +12,13 @@ using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
 public class PredicateGoalStateUpdater
 {
-    private readonly SolverStateUpdater _updater;
+    private readonly SolverStateUpdater updater;
 
     public PredicateGoalStateUpdater(SolverStateUpdater updater)
     {
         ArgumentNullException.ThrowIfNull(updater, nameof(updater));
 
-        _updater = updater;
+        this.updater = updater;
     }
 
     /// <summary>
@@ -27,15 +27,13 @@ public class PredicateGoalStateUpdater
     /// Then constructs the mapping for the next solver state.
     /// Then substitutes
     /// </summary>
-    public CoSldSolverState BuildStateForSolvingBodyGoals
-    (
+    public CoSldSolverState BuildStateForSolvingBodyGoals(
         CoinductiveHypothesisSet inputSet,
         CallStack inputStack,
         VariableMapping unifyingMapping,
-        IEnumerable<Structure> renamedClause, 
+        IEnumerable<Structure> renamedClause,
         Structure constrainedTarget,
-        int nextInternal
-    )
+        int nextInternal)
     {
         ArgumentNullException.ThrowIfNull(inputSet);
         ArgumentNullException.ThrowIfNull(inputStack);
@@ -44,10 +42,10 @@ public class PredicateGoalStateUpdater
         ArgumentNullException.ThrowIfNull(constrainedTarget);
 
         // update chs by updating all the variables in it.
-        var newCHS =  _updater.UpdateCHS(inputSet, unifyingMapping);
+        var newCHS = this.updater.UpdateCHS(inputSet, unifyingMapping);
 
         // update callstack by pushing target onto stack and updating all the variables in it.
-        var newCallstack = _updater.UpdateCallstack(inputStack.Push(constrainedTarget), unifyingMapping);
+        var newCallstack = this.updater.UpdateCallstack(inputStack.Push(constrainedTarget), unifyingMapping);
         
         // substitute the next goal, if there is one.
         var nextGoals = renamedClause.Skip(1);
@@ -57,17 +55,13 @@ public class PredicateGoalStateUpdater
             nextGoals = nextGoals.Skip(1).Prepend(substitutedNextGoal);
         }
 
-        return new CoSldSolverState
-        (
+        return new CoSldSolverState(
             nextGoals,
-            new SolutionState
-            (
+            new SolutionState(
                 newCallstack,
                 newCHS,
                 unifyingMapping,
-                nextInternal
-            )
-        );
+                nextInternal));
     }
 
     public GoalSolution ConstructCoinductiveSuccessSolution(SolutionState state, VariableMapping result)
@@ -75,13 +69,11 @@ public class PredicateGoalStateUpdater
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(state);
 
-        return new GoalSolution
-        (
-            _updater.UpdateCHS(state.CHS, result),
+        return new GoalSolution(
+            this.updater.UpdateCHS(state.CHS, result),
             result,
-            _updater.UpdateCallstack(state.Callstack, result),
-            state.NextInternalVariableIndex
-        );
+            this.updater.UpdateCallstack(state.Callstack, result),
+            state.NextInternalVariableIndex);
     }
 
     /// <summary>
@@ -98,12 +90,10 @@ public class PredicateGoalStateUpdater
 
         var newCHS = subgoalSolution.ResultSet.Add(entry);
 
-        return new GoalSolution
-        (
+        return new GoalSolution(
             newCHS,
             subgoalSolution.ResultMapping,
             subgoalSolution.Stack.Pop(),
-            subgoalSolution.NextInternalVariable
-        );
+            subgoalSolution.NextInternalVariable);
     }
 }

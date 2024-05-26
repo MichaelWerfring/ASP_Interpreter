@@ -25,4 +25,3 @@ public interface IBinaryVariableBindingCaseVisitor<T>
 
     public T Visit(TermBindingTermBindingCase binaryCase);
 }
-

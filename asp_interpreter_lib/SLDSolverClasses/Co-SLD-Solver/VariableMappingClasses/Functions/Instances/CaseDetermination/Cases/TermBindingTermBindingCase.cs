@@ -13,8 +13,8 @@ public class TermBindingTermBindingCase : IBinaryVariableBindingCase
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));
 
-        Left = left;
-        Right = right;
+        this.Left = left;
+        this.Right = right;
     }
 
     public TermBinding Left { get; }

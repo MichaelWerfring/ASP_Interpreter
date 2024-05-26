@@ -12,8 +12,8 @@ public class CHSEntry
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        Term = term;
-        HasSucceded = hasSucceeded;
+        this.Term = term;
+        this.HasSucceded = hasSucceeded;
     }
 
     public Structure Term { get; }
@@ -22,6 +22,6 @@ public class CHSEntry
 
     public override string ToString()
     {
-        return $"[{Term}:{HasSucceded}]";
+        return $"[{this.Term}:{this.HasSucceded}]";
     }
 }

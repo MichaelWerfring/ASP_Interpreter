@@ -4,6 +4,9 @@
 
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
 
+/// <summary>
+/// An interface for a chs checking result.
+/// </summary>
 public interface ICHSCheckingResult
 {
     /// <summary>
@@ -26,7 +29,7 @@ public interface ICHSCheckingResult
     /// <param name="visitor">The visitor to accept.</param>
     /// <param name="argument">The argument.</param>
     /// <typeparam name="TArgs">The argument type.</typeparam>
-    public void Accept<TArgs>(ICHSCheckingResultArgumentsVisitor<TArgs> visitor, TArgs args);
+    public void Accept<TArgs>(ICHSCheckingResultArgumentsVisitor<TArgs> visitor, TArgs argument);
 
     /// <summary>
     /// Accepts a visitor that returns a value.
@@ -36,5 +39,5 @@ public interface ICHSCheckingResult
     /// <typeparam name="TResult">The result type.</typeparam>
     /// <typeparam name="TArgs">The argument type.</typeparam>
     /// <returns>A value of type <typeparamref name="TResult"/>.</returns>
-    public TResult Accept<TResult, TArgs>(ICHSCheckingResultArgumentsVisitor<TResult, TArgs> visitor, TArgs args);
+    public TResult Accept<TResult, TArgs>(ICHSCheckingResultArgumentsVisitor<TResult, TArgs> visitor, TArgs argument);
 }

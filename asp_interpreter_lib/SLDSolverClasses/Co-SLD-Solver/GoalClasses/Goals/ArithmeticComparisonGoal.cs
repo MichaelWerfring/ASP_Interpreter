@@ -13,22 +13,20 @@ using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 public class ArithmeticComparisonGoal : ICoSLDGoal
 {
-    private readonly ArithmeticEvaluator _evaluator;
-    private readonly ISimpleTerm _left;
-    private readonly ISimpleTerm _right;
-    private readonly Func<int, int, bool> _predicate;
-    private readonly SolutionState _inputstate;
-    private readonly ILogger _logger;
+    private readonly ArithmeticEvaluator evaluator;
+    private readonly ISimpleTerm left;
+    private readonly ISimpleTerm right;
+    private readonly Func<int, int, bool> predicate;
+    private readonly SolutionState inputstate;
+    private readonly ILogger logger;
 
-    public ArithmeticComparisonGoal
-    (
+    public ArithmeticComparisonGoal(
         ArithmeticEvaluator evaluator,
         ISimpleTerm left,
         ISimpleTerm right,
         Func<int, int, bool> predicate,
         SolutionState solutionState,
-        ILogger logger
-    )
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(evaluator);
         ArgumentNullException.ThrowIfNull(left);
@@ -37,20 +35,20 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(solutionState);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _evaluator = evaluator;
-        _left = left;
-        _right = right;
-        _predicate = predicate;
-        _inputstate = solutionState;
-        _logger = logger;
+        this.evaluator = evaluator;
+        this.left = left;
+        this.right = right;
+        this.predicate = predicate;
+        this.inputstate = solutionState;
+        this.logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        _logger.LogInfo($"Attempting to solve arithmetic comparison goal: {_left}, {_right}");
-        _logger.LogTrace($"Input state is: {_inputstate}");
+        this.logger.LogInfo($"Attempting to solve arithmetic comparison goal: {this.left}, {this.right}");
+        this.logger.LogTrace($"Input state is: {this.inputstate}");
 
-        var leftIntegerMaybe = TermFuncs.ReturnIntegerOrNone( _left );
+        var leftIntegerMaybe = TermFuncs.ReturnIntegerOrNone(this.left);
         if (!leftIntegerMaybe.HasValue)
         {
             yield break;
@@ -58,26 +56,24 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
 
         var leftInteger = leftIntegerMaybe.GetValueOrThrow();
 
-        var rightEvaluationMaybe = _evaluator.Evaluate(_right);
+        var rightEvaluationMaybe = this.evaluator.Evaluate(this.right);
 
         if (!rightEvaluationMaybe.HasValue)
         {
             yield break;
         }
-       
-        if (!_predicate(leftInteger.Value, rightEvaluationMaybe.GetValueOrThrow()))
+
+        if (!this.predicate(leftInteger.Value, rightEvaluationMaybe.GetValueOrThrow()))
         {
             yield break;
         }
 
-        _logger.LogInfo($"Solved arithmetic comparison goal: {_left}, {_right}");
+        this.logger.LogInfo($"Solved arithmetic comparison goal: {this.left}, {this.right}");
 
-        yield return new GoalSolution
-        (
-            _inputstate.CHS, 
-            _inputstate.Mapping, 
-            _inputstate.Callstack,
-            _inputstate.NextInternalVariableIndex
-        );
+        yield return new GoalSolution(
+            this.inputstate.CHS,
+            this.inputstate.Mapping,
+            this.inputstate.Callstack,
+            this.inputstate.NextInternalVariableIndex);
     }
 }

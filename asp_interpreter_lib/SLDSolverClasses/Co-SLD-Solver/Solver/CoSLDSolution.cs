@@ -14,8 +14,8 @@ public class CoSLDSolution
         ArgumentNullException.ThrowIfNull(chsEntries, nameof(chsEntries));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        CHSEntries = chsEntries;
-        SolutionMapping = mapping;
+        this.CHSEntries = chsEntries;
+        this.SolutionMapping = mapping;
     }
 
     public IEnumerable<ISimpleTerm> CHSEntries { get; }

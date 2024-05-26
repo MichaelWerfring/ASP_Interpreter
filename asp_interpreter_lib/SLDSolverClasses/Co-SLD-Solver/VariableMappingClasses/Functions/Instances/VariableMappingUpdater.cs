@@ -39,10 +39,10 @@ internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOptio
         {
             var currentVariable = variables.ElementAt(index);
 
-            IOption<IVariableBinding> resolutionMaybe = Resolve(currentVariable, left, right);
+            IOption<IVariableBinding> resolutionMaybe = this.Resolve(currentVariable, left, right);
             if (!resolutionMaybe.HasValue)
             {
-                clashEncountered = true;          
+                clashEncountered = true;
             }
             else
             {
@@ -65,8 +65,7 @@ internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOptio
     {
         ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
 
-        return new Some<IVariableBinding>
-            (new ProhibitedValuesBinding(binaryCase.Left.ProhibitedValues.Union(binaryCase.Right.ProhibitedValues)));
+        return new Some<IVariableBinding>(new ProhibitedValuesBinding(binaryCase.Left.ProhibitedValues.Union(binaryCase.Right.ProhibitedValues)));
     }
 
     public IOption<IVariableBinding> Visit(ProhibValsTermBindingCase binaryCase)

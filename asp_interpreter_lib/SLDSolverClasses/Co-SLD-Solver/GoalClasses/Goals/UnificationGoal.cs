@@ -12,20 +12,18 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class UnificationGoal : ICoSLDGoal
 {
-    private readonly SolverStateUpdater _updater;
-    private readonly ConstructiveTarget _target;
-    private readonly IConstructiveUnificationAlgorithm _algorithm;
-    private readonly SolutionState _solutionState;
-    private readonly ILogger _logger;
+    private readonly SolverStateUpdater updater;
+    private readonly ConstructiveTarget target;
+    private readonly IConstructiveUnificationAlgorithm algorithm;
+    private readonly SolutionState state;
+    private readonly ILogger logger;
 
-    public UnificationGoal
-    (
+    public UnificationGoal(
         SolverStateUpdater updater,
         ConstructiveTarget target,
         IConstructiveUnificationAlgorithm algorithm,
         SolutionState solutionState,
-        ILogger logger
-    )
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(updater, nameof(updater));
         ArgumentNullException.ThrowIfNull(target, nameof(target));
@@ -33,48 +31,45 @@ public class UnificationGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(solutionState, nameof(solutionState));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
-        _updater = updater;
-        _target = target;
-        _algorithm = algorithm;
-        _solutionState = solutionState;
-        _logger = logger;
+        this.updater = updater;
+        this.target = target;
+        this.algorithm = algorithm;
+        this.state = solutionState;
+        this.logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        _logger.LogInfo($"Attempting to solve unification goal: {_target}");
-        _logger.LogTrace($"Input state is: {_solutionState}");
+        this.logger.LogInfo($"Attempting to solve unification goal: {this.target}");
+        this.logger.LogTrace($"Input state is: {this.state}");
 
-        var unificationMaybe = _algorithm.Unify(_target);
+        var unificationMaybe = this.algorithm.Unify(this.target);
         if (!unificationMaybe.HasValue)
         {
             yield break;
         }
 
-        _logger.LogInfo($"Solved unification goal: {_target}");
+        this.logger.LogInfo($"Solved unification goal: {this.target}");
 
         var unifyingMapping = unificationMaybe.GetValueOrThrow();
-        _logger.LogTrace($"Unifying mapping is {unifyingMapping}");
+        this.logger.LogTrace($"Unifying mapping is {unifyingMapping}");
 
-        var updatedMapping = _solutionState.Mapping.Update(unifyingMapping).GetValueOrThrow();
-        _logger.LogTrace($"Updated mapping is {updatedMapping}");
+        var updatedMapping = this.state.Mapping.Update(unifyingMapping).GetValueOrThrow();
+        this.logger.LogTrace($"Updated mapping is {updatedMapping}");
 
         var flattenedMapping = updatedMapping.Flatten();
-        _logger.LogTrace($"Flattened mapping is {updatedMapping}");
+        this.logger.LogTrace($"Flattened mapping is {updatedMapping}");
 
-        CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_solutionState.CHS, flattenedMapping);
-        _logger.LogTrace($"Updated CHS is {updatedCHS}");
+        CoinductiveHypothesisSet updatedCHS = this.updater.UpdateCHS(this.state.CHS, flattenedMapping);
+        this.logger.LogTrace($"Updated CHS is {updatedCHS}");
 
-        CallStack updatedCallstack = _updater.UpdateCallstack(_solutionState.Callstack, flattenedMapping);
-        _logger.LogTrace($"Updated callstack is {updatedCallstack}");
+        CallStack updatedCallstack = this.updater.UpdateCallstack(this.state.Callstack, flattenedMapping);
+        this.logger.LogTrace($"Updated callstack is {updatedCallstack}");
 
-
-        yield return new GoalSolution       
-        (
+        yield return new GoalSolution(
             updatedCHS,
             flattenedMapping,
             updatedCallstack,
-            _solutionState.NextInternalVariableIndex
-        );
+            this.state.NextInternalVariableIndex);
     }
 }

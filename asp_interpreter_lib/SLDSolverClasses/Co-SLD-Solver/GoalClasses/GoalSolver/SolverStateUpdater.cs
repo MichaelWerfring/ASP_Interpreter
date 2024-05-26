@@ -20,7 +20,7 @@ public class SolverStateUpdater
             newCalls[index] = map.ApplySubstitution
             (callStack.ElementAt(newCalls.Length - 1 - index));
         });
-        
+
         var newCallstack = new CallStack(ImmutableStack.CreateRange(newCalls));
 
         return newCallstack;

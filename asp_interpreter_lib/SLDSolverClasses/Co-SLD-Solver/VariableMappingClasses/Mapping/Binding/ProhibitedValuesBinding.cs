@@ -14,7 +14,7 @@ public class ProhibitedValuesBinding : IVariableBinding
 {
     public ProhibitedValuesBinding()
     {
-        ProhibitedValues = ImmutableSortedSet.Create<ISimpleTerm>(TermFuncs.GetSingletonTermComparer());
+        this.ProhibitedValues = ImmutableSortedSet.Create<ISimpleTerm>(TermFuncs.GetSingletonTermComparer());
     }
 
     public ProhibitedValuesBinding(ImmutableSortedSet<ISimpleTerm> prohibitedValuesSet)
@@ -25,7 +25,7 @@ public class ProhibitedValuesBinding : IVariableBinding
             throw new ArgumentException("Must contain correct comparer.");
         }
 
-        ProhibitedValues = prohibitedValuesSet;
+        this.ProhibitedValues = prohibitedValuesSet;
     }
 
     public ImmutableSortedSet<ISimpleTerm> ProhibitedValues { get; }
@@ -52,6 +52,6 @@ public class ProhibitedValuesBinding : IVariableBinding
 
     public override string ToString()
     {
-        return $"ProhibitedValues:{{{ProhibitedValues.ToList().ListToString()}}}";
+        return $"ProhibitedValues:{{{this.ProhibitedValues.ToList().ListToString()}}}";
     }
 }

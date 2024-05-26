@@ -11,88 +11,88 @@ using System.Collections.Immutable;
 
 public class CallStack : IImmutableStack<Structure>
 {
-    private readonly IImmutableStack<Structure> _terms;
+    private readonly IImmutableStack<Structure> terms;
 
     public CallStack()
     {
-        _terms = [];
+        this.terms = [];
     }
 
     public CallStack(IImmutableStack<Structure> termStack)
     {
         ArgumentNullException.ThrowIfNull(termStack, nameof(termStack));
 
-        _terms = termStack;
+        this.terms = termStack;
     }
 
-    public bool IsEmpty => _terms.IsEmpty;
+    public bool IsEmpty => this.terms.IsEmpty;
 
     public CallStack Clear()
     {
-        return new CallStack(_terms.Clear());
+        return new CallStack(this.terms.Clear());
     }
 
     public IEnumerator<Structure> GetEnumerator()
     {
-        return _terms.GetEnumerator();
+        return this.terms.GetEnumerator();
     }
 
     public Structure Peek()
     {
-        return _terms.Peek();
+        return this.terms.Peek();
     }
 
     public CallStack Pop()
     {
-        if (_terms.IsEmpty)
+        if (this.terms.IsEmpty)
         {
             return this;
         }
         else
         {
-            return new CallStack(_terms.Pop());
-        }       
+            return new CallStack(this.terms.Pop());
+        }
     }
 
     public CallStack Push(Structure value)
     {
-        return new CallStack(_terms.Push(value));
+        return new CallStack(this.terms.Push(value));
     }
 
-    bool IImmutableStack<Structure>.IsEmpty => IsEmpty;
+    bool IImmutableStack<Structure>.IsEmpty => this.IsEmpty;
 
     IImmutableStack<Structure> IImmutableStack<Structure>.Clear()
     {
-        return Clear();
+        return this.Clear();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return GetEnumerator();
+        return this.GetEnumerator();
     }
 
     IEnumerator<Structure> IEnumerable<Structure>.GetEnumerator()
     {
-        return GetEnumerator();
+        return this.GetEnumerator();
     }
 
     Structure IImmutableStack<Structure>.Peek()
     {
-        return Peek();
+        return this.Peek();
     }
 
     IImmutableStack<Structure> IImmutableStack<Structure>.Pop()
     {
-        return Pop();
+        return this.Pop();
     }
 
     IImmutableStack<Structure> IImmutableStack<Structure>.Push(Structure value)
     {
-        return Push(value);
+        return this.Push(value);
     }
 
     public override string ToString()
     {
-        return !_terms.IsEmpty ? $"{{{_terms.ToList().ListToString()}}}" : "Empty Callstack";
+        return !this.terms.IsEmpty ? $"{{{this.terms.ToList().ListToString()}}}" : "Empty Callstack";
     }
 }

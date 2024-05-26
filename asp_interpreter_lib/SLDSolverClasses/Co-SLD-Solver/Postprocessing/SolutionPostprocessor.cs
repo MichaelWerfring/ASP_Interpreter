@@ -10,24 +10,24 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 
 internal class SolutionPostprocessor
 {
-    private readonly VariableMappingPostprocessor _mappingPostprocessor;
+    private readonly VariableMappingPostprocessor mappingPostprocessor;
 
-    private readonly CHSPostProcessor _chsPostprocessor;
+    private readonly CHSPostProcessor chsPostprocessor;
 
     public SolutionPostprocessor(VariableMappingPostprocessor mappingProcessor, CHSPostProcessor chsProcessor)
     {
         ArgumentNullException.ThrowIfNull(mappingProcessor, nameof(mappingProcessor));
         ArgumentNullException.ThrowIfNull(chsProcessor, nameof(chsProcessor));
 
-        _mappingPostprocessor = mappingProcessor;
-        _chsPostprocessor = chsProcessor;
+        this.mappingPostprocessor = mappingProcessor;
+        this.chsPostprocessor = chsProcessor;
     }
 
     public CoSLDSolution Postprocess(GoalSolution solution)
     {
         ArgumentNullException.ThrowIfNull(solution, nameof(solution));
 
-        CoinductiveHypothesisSet postprocessedCHS = _chsPostprocessor.Postprocess(solution.ResultSet);
+        CoinductiveHypothesisSet postprocessedCHS = this.chsPostprocessor.Postprocess(solution.ResultSet);
 
         var variablesInCHS = postprocessedCHS
             .Select(x => x.Term)
@@ -38,7 +38,7 @@ internal class SolutionPostprocessor
 
         var varsToKeep = variablesInCHS.Union(nonInternals, TermFuncs.GetSingletonVariableComparer());
 
-        var postprocessedMapping = _mappingPostprocessor.Postprocess(solution.ResultMapping, varsToKeep);
+        var postprocessedMapping = this.mappingPostprocessor.Postprocess(solution.ResultMapping, varsToKeep);
 
         return new CoSLDSolution(postprocessedCHS.Select(x => x.Term), postprocessedMapping);
     }

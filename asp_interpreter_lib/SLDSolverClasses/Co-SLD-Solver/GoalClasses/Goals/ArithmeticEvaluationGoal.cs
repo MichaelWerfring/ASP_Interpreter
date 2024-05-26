@@ -17,13 +17,13 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOption<GoalSolution>, int>
 {
-    private readonly SolverStateUpdater _updater;
-    private readonly ArithmeticEvaluator _evaluator;
-    private readonly ISimpleTerm _left;
-    private readonly ISimpleTerm _right;
-    private readonly SolutionState _state;
-    private readonly IConstructiveUnificationAlgorithm _algorithm;
-    private readonly ILogger _logger;
+    private readonly SolverStateUpdater updater;
+    private readonly ArithmeticEvaluator evaluator;
+    private readonly ISimpleTerm left;
+    private readonly ISimpleTerm right;
+    private readonly SolutionState state;
+    private readonly IConstructiveUnificationAlgorithm algorithm;
+    private readonly ILogger logger;
 
     public ArithmeticEvaluationGoal
     (
@@ -44,21 +44,21 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
         ArgumentNullException.ThrowIfNull(algorithm);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _updater = updater;
-        _evaluator = evaluator;
-        _left = left;
-        _right = right;
-        _state = state;
-        _algorithm = algorithm;
-        _logger = logger;
+        this.updater = updater;
+        this.evaluator = evaluator;
+        this.left = left;
+        this.right = right;
+        this.state = state;
+        this.algorithm = algorithm;
+        this.logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        _logger.LogInfo($"Attempting to solve arithmetic evaluation goal: {_left}, {_right}");
-        _logger.LogTrace($"Input state is: {_state}");
+        this.logger.LogInfo($"Attempting to solve arithmetic evaluation goal: {this.left}, {this.right}");
+        this.logger.LogTrace($"Input state is: {this.state}");
 
-        IOption<int> rightEvalMaybe = _evaluator.Evaluate( _right );
+        IOption<int> rightEvalMaybe = this.evaluator.Evaluate(this.right);
 
         int rightEval;
         try
@@ -70,13 +70,13 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
             yield break;
         }
 
-        var solutionMaybe = _left.Accept(this, rightEval);    
+        var solutionMaybe = this.left.Accept(this, rightEval);
         if (!solutionMaybe.HasValue)
         {
             yield break;
         }
 
-        _logger.LogInfo($"Solved arithmetic evaluation goal: {_left}, {_right}");
+        this.logger.LogInfo($"Solved arithmetic evaluation goal: {this.left}, {this.right}");
 
         yield return solutionMaybe.GetValueOrThrow();
     }
@@ -85,51 +85,47 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
     {
         ArgumentNullException.ThrowIfNull(var);
 
-        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), _state.Mapping);
-        if(!targetEither.IsRight)
+        var targetEither = ConstructiveTargetBuilder.Build(var, new Integer(integer), this.state.Mapping);
+        if (!targetEither.IsRight)
         {
-            _logger.LogError(targetEither.GetLeftOrThrow().Message);
-            throw new ArgumentException(nameof(_state));
+            this.logger.LogError(targetEither.GetLeftOrThrow().Message);
+            throw new ArgumentException(nameof(this.state));
         }
 
         var target = targetEither.GetRightOrThrow();
 
-        IOption<VariableMapping> unificationResult = _algorithm.Unify(target);
+        IOption<VariableMapping> unificationResult = this.algorithm.Unify(target);
         if (!unificationResult.HasValue)
         {
             return new None<GoalSolution>();
         }
 
         VariableMapping unification = unificationResult.GetValueOrThrow();
-        _logger.LogTrace($"Unifying mapping is {unification}");
+        this.logger.LogTrace($"Unifying mapping is {unification}");
 
-        var updatedMapping = _state.Mapping.Update(unification).GetValueOrThrow();
-        _logger.LogTrace($"Updated mapping is {updatedMapping}");
+        var updatedMapping = this.state.Mapping.Update(unification).GetValueOrThrow();
+        this.logger.LogTrace($"Updated mapping is {updatedMapping}");
 
         var flattenedMapping = updatedMapping.Flatten();
-        _logger.LogTrace($"Flattened mapping is {flattenedMapping}");
+        this.logger.LogTrace($"Flattened mapping is {flattenedMapping}");
 
-        CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_state.CHS, flattenedMapping);
-        _logger.LogTrace($"Updated CHS is {updatedCHS}");
+        CoinductiveHypothesisSet updatedCHS = this.updater.UpdateCHS(this.state.CHS, flattenedMapping);
+        this.logger.LogTrace($"Updated CHS is {updatedCHS}");
 
-        CallStack updatedStack = _updater.UpdateCallstack(_state.Callstack, flattenedMapping);
-        _logger.LogTrace($"Updated callstack is {updatedStack}");
+        CallStack updatedStack = this.updater.UpdateCallstack(this.state.Callstack, flattenedMapping);
+        this.logger.LogTrace($"Updated callstack is {updatedStack}");
 
-        return new Some<GoalSolution>
-        (
-            new GoalSolution
-            (
+        return new Some<GoalSolution>(
+            new GoalSolution(
                 updatedCHS,
                 flattenedMapping,
                 updatedStack,
-                _state.NextInternalVariableIndex
-            )
-        );
+                this.state.NextInternalVariableIndex));
     }
 
-    public IOption<GoalSolution> Visit(Structure _, int __)
+    public IOption<GoalSolution> Visit(Structure structure, int integer)
     {
-        ArgumentNullException.ThrowIfNull(_);
+        ArgumentNullException.ThrowIfNull(structure);
 
         return new None<GoalSolution>();
     }
@@ -143,15 +139,11 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
             return new None<GoalSolution>();
         }
 
-        return new Some<GoalSolution>
-        (
-            new GoalSolution
-            (
-                _state.CHS,
-                _state.Mapping,
-                _state.Callstack,
-                _state.NextInternalVariableIndex
-            )
-        );
+        return new Some<GoalSolution>(
+            new GoalSolution(
+                this.state.CHS,
+                this.state.Mapping,
+                this.state.Callstack,
+                this.state.NextInternalVariableIndex));
     }
 }

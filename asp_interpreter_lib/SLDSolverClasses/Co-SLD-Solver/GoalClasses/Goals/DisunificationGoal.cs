@@ -15,23 +15,21 @@ using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 
 public class DisunificationGoal : ICoSLDGoal
 {
-    private readonly SolverStateUpdater _updater;
-    private readonly ConstructiveTarget _target;
+    private readonly SolverStateUpdater updater;
+    private readonly ConstructiveTarget target;
 
-    private readonly IConstructiveDisunificationAlgorithm _algorithm;
+    private readonly IConstructiveDisunificationAlgorithm algorithm;
 
-    private readonly SolutionState _inputState;
+    private readonly SolutionState inputState;
 
-    private readonly ILogger _logger;
+    private readonly ILogger logger;
 
-    public DisunificationGoal
-    (
+    public DisunificationGoal(
         SolverStateUpdater updater,
         ConstructiveTarget target,
         IConstructiveDisunificationAlgorithm algorithm,
         SolutionState state,
-        ILogger logger
-    )
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(updater, nameof(updater));
         ArgumentNullException.ThrowIfNull(target, nameof(target));
@@ -39,19 +37,19 @@ public class DisunificationGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(state, nameof(state));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
-        _updater = updater;
-        _target = target;
-        _algorithm = algorithm;
-        _inputState = state;
-        _logger = logger;
+        this.updater = updater;
+        this.target = target;
+        this.algorithm = algorithm;
+        this.inputState = state;
+        this.logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        _logger.LogInfo($"Attempting to solve disunification goal: {_target}");
-        _logger.LogTrace($"Input state is: {_inputState}");
+        this.logger.LogInfo($"Attempting to solve disunification goal: {this.target}");
+        this.logger.LogTrace($"Input state is: {this.inputState}");
 
-        IEither<DisunificationException, IEnumerable<VariableMapping>> disunificationsResult = _algorithm.Disunify(_target);
+        IEither<DisunificationException, IEnumerable<VariableMapping>> disunificationsResult = this.algorithm.Disunify(this.target);
 
         if (!disunificationsResult.IsRight)
         {
@@ -60,29 +58,27 @@ public class DisunificationGoal : ICoSLDGoal
 
         foreach (VariableMapping disunifyingMapping in disunificationsResult.GetRightOrThrow())
         {
-            _logger.LogInfo($"Solved disunification goal: {_target} with {disunifyingMapping}");
+            this.logger.LogInfo($"Solved disunification goal: {this.target} with {disunifyingMapping}");
 
-            _logger.LogTrace($"Disunifying mapping is {disunifyingMapping}");
+            this.logger.LogTrace($"Disunifying mapping is {disunifyingMapping}");
 
-            VariableMapping updatedMapping = _inputState.Mapping.Update(disunifyingMapping).GetValueOrThrow();
-            _logger.LogTrace($"Updated mapping is {updatedMapping}");
+            VariableMapping updatedMapping = this.inputState.Mapping.Update(disunifyingMapping).GetValueOrThrow();
+            this.logger.LogTrace($"Updated mapping is {updatedMapping}");
 
             VariableMapping flattenedMapping = updatedMapping.Flatten();
-            _logger.LogTrace($"Flattened mapping is {updatedMapping}");
+            this.logger.LogTrace($"Flattened mapping is {updatedMapping}");
 
-            CoinductiveHypothesisSet updatedCHS = _updater.UpdateCHS(_inputState.CHS, flattenedMapping);
-            _logger.LogTrace($"updated CHS is {updatedCHS}");
+            CoinductiveHypothesisSet updatedCHS = this.updater.UpdateCHS(this.inputState.CHS, flattenedMapping);
+            this.logger.LogTrace($"updated CHS is {updatedCHS}");
 
-            CallStack updatedCallstack = _updater.UpdateCallstack(_inputState.Callstack, flattenedMapping);
-            _logger.LogTrace($"updated callstack is {updatedCallstack}");
+            CallStack updatedCallstack = this.updater.UpdateCallstack(this.inputState.Callstack, flattenedMapping);
+            this.logger.LogTrace($"updated callstack is {updatedCallstack}");
 
-            yield return new GoalSolution
-            (
+            yield return new GoalSolution(
                 updatedCHS,
                 flattenedMapping,
-                updatedCallstack, 
-                _inputState.NextInternalVariableIndex
-            );
+                updatedCallstack,
+                this.inputState.NextInternalVariableIndex);
         }
     }
 }

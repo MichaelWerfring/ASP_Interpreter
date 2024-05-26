@@ -13,15 +13,15 @@ using System.Collections.Immutable;
 
 public class VariableMappingSplitter
 {
-    private readonly ProhibitedValuesChecker _prohibsFilterer = new();
-    private readonly TermBindingChecker _tbFilterer = new();
+    private readonly ProhibitedValuesChecker prohibsFilterer = new();
+    private readonly TermBindingChecker tbFilterer = new();
 
     public IImmutableDictionary<Variable, TermBinding> GetTermBindings(VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping);
 
         var filteredPairs = mapping
-            .Select(pair => (pair.Key, _tbFilterer.ReturnTermbindingOrNone(pair.Value)))
+            .Select(pair => (pair.Key, this.tbFilterer.ReturnTermbindingOrNone(pair.Value)))
             .Where(pair => pair.Item2.HasValue)
             .Select(pair => new KeyValuePair<Variable, TermBinding>(pair.Key, pair.Item2.GetValueOrThrow()))
             .ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer());
@@ -34,7 +34,7 @@ public class VariableMappingSplitter
         ArgumentNullException.ThrowIfNull(mapping);
 
         var filteredPairs = mapping
-            .Select(pair => (pair.Key, _prohibsFilterer.ReturnProhibitedValueBindingOrNone(pair.Value)))
+            .Select(pair => (pair.Key, this.prohibsFilterer.ReturnProhibitedValueBindingOrNone(pair.Value)))
             .Where(pair => pair.Item2.HasValue)
             .Select(pair => new KeyValuePair<Variable, ProhibitedValuesBinding>(pair.Key, pair.Item2.GetValueOrThrow()))
             .ToImmutableDictionary(TermFuncs.GetSingletonVariableComparer());

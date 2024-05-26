@@ -9,22 +9,20 @@ using System.Text;
 
 public class SolutionState
 {
-    public SolutionState
-    (
+    public SolutionState(
         CallStack callstack,
         CoinductiveHypothesisSet chs,
         VariableMapping mapping,
-        int nextInternalIndex
-    )
+        int nextInternalIndex)
     {
         ArgumentNullException.ThrowIfNull(callstack, nameof(callstack));
         ArgumentNullException.ThrowIfNull(chs, nameof(chs));
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        Callstack = callstack;
-        CHS = chs;
-        Mapping = mapping;
-        NextInternalVariableIndex = nextInternalIndex;
+        this.Callstack = callstack;
+        this.CHS = chs;
+        this.Mapping = mapping;
+        this.NextInternalVariableIndex = nextInternalIndex;
     }
 
     public CallStack Callstack { get; }
@@ -40,16 +38,16 @@ public class SolutionState
         var sb = new StringBuilder();
 
         sb.AppendLine("Callstack:");
-        sb.AppendLine(Callstack.ToString());
+        sb.AppendLine(this.Callstack.ToString());
 
         sb.AppendLine("CHS:");
-        sb.AppendLine(CHS.ToString());
+        sb.AppendLine(this.CHS.ToString());
 
         sb.AppendLine("VariableMapping:");
-        sb.AppendLine(Mapping.ToString());
+        sb.AppendLine(this.Mapping.ToString());
 
         sb.AppendLine("NextVar");
-        sb.AppendLine(NextInternalVariableIndex.ToString());
+        sb.AppendLine(this.NextInternalVariableIndex.ToString());
 
         return sb.ToString();
     }

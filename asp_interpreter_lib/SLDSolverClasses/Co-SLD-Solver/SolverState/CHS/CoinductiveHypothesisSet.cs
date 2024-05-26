@@ -13,30 +13,30 @@ using System.Collections;
 
 public class CoinductiveHypothesisSet : IEnumerable<CHSEntry>
 {
-    private readonly ImmutableLinkedList<CHSEntry> _entries;
+    private readonly ImmutableLinkedList<CHSEntry> entries;
 
     public CoinductiveHypothesisSet()
-    {       
-        _entries = [];
+    {
+        this.entries = [];
     }
 
     public CoinductiveHypothesisSet(ImmutableLinkedList<CHSEntry> termSet)
     {
         ArgumentNullException.ThrowIfNull(termSet);
 
-        _entries = termSet;
+        this.entries = termSet;
     }
 
-    public int Count => _entries.Count;
+    public int Count => this.entries.Count;
 
     public CoinductiveHypothesisSet Add(CHSEntry value)
     {
-        return new CoinductiveHypothesisSet(_entries.Prepend(value));
+        return new CoinductiveHypothesisSet(this.entries.Prepend(value));
     }
 
     public CoinductiveHypothesisSet Update(Structure term, bool isFulfilled)
     {
-        var newList = _entries.AsParallel().Select(entry =>
+        var newList = this.entries.AsParallel().Select(entry =>
         {
             if (entry.Term.IsEqualTo(term))
             {
@@ -53,16 +53,16 @@ public class CoinductiveHypothesisSet : IEnumerable<CHSEntry>
 
     public IEnumerator<CHSEntry> GetEnumerator()
     {
-        return _entries.GetEnumerator();
+        return this.entries.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return _entries.GetEnumerator();
+        return this.entries.GetEnumerator();
     }
 
     public override string ToString()
     {
-        return _entries.Count > 0 ? $"{{{_entries.ToList().ListToString()}}}" : "Empty CHS";
+        return this.entries.Count > 0 ? $"{{{this.entries.ToList().ListToString()}}}" : "Empty CHS";
     }
 }

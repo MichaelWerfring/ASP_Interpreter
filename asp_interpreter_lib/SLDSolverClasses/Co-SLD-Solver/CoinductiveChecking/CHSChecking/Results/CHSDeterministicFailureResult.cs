@@ -4,6 +4,9 @@
 
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CHSChecking.Results;
 
+/// <summary>
+/// Represents a failure result of a chs check.
+/// </summary>
 public class CHSDeterministicFailureResult : ICHSCheckingResult
 {
     /// <summary>

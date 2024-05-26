@@ -4,33 +4,49 @@
 
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 
-using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUnificationGoal.DBUnifier;
-using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductivChecking.CoinductivityChecking;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
 internal class PredicateGoal : ICoSLDGoal
 {
-    private readonly CoinductiveChecker _checker;
-    private readonly DatabaseUnifier _databaseUnifier;
-    private readonly GoalSolver _goalSolver;
-    private readonly Structure _inputTarget;
-    private readonly SolutionState _inputState;
-    private readonly PredicateGoalStateUpdater _stateUpdater;
-    private readonly ILogger _logger;
+    private readonly CoinductiveChecker checker;
+    private readonly DatabaseUnifier databaseUnifier;
+    private readonly GoalSolver goalSolver;
+    private readonly Structure inputTarget;
+    private readonly SolutionState inputState;
+    private readonly PredicateGoalStateUpdater stateUpdater;
+    private readonly ILogger logger;
 
-    public PredicateGoal
-    (
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PredicateGoal"/> class.
+    /// </summary>
+    /// <param name="checker">A coinductive checker.</param>
+    /// <param name="databaseUnifier">A unifier for unifying with clauses in the database.</param>
+    /// <param name="solver">A solver for solving subgoals.</param>
+    /// <param name="target">The predicate to solve.</param>
+    /// <param name="solutionState">The input solution state.</param>
+    /// <param name="stateUpdater">An updater for updating after unification and subgoal solving.</param>
+    /// <param name="logger">A logger.</param>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="checker"/> is null,
+    /// <paramref name="databaseUnifier"/> is null,
+    /// <paramref name="solver"/> is null,
+    /// <paramref name="target"/> is null,
+    /// <paramref name="solutionState"/> is null,
+    /// <paramref name="logger"/> is null,
+    /// <paramref name="stateUpdater"/> is null.</exception>
+    public PredicateGoal(
         CoinductiveChecker checker,
         DatabaseUnifier databaseUnifier,
         GoalSolver solver,
         Structure target,
         SolutionState solutionState,
         PredicateGoalStateUpdater stateUpdater,
-        ILogger logger
-    )
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(checker, nameof(checker));
         ArgumentNullException.ThrowIfNull(databaseUnifier, nameof(databaseUnifier));
@@ -40,25 +56,25 @@ internal class PredicateGoal : ICoSLDGoal
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
         ArgumentNullException.ThrowIfNull(stateUpdater, nameof(stateUpdater));
 
-        _checker = checker;
-        _databaseUnifier = databaseUnifier;
-        _goalSolver = solver;
-        _inputTarget = target;
-        _inputState = solutionState;
-        _stateUpdater = stateUpdater;
-        _logger = logger;
+        this.checker = checker;
+        this.databaseUnifier = databaseUnifier;
+        this.goalSolver = solver;
+        this.inputTarget = target;
+        this.inputState = solutionState;
+        this.stateUpdater = stateUpdater;
+        this.logger = logger;
     }
 
     public IEnumerable<GoalSolution> TrySatisfy()
     {
-        _logger.LogInfo($"Attempting to solve predicate goal {_inputTarget}");
-        _logger.LogTrace($"Input state is: {_inputState}");
+        this.logger.LogInfo($"Attempting to solve predicate goal {this.inputTarget}");
+        this.logger.LogTrace($"Input state is: {this.inputState}");
 
         // for each way the input can "survive" the coinductive check..
-        foreach (CoinductiveCheckingResult checkingResult in _checker.Check(_inputTarget, _inputState))
+        foreach (CoinductiveCheckingResult checkingResult in this.checker.Check(this.inputTarget, this.inputState))
         {
             // enumerate the ways they can be solved.
-            foreach (var solution in SolveCoinductiveCheckingResults(checkingResult))
+            foreach (var solution in this.SolveCoinductiveCheckingResults(checkingResult))
             {
                 yield return solution;
             }
@@ -69,27 +85,25 @@ internal class PredicateGoal : ICoSLDGoal
     {
         if (checkingResult.SuccessType == SuccessType.DeterministicSuccess)
         {
-            yield return _stateUpdater.ConstructCoinductiveSuccessSolution(_inputState, checkingResult.Mapping);
+            yield return this.stateUpdater.ConstructCoinductiveSuccessSolution(this.inputState, checkingResult.Mapping);
             yield break;
         }
 
         if (checkingResult.SuccessType == SuccessType.NonDeterministicSuccess)
         {
-            yield return _stateUpdater.ConstructCoinductiveSuccessSolution(_inputState, checkingResult.Mapping);
+            yield return this.stateUpdater.ConstructCoinductiveSuccessSolution(this.inputState, checkingResult.Mapping);
         }
 
-        IEnumerable<DBUnificationResult> dbunifications = _databaseUnifier.GetDatabaseUnificationResults
-        (
+        IEnumerable<DBUnificationResult> dbunifications = this.databaseUnifier.GetDatabaseUnificationResults(
             checkingResult.Target,
             checkingResult.Mapping,
-            _inputState.NextInternalVariableIndex
-        );
+            this.inputState.NextInternalVariableIndex);
 
         // for each way the constrainedTarget unifies with clauses in the database..
         foreach (DBUnificationResult dbunification in dbunifications)
         {
             // ..enumerate the subgoal solutions.
-            foreach (var subgoalSolution in SolveDatabaseUnificationResults(dbunification))
+            foreach (var subgoalSolution in this.SolveDatabaseUnificationResults(dbunification))
             {
                 yield return subgoalSolution;
             }
@@ -98,20 +112,18 @@ internal class PredicateGoal : ICoSLDGoal
 
     private IEnumerable<GoalSolution> SolveDatabaseUnificationResults(DBUnificationResult result)
     {
-        CoSldSolverState nextState = _stateUpdater.BuildStateForSolvingBodyGoals
-        (
-            _inputState.CHS,
-            _inputState.Callstack, 
+        CoSldSolverState nextState = this.stateUpdater.BuildStateForSolvingBodyGoals(
+            this.inputState.CHS,
+            this.inputState.Callstack,
             result.NewMapping,
             result.RenamedClause,
-            _inputTarget, 
-            result.NextInternalIndex
-        );
+            this.inputTarget,
+            result.NextInternalIndex);
 
         // enumerate each way the subgoal can be satisfied. Update and yield return.
-        foreach (GoalSolution subgoalSolution in _goalSolver.SolveGoals(nextState))
+        foreach (GoalSolution subgoalSolution in this.goalSolver.SolveGoals(nextState))
         {
-            GoalSolution updatedSolution = _stateUpdater.UpdateGoalSolution(subgoalSolution, _inputTarget);
+            GoalSolution updatedSolution = this.stateUpdater.UpdateGoalSolution(subgoalSolution, this.inputTarget);
 
             yield return updatedSolution;
         }

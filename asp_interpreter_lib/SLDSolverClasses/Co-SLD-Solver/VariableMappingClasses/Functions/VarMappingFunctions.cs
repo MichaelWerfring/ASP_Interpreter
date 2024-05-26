@@ -14,28 +14,28 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 internal static class VarMappingFunctions
 {
-    private static readonly VariableMappingMerger _merger = new();
-    private static readonly BinaryVariableBindingCaseDeterminer _caseDeterminer = new();
-    private static readonly ProhibitedValuesChecker _prohibFilterer = new();
-    private static readonly TermBindingChecker _termbindingFilterer = new();
+    private static readonly VariableMappingMerger Merger = new();
+    private static readonly BinaryVariableBindingCaseDeterminer CaseDeterminer = new();
+    private static readonly ProhibitedValuesChecker ProhibFilterer = new();
+    private static readonly TermBindingChecker TermbindingFilterer = new();
 
     public static VariableMapping Merge(this IDictionary<Variable, ProhibitedValuesBinding> prohibs, IDictionary<Variable, TermBinding> termbindings)
     {
-        return _merger.Merge(prohibs, termbindings);
+        return Merger.Merge(prohibs, termbindings);
     }
 
     public static IBinaryVariableBindingCase DetermineCase(IVariableBinding left, IVariableBinding right)
     {
-        return _caseDeterminer.DetermineCase(left, right);
+        return CaseDeterminer.DetermineCase(left, right);
     }
 
     public static IOption<ProhibitedValuesBinding> ReturnProhibitedValueBindingOrNone(this IVariableBinding variableBinding)
     {
-        return _prohibFilterer.ReturnProhibitedValueBindingOrNone(variableBinding);
+        return ProhibFilterer.ReturnProhibitedValueBindingOrNone(variableBinding);
     }
 
     public static IOption<TermBinding> ReturnTermbindingOrNone(this IVariableBinding variableBinding)
     {
-        return _termbindingFilterer.ReturnTermbindingOrNone(variableBinding);
+        return TermbindingFilterer.ReturnTermbindingOrNone(variableBinding);
     }
 }

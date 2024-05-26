@@ -5,7 +5,7 @@
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking.CallStackChacking.Results;
 
 /// <summary>
-/// Represents a result of a callstack check.
+/// Represents a failure result of a callstack check.
 /// </summary>
 public class CallstackDeterministicFailureResult : ICallstackCheckingResult
 {

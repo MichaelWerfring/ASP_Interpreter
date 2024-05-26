@@ -17,7 +17,7 @@ public class VariableMappingPostprocessor
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
 
-        return Postprocess(mapping, mapping.Keys.Where(x => !x.Identifier.StartsWith('#')));
+        return this.Postprocess(mapping, mapping.Keys.Where(x => !x.Identifier.StartsWith('#')));
     }
 
     public VariableMapping Postprocess(VariableMapping map, IEnumerable<Variable> variablesToKeep)
@@ -34,11 +34,11 @@ public class VariableMappingPostprocessor
 
         // get all variables from all the term bindings.
         var internalVariablesInTerms = newBinding.Values
-            .OfType<TermBinding>()          
-            .SelectMany(x => (x).Term.ExtractVariables())
-            .Where(x => x.Identifier.StartsWith('#'))
+            .OfType<TermBinding>()
+            .SelectMany(termBinding => termBinding.Term.ExtractVariables())
+            .Where(variable => variable.Identifier.StartsWith('#'))
             .ToImmutableHashSet(TermFuncs.GetSingletonVariableComparer());
- 
+
         // for all the variables in the termbindings: add their values as well, if they have any.
         foreach (var variable in internalVariablesInTerms)
         {

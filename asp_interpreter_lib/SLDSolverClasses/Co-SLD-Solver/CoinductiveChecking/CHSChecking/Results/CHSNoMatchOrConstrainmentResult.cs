@@ -6,15 +6,26 @@ namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.CoinductiveChecking
 
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
+/// <summary>
+/// Represents a no match or constraintment (success) result of a chs check.
+/// </summary
 public class CHSNoMatchOrConstrainmentResult : ICHSCheckingResult
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CHSNoMatchOrConstrainmentResult"/> class.
+    /// </summary>
+    /// <param name="results">The constrainment results.</param>
+    /// <exception cref="ArgumentNullException">Thrown if results is null.</exception>
     public CHSNoMatchOrConstrainmentResult(IEnumerable<VariableMapping> results)
     {
         ArgumentNullException.ThrowIfNull(results);
 
-        ConstrainmentResults = results;
+        this.ConstrainmentResults = results;
     }
 
+    /// <summary>
+    /// Gets the constrainment results.
+    /// </summary>
     public IEnumerable<VariableMapping> ConstrainmentResults { get; }
 
     /// <summary>

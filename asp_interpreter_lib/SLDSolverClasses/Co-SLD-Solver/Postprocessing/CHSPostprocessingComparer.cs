@@ -10,32 +10,50 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 
 internal class CHSPostprocessingComparer : IComparer<CHSEntry>
 {
-    private FunctorTableRecord _functors;
+    private FunctorTableRecord functors;
 
-    private PostprocessingTermComparer _comparer = new();
+    private PostprocessingTermComparer comparer;
 
     public CHSPostprocessingComparer(FunctorTableRecord functors)
     {
-        _functors = functors;
+        ArgumentNullException.ThrowIfNull(functors, nameof(functors));
+
+        this.functors = functors;
+        this.comparer = new();
     }
 
     public int Compare(CHSEntry? x, CHSEntry? y)
     {
-        if (x == null && y == null) return 0;
-
-        if (x == null) return -1;
-
-        if (y == null) return 1;
-
-        if (x.Term.IsNegated(_functors) && y.Term.IsNegated(_functors))
+        if (x == null && y == null)
         {
-            return _comparer.Compare(x.Term.Children.ElementAt(0), y.Term.Children.ElementAt(0));
+            return 0;
         }
 
-        if (x.Term.IsNegated(_functors)) return 1;
+        if (x == null)
+        {
+            return -1;
+        }
 
-        if (y.Term.IsNegated(_functors)) return -1;
+        if (y == null)
+        {
+            return 1;
+        }
 
-        return _comparer.Compare(x.Term, y.Term);
+        if (x.Term.IsNegated(this.functors) && y.Term.IsNegated(this.functors))
+        {
+            return this.comparer.Compare(x.Term.Children.ElementAt(0), y.Term.Children.ElementAt(0));
+        }
+
+        if (x.Term.IsNegated(this.functors))
+        {
+            return 1;
+        }
+
+        if (y.Term.IsNegated(this.functors))
+        {
+            return -1;
+        }
+
+        return this.comparer.Compare(x.Term, y.Term);
     }
 }

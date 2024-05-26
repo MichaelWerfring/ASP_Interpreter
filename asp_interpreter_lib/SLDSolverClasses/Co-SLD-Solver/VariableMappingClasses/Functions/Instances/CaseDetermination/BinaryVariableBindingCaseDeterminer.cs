@@ -10,8 +10,8 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 
 internal class BinaryVariableBindingCaseDeterminer : IVariableBindingArgumentVisitor<IBinaryVariableBindingCase, IVariableBinding>
 {
-    private readonly LeftIsProhibitedValuesCaseDeterminer _rightCaseDeterminerForProhibitedValuesCase = new();
-    private readonly LeftIsTermBindingCaseDeterminer _rightCaseDeterminerForTermBindingCase = new();
+    private readonly LeftIsProhibitedValuesCaseDeterminer rightCaseDeterminerForProhibitedValuesCase = new();
+    private readonly LeftIsTermBindingCaseDeterminer rightCaseDeterminerForTermBindingCase = new();
 
     public IBinaryVariableBindingCase DetermineCase(IVariableBinding left, IVariableBinding right)
     {
@@ -26,7 +26,7 @@ internal class BinaryVariableBindingCaseDeterminer : IVariableBindingArgumentVis
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
 
-        return right.Accept(_rightCaseDeterminerForProhibitedValuesCase, left);
+        return right.Accept(this.rightCaseDeterminerForProhibitedValuesCase, left);
     }
 
     public IBinaryVariableBindingCase Visit(TermBinding left, IVariableBinding right)
@@ -34,6 +34,6 @@ internal class BinaryVariableBindingCaseDeterminer : IVariableBindingArgumentVis
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
 
-        return right.Accept(_rightCaseDeterminerForTermBindingCase, left);
+        return right.Accept(this.rightCaseDeterminerForTermBindingCase, left);
     }
 }

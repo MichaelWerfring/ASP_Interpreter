@@ -22,14 +22,14 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
     /// should resolve to X -> \={1,2,3},
     /// or just X -> Y.
     /// </summary>
-    private readonly bool _doProhibitedValuesBindingResolution;
+    private readonly bool doProhibitedValuesBindingResolution;
 
-    private readonly TermBindingChecker _termbindingFilterer;
+    private readonly TermBindingChecker termbindingFilterer;
 
     public TransitiveVariableMappingResolver(bool doProhibitedValuesBindingResolution)
     {
-        _doProhibitedValuesBindingResolution = doProhibitedValuesBindingResolution;
-        _termbindingFilterer = new();
+        this.doProhibitedValuesBindingResolution = doProhibitedValuesBindingResolution;
+        this.termbindingFilterer = new();
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         ArgumentNullException.ThrowIfNull(binding);
         ArgumentNullException.ThrowIfNull(map);
 
-        return binding.Term.Accept(this, map);      
+        return binding.Term.Accept(this, map);
     }
 
     public IVariableBinding Visit(Variable term, VariableMapping map)
@@ -75,7 +75,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
             return new TermBinding(term);
         }
 
-        if (!_doProhibitedValuesBindingResolution && VarMappingFunctions.ReturnProhibitedValueBindingOrNone(binding).HasValue)
+        if (!this.doProhibitedValuesBindingResolution && VarMappingFunctions.ReturnProhibitedValueBindingOrNone(binding).HasValue)
         {
             return new TermBinding(term);
         }
@@ -92,8 +92,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         var variablesInTerm = term.ExtractVariables();
 
         // filter out all variables where you have something like this : X => s(X).
-        var filteredVariables = variablesInTerm.Where
-        (
+        var filteredVariables = variablesInTerm.Where(
             x =>
             {
                 if (!map.TryGetValue(x, out IVariableBinding? value))
@@ -103,9 +102,9 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
 
                 var tbMaybe = VarMappingFunctions.ReturnTermbindingOrNone(value);
 
-                if (!tbMaybe.HasValue) 
+                if (!tbMaybe.HasValue)
                 {
-                    return false; 
+                    return false;
                 }
 
                 if (tbMaybe.GetValueOrThrow().Term.IsEqualTo(term))
@@ -114,14 +113,12 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
                 }
 
                 return true;
-            }
-
-        );
+            });
 
         // resolve those variables : get only the termbindings. Build mapping.
         var resolvedVars = filteredVariables
-            .Select(x => (x, Visit(new TermBinding(x), map)))
-            .Select(pair => (pair.x, _termbindingFilterer.ReturnTermbindingOrNone(pair.Item2)))
+            .Select(x => (x, this.Visit(new TermBinding(x), map)))
+            .Select(pair => (pair.x, this.termbindingFilterer.ReturnTermbindingOrNone(pair.Item2)))
             .Where(pair => pair.Item2.HasValue)
             .Select(pair => (pair.x, pair.Item2.GetValueOrThrow().Term))
             .ToDictionary(TermFuncs.GetSingletonVariableComparer());

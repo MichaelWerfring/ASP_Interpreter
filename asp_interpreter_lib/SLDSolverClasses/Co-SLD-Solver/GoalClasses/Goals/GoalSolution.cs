@@ -9,22 +9,20 @@ using System.Text;
 
 public class GoalSolution
 {
-    public GoalSolution
-    (
+    public GoalSolution(
         CoinductiveHypothesisSet resultSet,
         VariableMapping resultMapping,
         CallStack stack,
-        int nextInternalVariableIndex
-    )
+        int nextInternalVariableIndex)
     {
         ArgumentNullException.ThrowIfNull(resultSet, nameof(resultSet));
         ArgumentNullException.ThrowIfNull(resultMapping, nameof(resultMapping));
         ArgumentNullException.ThrowIfNull(stack, nameof(stack));
 
-        ResultSet = resultSet;
-        ResultMapping = resultMapping;
-        NextInternalVariable = nextInternalVariableIndex;
-        Stack = stack;
+        this.ResultSet = resultSet;
+        this.ResultMapping = resultMapping;
+        this.NextInternalVariable = nextInternalVariableIndex;
+        this.Stack = stack;
     }
 
     public CoinductiveHypothesisSet ResultSet { get; }
@@ -40,13 +38,13 @@ public class GoalSolution
         var sb = new StringBuilder();
 
         sb.AppendLine("Resultset:");
-        sb.AppendLine($"{{ {ResultSet} }}");
+        sb.AppendLine($"{{ {this.ResultSet} }}");
 
         sb.AppendLine("Resultmapping:");
-        sb.AppendLine(ResultMapping.ToString());
+        sb.AppendLine(this.ResultMapping.ToString());
 
         sb.AppendLine("Next variable index:");
-        sb.AppendLine(NextInternalVariable.ToString());
+        sb.AppendLine(this.NextInternalVariable.ToString());
 
         return sb.ToString();
     }

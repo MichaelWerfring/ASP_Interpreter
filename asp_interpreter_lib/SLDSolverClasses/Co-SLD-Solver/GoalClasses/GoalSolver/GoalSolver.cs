@@ -11,16 +11,16 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class GoalSolver
 {
-    private readonly CoSLDGoalMapper _goalMapper;
-    private readonly ILogger _logger;
+    private readonly CoSLDGoalMapper goalMapper;
+    private readonly ILogger logger;
 
     public GoalSolver(CoSLDGoalMapper goalMapper, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(goalMapper, nameof(goalMapper));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
-        _goalMapper = goalMapper;
-        _logger = logger;
+        this.goalMapper = goalMapper;
+        this.logger = logger;
     }
 
     public IEnumerable<GoalSolution> SolveGoals(CoSldSolverState inputState)
@@ -36,7 +36,7 @@ public class GoalSolver
             yield break;
         }
 
-        IOption<ICoSLDGoal> goalToSolveMaybe = _goalMapper.GetGoal(inputState);
+        IOption<ICoSLDGoal> goalToSolveMaybe = this.goalMapper.GetGoal(inputState);
 
         if (!goalToSolveMaybe.HasValue)
         {
@@ -44,12 +44,12 @@ public class GoalSolver
         }
 
         ICoSLDGoal goal = goalToSolveMaybe.GetValueOrThrow();
-        
+
         // for each way the goal can be satisfied..
         foreach (GoalSolution solution in goal.TrySatisfy())
         {
             CoSldSolverState nextState = this.UpdateAfterGoalFulfilled(inputState, solution);
-         
+
             // yield return all the ways the rest of the goals can be satisfied
             foreach (GoalSolution resolution in this.SolveGoals(nextState))
             {
@@ -69,16 +69,12 @@ public class GoalSolver
             goalTail = goalTail.Skip(1).Prepend(substitutedNextGoal);
         }
 
-        return new CoSldSolverState
-        (
+        return new CoSldSolverState(
             goalTail,
-            new SolutionState
-            (
+            new SolutionState(
                 goalSolution.Stack,
                 goalSolution.ResultSet,
                 goalSolution.ResultMapping,
-                goalSolution.NextInternalVariable
-            )
-        );
+                goalSolution.NextInternalVariable));
     }
 }
