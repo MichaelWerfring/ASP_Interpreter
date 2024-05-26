@@ -40,12 +40,18 @@ namespace Asp_interpreter_lib.Visitors
 
                 var parsedGoal = goal.Accept(goalVisitor);
 
+                if (parsedGoal == null)
+                {
+                    this.logger.LogError("Cannot parse goal.", context);
+                    return new None<Statement>();
+                }
+
                 if (parsedGoal.HasValue)
                 {
                     body.Add(parsedGoal.GetValueOrThrow());
                     continue;
                 }
-                
+
                 goal.Accept(binaryOperationVisitor)?.IfHasValue(v => body.Add(v));
             }
 
