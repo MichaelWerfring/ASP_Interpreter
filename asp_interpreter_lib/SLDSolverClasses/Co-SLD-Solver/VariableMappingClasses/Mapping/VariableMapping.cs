@@ -24,6 +24,9 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 {
     private readonly ImmutableDictionary<Variable, IVariableBinding> mapping;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VariableMapping"/> class.
+    /// </summary>
     public VariableMapping()
     {
         this.mapping = ImmutableDictionary.Create<Variable, IVariableBinding>(TermFuncs.GetSingletonVariableComparer());
@@ -73,6 +76,13 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 
         this.mapping = immutableBuilder.ToImmutable();
     }
+    public IVariableBinding this[Variable key] => this.mapping[key];
+
+    public int Count => this.mapping.Count;
+
+    public IEnumerable<Variable> Keys => this.mapping.Keys;
+
+    public IEnumerable<IVariableBinding> Values => this.mapping.Values;
 
     public VariableMapping Add(Variable key, IVariableBinding value) => new(this.mapping.Add(key, value));
 
@@ -87,14 +97,6 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
     public VariableMapping SetItem(Variable key, IVariableBinding value) => new(this.mapping.SetItem(key, value));
 
     public VariableMapping SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items) => new(this.mapping.SetItems(items));
-
-    public IVariableBinding this[Variable key] => this.mapping[key];
-
-    public IEnumerable<Variable> Keys => this.mapping.Keys;
-
-    public IEnumerable<IVariableBinding> Values => this.mapping.Values;
-
-    public int Count => this.mapping.Count;
 
     public bool Contains(KeyValuePair<Variable, IVariableBinding> pair) => this.mapping.Contains(pair);
 

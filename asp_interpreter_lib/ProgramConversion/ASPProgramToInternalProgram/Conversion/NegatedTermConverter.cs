@@ -94,6 +94,19 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
         return new Some<ISimpleTerm>(negatedInteger);
     }
 
+    /// <summary>
+    /// Visits an inner term to convert it.
+    /// </summary>
+    /// <param name="term">The term to convert.</param>
+    /// <returns>The converted term, or none in case of failure.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
+    public override IOption<ISimpleTerm> Visit(ParenthesizedTerm term)
+    {
+        ArgumentNullException.ThrowIfNull(term);
+
+        return term.Term.Accept(this);
+    }
+
     // unconvertible terms : these should not be inside a negated term
 
     /// <summary>
@@ -129,19 +142,6 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
     /// <returns>Always none. </returns>
     /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
     public override IOption<ISimpleTerm> Visit(ConventionalList term)
-    {
-        ArgumentNullException.ThrowIfNull(term);
-
-        return new None<ISimpleTerm>();
-    }
-
-    /// <summary>
-    /// Visits an inner term to convert it. Failure case.
-    /// </summary>
-    /// <param name="term">The term to convert.</param>
-    /// <returns>Always none. </returns>
-    /// <exception cref="ArgumentNullException">Thrown if term is null.</exception>
-    public override IOption<ISimpleTerm> Visit(ParenthesizedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 

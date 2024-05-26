@@ -13,6 +13,9 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 using Asp_interpreter_lib.Util.ErrorHandling.Either;
 using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 
+/// <summary>
+/// Represents a disunification goal.
+/// </summary>
 public class DisunificationGoal : ICoSLDGoal
 {
     private readonly SolverStateUpdater updater;
@@ -24,6 +27,20 @@ public class DisunificationGoal : ICoSLDGoal
 
     private readonly ILogger logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisunificationGoal"/> class.
+    /// </summary>
+    /// <param name="updater">A state updater.</param>
+    /// <param name="target">The disunification target.</param>
+    /// <param name="algorithm">The disunification algorithm.</param>
+    /// <param name="state">The input solution state.</param>
+    /// <param name="logger">A logger.</param>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="updater"/> is null,
+    /// ..<paramref name="target"/> is null,
+    /// ..<paramref name="algorithm"/> is null,
+    /// ..<paramref name="state"/> is null,
+    /// ..<paramref name="logger"/> is null.</exception>
     public DisunificationGoal(
         SolverStateUpdater updater,
         ConstructiveTarget target,
@@ -44,6 +61,10 @@ public class DisunificationGoal : ICoSLDGoal
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Attempts to solve the goal.
+    /// </summary>
+    /// <returns>An enumeration of all the ways the goal can be solved.</returns>
     public IEnumerable<GoalSolution> TrySatisfy()
     {
         this.logger.LogInfo($"Attempting to solve disunification goal: {this.target}");

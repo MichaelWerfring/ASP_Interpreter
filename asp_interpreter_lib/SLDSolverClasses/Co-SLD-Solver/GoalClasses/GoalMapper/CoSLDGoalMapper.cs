@@ -29,8 +29,6 @@ public class CoSLDGoalMapper
 
     private readonly PredicateGoalBuilder predicateGoalBuilder;
 
-    private readonly ILogger logger;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CoSLDGoalMapper"/> class.
     /// </summary>
@@ -82,7 +80,7 @@ public class CoSLDGoalMapper
                 new ArithmeticComparisonGoalBuilder((left, right) => left >= right, new ArithmeticEvaluator(functorTable), logger)
             },
             {
-                (functorTable.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this, logger), 100)
+                (functorTable.Forall, 2), new ForallGoalBuilder(logger ,new GoalSolver(this), 100)
             },
             {
                 (functorTable.ArithmeticEvaluationNegated, 2),
@@ -101,7 +99,7 @@ public class CoSLDGoalMapper
                     new ExactMatchChecker(new StandardConstructiveUnificationAlgorithm(false)),
                     new StandardConstructiveUnificationAlgorithm(false),
                     functorTable,
-                    new GoalSolver(this, logger),
+                    new GoalSolver(this),
                     logger),
                 new CallstackChecker(
                     functorTable,
@@ -109,11 +107,9 @@ public class CoSLDGoalMapper
                     new StandardConstructiveUnificationAlgorithm(false),
                     logger)),
             new DatabaseUnifier(new StandardConstructiveUnificationAlgorithm(false), database, logger),
-            new GoalSolver(this, logger),
+            new GoalSolver(this),
             new PredicateGoalStateUpdater(new SolverStateUpdater()),
             logger);
-
-        this.logger = logger;
     }
 
     /// <summary>

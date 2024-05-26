@@ -15,6 +15,9 @@ using Asp_interpreter_lib.Unification.Constructive.Target.Builder;
 using Asp_interpreter_lib.Unification.Constructive.Unification;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
+/// <summary>
+/// A class that represents an evaluation goal, or otherwise called an "is".
+/// </summary>
 internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOption<GoalSolution>, int>
 {
     private readonly SolverStateUpdater updater;
@@ -25,16 +28,29 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
     private readonly IConstructiveUnificationAlgorithm algorithm;
     private readonly ILogger logger;
 
-    public ArithmeticEvaluationGoal
-    (
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArithmeticEvaluationGoal"/> class.
+    /// </summary>
+    /// <param name="updater">A state updater to use after success.</param>
+    /// <param name="evaluator">The arithmetic evaluator.</param>
+    /// <param name="left">The left term.</param>
+    /// <param name="right">The right term.</param>
+    /// <param name="state">The input solution state.</param>
+    /// <param name="algorithm">The unification algorithm.</param>
+    /// <param name="logger">A logger.</param>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="evaluator"/> is null,
+    /// ..<paramref name="left"/> is null,
+    /// <paramref name="right"/> is null,
+    /// <paramref name="logger"/> is null.</exception>
+    public ArithmeticEvaluationGoal(
         SolverStateUpdater updater,
         ArithmeticEvaluator evaluator,
         ISimpleTerm left,
         ISimpleTerm right,
         SolutionState state,
         IConstructiveUnificationAlgorithm algorithm,
-        ILogger logger
-    )
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(updater);
         ArgumentNullException.ThrowIfNull(evaluator);
@@ -53,6 +69,10 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Attempts to solve the goal.
+    /// </summary>
+    /// <returns>An enumeration of all the ways the goal can be solved.</returns>
     public IEnumerable<GoalSolution> TrySatisfy()
     {
         this.logger.LogInfo($"Attempting to solve arithmetic evaluation goal: {this.left}, {this.right}");
@@ -81,6 +101,14 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
         yield return solutionMaybe.GetValueOrThrow();
     }
 
+    /// <summary>
+    /// Visits a case where left is variable.
+    /// </summary>
+    /// <param name="var">The variable.</param>
+    /// <param name="integer">The right evaluation.</param>
+    /// <returns>A goal solution, or none in case of failure.</returns>
+    /// <exception cref="ArgumentException">Thrown if constructive target building fails.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if var is null.</exception>
     public IOption<GoalSolution> Visit(Variable var, int integer)
     {
         ArgumentNullException.ThrowIfNull(var);
@@ -123,6 +151,13 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
                 this.state.NextInternalVariableIndex));
     }
 
+    /// <summary>
+    /// Visits a case where left is structure.
+    /// </summary>
+    /// <param name="structure">The structure.</param>
+    /// <param name="integer">The right evaluation.</param>
+    /// <returns>Always none.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if structure is null.</exception>
     public IOption<GoalSolution> Visit(Structure structure, int integer)
     {
         ArgumentNullException.ThrowIfNull(structure);
@@ -130,6 +165,13 @@ internal class ArithmeticEvaluationGoal : ICoSLDGoal, ISimpleTermArgsVisitor<IOp
         return new None<GoalSolution>();
     }
 
+    /// <summary>
+    /// Visits a case where left is integer.
+    /// </summary>
+    /// <param name="integer">The structure.</param>
+    /// <param name="rightEval">The right evaluation.</param>
+    /// <returns>A goalsolution, or none in case of failure.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if integer is null.</exception>
     public IOption<GoalSolution> Visit(Integer integer, int rightEval)
     {
         ArgumentNullException.ThrowIfNull(integer);

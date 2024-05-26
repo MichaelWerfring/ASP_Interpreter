@@ -8,12 +8,23 @@ using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 
+/// <summary>
+/// A class for postprocessing a coinductive solution.
+/// </summary>
 internal class SolutionPostprocessor
 {
     private readonly VariableMappingPostprocessor mappingPostprocessor;
 
     private readonly CHSPostProcessor chsPostprocessor;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolutionPostprocessor"/> class.
+    /// </summary>
+    /// <param name="mappingProcessor">A variable mapping processing.</param>
+    /// <param name="chsProcessor">A postprocessor for the coinductive hypothesis set.</param>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="mappingProcessor"/> is null,
+    /// ..<paramref name="chsProcessor"/> is null.</exception>
     public SolutionPostprocessor(VariableMappingPostprocessor mappingProcessor, CHSPostProcessor chsProcessor)
     {
         ArgumentNullException.ThrowIfNull(mappingProcessor, nameof(mappingProcessor));
@@ -23,6 +34,12 @@ internal class SolutionPostprocessor
         this.chsPostprocessor = chsProcessor;
     }
 
+    /// <summary>
+    /// Postprocesses a solution into a more readable <see cref="CoSLDSolution"/>.
+    /// </summary>
+    /// <param name="solution">The solution to postprocess.</param>
+    /// <returns>A postprocessed solution.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="solution"/> is null.</exception>
     public CoSLDSolution Postprocess(GoalSolution solution)
     {
         ArgumentNullException.ThrowIfNull(solution, nameof(solution));

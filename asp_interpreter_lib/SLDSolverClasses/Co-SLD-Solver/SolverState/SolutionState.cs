@@ -7,8 +7,22 @@ namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using System.Text;
 
+/// <summary>
+/// Represents the current solution state of a coinductive solver.
+/// </summary>
 public class SolutionState
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolutionState"/> class.
+    /// </summary>
+    /// <param name="callstack">The current callstack.</param>
+    /// <param name="chs">The current chs.</param>
+    /// <param name="mapping">The current mapping.</param>
+    /// <param name="nextInternalIndex">The next internal variable index.</param>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="callstack"/> is null,
+    /// ..<paramref name="chs"/> is null,
+    /// <paramref name="mapping"/> is null.</exception>
     public SolutionState(
         CallStack callstack,
         CoinductiveHypothesisSet chs,
@@ -25,14 +39,30 @@ public class SolutionState
         this.NextInternalVariableIndex = nextInternalIndex;
     }
 
+    /// <summary>
+    /// Gets the current callstack.
+    /// </summary>
     public CallStack Callstack { get; }
 
+    /// <summary>
+    /// Gets the current chs.
+    /// </summary>
     public CoinductiveHypothesisSet CHS { get; }
 
+    /// <summary>
+    /// Gets the current mapping.
+    /// </summary>
     public VariableMapping Mapping { get; }
 
+    /// <summary>
+    /// Gets the next internal variable index.
+    /// </summary>
     public int NextInternalVariableIndex { get; }
 
+    /// <summary>
+    /// Converts the solution state to a string representation.
+    /// </summary>
+    /// <returns>The string representation.</returns>
     public override string ToString()
     {
         var sb = new StringBuilder();

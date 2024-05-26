@@ -8,30 +8,45 @@ using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 
+/// <summary>
+/// A class for comparing terms for sorting of terms during postprocessing.
+/// </summary>
 internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermCaseVisitor<int>
 {
-    public int Compare(ISimpleTerm? x, ISimpleTerm? y)
+    /// <summary>
+    /// Compares two terms for ordering.
+    /// </summary>
+    /// <param name="left">The left term.</param>
+    /// <param name="right">The right term.</param>
+    /// <returns>An integer representing ordering.</returns>
+    public int Compare(ISimpleTerm? left, ISimpleTerm? right)
     {
-        if (x == null && y == null)
+        if (left == null && right == null)
         {
             return 0;
         }
 
-        if (x == null)
+        if (left == null)
         {
             return -1;
         }
 
-        if (y == null)
+        if (right == null)
         {
             return 1;
         }
 
-        var binaryCase = TermFuncs.DetermineCase(x, y);
+        var binaryCase = TermFuncs.DetermineCase(left, right);
 
         return binaryCase.Accept(this);
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(IntegerIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -39,6 +54,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return binaryCase.Left.Value.CompareTo(binaryCase.Right.Value);
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(IntegerStructureCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -46,6 +67,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return -1;
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(IntegerVariableCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -53,6 +80,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return 1;
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(StructureIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -60,6 +93,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return 1;
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(StructureStructureCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -93,6 +132,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return 0;
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(StructureVariableCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -100,6 +145,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return 1;
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(VariableIntegerCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -107,6 +158,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return -1;
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(VariableVariableCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);
@@ -114,6 +171,12 @@ internal class PostprocessingTermComparer : IComparer<ISimpleTerm>, IBinaryTermC
         return binaryCase.Left.Identifier.CompareTo(binaryCase.Right.Identifier);
     }
 
+    /// <summary>
+    /// Visits a case and returns its ordering.
+    /// </summary>
+    /// <param name="binaryCase">The case to visit.</param>
+    /// <returns>An integer representing ordering.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="binaryCase"/> is null.</exception>
     public int Visit(VariableStructureCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase);

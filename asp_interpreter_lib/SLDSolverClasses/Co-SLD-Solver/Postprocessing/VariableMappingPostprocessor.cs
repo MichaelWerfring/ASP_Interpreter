@@ -11,8 +11,17 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using System.Collections.Immutable;
 
+/// <summary>
+/// A class for postprocessing a variable mapping.
+/// </summary>
 public class VariableMappingPostprocessor
 {
+    /// <summary>
+    /// Postprocess a variable mapping.
+    /// </summary>
+    /// <param name="mapping">The mapping to postprocess.</param>
+    /// <returns>The postprocessed mapping.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="mapping"/> is null.</exception>
     public VariableMapping Postprocess(VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
@@ -20,6 +29,15 @@ public class VariableMappingPostprocessor
         return this.Postprocess(mapping, mapping.Keys.Where(x => !x.Identifier.StartsWith('#')));
     }
 
+    /// <summary>
+    /// Postprocess a variable mapping, with an additional input signifying the variables to keep.
+    /// </summary>
+    /// <param name="map">The mapping to postprocess.</param>
+    /// <param name="variablesToKeep">The variables to keep.</param>
+    /// <returns>The postprocessed mapping.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="map"/> is null,
+    /// ..<paramref name="variablesToKeep"/> is null.</exception>
     public VariableMapping Postprocess(VariableMapping map, IEnumerable<Variable> variablesToKeep)
     {
         ArgumentNullException.ThrowIfNull(map, nameof(map));

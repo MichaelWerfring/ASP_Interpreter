@@ -9,17 +9,33 @@ using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Medallion.Collections;
 
+/// <summary>
+/// Postprocess a <see cref="CoinductiveHypothesisSet"/> instance so it
+/// is ordered in the same way as the original s(ASP)-implementation.
+/// </summary>
 internal partial class CHSPostProcessor
 {
     private readonly CHSPostprocessingComparer comparer;
 
-    public CHSPostProcessor(FunctorTableRecord functors)
-    {
-        ArgumentNullException.ThrowIfNull(functors, nameof(functors));
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CHSPostProcessor"/> class.
+    /// </summary>
+    /// <param name="functorMapping">The functor mapping for determining how a NaF looks like.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="functorMapping"/> is null.</exception>
 
-        this.comparer = new CHSPostprocessingComparer(functors);
+    public CHSPostProcessor(FunctorTableRecord functorMapping)
+    {
+        ArgumentNullException.ThrowIfNull(functorMapping, nameof(functorMapping));
+
+        this.comparer = new CHSPostprocessingComparer(functorMapping);
     }
 
+    /// <summary>
+    /// Postprocesses a <see cref="CoinductiveHypothesisSet"/> for output.
+    /// </summary>
+    /// <param name="set">The input chs.</param>
+    /// <returns>A postprocessed chs.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="set"/> is null.</exception>
     public CoinductiveHypothesisSet Postprocess(CoinductiveHypothesisSet set)
     {
         ArgumentNullException.ThrowIfNull(set, nameof(set));

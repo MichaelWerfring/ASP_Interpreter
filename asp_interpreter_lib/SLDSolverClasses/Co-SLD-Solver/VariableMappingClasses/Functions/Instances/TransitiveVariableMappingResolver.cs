@@ -14,18 +14,22 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
+/// <summary>
+/// A class for transitively resolving where a <see cref="Variable"/> maps to in a <see cref="VariableMapping"/>.
+/// </summary>
 public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor<IVariableBinding, VariableMapping>,
                                                  ISimpleTermArgsVisitor<IVariableBinding, VariableMapping>
 {
-    /// <summary>
-    /// Whether X -> Y -> \={1,2,3}
-    /// should resolve to X -> \={1,2,3},
-    /// or just X -> Y.
-    /// </summary>
     private readonly bool doProhibitedValuesBindingResolution;
 
     private readonly TermBindingChecker termbindingFilterer;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TransitiveVariableMappingResolver"/> class.
+    /// </summary>
+    /// <param name="doProhibitedValuesBindingResolution">Whether X -> Y -> \={1,2,3}
+    /// should resolve to X -> \={1,2,3},
+    /// or just X -> Y.</param>
     public TransitiveVariableMappingResolver(bool doProhibitedValuesBindingResolution)
     {
         this.doProhibitedValuesBindingResolution = doProhibitedValuesBindingResolution;
@@ -36,6 +40,9 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
     /// Transitively simplifies a variableBinding, ie. if X => Y => s(), then X => s().
     /// Handles self-recursive structures like so: X => s(X) just returns s(X). However: X => s(X, Y), Y => 1 would resolve to s(X, 1).
     /// </summary>
+    /// <param name="variable">The variable to resolve.</param>
+    /// <param name="mapping">The mapping.</param>
+    /// <returns>A resolved <see cref="IVariableBinding"/>, or none if variable is not in mapping.</returns>
     public IOption<IVariableBinding> Resolve(Variable variable, VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));

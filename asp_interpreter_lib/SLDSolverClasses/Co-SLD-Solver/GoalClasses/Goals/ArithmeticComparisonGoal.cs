@@ -11,6 +11,9 @@ using Asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using Asp_interpreter_lib.Util.ErrorHandling;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
+/// <summary>
+/// Represents an arithmetic comparison goal.
+/// </summary>
 public class ArithmeticComparisonGoal : ICoSLDGoal
 {
     private readonly ArithmeticEvaluator evaluator;
@@ -20,6 +23,22 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
     private readonly SolutionState inputstate;
     private readonly ILogger logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArithmeticComparisonGoal"/> class.
+    /// </summary>
+    /// <param name="evaluator">The arithmetic evaluator.</param>
+    /// <param name="left">The left term.</param>
+    /// <param name="right">The right term.</param>
+    /// <param name="predicate">A predicate to determine the truth value of the evaluation.</param>
+    /// <param name="solutionState">The input solution state.</param>
+    /// <param name="logger">A logger.</param>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="evaluator"/> is null,
+    /// ..<paramref name="left"/> is null,
+    /// <paramref name="right"/> is null,
+    /// <paramref name="predicate"/> is null,
+    /// <paramref name="solutionState"/> is null,
+    /// <paramref name="logger"/> is null.</exception>
     public ArithmeticComparisonGoal(
         ArithmeticEvaluator evaluator,
         ISimpleTerm left,
@@ -43,6 +62,10 @@ public class ArithmeticComparisonGoal : ICoSLDGoal
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Attempts to solve the goal.
+    /// </summary>
+    /// <returns>An enumeration of all the ways the goal can be solved.</returns>
     public IEnumerable<GoalSolution> TrySatisfy()
     {
         this.logger.LogInfo($"Attempting to solve arithmetic comparison goal: {this.left}, {this.right}");

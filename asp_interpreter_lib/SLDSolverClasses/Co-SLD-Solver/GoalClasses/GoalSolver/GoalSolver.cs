@@ -7,22 +7,30 @@ namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
-using Asp_interpreter_lib.Util.ErrorHandling;
 
+/// <summary>
+/// A solver for solving multiple goals.
+/// </summary>
 public class GoalSolver
 {
     private readonly CoSLDGoalMapper goalMapper;
-    private readonly ILogger logger;
 
-    public GoalSolver(CoSLDGoalMapper goalMapper, ILogger logger)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GoalSolver"/> class.
+    /// </summary>
+    /// <param name="goalMapper">A goal mapper for determining the kind of goal of a goal structure.</param>
+    public GoalSolver(CoSLDGoalMapper goalMapper)
     {
         ArgumentNullException.ThrowIfNull(goalMapper, nameof(goalMapper));
-        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
         this.goalMapper = goalMapper;
-        this.logger = logger;
     }
 
+    /// <summary>
+    /// Attempts to solve a goal, contained in an input state.
+    /// </summary>
+    /// <param name="inputState">The input solver state.</param>
+    /// <returns>An enumeration of solutions.</returns>
     public IEnumerable<GoalSolution> SolveGoals(CoSldSolverState inputState)
     {
         if (!inputState.CurrentGoals.Any())
@@ -36,14 +44,7 @@ public class GoalSolver
             yield break;
         }
 
-        IOption<ICoSLDGoal> goalToSolveMaybe = this.goalMapper.GetGoal(inputState);
-
-        if (!goalToSolveMaybe.HasValue)
-        {
-            yield break;
-        }
-
-        ICoSLDGoal goal = goalToSolveMaybe.GetValueOrThrow();
+        ICoSLDGoal goal = this.goalMapper.GetGoal(inputState);
 
         // for each way the goal can be satisfied..
         foreach (GoalSolution solution in goal.TrySatisfy())

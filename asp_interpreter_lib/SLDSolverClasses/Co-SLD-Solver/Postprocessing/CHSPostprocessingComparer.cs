@@ -8,52 +8,66 @@ using Asp_interpreter_lib.FunctorNaming;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 
+/// <summary>
+/// A class for comparing chs entries for sorting of terms during postprocessing.
+/// </summary>
 internal class CHSPostprocessingComparer : IComparer<CHSEntry>
 {
     private FunctorTableRecord functors;
 
     private PostprocessingTermComparer comparer;
 
-    public CHSPostprocessingComparer(FunctorTableRecord functors)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CHSPostprocessingComparer"/> class.
+    /// </summary>
+    /// <param name="functorMapping">The functor mapping for determining how a NaF looks like.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="functorMapping"/> is null.</exception>
+    public CHSPostprocessingComparer(FunctorTableRecord functorMapping)
     {
-        ArgumentNullException.ThrowIfNull(functors, nameof(functors));
+        ArgumentNullException.ThrowIfNull(functorMapping, nameof(functorMapping));
 
-        this.functors = functors;
+        this.functors = functorMapping;
         this.comparer = new();
     }
 
-    public int Compare(CHSEntry? x, CHSEntry? y)
+    /// <summary>
+    /// Compares two chs entries for ordering.
+    /// </summary>
+    /// <param name="left">The left entry.</param>
+    /// <param name="right">The right entry.</param>
+    /// <returns>An integer representing ordering.</returns>
+    public int Compare(CHSEntry? left, CHSEntry? right)
     {
-        if (x == null && y == null)
+        if (left == null && right == null)
         {
             return 0;
         }
 
-        if (x == null)
+        if (left == null)
         {
             return -1;
         }
 
-        if (y == null)
+        if (right == null)
         {
             return 1;
         }
 
-        if (x.Term.IsNegated(this.functors) && y.Term.IsNegated(this.functors))
+        if (left.Term.IsNegated(this.functors) && right.Term.IsNegated(this.functors))
         {
-            return this.comparer.Compare(x.Term.Children.ElementAt(0), y.Term.Children.ElementAt(0));
+            return this.comparer.Compare(left.Term.Children.ElementAt(0), right.Term.Children.ElementAt(0));
         }
 
-        if (x.Term.IsNegated(this.functors))
+        if (left.Term.IsNegated(this.functors))
         {
             return 1;
         }
 
-        if (y.Term.IsNegated(this.functors))
+        if (right.Term.IsNegated(this.functors))
         {
             return -1;
         }
 
-        return this.comparer.Compare(x.Term, y.Term);
+        return this.comparer.Compare(left.Term, right.Term);
     }
 }

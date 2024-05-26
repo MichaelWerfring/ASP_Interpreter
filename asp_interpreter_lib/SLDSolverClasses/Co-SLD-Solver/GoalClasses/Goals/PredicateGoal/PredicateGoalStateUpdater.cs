@@ -10,10 +10,18 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Functions.Extensions;
 using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
 
+/// <summary>
+/// A class that is used to update the solver state during predicate goal execution.
+/// </summary>
 public class PredicateGoalStateUpdater
 {
     private readonly SolverStateUpdater updater;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PredicateGoalStateUpdater"/> class.
+    /// </summary>
+    /// <param name="updater">An updater for updating state after unification and subgoal solving.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="updater"/> is null.</exception>
     public PredicateGoalStateUpdater(SolverStateUpdater updater)
     {
         ArgumentNullException.ThrowIfNull(updater, nameof(updater));
@@ -22,11 +30,22 @@ public class PredicateGoalStateUpdater
     }
 
     /// <summary>
-    /// Adds the current goal to the chs with false flag, updates all the entries.
-    /// Then does the same with callstack.
-    /// Then constructs the mapping for the next solver state.
-    /// Then substitutes
+    /// Updates the state after unification.
     /// </summary>
+    /// <param name="inputSet">The input chs that will be updated.</param>
+    /// <param name="inputStack">The input callstack.</param>
+    /// <param name="unifyingMapping">The mapping after unification.</param>
+    /// <param name="renamedClause">The renamed clause after unification.</param>
+    /// <param name="constrainedTarget">The current predicate.
+    /// This should always be the predicate after it comes out of the coinductive check.</param>
+    /// <param name="nextInternal">The next internal variable index, after clause renaming.</param>
+    /// <returns>The new solver state.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="inputSet"/> is null,
+    /// ..<paramref name="inputStack"/> is null,
+    /// ..<paramref name="unifyingMapping"/> is null,
+    /// ..<paramref name="renamedClause"/> is null,
+    /// <paramref name="constrainedTarget"/> is null.</exception>
     public CoSldSolverState BuildStateForSolvingBodyGoals(
         CoinductiveHypothesisSet inputSet,
         CallStack inputStack,
@@ -46,7 +65,7 @@ public class PredicateGoalStateUpdater
 
         // update callstack by pushing target onto stack and updating all the variables in it.
         var newCallstack = this.updater.UpdateCallstack(inputStack.Push(constrainedTarget), unifyingMapping);
-        
+
         // substitute the next goal, if there is one.
         var nextGoals = renamedClause.Skip(1);
         if (nextGoals.Any())
@@ -64,21 +83,36 @@ public class PredicateGoalStateUpdater
                 nextInternal));
     }
 
-    public GoalSolution ConstructCoinductiveSuccessSolution(SolutionState state, VariableMapping result)
+    /// <summary>
+    /// Constructs a goal solution after coinductive success.
+    /// </summary>
+    /// <param name="state">The predicate goal input solution state.</param>
+    /// <param name="constrainedMapping">The constrainedMapping after coinductive checking.</param>
+    /// <returns>A goal solution to return.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="state"/> is null,
+    /// ..<paramref name="constrainedMapping"/> is null.</exception>
+    public GoalSolution ConstructCoinductiveSuccessSolution(SolutionState state, VariableMapping constrainedMapping)
     {
-        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(constrainedMapping);
         ArgumentNullException.ThrowIfNull(state);
 
         return new GoalSolution(
-            this.updater.UpdateCHS(state.CHS, result),
-            result,
-            this.updater.UpdateCallstack(state.Callstack, result),
+            this.updater.UpdateCHS(state.CHS, constrainedMapping),
+            constrainedMapping,
+            this.updater.UpdateCallstack(state.Callstack, constrainedMapping),
             state.NextInternalVariableIndex);
     }
 
     /// <summary>
-    /// updates subgoal solution by adding target to chs and popping the latest item from callstack.
+    /// Updates a subgoal solution by adding target to chs and popping the latest item from the callstack.
     /// </summary>
+    /// <param name="subgoalSolution">The subgoal solution.</param>
+    /// <param name="target">The predicate goal structure.</param>
+    /// <returns>The updated goal solution.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="subgoalSolution"/> is null,
+    /// ..<paramref name="target"/> is null.</exception>
     public GoalSolution UpdateGoalSolution(GoalSolution subgoalSolution, Structure target)
     {
         ArgumentNullException.ThrowIfNull(subgoalSolution);

@@ -11,6 +11,9 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.DBUni
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
+/// <summary>
+/// A class that represents a predicate goal.
+/// </summary>
 internal class PredicateGoal : ICoSLDGoal
 {
     private readonly CoinductiveChecker checker;
@@ -65,6 +68,10 @@ internal class PredicateGoal : ICoSLDGoal
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Attempts to solve the goal.
+    /// </summary>
+    /// <returns>An enumeration of all the ways the goal can be solved.</returns>
     public IEnumerable<GoalSolution> TrySatisfy()
     {
         this.logger.LogInfo($"Attempting to solve predicate goal {this.inputTarget}");

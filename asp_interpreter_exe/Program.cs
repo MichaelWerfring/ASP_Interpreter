@@ -38,14 +38,23 @@ internal class Program
             return new ProgramConfig(" ", false, false, false, true,  LogLevel.None);
         }
 
-        //Assume that 1 is a path
+        // Assume that 1 is a path
         if (args.Length == 1)
         {
             return new ProgramConfig(args[0], false, true, true, false, LogLevel.Debug);
         }
 
-        var parser = InitParser(new ConsoleLogger(LogLevel.Info));
-        return parser.Parse(args);
+        var tempLogger = new ConsoleLogger(LogLevel.Info);
+        var parser = InitParser(tempLogger);
+        var conf = parser.Parse(args);
+
+        if (string.IsNullOrEmpty(conf.FilePath))
+        {
+            tempLogger.LogError("The path to the file was not provided correctly!");
+            return new ProgramConfig(" ", false, false, false, true, LogLevel.None);
+        }
+
+        return conf;
     }
 
     private static void DisplayHelp()
