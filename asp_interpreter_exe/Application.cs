@@ -143,7 +143,7 @@ public class Application(
         var constraints = nmrChecker.GetConstraintRules(program);
         olonRules.AddRange(constraints);
 
-        var subcheck = nmrChecker.GetSubCheckRules(olonRules.Duplicate());
+        var subcheck = nmrChecker.GetNmrCheck(olonRules.Duplicate());
 
         return new Right<string, AspProgram>(new AspProgram(
             [.. program.Statements, .. dual, .. subcheck]

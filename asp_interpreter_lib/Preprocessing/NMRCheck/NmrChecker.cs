@@ -120,7 +120,7 @@
             return duals;
         }
 
-        public List<Statement> GetSubCheckRules(List<Statement> olonRules, bool notAsName = true)
+        public List<Statement> GetNmrCheck(List<Statement> olonRules, bool notAsName = true)
         {
             ArgumentNullException.ThrowIfNull(olonRules);
 
