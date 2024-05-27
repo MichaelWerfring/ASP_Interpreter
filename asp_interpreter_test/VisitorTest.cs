@@ -20,7 +20,7 @@ public class VisitorTest
     private TestingLogger logger = new(LogLevel.Error);
     
     private GoalToLiteralConverter goalToLiteralConverter = new();
-    
+
     [SetUp]
     public void Setup()
     {
@@ -67,31 +67,10 @@ public class VisitorTest
                    """;
 
         var program = AspExtensions.GetProgram(code, logger);
-        
+
         Assert.That(logger.Errors.Count == 0 && !program.Query.HasValue);
     }
-    
-    [Test]
-    public void HandlesProgramWithoutStatementsCorrectly()
-    {
-        var code = """
-                   ?- a(X).
-                   """;
 
-        Assert.That(logger.Errors.Count == 0);
-    }
-    
-    [Test]
-    public void HandlesMinimalProgramCorrectly()
-    {
-        var code = """
-                   a.
-                   ?- a.
-                   """;
-        
-        Assert.That(logger.Errors.Count == 0);
-    }
-    
     [Test]
     public void HandlesClassicalNegationCorrectly()
     {
@@ -99,7 +78,7 @@ public class VisitorTest
                    a(X) :- - b(X).
                    ?- a(Y).
                    """;
-        
+
         var program = AspExtensions.GetProgram(code, logger);
 
         Assert.That(program.Statements.Count == 1);
