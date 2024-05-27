@@ -75,6 +75,6 @@ internal class CallstackResultToCoinductiveSuccesstypeConverter : ICallstackChec
     {
         ArgumentNullException.ThrowIfNull(result);
 
-        return new Some<SuccessType>(SuccessType.NoMatch);
+        return new Some<SuccessType>(SuccessType.NoMatchOrConstrained);
     }
 }

@@ -23,12 +23,12 @@ public static class CycleStringifier
 
         if (cycle.Count == 0)
         {
-            throw new ArgumentException(nameof(cycle));
+            throw new ArgumentException("Cycle list must not be empty.", nameof(cycle));
         }
 
         if (cycle[0].Source != cycle[cycle.Count - 1].Target)
         {
-            throw new ArgumentException(nameof(cycle));
+            throw new ArgumentException("Cycle must start and end with the same statement.", nameof(cycle));
         }
 
         var stringBuilder = new StringBuilder();

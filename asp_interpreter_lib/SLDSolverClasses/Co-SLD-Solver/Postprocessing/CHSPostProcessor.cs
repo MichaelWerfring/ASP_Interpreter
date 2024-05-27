@@ -8,6 +8,7 @@ using Asp_interpreter_lib.FunctorNaming;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Medallion.Collections;
+using System.Collections.Immutable;
 
 /// <summary>
 /// Postprocess a <see cref="CoinductiveHypothesisSet"/> instance so it
@@ -42,10 +43,11 @@ internal partial class CHSPostProcessor
         var results = set.Where(
             entry => entry.Term.Enumerate().OfType<Structure>()
                     .All(structure => !structure.Functor.StartsWith('_')))
-        .ToList();
+                    .ToImmutableSortedSet(this.comparer);
 
-        results.Sort(this.comparer);
+        var resultList = results.ToList();
+        resultList.Sort(this.comparer);
 
-        return new CoinductiveHypothesisSet(results.ToImmutableLinkedList());
+        return new CoinductiveHypothesisSet(resultList.ToImmutableLinkedList());
     }
 }

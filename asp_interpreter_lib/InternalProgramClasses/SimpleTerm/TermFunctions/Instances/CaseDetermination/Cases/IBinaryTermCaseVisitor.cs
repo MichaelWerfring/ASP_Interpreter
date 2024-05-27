@@ -67,6 +67,7 @@ public interface IBinaryTermCaseVisitor
 /// <summary>
 /// An interface for a binary term case visitor, basically a double visitor, that also returns a value.
 /// </summary>
+/// <typeparam name="T">The return type.</typeparam>
 public interface IBinaryTermCaseVisitor<T>
 {
     /// <summary>

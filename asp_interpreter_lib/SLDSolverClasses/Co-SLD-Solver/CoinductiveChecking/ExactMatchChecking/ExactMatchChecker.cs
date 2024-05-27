@@ -80,9 +80,7 @@ public class ExactMatchChecker
 
         // if for any variable:
         // their old and new prohibited values are different, then no match.
-        if
-        (
-            variables.Any(variable =>
+        if (variables.Any(variable =>
             {
                 ImmutableSortedSet<ISimpleTerm> olds = oldProhibs[variable].ProhibitedValues;
                 ImmutableSortedSet<ISimpleTerm> news = newProhibs[variable].ProhibitedValues;

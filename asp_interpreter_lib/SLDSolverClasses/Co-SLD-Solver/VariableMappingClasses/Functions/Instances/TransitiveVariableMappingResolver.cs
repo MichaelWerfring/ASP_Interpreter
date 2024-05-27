@@ -37,12 +37,15 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
     }
 
     /// <summary>
-    /// Transitively simplifies a variableBinding, ie. if X => Y => s(), then X => s().
+    /// Transitively simplifies a variableBinding, ie. if X => Y => s(A, Z), and A -> a, B -> b, then X => s(a, b).
     /// Handles self-recursive structures like so: X => s(X) just returns s(X). However: X => s(X, Y), Y => 1 would resolve to s(X, 1).
     /// </summary>
     /// <param name="variable">The variable to resolve.</param>
     /// <param name="mapping">The mapping.</param>
     /// <returns>A resolved <see cref="IVariableBinding"/>, or none if variable is not in mapping.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="variable"/> is null,
+    /// ..<paramref name="mapping"/> is null.</exception>
     public IOption<IVariableBinding> Resolve(Variable variable, VariableMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(variable, nameof(variable));
@@ -56,7 +59,15 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return new Some<IVariableBinding>(value.Accept(this, mapping));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Visits a binding and proceeds according to type.
+    /// </summary>
+    /// <param name="binding">The binding to visit.</param>
+    /// <param name="map">The mapping as an additional argument.</param>
+    /// <returns>The resolved binding, in this case just the input binding.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="binding"/> is null,
+    /// ..<paramref name="map"/> is null.</exception>
     public IVariableBinding Visit(ProhibitedValuesBinding binding, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(binding);
@@ -65,7 +76,15 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return binding;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Visits a binding and proceeds according to type.
+    /// </summary>
+    /// <param name="binding">The binding to visit.</param>
+    /// <param name="map">The mapping as an additional argument.</param>
+    /// <returns>The resolved binding, in this case the recursively resolved term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="binding"/> is null,
+    /// ..<paramref name="map"/> is null.</exception>
     public IVariableBinding Visit(TermBinding binding, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(binding);
@@ -74,7 +93,17 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return binding.Term.Accept(this, map);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Visits a variable term.
+    /// </summary>
+    /// <param name="term">The term to visit.</param>
+    /// <param name="map">The map as an additional argument.</param>
+    /// <returns>The resolved binding. If variable does not map to a value, then the input variable.
+    /// If variable maps to a prohibited value binding, then the prohibited value or the variable, depending on <see cref="doProhibitedValuesBindingResolution"/>
+    /// If variable maps to a term, then recursively resolve the term.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="term"/> is null,
+    /// ..<paramref name="map"/> is null.</exception>
     public IVariableBinding Visit(Variable term, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -93,7 +122,15 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return binding.Accept(this, map);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Visits a structure term.
+    /// </summary>
+    /// <param name="term">The term to visit.</param>
+    /// <param name="map">The map as an additional argument.</param>
+    /// <returns> The resolved binding. Recursively resolves all the variables in the term.
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="term"/> is null,
+    /// ..<paramref name="map"/> is null.</exception>
     public IVariableBinding Visit(Structure term, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -140,7 +177,15 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return new TermBinding(substitutedStruct);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Visits an integer term.
+    /// </summary>
+    /// <param name="term">The term to visit.</param>
+    /// <param name="map">The map as an additional argument.</param>
+    /// <returns>The resolved binding. In this case, the integer wrapped in a termBinding.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if..
+    /// ..<paramref name="term"/> is null,
+    /// ..<paramref name="map"/> is null.</exception>
     public IVariableBinding Visit(Integer term, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(term);
