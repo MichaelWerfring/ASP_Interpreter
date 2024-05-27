@@ -13,8 +13,19 @@ namespace Asp_interpreter_lib.Preprocessing.DualRules
     using Asp_interpreter_lib.Types.TypeVisitors;
     using Asp_interpreter_lib.Types.TypeVisitors.Copy;
 
+    /// <summary>
+    /// Provides utility method for negating goals.
+    /// </summary>
     public class GoalNegator
     {
+        /// <summary>
+        /// Negates a given goal by either negating the literal or by wrapping it in an 
+        /// applicable combination of negation as failure and classical negation.
+        /// </summary>
+        /// <param name="goal">The goal to negated.</param>
+        /// <param name="wrapInNot">A boolean value indicating whether the literal should just be negated or wrapped into negation literals.</param>
+        /// <returns>The negated goal.</returns>
+        /// <exception cref="ArgumentNullException">If the goal is null.</exception>
         public static Goal Negate(Goal goal, bool wrapInNot = false)
         {
             ArgumentNullException.ThrowIfNull(goal);
