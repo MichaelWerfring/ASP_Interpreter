@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Preprocessing.DualRules
+﻿//-----------------------------------------------------------------------
+// <copyright file="DualRuleConverter.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Preprocessing.DualRules
 {
     using Asp_interpreter_lib.Preprocessing;
     using Asp_interpreter_lib.Types;
@@ -21,6 +29,12 @@
 
         private readonly bool wrapInNot;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DualRuleConverter"/> class.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="logger"></param>
+        /// <param name="wrapInNot"></param>
         public DualRuleConverter(
             PrefixOptions options,
             ILogger logger, bool wrapInNot = false)
@@ -61,10 +75,10 @@
 
             this.logger.LogInfo("Generating dual rules...");
 
-            List<Statement> duals = [];
+            List<Statement> duals =[];
 
             var statements = rules.ToList();
-            var withoutAnonymous = statements.Select(replacer.Replace);
+            var withoutAnonymous = statements.Select(this.replacer.Replace);
 
             var headComputed = withoutAnonymous.Select(this.ComputeHead).ToList();
             var t = this.GetGoalsOnlyAppearingInBody(headComputed);
@@ -89,10 +103,10 @@
 
             if (!rule.HasHead)
             {
-                return [rule];
+                return[rule];
             }
 
-            List<Statement> duals = [];
+            List<Statement> duals =[];
             var head = rule.Head.GetValueOrThrow();
 
             // If it is a fact, just add the prefix
@@ -119,8 +133,7 @@
                 return duals;
             }
 
-            bool forallApplicable = GetBodyVariables(rule).Count != 0;
-
+            bool forallApplicable = this.GetBodyVariables(rule).Count != 0;
 
             for (var i = 0; i < rule.Body.Count; i++)
             {
@@ -196,7 +209,7 @@
 
             if (literal.HasStrongNegation)
             {
-                return new Literal("-", false, false, [new BasicTerm(literal.Identifier, literal.Terms)]);
+                return new Literal("-", false, false,[new BasicTerm(literal.Identifier, literal.Terms)]);
             }
 
             return literal;
@@ -236,7 +249,7 @@
             // Headless statements are treated by the NMR Check
             if (!rule.HasHead || bodyVariables.Count == 0)
             {
-                return [rule];
+                return[rule];
             }
 
             // Copy the statement before
@@ -248,7 +261,7 @@
                 .DistinctBy(v => v.Identifier);
 
             // put all variables form body into head
-            ruleCopyHead.Terms = [];
+            ruleCopyHead.Terms =[];
             ruleCopyHead.Identifier = this.options.ForallPrefix + ruleCopyHead.Identifier;
 
             foreach (var variable in variables)
@@ -308,7 +321,7 @@
             ArgumentNullException.ThrowIfNull(disjunction);
             ArgumentNullException.ThrowIfNull(prefix);
 
-            List<Statement> duals = [];
+            List<Statement> duals =[];
 
             // 1) generate new rule at top (named like input)
             Statement wrapper = new();
@@ -327,11 +340,10 @@
                     disjunction.Key.Item1,
                     true,
                     disjunction.Key.Item3,
-                    AspExtensions.GenerateVariables(disjunction.Key.Item2, this.options.VariablePrefix)
-                ));
+                    AspExtensions.GenerateVariables(disjunction.Key.Item2, this.options.VariablePrefix)));
             }
 
-            List<Goal> wrapperBody = [];
+            List<Goal> wrapperBody =[];
 
             for (var i = 0; i < disjunction.Value.Count; i++)
             {
@@ -351,7 +363,7 @@
 
                 copy.Identifier = prefix + copy.Identifier;
 
-                if (wrapInNot)
+                if (this.wrapInNot)
                 {
                     copy = WrapInNot(copy);
                 }
@@ -382,7 +394,7 @@
             ArgumentNullException.ThrowIfNull(rules);
 
             // heads mapped to all bodies occurring in the program
-            Dictionary<(string, int, bool), List<Statement>> disjunctions = [];
+            Dictionary<(string, int, bool), List<Statement>> disjunctions =[];
             this.logger.LogTrace("Started preprocessing for dual rules.");
 
             foreach (var rule in rules)
@@ -399,7 +411,7 @@
 
                 var converted = this.ComputeHead(rule);
 
-                if (!disjunctions.TryAdd(signature, [converted]))
+                if (!disjunctions.TryAdd(signature,[converted]))
                 {
                     disjunctions[signature].Add(converted);
                     this.logger.LogTrace("Disjunction found: " +
@@ -408,7 +420,7 @@
                 }
             }
 
-            logger.LogTrace("Finished preprocessing for dual rules.");
+            this.logger.LogTrace("Finished preprocessing for dual rules.");
             return disjunctions;
         }
 
@@ -416,7 +428,7 @@
         {
             ArgumentNullException.ThrowIfNull(rules);
 
-            HashSet<(string, int, bool)> heads = [];
+            HashSet<(string, int, bool)> heads =[];
 
             // First find all heads
             foreach (var rule in rules)
@@ -427,7 +439,7 @@
 
             var literalVisitor = new GoalToLiteralConverter();
 
-            List<Statement> statements = [];
+            List<Statement> statements =[];
 
             for (int i = 0; i < rules.Count; i++)
             {
@@ -465,7 +477,6 @@
                     }
 
                     statements.Add(newStatement);
-
                 }
             }
 
@@ -478,7 +489,7 @@
 
             if (!rule.HasHead && rule.HasBody)
             {
-                List<string> variables = [];
+                List<string> variables =[];
                 foreach (var goal in rule.Body)
                 {
                     variables.AddRange(goal.Accept(this.variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
@@ -490,12 +501,12 @@
 
             if (rule.HasHead && !rule.HasBody)
             {
-                return [];
+                return[];
             }
 
             if (rule.HasHead && rule.HasBody)
             {
-                List<string> bodyVar = [];
+                List<string> bodyVar =[];
                 foreach (var goal in rule.Body)
                 {
                     bodyVar.AddRange(goal.Accept(this.variableFinder).GetValueOrThrow("Cannot retrieve variables from body!")
@@ -508,7 +519,7 @@
                 return bodyVar.Except(headVar).ToList();
             }
 
-            return [];
+            return[];
         }
     }
 }

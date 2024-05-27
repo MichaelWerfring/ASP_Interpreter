@@ -1,20 +1,24 @@
-﻿using Asp_interpreter_lib.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.Preprocessing;
-using Asp_interpreter_lib.Preprocessing.DualRules;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ToDisjunctionTest.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_test.DualRules
 {
+    using Asp_interpreter_lib.Preprocessing;
+    using Asp_interpreter_lib.Preprocessing.DualRules;
+    using Asp_interpreter_lib.Util;
+    using Asp_interpreter_lib.Util.ErrorHandling;
+    using System.Linq;
+
     internal class ToDisjunctionTest
     {
-        private readonly PrefixOptions _prefixes = AspExtensions.CommonPrefixes;
+        private readonly PrefixOptions prefixes = AspExtensions.CommonPrefixes;
 
-        private readonly ILogger _logger = new TestingLogger(LogLevel.Error);
+        private readonly ILogger logger = new TestingLogger(LogLevel.Error);
 
         [Test]
         public void ToDisjunctionHandlesTwoGoals()
@@ -24,8 +28,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -45,8 +49,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -66,8 +70,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -89,8 +93,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -109,8 +113,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -131,8 +135,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -153,8 +157,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -166,6 +170,7 @@ namespace Asp_interpreter_test.DualRules
                 Assert.That(dual[2].ToString() == "not fa_a(X, Y) :- not b(X), Y \\= 4.");
             });
         }
+
         [Test]
         public void ToDisjunctionWithBodyVariablesDoesNotAlterClassicalNegation()
         {
@@ -174,8 +179,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 
@@ -197,8 +202,8 @@ namespace Asp_interpreter_test.DualRules
                       p?
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
             var dual = dualRuleConverter.ToDisjunction(program.Statements[0]).ToList();
 

@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Util
+﻿//-----------------------------------------------------------------------
+// <copyright file="ASPExtensions.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Util
 {
     using Antlr4.Runtime;
     using Asp_interpreter_lib.Preprocessing;
@@ -16,7 +24,7 @@
     public static class AspExtensions
     {
         /// <summary>
-        /// Returns a list of common prefixes used in the ASP program.
+        /// Gets a list of common prefixes used in the ASP program.
         /// </summary>
         public static PrefixOptions CommonPrefixes
         {
@@ -122,7 +130,6 @@
             return newStatements;
         }
 
-
         /// <summary>
         /// Returns a copy of the given ASP program.
         /// </summary>
@@ -165,7 +172,7 @@
             ArgumentException.ThrowIfNullOrEmpty(variableName);
             ArgumentOutOfRangeException.ThrowIfNegative(numberOfVariables);
 
-            List<ITerm> vars = [];
+            List<ITerm> vars =[];
 
             for (int i = 0; i < numberOfVariables; i++)
             {

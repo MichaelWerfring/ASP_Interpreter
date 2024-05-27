@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Visitors
+﻿//-----------------------------------------------------------------------
+// <copyright file="GoalVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Visitors
 {
     using Asp_interpreter_lib.Types;
     using Asp_interpreter_lib.Util.ErrorHandling;
@@ -13,6 +21,7 @@
 
         private readonly ILogger logger;
 
+        /// <inheritdoc/>
         public override IOption<Goal> VisitGoal(ASPParser.GoalContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -26,6 +35,7 @@
             return new None<Goal>();
         }
 
+        /// <inheritdoc/>
         public override IOption<Goal> VisitBinary_operation(ASPParser.Binary_operationContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -42,6 +52,7 @@
             return new Some<Goal>(result.GetValueOrThrow());
         }
 
+        /// <inheritdoc/>
         public override IOption<Goal> VisitLiteral(ASPParser.LiteralContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

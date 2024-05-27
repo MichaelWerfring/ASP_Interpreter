@@ -22,7 +22,6 @@ internal partial class CHSPostProcessor
     /// </summary>
     /// <param name="functorMapping">The functor mapping for determining how a NaF looks like.</param>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="functorMapping"/> is null.</exception>
-
     public CHSPostProcessor(FunctorTableRecord functorMapping)
     {
         ArgumentNullException.ThrowIfNull(functorMapping, nameof(functorMapping));

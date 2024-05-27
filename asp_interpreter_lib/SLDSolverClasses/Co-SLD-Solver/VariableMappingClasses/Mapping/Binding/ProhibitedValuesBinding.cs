@@ -30,26 +30,31 @@ public class ProhibitedValuesBinding : IVariableBinding
 
     public ImmutableSortedSet<ISimpleTerm> ProhibitedValues { get; }
 
+    /// <inheritdoc/>
     public void Accept(IVariableBindingVisitor visitor)
     {
         visitor.Visit(this);
     }
 
+    /// <inheritdoc/>
     public T Accept<T>(IVariableBindingVisitor<T> visitor)
     {
         return visitor.Visit(this);
     }
 
+    /// <inheritdoc/>
     public void Accept<TArgs>(IVariableBindingArgumentVisitor<TArgs> visitor, TArgs arguments)
     {
         visitor.Visit(this, arguments);
     }
 
+    /// <inheritdoc/>
     public TResult Accept<TResult, TArgs>(IVariableBindingArgumentVisitor<TResult, TArgs> visitor, TArgs arguments)
     {
         return visitor.Visit(this, arguments);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
         return $"ProhibitedValues:{{{this.ProhibitedValues.ToList().ListToString()}}}";

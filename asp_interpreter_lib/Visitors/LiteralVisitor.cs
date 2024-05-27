@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Visitors
+﻿//-----------------------------------------------------------------------
+// <copyright file="LiteralVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Visitors
 {
     using Asp_interpreter_lib.Types;
     using Asp_interpreter_lib.Types.Terms;
@@ -8,6 +16,10 @@
     {
         private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LiteralVisitor"/> class.
+        /// </summary>
+        /// <param name="logger"></param>
         public LiteralVisitor(ILogger logger)
         {
             this.logger = logger ??
@@ -38,7 +50,7 @@
 
             if (terms == null)
             {
-                return new Some<Literal>(new Literal(id, hasNafNegation, hasClassicalNegation, []));
+                return new Some<Literal>(new Literal(id, hasNafNegation, hasClassicalNegation,[]));
             }
 
             IOption<List<ITerm>> parsedTerms = terms.Accept(new TermsVisitor(this.logger));

@@ -1,8 +1,15 @@
-﻿namespace Asp_interpreter_lib.Visitors
+﻿//-----------------------------------------------------------------------
+// <copyright file="QueryVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Visitors
 {
     using Asp_interpreter_lib.Types;
     using Asp_interpreter_lib.Util.ErrorHandling;
-    using System.Reflection.Metadata.Ecma335;
 
     public class QueryVisitor : ASPParserBaseVisitor<IOption<Query>>
     {
@@ -17,10 +24,11 @@
             this.goalVisitor = new GoalVisitor(logger);
         }
 
+        /// <inheritdoc/>
         public override IOption<Query> VisitQuery(ASPParser.QueryContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
-            List<Goal> query = [];
+            List<Goal> query =[];
 
             for (int i = 0; i < context.goal().Length; i++)
             {
@@ -33,7 +41,7 @@
                 }
 
                 goal.Accept(this.goalVisitor).
-                    IfHasValue(g => query.Add(g));
+                    IfHasValue(query.Add);
             }
 
             if (query.Count != context.goal().Length)

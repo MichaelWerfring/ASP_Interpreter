@@ -1,7 +1,19 @@
-﻿using Antlr4.Runtime;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Application.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_exe;
+using Antlr4.Runtime;
 using Asp_interpreter_lib.FunctorNaming;
 using Asp_interpreter_lib.InternalProgramClasses.Database;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.Preprocessing;
+using Asp_interpreter_lib.Preprocessing.DualRules;
+using Asp_interpreter_lib.Preprocessing.NMRCheck;
 using Asp_interpreter_lib.Preprocessing.OLONDetection;
 using Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
@@ -13,75 +25,74 @@ using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
 using Asp_interpreter_lib.Util.ErrorHandling.Either;
 using Asp_interpreter_lib.Visitors;
-using Asp_interpreter_lib.Preprocessing;
-using System.Diagnostics;
-using Asp_interpreter_lib.Preprocessing.NMRCheck;
-using Asp_interpreter_lib.Preprocessing.DualRules;
-
-namespace Asp_interpreter_exe;
 
 public class Application(
     ILogger logger,
     ProgramVisitor programVisitor,
     ProgramConfig config)
 {
-    private readonly ILogger _logger = logger;
+    private readonly ILogger logger = logger;
 
-    private readonly ProgramVisitor _programVisitor = programVisitor;
+    private readonly ProgramVisitor programVisitor = programVisitor;
 
     private readonly ProgramConfig config = config;
 
-    private readonly PrefixOptions _prefixes = new("fa_", "eh", "chk_", "not_", "V");
+    private readonly PrefixOptions prefixes = new("fa_", "eh", "chk_", "not_", "V");
 
     public void Run()
     {
-        if (config.DisplayExplanation)
+        if (this.config.DisplayExplanation)
         {
-            ExplainProgram();
+            this.ExplainProgram();
             return;
         }
 
-        var eitherProgram = LoadProgram();
+        var eitherProgram = this.LoadProgram();
 
         if (!eitherProgram.IsRight)
         {
-            _logger.LogError(eitherProgram.GetLeftOrThrow());
+            this.logger.LogError(eitherProgram.GetLeftOrThrow());
             return;
         }
 
         var program = eitherProgram.GetRightOrThrow();
 
-        //Interactive if needed else just solve
-        if (!config.RunInteractive)
+        // Interactive if needed else just solve
+        if (!this.config.RunInteractive)
         {
             if (!program.Query.HasValue)
             {
-                _logger.LogError("The program has no query given, either specify one in the file or use interactive mode.");
+                this.logger.LogError("The program has no query given, either specify one in the file or use interactive mode.");
                 return;
             }
 
-            SolveAutomatic(program);
+            this.SolveAutomatic(program);
             return;
         }
 
-        //If a query is specified in the file it will be ignored in this case
+        // If a query is specified in the file it will be ignored in this case
         while (true)
         {
             Console.Write("?-");
-            string input = Console.ReadLine() ?? "";
+            string input = Console.ReadLine() ?? string.Empty;
 
-            if (input == "exit") return;
+            if (input == "exit")
+            {
+                return;
+            }
+
             if (input == "clear")
             {
                 Console.Clear();
                 continue;
             }
+
             if (input == "reload")
             {
-                var either = LoadProgram();
+                var either = this.LoadProgram();
                 if (!either.IsRight)
                 {
-                    _logger.LogError(either.GetLeftOrThrow());
+                    this.logger.LogError(either.GetLeftOrThrow());
                     return;
                 }
 
@@ -89,44 +100,47 @@ public class Application(
                 continue;
             }
 
-            // 1) parse query 
-            var query = ParseQuery("?-" + input);
-            if (query == null) continue;
+            // 1) parse query
+            var query = this.ParseQuery("?-" + input);
+            if (query == null)
+            {
+                continue;
+            }
 
-            // 2) solve existing program with new query 
+            // 2) solve existing program with new query
             // 3) show answer
-            InteractiveSolve(program.Statements, query.Goals);
+            this.InteractiveSolve(program.Statements, query.Goals);
         }
     }
 
     private void ExplainProgram()
     {
-        var code = FileReader.ReadFile(config.FilePath);
+        var code = FileReader.ReadFile(this.config.FilePath);
 
         if (!code.IsRight)
         {
-            _logger.LogError(code.GetLeftOrThrow());
+            this.logger.LogError(code.GetLeftOrThrow());
             return;
         }
 
-        var program = GetProgram(code.GetRightOrThrow());
-        var visitor = new ExplainProgramVisitor(program, logger);
+        var program = this.GetProgram(code.GetRightOrThrow());
+        var visitor = new ExplainProgramVisitor(program, this.logger);
 
         foreach (var statement in program.Statements)
         {
-            statement.Accept(visitor).IfHasValue(v => Console.WriteLine(v));
+            statement.Accept(visitor).IfHasValue(Console.WriteLine);
         }
     }
 
     private IEither<string, AspProgram> LoadProgram()
     {
-        if (string.IsNullOrEmpty(config.FilePath))
+        if (string.IsNullOrEmpty(this.config.FilePath))
         {
             return new Left<string, AspProgram>("No file path specified!");
         }
 
         // Read
-        var code = FileReader.ReadFile(config.FilePath);
+        var code = FileReader.ReadFile(this.config.FilePath);
 
         if (!code.IsRight)
         {
@@ -134,26 +148,26 @@ public class Application(
         }
 
         // Program
-        var program = GetProgram(code.GetRightOrThrow());
+        var program = this.GetProgram(code.GetRightOrThrow());
 
         // Dual
-        var dualGenerator = new DualRuleConverter(_prefixes, _logger);
+        var dualGenerator = new DualRuleConverter(this.prefixes, this.logger);
         var dual = dualGenerator.GetDualRules(program.Duplicate().Statements, "_");
 
         // OLON
-        List<Statement> olonRules = new OLONRulesFilterer(_logger).FilterOlonRules(program.Statements);
+        List<Statement> olonRules = new OLONRulesFilterer(this.logger).FilterOlonRules(program.Statements);
 
-        // NMR 
-        var nmrChecker = new NmrChecker(_prefixes, _logger);
+        // NMR
+        var nmrChecker = new NmrChecker(this.prefixes, this.logger);
         var constraints = nmrChecker.GetConstraintRules(program);
         olonRules.AddRange(constraints);
 
         var subcheck = nmrChecker.GetNmrCheck(olonRules.Duplicate());
 
         return new Right<string, AspProgram>(new AspProgram(
-            [.. program.Statements, .. dual, .. subcheck]
-            , program.Query
-            , program.Explanations));
+            [.. program.Statements, .. dual, .. subcheck],
+            program.Query,
+            program.Explanations));
     }
 
     private Query? ParseQuery(string query)
@@ -163,12 +177,12 @@ public class Application(
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.query();
-        var visitor = new QueryVisitor(_logger);
+        var visitor = new QueryVisitor(this.logger);
         var parsedQuery = visitor.VisitQuery(context);
 
         if (!parsedQuery.HasValue)
         {
-            _logger.LogError("Not able to parse query: " + query);
+            this.logger.LogError("Not able to parse query: " + query);
             return null;
         }
 
@@ -177,7 +191,7 @@ public class Application(
 
     private void SolveAutomatic(AspProgram program)
     {
-        var converter = new ProgramConverter(new FunctorTableRecord(), _logger);
+        var converter = new ProgramConverter(new FunctorTableRecord(), this.logger);
 
         var convertedStatements = program.Statements.Where(x => x.HasHead).Select(converter.ConvertStatement).ToList();
 
@@ -185,9 +199,9 @@ public class Application(
 
         var database = new DualClauseDatabase(convertedStatements, new FunctorTableRecord());
 
-        var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
+        var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), this.logger);
 
-        var appendedQuery = convertedQuery.Append(new Structure("_nmr_check", []));
+        var appendedQuery = convertedQuery.Append(new Structure("_nmr_check",[]));
 
         foreach (var solution in solver.Solve(appendedQuery))
         {
@@ -197,7 +211,7 @@ public class Application(
 
     private void InteractiveSolve(List<Statement> rules, List<Goal> query)
     {
-        var converter = new ProgramConverter(new FunctorTableRecord(), _logger);
+        var converter = new ProgramConverter(new FunctorTableRecord(), this.logger);
         var convertedRules = rules.Where(rule => rule.Head.HasValue).Select(converter.ConvertStatement);
 
         var goalConverter = new GoalConverter(new FunctorTableRecord());
@@ -205,15 +219,15 @@ public class Application(
 
         var database = new DualClauseDatabase(convertedRules, new FunctorTableRecord());
 
-        var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), _logger);
+        var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), this.logger);
 
-        foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("_nmr_check", []))))
+        foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("_nmr_check",[]))))
         {
             PrintSolution(solution);
         }
     }
 
-    static void PrintSolution(CoSLDSolution solution)
+    private static void PrintSolution(CoSLDSolution solution)
     {
         Console.WriteLine("Solution found!");
         Console.WriteLine("---------------------------------------------------------------");
@@ -224,7 +238,7 @@ public class Application(
         Console.WriteLine("---------------------------------------------------------------");
     }
 
-    static void PrintMapping(VariableMapping mapping)
+    private static void PrintMapping(VariableMapping mapping)
     {
         foreach (var pair in mapping)
         {
@@ -246,7 +260,7 @@ public class Application(
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var program = _programVisitor.VisitProgram(context);
+        var program = this.programVisitor.VisitProgram(context);
 
         if (!program.HasValue)
         {

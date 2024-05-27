@@ -27,7 +27,7 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
     private readonly ISimpleTerm right;
 
     // mutated during execution
-    private IDictionary<Variable, ProhibitedValuesBinding> prohibitedValues;
+    private readonly IDictionary<Variable, ProhibitedValuesBinding> prohibitedValues;
     private IDictionary<Variable, TermBinding> termBindings;
     private bool hasSucceded;
 
@@ -62,7 +62,8 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
         if (!this.hasSucceded)
         {
             return new None<VariableMapping>();
-        }        
+        }
+
         return new Some<VariableMapping>(VarMappingFunctions.Merge(this.prohibitedValues, this.termBindings));
     }
 
@@ -268,8 +269,8 @@ internal class ConstructiveUnifier : IBinaryTermCaseVisitor
         {
             var currentPair = this.termBindings.ElementAt(index);
 
-            newPairs[index] = new KeyValuePair<Variable, TermBinding>
-                (currentPair.Key, new TermBinding(currentPair.Value.Term.Substitute(dictForSubstitution)));
+            newPairs[index] = new KeyValuePair<Variable, TermBinding>(
+                currentPair.Key, new TermBinding(currentPair.Value.Term.Substitute(dictForSubstitution)));
         });
 
         this.termBindings = newPairs.ToDictionary(TermFuncs.GetSingletonVariableComparer());

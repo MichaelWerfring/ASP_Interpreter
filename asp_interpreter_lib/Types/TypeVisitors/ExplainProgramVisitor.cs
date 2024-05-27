@@ -1,21 +1,29 @@
-﻿using System.Reflection;
-using System.Resources;
-using System.Text;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ExplainProgramVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Types.TypeVisitors
 {
+    using Asp_interpreter_lib.Util.ErrorHandling;
+    using System.Text;
+
     public class ExplainProgramVisitor : TypeBaseVisitor<string>
     {
-        private readonly AspProgram _program;
-        private readonly ILogger _logger;
+        private readonly AspProgram program;
+
+        private readonly ILogger logger;
 
         public ExplainProgramVisitor(AspProgram program, ILogger logger)
         {
-            _program = program ?? throw new ArgumentNullException(nameof(program));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.program = program ?? throw new ArgumentNullException(nameof(program));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <inheritdoc/>
         public override IOption<string> Visit(Statement statement)
         {
             if (!statement.HasHead)
@@ -28,15 +36,15 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
 
             Explanation explaination;
 
-            if (!_program.Explanations.TryGetValue((head.Identifier, head.Terms.Count), out explaination))
+            if (!this.program.Explanations.TryGetValue((head.Identifier, head.Terms.Count), out explaination))
             {
-                _logger.LogInfo($"Unable to find Explanation for: {head.ToString()}");
+                this.logger.LogInfo($"Unable to find Explanation for: {head.ToString()}");
                 return new Some<string>(string.Empty);
             }
 
             if (explaination.Literal.Terms.Count != head.Terms.Count)
             {
-                _logger.LogError($"The actual Head of the statement: {head.ToString()}, does not " +
+                this.logger.LogError($"The actual Head of the statement: {head.ToString()}, does not " +
                     $"match the statement to be explained: {explaination.Literal.ToString()}");
                 return new None<string>();
             }
@@ -80,9 +88,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
 
             var t = sb.ToString();
             return new Some<string>(t);
-
         }
 
+        /// <inheritdoc/>
         public override IOption<string> Visit(Literal literal)
         {
             StringBuilder sb = new StringBuilder();
@@ -99,7 +107,7 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
                 sb.Append("it is not the case that ");
             }
 
-            if (!_program.Explanations.TryGetValue((literal.Identifier, literal.Terms.Count), out explaination))
+            if (!this.program.Explanations.TryGetValue((literal.Identifier, literal.Terms.Count), out explaination))
             {
                 var copy = new Literal(literal.Identifier, false, false, literal.Terms);
                 sb.Append(copy.ToString() + " holds");
@@ -112,7 +120,7 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
 
                 if (explaination.VariablesAt.Contains(i))
                 {
-                    //replace var
+                    // replace var
                     sb.Append(literal.Terms[GetIndexOfVariable(item, explaination)].ToString());
                 }
                 else
@@ -120,10 +128,12 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
                     sb.Append(item);
                 }
             }
+
             var t = sb.ToString();
             return new Some<string>(t);
         }
 
+        /// <inheritdoc/>
         public override IOption<string> Visit(BinaryOperation binaryOperation)
         {
             StringBuilder sb = new StringBuilder();

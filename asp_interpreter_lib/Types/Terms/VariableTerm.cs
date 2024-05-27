@@ -1,40 +1,50 @@
-﻿using Asp_interpreter_lib.Types.TypeVisitors;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿//-----------------------------------------------------------------------
+// <copyright file="VariableTerm.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
-public class VariableTerm: ITerm
+public class VariableTerm : ITerm
 {
-    private string _identifier;
+    private string identifier;
 
     public VariableTerm(string identifier)
     {
-        Identifier = identifier;
+        this.Identifier = identifier;
     }
 
     public string Identifier
     {
-        get => _identifier;
+        get => this.identifier;
         set
         {
             if (string.IsNullOrWhiteSpace(value) || value == string.Empty)
             {
-                throw new ArgumentException("Identifier cannot be null, empty or whitespace!", 
-                    nameof(Identifier));
+                throw new ArgumentException(
+                    "Identifier cannot be null, empty or whitespace!",
+                    nameof(this.Identifier));
             }
-            
-            _identifier = value;
+
+            this.identifier = value;
         }
     }
 
+    /// <inheritdoc/>
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
         return visitor.Visit(this);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
-        return Identifier;
+        return this.Identifier;
     }
 }

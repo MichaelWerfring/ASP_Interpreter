@@ -1,16 +1,22 @@
-﻿using Asp_interpreter_lib;
-using Asp_interpreter_lib.Util;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.Preprocessing;
-using Asp_interpreter_lib.Preprocessing.NMRCheck;
+﻿//-----------------------------------------------------------------------
+// <copyright file="NmrCheckerTest.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_test;
+using Asp_interpreter_lib.Preprocessing;
+using Asp_interpreter_lib.Preprocessing.NMRCheck;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class NmrCheckerTest
 {
-    private readonly PrefixOptions _prefixes = AspExtensions.CommonPrefixes;
+    private readonly PrefixOptions prefixes = AspExtensions.CommonPrefixes;
 
-    private readonly ILogger _logger = new TestingLogger(LogLevel.Error);
+    private readonly ILogger logger = new TestingLogger(LogLevel.Error);
 
     [Test]
     public void NmrCheckHandlesBasicProgram()
@@ -19,8 +25,8 @@ public class NmrCheckerTest
                       p(X) :- q(X), not p(X).
                       ?- p(X).
                       """;
-        var program = AspExtensions.GetProgram(code, _logger);
-        var checker = new NmrChecker(_prefixes, _logger);    
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
 
         var subCheckRules = checker.GetNmrCheck(program.Statements, false);
 
@@ -32,8 +38,6 @@ public class NmrCheckerTest
             Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_1_1(X)) :- not(q(X))."));
             Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(_chk_1_1(X)) :- q(X), p(X)."));
         });
-
-
     }
 
     [Test]
@@ -43,8 +47,8 @@ public class NmrCheckerTest
                       :- not r(X).
                       ?- p(X).
                       """;
-        var program = AspExtensions.GetProgram(code, _logger);
-        var checker = new NmrChecker(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
         var subCheckRules = checker.GetNmrCheck(program.Statements, false);
 
         Assert.Multiple(() =>
@@ -55,8 +59,6 @@ public class NmrCheckerTest
             Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_1_1) :- forall(X, not(_fa__chk_1_1(X)))."));
             Assert.That(subCheckRules[3].ToString(), Is.EqualTo("not(_fa__chk_1_1(X)) :- r(X)."));
         });
-
-
     }
 
     [Test]
@@ -67,11 +69,11 @@ public class NmrCheckerTest
                       :- not r(X).
                       ?- p(X).
                       """;
-        var program = AspExtensions.GetProgram(code, _logger);
-        var checker = new NmrChecker(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
         var subCheckRules = checker.GetNmrCheck(program.Statements, false);
 
-        //verified with s(CASP)
+        // verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(7));
@@ -84,7 +86,7 @@ public class NmrCheckerTest
             Assert.That(subCheckRules[6].ToString(), Is.EqualTo("not(_fa__chk_2_1(X)) :- r(X)."));
         });
     }
-    
+
     [Test]
     public void NmrCheckHandlesCompoundProgramWithAtom()
     {
@@ -93,11 +95,11 @@ public class NmrCheckerTest
                       p(X):- q(X), not p(X).
                       ?- p(X).
                       """;
-        var program = AspExtensions.GetProgram(code, _logger);
-        var checker = new NmrChecker(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
         var subCheckRules = checker.GetNmrCheck(program.Statements, false);
 
-        //verifed with s(CASP)
+        // verifed with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(7));
@@ -118,11 +120,11 @@ public class NmrCheckerTest
                       p(X) :- q(X, Y), not p(Y).
                       ?- p(X).
                       """;
-        var program = AspExtensions.GetProgram(code, _logger);
-        var checker = new NmrChecker(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
         var subCheckRules = checker.GetNmrCheck(program.Statements, false);
 
-        //verified with s(CASP)
+        // verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(6));
@@ -138,10 +140,10 @@ public class NmrCheckerTest
     [Test]
     public void AlsoAddsCheckForEmtpyStatements()
     {
-        var checker = new NmrChecker(_prefixes, _logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
         var subCheckRules = checker.GetNmrCheck([], false);
 
-        //verified with s(CASP)
+        // verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(subCheckRules.Count, Is.EqualTo(1));
@@ -163,14 +165,14 @@ public class NmrCheckerTest
 
                       ?- chosen(X, Y).
                       """;
-        var program = AspExtensions.GetProgram(code, _logger);
-        var checker = new NmrChecker(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
         var subCheckRules = checker.GetNmrCheck(program.Statements, false);
 
-        //verified with s(CASP)
+        // verified with s(CASP)
         Assert.Multiple(() =>
         {
-            //Just check the nmr_rule is important now
+            // Just check the nmr_rule is important now
             Assert.That(subCheckRules[0].ToString(), Is.EqualTo(
                 "_nmr_check :- forall(U, forall(V, not(_chk_1_(U, V)))), forall(U, forall(V, not(_chk_2_(U, V)))), not(_chk_3_)."));
         });
@@ -185,14 +187,14 @@ public class NmrCheckerTest
                       r :- not p.
                       q :- not r.
                       """;
-        var program = AspExtensions.GetProgram(code, _logger);
-        var checker = new NmrChecker(_prefixes, _logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var checker = new NmrChecker(this.prefixes, this.logger);
         var subCheckRules = checker.GetNmrCheck(program.Statements, false);
 
-        //verified with s(CASP)
+        // verified with s(CASP)
         Assert.Multiple(() =>
         {
-            //Just check the nmr_rule is important now
+            // Just check the nmr_rule is important now
             Assert.That(subCheckRules[0].ToString(), Is.EqualTo("_nmr_check :- not(_chk_1_), not(_chk_2_), not(_chk_3_), not(_chk_4_)."));
             Assert.That(subCheckRules[1].ToString(), Is.EqualTo("not(_chk_1_) :- not(_chk_1_1)."));
             Assert.That(subCheckRules[2].ToString(), Is.EqualTo("not(_chk_1_1) :- q."));

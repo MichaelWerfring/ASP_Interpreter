@@ -1,76 +1,86 @@
-﻿using System.Text;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Literal.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Types;
 using Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Types.TypeVisitors;
 using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
-
-namespace Asp_interpreter_lib.Types;
+using System.Text;
 
 public class Literal : Goal
 {
-    private List<ITerm> _terms;
-    private string _identifier;
+    private List<ITerm> terms;
+    private string identifier;
 
-    public Literal(string identifier, bool hasNafNegation, bool hasStrongNegation, List<ITerm> terms) 
+    public Literal(string identifier, bool hasNafNegation, bool hasStrongNegation, List<ITerm> terms)
     {
-        Identifier = identifier;
-        Terms = terms;
-        HasStrongNegation = hasStrongNegation;
-        HasNafNegation = hasNafNegation;
+        this.Identifier = identifier;
+        this.Terms = terms;
+        this.HasStrongNegation = hasStrongNegation;
+        this.HasNafNegation = hasNafNegation;
     }
 
     public List<ITerm> Terms
     {
-        get => _terms;
-        set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
+        get => this.terms;
+        set => this.terms = value ?? throw new ArgumentNullException(nameof(this.Terms));
     }
 
-    //Negated in this context means classical negation 
+    // Negated in this context means classical negation
     public bool HasStrongNegation { get; set; }
-    
+
     public bool HasNafNegation { get; set; }
 
     public string Identifier
     {
-        get => _identifier;
+        get => this.identifier;
         set
         {
-            if (string.IsNullOrWhiteSpace(value) || value == string.Empty )
+            if (string.IsNullOrWhiteSpace(value) || value == string.Empty)
             {
-                throw new ArgumentException("The given Identifier must not be null, whitespace or empty!",
-                    nameof(Identifier));
+                throw new ArgumentException(
+                    "The given Identifier must not be null, whitespace or empty!",
+                    nameof(this.Identifier));
             }
 
-            _identifier = value;
+            this.identifier = value;
         }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
         var builder = new StringBuilder();
 
-        if(HasNafNegation)
+        if (this.HasNafNegation)
         {
             builder.Append("not ");
         }
-        
-        if(HasStrongNegation)
+
+        if (this.HasStrongNegation)
         {
             builder.Append('-');
         }
 
-        builder.Append(Identifier);
+        builder.Append(this.Identifier);
 
-        if (Terms.Count > 0)
+        if (this.Terms.Count > 0)
         {
             builder.Append('(');
-            builder.Append(Terms.ListToString());
+            builder.Append(this.Terms.ListToString());
             builder.Append(')');
         }
 
         return builder.ToString();
     }
-    
+
+    /// <inheritdoc/>
     public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor);

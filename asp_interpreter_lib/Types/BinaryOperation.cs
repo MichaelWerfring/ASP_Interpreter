@@ -1,44 +1,51 @@
-﻿using Asp_interpreter_lib.Types.BinaryOperations;
+﻿//-----------------------------------------------------------------------
+// <copyright file="BinaryOperation.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Types;
+using Asp_interpreter_lib.Types.BinaryOperations;
 using Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Types.TypeVisitors;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace Asp_interpreter_lib.Types;
-
 public class BinaryOperation : Goal
 {
-    private ITerm _left;
-    private ITerm _right;
-    private BinaryOperator _binaryOperator;
+    private ITerm left;
+    private ITerm right;
+    private BinaryOperator binaryOperator;
 
-    public BinaryOperation(ITerm left, BinaryOperator binaryOperator,ITerm right)
+    public BinaryOperation(ITerm left, BinaryOperator binaryOperator, ITerm right)
     {
-        Left = left;
-        Right = right;
-        BinaryOperator = binaryOperator;
+        this.Left = left;
+        this.Right = right;
+        this.BinaryOperator = binaryOperator;
     }
 
     public ITerm Left
     {
-        get => _left;
-        set => _left = value ?? throw new ArgumentNullException(nameof(Left));
+        get => this.left;
+        set => this.left = value ?? throw new ArgumentNullException(nameof(this.Left));
     }
 
     public ITerm Right
     {
-        get => _right;
-        set => _right = value ?? throw new ArgumentNullException(nameof(Right));
+        get => this.right;
+        set => this.right = value ?? throw new ArgumentNullException(nameof(this.Right));
     }
 
     public BinaryOperator BinaryOperator
     {
-        get => _binaryOperator;
-        set => _binaryOperator = value ?? throw new ArgumentNullException(nameof(BinaryOperator));
+        get => this.binaryOperator;
+        set => this.binaryOperator = value ?? throw new ArgumentNullException(nameof(this.BinaryOperator));
     }
-    
+
     public override string ToString()
     {
-        return $"{Left.ToString()} {BinaryOperator.ToString()} {Right.ToString()}";
+        return $"{this.Left.ToString()} {this.BinaryOperator.ToString()} {this.Right.ToString()}";
     }
 
     public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)

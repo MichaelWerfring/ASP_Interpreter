@@ -50,5 +50,7 @@ public class CoinductiveCheckingResult
 
 public enum SuccessType
 {
-    DeterministicSuccess, NonDeterministicSuccess, NoMatch 
-};
+    DeterministicSuccess,
+    NonDeterministicSuccess,
+    NoMatch,
+}

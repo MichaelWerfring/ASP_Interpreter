@@ -1,57 +1,72 @@
-﻿using Asp_interpreter_lib.Types.TypeVisitors;
-using System.Text;
-using Asp_interpreter_lib.Util;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿//-----------------------------------------------------------------------
+// <copyright file="BasicTerm.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using System.Text;
 
-public class BasicTerm: ITerm
+public class BasicTerm : ITerm
 {
-    private string _identifier;
-    private List<ITerm> _terms;
+    private string identifier;
+    private List<ITerm> terms;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasicTerm"/> class.
+    /// </summary>
+    /// <param name="identifier"></param>
+    /// <param name="terms"></param>
     public BasicTerm(string identifier, List<ITerm> terms)
     {
-        Identifier = identifier;
-        Terms = terms;
+        this.Identifier = identifier;
+        this.Terms = terms;
     }
 
     public string Identifier
     {
-        get => _identifier;
+        get => this.identifier;
         set
         {
-            if (string.IsNullOrWhiteSpace(value) || value == string.Empty )
+            if (string.IsNullOrWhiteSpace(value) || value == string.Empty)
             {
-                throw new ArgumentException("The given Identifier must not be null, whitespace or empty!",
-                    nameof(Identifier));
+                throw new ArgumentException(
+                    "The given Identifier must not be null, whitespace or empty!",
+                    nameof(this.Identifier));
             }
 
-            _identifier = value;
+            this.identifier = value;
         }
     }
 
     public List<ITerm> Terms
     {
-        get => _terms;
-        set => _terms = value ?? throw new ArgumentNullException(nameof(Terms));
+        get => this.terms;
+        set => this.terms = value ?? throw new ArgumentNullException(nameof(this.Terms));
     }
-    
+
+    /// <inheritdoc/>
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
         return visitor.Visit(this);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
         var builder = new StringBuilder();
-        builder.Append(Identifier);
+        builder.Append(this.Identifier);
 
-        if(Terms.Count > 0)
+        if (this.Terms.Count > 0)
         {
             builder.Append('(');
-            builder.Append(Terms.ListToString());
+            builder.Append(this.Terms.ListToString());
             builder.Append(')');
         }
 

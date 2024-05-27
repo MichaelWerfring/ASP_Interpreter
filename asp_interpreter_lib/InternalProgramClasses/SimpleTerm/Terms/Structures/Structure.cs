@@ -4,10 +4,10 @@
 
 namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
-using System.Collections.Immutable;
-using System.Text;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using Asp_interpreter_lib.Util;
+using System.Collections.Immutable;
+using System.Text;
 
 /// <summary>
 /// Represents a compound term, as well as a simple atom, depending on whether it has children.

@@ -1,8 +1,16 @@
-﻿using Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿//-----------------------------------------------------------------------
+// <copyright file="TermsVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Visitors
 {
+    using Asp_interpreter_lib.Types.Terms;
+    using Asp_interpreter_lib.Util.ErrorHandling;
+
     public class TermsVisitor : ASPParserBaseVisitor<IOption<List<ITerm>>>
     {
         private readonly ILogger logger;
@@ -16,6 +24,7 @@ namespace Asp_interpreter_lib.Visitors
             this.termVisitor = new TermVisitor(logger);
         }
 
+        /// <inheritdoc/>
         public override IOption<List<ITerm>> VisitTerms(ASPParser.TermsContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

@@ -33,7 +33,7 @@ public class OLONRulesFilterer(ILogger logger)
         ArgumentNullException.ThrowIfNull(rules, nameof(rules));
         this.logger.LogInfo("Filtering OLON rules...");
 
-        List<Statement> filteredStatements = new List<Statement>();
+        List<Statement> filteredStatements = [];
 
         // add all rules without a head.
         foreach (var rule in rules)

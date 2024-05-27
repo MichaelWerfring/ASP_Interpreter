@@ -1,8 +1,14 @@
-﻿namespace Asp_interpreter_lib.Visitors
+﻿//-----------------------------------------------------------------------
+// <copyright file="ExplanationTextVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Visitors
 {
-    using Antlr4.Runtime.Misc;
     using Asp_interpreter_lib.Util.ErrorHandling;
-    using System.Globalization;
 
     internal class ExplanationTextVisitor : ASPParserBaseVisitor<string>
     {

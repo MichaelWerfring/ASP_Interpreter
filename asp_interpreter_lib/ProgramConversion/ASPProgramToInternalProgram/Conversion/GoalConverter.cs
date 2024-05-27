@@ -4,13 +4,13 @@
 
 namespace Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
+using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.Types;
 using Asp_interpreter_lib.Types.TypeVisitors;
-using System.Text;
 using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using Asp_interpreter_lib.FunctorNaming;
+using System.Text;
 
 /// <summary>
 /// A class for converting a goal to a structure.
@@ -72,7 +72,7 @@ public class GoalConverter : TypeBaseVisitor<Structure>
             return new None<Structure>();
         }
 
-        var convertedStruct = new Structure(this.functors.Forall, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
+        var convertedStruct = new Structure(this.functors.Forall,[leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
         return new Some<Structure>(convertedStruct);
     }
@@ -93,12 +93,12 @@ public class GoalConverter : TypeBaseVisitor<Structure>
 
         if (goal.HasStrongNegation)
         {
-            convertedTerm = new Structure(this.functors.ClassicalNegation, [convertedTerm]);
+            convertedTerm = new Structure(this.functors.ClassicalNegation,[convertedTerm]);
         }
 
         if (goal.HasNafNegation)
         {
-            convertedTerm = new Structure(this.functors.NegationAsFailure, [convertedTerm]);
+            convertedTerm = new Structure(this.functors.NegationAsFailure,[convertedTerm]);
         }
 
         return new Some<Structure>(convertedTerm);
@@ -120,7 +120,7 @@ public class GoalConverter : TypeBaseVisitor<Structure>
 
         var functor = this.operatorConverter.Convert(goal.BinaryOperator);
 
-        var convertedStructure = new Structure(functor, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
+        var convertedStructure = new Structure(functor,[leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
 
         return new Some<Structure>(convertedStructure);
     }

@@ -37,7 +37,7 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
         ArgumentNullException.ThrowIfNull(mapping, nameof(mapping));
         if (mapping.KeyComparer is not VariableComparer)
         {
-            throw new ArgumentException("Must contain the correct comparer.",nameof(mapping));
+            throw new ArgumentException("Must contain the correct comparer.", nameof(mapping));
         }
 
         this.mapping = mapping;
@@ -76,12 +76,17 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 
         this.mapping = immutableBuilder.ToImmutable();
     }
+
+    /// <inheritdoc/>
     public IVariableBinding this[Variable key] => this.mapping[key];
 
+    /// <inheritdoc/>
     public int Count => this.mapping.Count;
 
+    /// <inheritdoc/>
     public IEnumerable<Variable> Keys => this.mapping.Keys;
 
+    /// <inheritdoc/>
     public IEnumerable<IVariableBinding> Values => this.mapping.Values;
 
     public VariableMapping Add(Variable key, IVariableBinding value) => new(this.mapping.Add(key, value));
@@ -98,56 +103,70 @@ public class VariableMapping : IImmutableDictionary<Variable, IVariableBinding>
 
     public VariableMapping SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items) => new(this.mapping.SetItems(items));
 
+    /// <inheritdoc/>
     public bool Contains(KeyValuePair<Variable, IVariableBinding> pair) => this.mapping.Contains(pair);
 
+    /// <inheritdoc/>
     public bool ContainsKey(Variable key) => this.mapping.ContainsKey(key);
 
+    /// <inheritdoc/>
     public bool TryGetKey(Variable equalKey, out Variable actualKey) => this.mapping.TryGetKey(equalKey, out actualKey);
 
+    /// <inheritdoc/>
     public bool TryGetValue(Variable key, [MaybeNullWhen(false)] out IVariableBinding value) => this.mapping.TryGetValue(key, out value);
 
+    /// <inheritdoc/>
     public IEnumerator<KeyValuePair<Variable, IVariableBinding>> GetEnumerator() => this.mapping.GetEnumerator();
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return this.mapping.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.Add(Variable key, IVariableBinding value)
     {
-       return this.Add(key, value);
+        return this.Add(key, value);
     }
 
+    /// <inheritdoc/>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.AddRange(IEnumerable<KeyValuePair<Variable, IVariableBinding>> pairs)
     {
         return this.AddRange(pairs);
     }
 
+    /// <inheritdoc/>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.Clear()
     {
         return this.Clear();
     }
 
+    /// <inheritdoc/>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.Remove(Variable key)
     {
         return this.Remove(key);
     }
 
+    /// <inheritdoc/>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.RemoveRange(IEnumerable<Variable> keys)
     {
         return this.RemoveRange(keys);
     }
 
+    /// <inheritdoc/>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.SetItem(Variable key, IVariableBinding value)
     {
-       return this.SetItem(key, value);
+        return this.SetItem(key, value);
     }
 
+    /// <inheritdoc/>
     IImmutableDictionary<Variable, IVariableBinding> IImmutableDictionary<Variable, IVariableBinding>.SetItems(IEnumerable<KeyValuePair<Variable, IVariableBinding>> items)
     {
         return this.SetItems(items);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
         return this.mapping.Count > 0 ? $"{{{this.mapping.ToList().ListToString()}}}" : "Empty Mapping";

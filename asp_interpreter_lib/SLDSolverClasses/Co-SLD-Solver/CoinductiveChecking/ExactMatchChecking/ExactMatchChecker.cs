@@ -100,8 +100,7 @@ public class ExactMatchChecker
                 }
 
                 return false;
-            })
-        )
+            }))
         {
             return false;
         }

@@ -1,26 +1,32 @@
-﻿using System.Runtime.InteropServices.JavaScript;
+﻿//-----------------------------------------------------------------------
+// <copyright file="TestingLogger.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_test;
 using Antlr4.Runtime;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace Asp_interpreter_test;
-
 public class TestingLogger(LogLevel logLevel) : ILogger
 {
-    public List<string> ErrorMessages { get; } = [];
-    
-    public List<string> DebugMessages { get; } = [];
-    
-    public List<string> TraceMessages { get; } = [];
-    
-    public List<string> InfoMessages { get; } = [];
-    
-    public List<string> Errors { get; } = [];
+    public List<string> ErrorMessages { get; } =[];
+
+    public List<string> DebugMessages { get; } =[];
+
+    public List<string> TraceMessages { get; } =[];
+
+    public List<string> InfoMessages { get; } =[];
+
+    public List<string> Errors { get; } =[];
 
     public LogLevel LogLevel { get; } = logLevel;
 
     public void LogError(string message, ParserRuleContext _)
     {
-        if(this.LogLevel <= LogLevel.Error)
+        if (this.LogLevel <= LogLevel.Error)
         {
             this.ErrorMessages.Add(message);
         }

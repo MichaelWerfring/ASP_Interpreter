@@ -117,8 +117,8 @@ public class CoinductiveChecker : ICHSCheckingResultArgumentsVisitor<IEnumerable
         {
             Structure targetwithConstraintment = constrainment.ApplySubstitution(checkingInput.Target);
 
-            ICallstackCheckingResult callstackCheckingResult = this.callstackChecker.CheckCallstack
-                (targetwithConstraintment, constrainment, checkingInput.State.Callstack);
+            ICallstackCheckingResult callstackCheckingResult = this.callstackChecker.CheckCallstack(
+                targetwithConstraintment, constrainment, checkingInput.State.Callstack);
 
             IOption<SuccessType> resultTypeMaybe = this.converter.Convert(callstackCheckingResult);
 
@@ -127,12 +127,10 @@ public class CoinductiveChecker : ICHSCheckingResultArgumentsVisitor<IEnumerable
                 continue;
             }
 
-            yield return new CoinductiveCheckingResult
-            (
+            yield return new CoinductiveCheckingResult(
                 targetwithConstraintment,
                 constrainment,
-                resultTypeMaybe.GetValueOrThrow()
-            );
+                resultTypeMaybe.GetValueOrThrow());
         }
     }
 }

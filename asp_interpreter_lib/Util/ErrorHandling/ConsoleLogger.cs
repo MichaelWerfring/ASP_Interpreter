@@ -1,9 +1,18 @@
-﻿namespace Asp_interpreter_lib.Util.ErrorHandling
+﻿//-----------------------------------------------------------------------
+// <copyright file="ConsoleLogger.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Util.ErrorHandling
 {
     using Antlr4.Runtime;
 
     public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogger
     {
+        /// <inheritdoc/>
         public void LogTrace(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -24,6 +33,7 @@
             Console.WriteLine(message);
         }
 
+        /// <inheritdoc/>
         public void LogDebug(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -44,6 +54,7 @@
             Console.WriteLine(message);
         }
 
+        /// <inheritdoc/>
         public void LogInfo(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -64,6 +75,7 @@
             Console.WriteLine(message);
         }
 
+        /// <inheritdoc/>
         public void LogError(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -84,6 +96,7 @@
             Console.WriteLine(message);
         }
 
+        /// <inheritdoc/>
         public void LogError(string message, ParserRuleContext context)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -105,6 +118,7 @@
             Console.WriteLine($"{message} at line {context.Start.Line} column {context.Start.Column}");
         }
 
+        /// <inheritdoc/>
         public ILogger GetDummy()
         {
             return new ConsoleLogger(LogLevel.None);

@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Util
+﻿//-----------------------------------------------------------------------
+// <copyright file="ProgramConfig.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Util
 {
     using Asp_interpreter_lib.Util.ErrorHandling;
 

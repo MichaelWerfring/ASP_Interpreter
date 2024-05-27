@@ -46,8 +46,8 @@ internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOptio
             }
             else
             {
-                newPairs[index] = new KeyValuePair<Variable, IVariableBinding>
-                    (currentVariable, resolutionMaybe.GetValueOrThrow());
+                newPairs[index] = new KeyValuePair<Variable, IVariableBinding>(
+                    currentVariable, resolutionMaybe.GetValueOrThrow());
             }
         });
 
@@ -61,6 +61,7 @@ internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOptio
         return new Some<VariableMapping>(new VariableMapping(newValues));
     }
 
+    /// <inheritdoc/>
     public IOption<IVariableBinding> Visit(ProhibValsProhibValsCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
@@ -68,6 +69,7 @@ internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOptio
         return new Some<IVariableBinding>(new ProhibitedValuesBinding(binaryCase.Left.ProhibitedValues.Union(binaryCase.Right.ProhibitedValues)));
     }
 
+    /// <inheritdoc/>
     public IOption<IVariableBinding> Visit(ProhibValsTermBindingCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
@@ -75,6 +77,7 @@ internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOptio
         return new Some<IVariableBinding>(binaryCase.Right);
     }
 
+    /// <inheritdoc/>
     public IOption<IVariableBinding> Visit(TermBindingProhibValsCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));
@@ -82,6 +85,7 @@ internal class VariableMappingUpdater : IBinaryVariableBindingCaseVisitor<IOptio
         return new None<IVariableBinding>();
     }
 
+    /// <inheritdoc/>
     public IOption<IVariableBinding> Visit(TermBindingTermBindingCase binaryCase)
     {
         ArgumentNullException.ThrowIfNull(binaryCase, nameof(binaryCase));

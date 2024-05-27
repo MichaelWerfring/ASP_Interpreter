@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Preprocessing
+﻿//-----------------------------------------------------------------------
+// <copyright file="PrefixOptions.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Preprocessing
 {
     public class PrefixOptions
     {

@@ -1,6 +1,13 @@
-﻿namespace Asp_interpreter_test
+﻿//-----------------------------------------------------------------------
+// <copyright file="CompleteTest.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_test
 {
-    using Antlr4.Runtime.Atn;
     using Asp_interpreter_lib.FunctorNaming;
     using Asp_interpreter_lib.InternalProgramClasses.Database;
     using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
@@ -13,13 +20,10 @@
     using Asp_interpreter_lib.Types;
     using Asp_interpreter_lib.Util;
     using Asp_interpreter_lib.Util.ErrorHandling;
-    using Asp_interpreter_lib.Util.ErrorHandling.Either;
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Text;
-    using System.Threading.Tasks;
 
     internal class CompleteTest
     {
@@ -63,7 +67,7 @@
             // OLON
             List<Statement> olonRules = new OLONRulesFilterer(logger).FilterOlonRules(program.Statements);
 
-            // NMR 
+            // NMR
             var nmrChecker = new NmrChecker(prefixes, logger);
             var constraints = nmrChecker.GetConstraintRules(program);
             olonRules.AddRange(constraints);
@@ -72,11 +76,11 @@
 
             // Concatenate
             var fullProgram = new AspProgram(
-                [.. program.Statements, .. dual, .. subcheck]
-                , program.Query
-                , program.Explanations);
+                [.. program.Statements, .. dual, .. subcheck],
+                program.Query,
+                program.Explanations);
 
-            var solutions = GetSolutions(
+            var solutions = this.GetSolutions(
                 fullProgram.Statements,
                 fullProgram.Query.GetValueOrThrow().Goals,
                 logger);
@@ -104,7 +108,7 @@
             var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), logger);
 
             var result = new List<CoSLDSolution>();
-            foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("_nmr_check", []))))
+            foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("_nmr_check",[]))))
             {
                 result.Add(solution);
             }

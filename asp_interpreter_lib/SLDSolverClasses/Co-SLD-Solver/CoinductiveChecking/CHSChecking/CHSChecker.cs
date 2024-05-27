@@ -99,14 +99,12 @@ public class CHSChecker
 
         // construct disunification goals
         IEnumerable<Structure> disunificationGoals = termsUnifyingWithNegation.AsParallel()
-            .Select(term => new Structure(this.functorTable.Disunification, [termToCheck, term]));
+            .Select(term => new Structure(this.functorTable.Disunification,[termToCheck, term]));
 
         // from that, construct initial state for solver.
-        var newSolverState = new CoSldSolverState
-        (
+        var newSolverState = new CoSldSolverState(
             disunificationGoals,
-            new SolutionState(state.Callstack, state.CHS, state.Mapping, state.NextInternalVariableIndex)
-        );
+            new SolutionState(state.Callstack, state.CHS, state.Mapping, state.NextInternalVariableIndex));
 
         // return all the ways that all these disunifications can be solved.
         return new CHSNoMatchOrConstrainmentResult(this.goalSolver.SolveGoals(newSolverState).Select(x => x.ResultMapping));
@@ -124,7 +122,7 @@ public class CHSChecker
                 }
 
                 ConstructiveTarget target = ConstructiveTargetBuilder.Build(term, entry.Term, mapping).GetRightOrThrow();
- 
+
                 return this.checker.AreExactMatch(target);
             }))
             {
@@ -141,15 +139,13 @@ public class CHSChecker
 
     private ParallelQuery<Structure> GetUnifyingTerms(Structure term, CoinductiveHypothesisSet set, VariableMapping mapping)
     {
-       return set.AsParallel().Where
-       (
-           entry =>
-           {
-               var target = ConstructiveTargetBuilder.Build(term, entry.Term, mapping).GetRightOrThrow();
+        return set.AsParallel().Where(
+            entry =>
+            {
+                var target = ConstructiveTargetBuilder.Build(term, entry.Term, mapping).GetRightOrThrow();
 
-               return this.algorithm.Unify(target).HasValue;
-           }
-       )
-       .Select(entry => entry.Term);
+                return this.algorithm.Unify(target).HasValue;
+            })
+        .Select(entry => entry.Term);
     }
 }

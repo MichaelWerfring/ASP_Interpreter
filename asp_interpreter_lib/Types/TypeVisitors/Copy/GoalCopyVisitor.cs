@@ -1,18 +1,30 @@
-﻿using Asp_interpreter_lib.Types.Terms;
+﻿//-----------------------------------------------------------------------
+// <copyright file="GoalCopyVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Types.TypeVisitors.Copy;
+using Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace Asp_interpreter_lib.Types.TypeVisitors.Copy;
-
 public class GoalCopyVisitor : TypeBaseVisitor<Goal>
 {
-    private readonly TermCopyVisitor _termCopyVisitor;
+    private readonly TermCopyVisitor termCopyVisitor;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GoalCopyVisitor"/> class.
+    /// </summary>
+    /// <param name="termCopyVisitor"></param>
     public GoalCopyVisitor(TermCopyVisitor termCopyVisitor)
     {
-        _termCopyVisitor = termCopyVisitor;
+        this.termCopyVisitor = termCopyVisitor;
     }
 
+    /// <inheritdoc/>
     public override IOption<Goal> Visit(Forall goal)
     {
         var innerGoal = goal.Goal.Accept(this).GetValueOrThrow("The given goal cannot be copied!");
@@ -20,27 +32,29 @@ public class GoalCopyVisitor : TypeBaseVisitor<Goal>
         return new Some<Goal>(new Forall(variable, innerGoal));
     }
 
+    /// <inheritdoc/>
     public override IOption<Goal> Visit(Literal goal)
     {
         bool naf = goal.HasNafNegation;
         bool classical = goal.HasStrongNegation;
         string identifier = goal.Identifier.GetCopy();
-        List<ITerm> terms = [];
-        
+        List<ITerm> terms =[];
+
         foreach (var term in goal.Terms)
         {
-            terms.Add(term.Accept(_termCopyVisitor).GetValueOrThrow(
+            terms.Add(term.Accept(this.termCopyVisitor).GetValueOrThrow(
                 "The given term cannot be read!"));
         }
-        
+
         return new Some<Goal>(new Literal(identifier, naf, classical, terms));
     }
 
+    /// <inheritdoc/>
     public override IOption<Goal> Visit(BinaryOperation binOp)
     {
-        var leftCopy = binOp.Left.Accept(_termCopyVisitor).GetValueOrThrow(
+        var leftCopy = binOp.Left.Accept(this.termCopyVisitor).GetValueOrThrow(
             "The given left term cannot be read!");
-        var rightCopy = binOp.Right.Accept(_termCopyVisitor).GetValueOrThrow(
+        var rightCopy = binOp.Right.Accept(this.termCopyVisitor).GetValueOrThrow(
             "The given right term cannot be read!");
 
         return new Some<Goal>(new BinaryOperation(leftCopy, binOp.BinaryOperator, rightCopy));

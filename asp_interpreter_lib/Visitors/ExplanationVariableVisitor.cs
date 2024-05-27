@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Visitors
+﻿//-----------------------------------------------------------------------
+// <copyright file="ExplanationVariableVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Visitors
 {
     using Asp_interpreter_lib.Util.ErrorHandling;
 
@@ -6,6 +14,10 @@
     {
         private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExplanationVariableVisitor"/> class.
+        /// </summary>
+        /// <param name="logger"></param>
         public ExplanationVariableVisitor(ILogger logger)
         {
             ArgumentNullException.ThrowIfNull(logger);
@@ -13,6 +25,7 @@
             this.logger = logger;
         }
 
+        /// <inheritdoc/>
         public override string VisitExp_var(ASPParser.Exp_varContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

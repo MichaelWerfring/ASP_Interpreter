@@ -13,9 +13,9 @@ using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 /// </summary>
 internal class CHSPostprocessingComparer : IComparer<CHSEntry>
 {
-    private FunctorTableRecord functors;
+    private readonly FunctorTableRecord functors;
 
-    private PostprocessingTermComparer comparer;
+    private readonly PostprocessingTermComparer comparer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CHSPostprocessingComparer"/> class.

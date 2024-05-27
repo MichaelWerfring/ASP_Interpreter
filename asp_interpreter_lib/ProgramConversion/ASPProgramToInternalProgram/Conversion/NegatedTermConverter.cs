@@ -4,12 +4,12 @@
 
 namespace Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
 
+using Asp_interpreter_lib.FunctorNaming;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Types.TypeVisitors;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
 using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using Asp_interpreter_lib.FunctorNaming;
 
 /// <summary>
 /// A class for converting a negated term.
@@ -61,7 +61,7 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
 
         var convertedStructure = this.converter.Convert(term);
 
-        return new Some<ISimpleTerm>(new Structure(this.functorTable.ClassicalNegation, [convertedStructure]));
+        return new Some<ISimpleTerm>(new Structure(this.functorTable.ClassicalNegation,[convertedStructure]));
     }
 
     /// <summary>

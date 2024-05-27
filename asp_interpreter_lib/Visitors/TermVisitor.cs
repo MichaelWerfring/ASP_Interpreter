@@ -1,7 +1,14 @@
-﻿using Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿//-----------------------------------------------------------------------
+// <copyright file="TermVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Visitors;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
 {
@@ -13,6 +20,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
             throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitNegatedTerm(ASPParser.NegatedTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -28,6 +36,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
         return new Some<ITerm>(new NegatedTerm(baseTerm.GetValueOrThrow()));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitStringTerm(ASPParser.StringTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -36,13 +45,14 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
 
         if (text == null)
         {
-            logger.LogError("The string term must have a text!", context);
+            this.logger.LogError("The string term must have a text!", context);
             return new None<ITerm>();
         }
 
         return new Some<ITerm>(new StringTerm(text[1..^1]));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitBasicTerm(ASPParser.BasicTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -60,7 +70,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
         if (terms == null)
         {
             // Can be a basic term without any inner terms
-            return new Some<ITerm>(new BasicTerm(id, []));
+            return new Some<ITerm>(new BasicTerm(id,[]));
         }
 
         var innerTerms = terms.Accept(new TermsVisitor(this.logger));
@@ -74,6 +84,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
         return new Some<ITerm>(new BasicTerm(id, innerTerms.GetValueOrThrow()));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitArithmeticOperationTerm(ASPParser.ArithmeticOperationTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -94,6 +105,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
             right.GetValueOrThrow()));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitParenthesizedTerm(ASPParser.ParenthesizedTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -109,12 +121,14 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
         return new Some<ITerm>(baseTerm.GetValueOrThrow());
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitAnonymousVariableTerm(ASPParser.AnonymousVariableTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
         return new Some<ITerm>(new AnonymousVariableTerm());
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitNumberTerm(ASPParser.NumberTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -131,13 +145,14 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
 
         if (!isValidNumber)
         {
-            logger.LogError("Term cannot be converted to number!", context);
+            this.logger.LogError("Term cannot be converted to number!", context);
             return new None<ITerm>();
         }
 
         return new Some<ITerm>(new NumberTerm(number));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitVariableTerm(ASPParser.VariableTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -153,6 +168,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
         return new Some<ITerm>(new VariableTerm(variable));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitListTerm(ASPParser.ListTermContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -168,6 +184,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
         return new Some<ITerm>(list.GetValueOrThrow());
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitConventionalList(ASPParser.ConventionalListContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -190,6 +207,7 @@ public class TermVisitor : ASPParserBaseVisitor<IOption<ITerm>>
         return new Some<ITerm>(new ConventionalList(terms.GetValueOrThrow()));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> VisitRecursiveList(ASPParser.RecursiveListContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

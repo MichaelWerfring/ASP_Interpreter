@@ -116,7 +116,7 @@ public class CoSLDGoalMapper
     /// Builds a goal based on the current state of a solver.
     /// </summary>
     /// <param name="state">The state of the solver.</param>
-    /// <returns>A goal-</returns>
+    /// <returns>A goal-.</returns>
     /// <exception cref="ArgumentException">Thrown if state does not contain at least one goal.</exception>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="state"/> is null.</exception>
     public ICoSLDGoal GetGoal(CoSldSolverState state)

@@ -18,7 +18,7 @@ public class SolverStateUpdater
     /// <summary>
     /// Updates a callstack based on a new mapping.
     /// </summary>
-    /// <param name="callStack">The input callstack</param>
+    /// <param name="callStack">The input callstack.</param>
     /// <param name="map">The new mapping to update with.</param>
     /// <returns>An updated callstack.</returns>
     /// <exception cref="ArgumentNullException">Thrown if..
@@ -41,7 +41,7 @@ public class SolverStateUpdater
     /// <summary>
     /// Updates a coinductive hypothesis set based on a new mapping.
     /// </summary>
-    /// <param name="set">The input callstack</param>
+    /// <param name="set">The input callstack.</param>
     /// <param name="map">The new mapping to update with.</param>
     /// <returns>An updated chs.</returns>
     /// <exception cref="ArgumentNullException">Thrown if..

@@ -1,15 +1,22 @@
-﻿using System.Linq;
-using Asp_interpreter_lib.Util;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.Preprocessing;
-using NUnit.Framework;
-using Asp_interpreter_lib.Preprocessing.DualRules;
+﻿//-----------------------------------------------------------------------
+// <copyright file="DualRuleTest.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_test.DualRules;
+using Asp_interpreter_lib.Preprocessing;
+using Asp_interpreter_lib.Preprocessing.DualRules;
+using Asp_interpreter_lib.Util;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using NUnit.Framework;
+using System.Linq;
 
 public class DualRuleTest
 {
-    private readonly PrefixOptions _prefixes = AspExtensions.CommonPrefixes;
+    private readonly PrefixOptions prefixes = AspExtensions.CommonPrefixes;
 
     private readonly ILogger logger = new TestingLogger(LogLevel.Error);
 
@@ -21,8 +28,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var dual = dualRuleConverter.AddForall(program.Statements[0]).ToList();
 
@@ -38,11 +45,10 @@ public class DualRuleTest
                       ?- b(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var dual = dualRuleConverter.AddForall(program.Statements[0]).ToList();
-
 
         Assert.Multiple(() =>
         {
@@ -60,8 +66,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -87,8 +93,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -114,8 +120,8 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
@@ -143,12 +149,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Checked with s(CASP)
+        // Checked with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count, Is.EqualTo(6));
@@ -169,12 +175,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
 
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count, Is.EqualTo(9));
@@ -199,12 +205,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Tested with s(CASP)
+        // Tested with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 3);
@@ -225,12 +231,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 8);
@@ -253,12 +259,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 3);
@@ -267,7 +273,7 @@ public class DualRuleTest
             Assert.That(duals[2].ToString(), Is.EqualTo("not fa_p1(X, V0_) :- V0_ <= X."));
         });
     }
-    
+
     [Test]
     public void ConversionRemovesAnonymousVariablesInLiteral()
     {
@@ -278,12 +284,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 8);
@@ -297,7 +303,7 @@ public class DualRuleTest
             Assert.That(duals[7].ToString(), Is.EqualTo("not s1(V1) :- V1 \\= 4."));
         });
     }
-    
+
     [Test]
     public void ConversionRemovesAnonymousVariablesInHead()
     {
@@ -307,12 +313,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 4);
@@ -322,7 +328,7 @@ public class DualRuleTest
             Assert.That(duals[3].ToString(), Is.EqualTo("not q1(V1) :- V1 \\= 3."));
         });
     }
-    
+
     [Test]
     public void ConversionRemovesAnonymousVariablesInRecursiveListHead()
     {
@@ -332,12 +338,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 6);
@@ -349,7 +355,7 @@ public class DualRuleTest
             Assert.That(duals[5].ToString(), Is.EqualTo("not q1(V1) :- V1 \\= 3."));
         });
     }
-    
+
     [Test]
     public void ConversionRemovesAnonymousVariablesInConventionalListHead()
     {
@@ -359,12 +365,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 6);
@@ -376,7 +382,7 @@ public class DualRuleTest
             Assert.That(duals[5].ToString(), Is.EqualTo("not q1(V1) :- V1 \\= 3."));
         });
     }
-    
+
     [Test]
     public void ConversionHandlesMultipleAnonymousVariablesInBody()
     {
@@ -388,12 +394,12 @@ public class DualRuleTest
                       ?- p(X).
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 12);
@@ -419,12 +425,12 @@ public class DualRuleTest
                       a :- b.
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 3);
@@ -442,12 +448,12 @@ public class DualRuleTest
                       a.
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 1);
@@ -463,12 +469,12 @@ public class DualRuleTest
                       a :- b.
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-        //Solution was verified with s(CASP)
+        // Solution was verified with s(CASP)
         Assert.Multiple(() =>
         {
             Assert.That(duals.Count == 3);
@@ -477,7 +483,7 @@ public class DualRuleTest
             Assert.That(duals[2].ToString() == "not b.");
         });
     }
-    
+
     [Test]
     public void DualConverterConvertsIsToIsNot()
     {
@@ -486,8 +492,8 @@ public class DualRuleTest
                       abs(X, Y) :- X < 0, Y is X * -1.
                       """;
 
-        var program = AspExtensions.GetProgram(code, logger);
-        var dualRuleConverter = new DualRuleConverter(_prefixes, logger, false);
+        var program = AspExtensions.GetProgram(code, this.logger);
+        var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
         var duals = dualRuleConverter.GetDualRules(program.Statements);
 

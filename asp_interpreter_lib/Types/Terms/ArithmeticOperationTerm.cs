@@ -1,47 +1,63 @@
-﻿using Asp_interpreter_lib.Types.ArithmeticOperations;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ArithmeticOperationTerm.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Types.ArithmeticOperations;
 using Asp_interpreter_lib.Types.TypeVisitors;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
-namespace Asp_interpreter_lib.Types.Terms;
-
 public class ArithmeticOperationTerm : ITerm
 {
-    private ArithmeticOperation _operation;
-    private ITerm _left;
-    private ITerm _right;
+    private ArithmeticOperation operation;
+    private ITerm left;
+    private ITerm right;
 
-    public ArithmeticOperationTerm(ITerm left,ArithmeticOperation operation, ITerm right)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArithmeticOperationTerm"/> class.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="operation"></param>
+    /// <param name="right"></param>
+    public ArithmeticOperationTerm(ITerm left, ArithmeticOperation operation, ITerm right)
     {
-        Left = left;
-        Operation = operation;
-        Right = right;
+        this.Left = left;
+        this.Operation = operation;
+        this.Right = right;
     }
 
-    public ITerm Left 
+    public ITerm Left
     {
-        get => _left;
-        private set => _left = value ?? throw new ArgumentNullException(nameof(Left));
+        get => this.left;
+        private set => this.left = value ?? throw new ArgumentNullException(nameof(this.Left));
     }
 
     public ArithmeticOperation Operation
     {
-        get => _operation;
-        private set => _operation = value ?? throw new ArgumentNullException(nameof(Operation));
+        get => this.operation;
+        private set => this.operation = value ?? throw new ArgumentNullException(nameof(this.Operation));
     }
 
-    public ITerm Right {
-        get => _right;
-        private set => _right = value ?? throw new ArgumentNullException(nameof(Right));
+    public ITerm Right
+    {
+        get => this.right;
+        private set => this.right = value ?? throw new ArgumentNullException(nameof(this.Right));
     }
 
+    /// <inheritdoc/>
     public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
         return visitor.Visit(this);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
-        return $"{_left} {_operation} {_right}";
+        return $"{this.left} {this.operation} {this.right}";
     }
 }

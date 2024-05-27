@@ -1,30 +1,32 @@
-﻿using System.Xml.Schema;
+﻿//-----------------------------------------------------------------------
+// <copyright file="VisitorTest.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_test;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Atn;
-using Asp_interpreter_lib;
 using Asp_interpreter_lib.Types;
-using Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Types.TypeVisitors;
 using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
 using Asp_interpreter_lib.Visitors;
-using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using NUnit.Framework.Internal;
-
-namespace Asp_interpreter_test;
 
 public class VisitorTest
 {
     private string graphCode;
-    
-    private TestingLogger logger = new(LogLevel.Error);
-    
-    private GoalToLiteralConverter goalToLiteralConverter = new();
+
+    private readonly TestingLogger logger = new(LogLevel.Error);
+
+    private readonly GoalToLiteralConverter goalToLiteralConverter = new();
 
     [SetUp]
     public void Setup()
     {
-        graphCode = """
+        this.graphCode = """
                      node(a).
                      node(b).
                      node(c).
@@ -58,7 +60,7 @@ public class VisitorTest
             infoLogger.Errors.Count == 0 &&
             infoLogger.InfoMessages.Count > 0);
     }
-    
+
     [Test]
     public void HandlesProgramWithoutQueryCorrectly()
     {
@@ -66,9 +68,9 @@ public class VisitorTest
                    a :- b.
                    """;
 
-        var program = AspExtensions.GetProgram(code, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
 
-        Assert.That(logger.Errors.Count == 0 && !program.Query.HasValue);
+        Assert.That(this.logger.Errors.Count == 0 && !program.Query.HasValue);
     }
 
     [Test]
@@ -79,14 +81,14 @@ public class VisitorTest
                    ?- a(Y).
                    """;
 
-        var program = AspExtensions.GetProgram(code, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
 
         Assert.That(program.Statements.Count == 1);
         Assert.That(program.Statements[0].Body.Count == 1);
-        Assert.That(AspExtensions.CompareGoal(program.Statements[0].Body[0], false, true, "b", ["X"]));
+        Assert.That(AspExtensions.CompareGoal(program.Statements[0].Body[0], false, true, "b",["X"]));
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesNegationAsFailureCorrectly()
     {
@@ -94,15 +96,15 @@ public class VisitorTest
                    a(X) :- not b(X).
                    ?- a(X).
                    """;
-        
+
         var program = AspExtensions.GetProgram(code, this.logger);
 
         Assert.That(program.Statements.Count == 1);
         Assert.That(program.Statements[0].Body.Count == 1);
-        Assert.That(AspExtensions.CompareGoal(program.Statements[0].Body[0], true, false, "b", ["X"]));
+        Assert.That(AspExtensions.CompareGoal(program.Statements[0].Body[0], true, false, "b",["X"]));
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesNafAndClassicalNegationCorrectly()
     {
@@ -111,18 +113,18 @@ public class VisitorTest
                    ?- a(X).
                    """;
 
-        var program = AspExtensions.GetProgram(code, logger);
+        var program = AspExtensions.GetProgram(code, this.logger);
 
         Assert.That(program.Statements.Count == 1);
         Assert.That(program.Statements[0].Body.Count == 1);
-        Assert.That(AspExtensions.CompareGoal(program.Statements[0].Body[0], true, true, "b", ["X"]));
+        Assert.That(AspExtensions.CompareGoal(program.Statements[0].Body[0], true, true, "b",["X"]));
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesMultipleLiteralsInQueryCorrectly()
     {
-        //This code cannot exist due to grammar specification
+        // This code cannot exist due to grammar specification
         var code = """
                    a(X) :- c(X).
                    a(X) :- b(X).
@@ -130,12 +132,12 @@ public class VisitorTest
                    c(3).
                    ?- a(X), Y = 1 ,b(Y).
                    """;
-        var program = AspExtensions.GetProgram(code, logger);
-        
+        var program = AspExtensions.GetProgram(code, this.logger);
+
         Assert.That(program.Query.HasValue && program.Query.GetValueOrThrow().Goals.Count == 3);
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesStatementWithoutRuleHeadCorrectly()
     {
@@ -143,16 +145,16 @@ public class VisitorTest
                    :- b.
                    ?- a(X).
                    """;
-        
-        var program = AspExtensions.GetProgram(code, logger);
+
+        var program = AspExtensions.GetProgram(code, this.logger);
         var statement = program.Statements[0];
 
         Assert.That(statement.Body.Count == 1);
-        Assert.That(AspExtensions.CompareGoal(statement.Body[0], false, false, "b", []));
+        Assert.That(AspExtensions.CompareGoal(statement.Body[0], false, false, "b",[]));
         Assert.That(!statement.Head.HasValue);
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesStatementWithoutRuleBodyCorrectly()
     {
@@ -160,15 +162,15 @@ public class VisitorTest
                    a.
                    ?- a.
                    """;
-        
-        var program = AspExtensions.GetProgram(code, logger);
+
+        var program = AspExtensions.GetProgram(code, this.logger);
         var statement = program.Statements[0];
-        
+
         Assert.That(statement.Head.HasValue);
-        Assert.That(AspExtensions.CompareGoal(statement.Head.GetValueOrThrow(), false, false, "a", []));
+        Assert.That(AspExtensions.CompareGoal(statement.Head.GetValueOrThrow(), false, false, "a",[]));
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesStatementWithRuleBodyAndHeadCorrectly()
     {
@@ -176,19 +178,19 @@ public class VisitorTest
                    a :- b.
                    ?- a.
                    """;
-        
-        var program = AspExtensions.GetProgram(code, logger);
+
+        var program = AspExtensions.GetProgram(code, this.logger);
         var statement = program.Statements[0];
-        
-        var body = program.Statements[0].Body[0].Accept(goalToLiteralConverter);
+
+        var body = program.Statements[0].Body[0].Accept(this.goalToLiteralConverter);
 
         Assert.That(body.HasValue);
-        Assert.That(AspExtensions.CompareGoal(body.GetValueOrThrow(), false, false, "b", []));
+        Assert.That(AspExtensions.CompareGoal(body.GetValueOrThrow(), false, false, "b",[]));
         Assert.That(statement.Head.HasValue);
-        Assert.That(AspExtensions.CompareGoal(statement.Head.GetValueOrThrow(), false, false, "a", []));
+        Assert.That(AspExtensions.CompareGoal(statement.Head.GetValueOrThrow(), false, false, "a",[]));
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesStatementWithRuleBodyAndNegatedHeadCorrectly()
     {
@@ -196,58 +198,58 @@ public class VisitorTest
                    -a :- b.
                    ?- -a.
                    """;
-        
-        var program = AspExtensions.GetProgram(code, logger);
+
+        var program = AspExtensions.GetProgram(code, this.logger);
         var statement = program.Statements[0];
-        var body = program.Statements[0].Body[0].Accept(goalToLiteralConverter);
+        var body = program.Statements[0].Body[0].Accept(this.goalToLiteralConverter);
 
         Assert.That(body.HasValue);
-        Assert.That(AspExtensions.CompareGoal(body.GetValueOrThrow(), false, false, "b", []));
+        Assert.That(AspExtensions.CompareGoal(body.GetValueOrThrow(), false, false, "b",[]));
         Assert.That(statement.Head.HasValue);
-        Assert.That(AspExtensions.CompareGoal(statement.Head.GetValueOrThrow(), false, true, "a", []));
+        Assert.That(AspExtensions.CompareGoal(statement.Head.GetValueOrThrow(), false, true, "a",[]));
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesTermsInHeadCorrectly()
     {
-        AspProgram program = AspExtensions.GetProgram(graphCode, logger);
+        AspProgram program = AspExtensions.GetProgram(this.graphCode, this.logger);
 
         var headLiteral = program.Statements[6].Head.GetValueOrThrow();
 
-        Assert.That(AspExtensions.CompareGoal(headLiteral, false, false, "separate", ["X", "Y"]));
+        Assert.That(AspExtensions.CompareGoal(headLiteral, false, false, "separate",["X", "Y"]));
         Assert.That(this.logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesBodyLiteralsCorrectly()
     {
-        AspProgram program = AspExtensions.GetProgram(graphCode, logger);
+        AspProgram program = AspExtensions.GetProgram(this.graphCode, this.logger);
 
         var body = program.Statements[6].Body;
-        var firstLiteral = body[0].Accept(goalToLiteralConverter).GetValueOrThrow();
-        var secondLiteral = body[1].Accept(goalToLiteralConverter).GetValueOrThrow();
-        var thirdLiteral = body[2].Accept(goalToLiteralConverter).GetValueOrThrow();
+        var firstLiteral = body[0].Accept(this.goalToLiteralConverter).GetValueOrThrow();
+        var secondLiteral = body[1].Accept(this.goalToLiteralConverter).GetValueOrThrow();
+        var thirdLiteral = body[2].Accept(this.goalToLiteralConverter).GetValueOrThrow();
 
         Assert.That(
             body.Count == 3 &&
             firstLiteral.Identifier == "node" && !firstLiteral.HasNafNegation &&
             secondLiteral.Identifier == "node" && !secondLiteral.HasNafNegation &&
             thirdLiteral.HasNafNegation && thirdLiteral.Identifier == "edge");
-        Assert.That(logger.Errors.Count == 0);
+        Assert.That(this.logger.Errors.Count == 0);
     }
 
     [Test]
     public void HandlesBodyTermsCorrectly()
     {
         var program = AspExtensions.GetProgram(this.graphCode, this.logger);
-        
+
         var body = program.Statements[6].Body;
 
         Assert.That(body.Count == 3);
-        Assert.That(AspExtensions.CompareGoal(body[0], false, false, "node", ["X"]));
-        Assert.That(AspExtensions.CompareGoal(body[1], false, false, "node", ["Y"]));
-        Assert.That(AspExtensions.CompareGoal(body[2], true, false, "edge", ["X", "Y"]));
+        Assert.That(AspExtensions.CompareGoal(body[0], false, false, "node",["X"]));
+        Assert.That(AspExtensions.CompareGoal(body[1], false, false, "node",["Y"]));
+        Assert.That(AspExtensions.CompareGoal(body[2], true, false, "edge",["X", "Y"]));
         Assert.That(this.logger.Errors.Count == 0);
     }
 }

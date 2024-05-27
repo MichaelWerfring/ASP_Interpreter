@@ -1,25 +1,30 @@
-﻿using Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Types.TypeVisitors;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Explanation.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Types
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class Explanation
     {
-        private readonly List<string> _textParts;
-        private readonly HashSet<int> _variablesAt;
-        private readonly Literal _literal;
+        private readonly List<string> textParts;
+
+        private readonly HashSet<int> variablesAt;
+
+        private readonly Literal literal;
 
         public Explanation(List<string> textParts, HashSet<int> variablesAt, Literal literal)
         {
-            _textParts = textParts ?? throw new ArgumentNullException(nameof(textParts));
-            _variablesAt = variablesAt ?? throw new ArgumentNullException(nameof(variablesAt));
-            _literal = literal ?? throw new ArgumentNullException(nameof(literal));
+            this.textParts = textParts ?? throw new ArgumentNullException(nameof(textParts));
+            this.variablesAt = variablesAt ?? throw new ArgumentNullException(nameof(variablesAt));
+            this.literal = literal ?? throw new ArgumentNullException(nameof(literal));
 
             if (variablesAt.Any(n => n > textParts.Count || n < 0))
             {
@@ -28,10 +33,10 @@ namespace Asp_interpreter_lib.Types
             }
         }
 
-        public List<string> TextParts { get => _textParts; } 
-        
-        public HashSet<int> VariablesAt { get => _variablesAt; }
+        public List<string> TextParts { get => this.textParts; }
 
-        public Literal Literal { get => _literal; }
+        public HashSet<int> VariablesAt { get => this.variablesAt; }
+
+        public Literal Literal { get => this.literal; }
     }
 }

@@ -56,6 +56,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return new Some<IVariableBinding>(value.Accept(this, mapping));
     }
 
+    /// <inheritdoc/>
     public IVariableBinding Visit(ProhibitedValuesBinding binding, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(binding);
@@ -64,6 +65,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return binding;
     }
 
+    /// <inheritdoc/>
     public IVariableBinding Visit(TermBinding binding, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(binding);
@@ -72,6 +74,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return binding.Term.Accept(this, map);
     }
 
+    /// <inheritdoc/>
     public IVariableBinding Visit(Variable term, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -90,6 +93,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return binding.Accept(this, map);
     }
 
+    /// <inheritdoc/>
     public IVariableBinding Visit(Structure term, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -136,6 +140,7 @@ public class TransitiveVariableMappingResolver : IVariableBindingArgumentVisitor
         return new TermBinding(substitutedStruct);
     }
 
+    /// <inheritdoc/>
     public IVariableBinding Visit(Integer term, VariableMapping map)
     {
         ArgumentNullException.ThrowIfNull(term);

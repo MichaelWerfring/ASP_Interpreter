@@ -12,11 +12,9 @@ using System.Collections.Immutable;
 
 internal class VariableMappingMerger
 {
-    public VariableMapping Merge
-    (
+    public VariableMapping Merge(
         IDictionary<Variable, ProhibitedValuesBinding> prohibs,
-        IDictionary<Variable, TermBinding> termbindings
-    )
+        IDictionary<Variable, TermBinding> termbindings)
     {
         ArgumentNullException.ThrowIfNull(prohibs, nameof(prohibs));
         ArgumentNullException.ThrowIfNull(termbindings, nameof(termbindings));

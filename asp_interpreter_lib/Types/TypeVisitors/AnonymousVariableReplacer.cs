@@ -1,37 +1,46 @@
-﻿using System.Runtime.CompilerServices;
-using Asp_interpreter_lib.Types.ArithmeticOperations;
-using Asp_interpreter_lib.Types.BinaryOperations;
-using Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.Preprocessing;
+﻿//-----------------------------------------------------------------------
+// <copyright file="AnonymousVariableReplacer.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Types.TypeVisitors;
+using Asp_interpreter_lib.Preprocessing;
+using Asp_interpreter_lib.Types.Terms;
+using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
 {
-    private readonly PrefixOptions _prefixOptions;
+    private readonly PrefixOptions prefixOptions;
 
-    private int _replacementCount;
-    
+    private int replacementCount;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnonymousVariableReplacer"/> class.
+    /// </summary>
+    /// <param name="prefixOptions"></param>
     public AnonymousVariableReplacer(PrefixOptions prefixOptions)
     {
         ArgumentNullException.ThrowIfNull(prefixOptions);
-        _prefixOptions = prefixOptions;
-        _replacementCount = 0;
+        this.prefixOptions = prefixOptions;
+        this.replacementCount = 0;
     }
-    
+
     public Statement Replace(Statement statement)
     {
-        _replacementCount = 0;
+        this.replacementCount = 0;
         statement.Accept(this);
-        _replacementCount = 0;
+        this.replacementCount = 0;
         return statement;
     }
-    
+
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
-        
+
         if (statement.HasHead)
         {
             statement.Head.GetValueOrThrow().Accept(this);
@@ -44,61 +53,66 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
                 goal.Accept(this);
             }
         }
-        
+
         return new None<ITerm>();
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(Literal literal)
     {
         ArgumentNullException.ThrowIfNull(literal);
-        List<ITerm> terms = [];
+        List<ITerm> terms =[];
         for (var i = 0; i < literal.Terms.Count; i++)
         {
             var term = literal.Terms[i];
-            literal.Terms[i] = term.Accept(this).GetValueOrThrow(); 
+            literal.Terms[i] = term.Accept(this).GetValueOrThrow();
         }
 
         return new None<ITerm>();
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(BinaryOperation binOp)
     {
         ArgumentNullException.ThrowIfNull(binOp);
-        
+
         binOp.Left = binOp.Left.Accept(this).GetValueOrThrow();
         binOp.Right = binOp.Right.Accept(this).GetValueOrThrow();
 
         return new None<ITerm>();
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(AnonymousVariableTerm variable)
     {
         ArgumentNullException.ThrowIfNull(variable);
-        string newName = _prefixOptions.VariablePrefix + _replacementCount++ + "_";
+        string newName = this.prefixOptions.VariablePrefix + this.replacementCount++ + "_";
         return new Some<ITerm>(new VariableTerm(newName));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(VariableTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
         return new Some<ITerm>(term);
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ArithmeticOperationTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
 
         var left = term.Left.Accept(this).GetValueOrThrow();
         var right = term.Right.Accept(this).GetValueOrThrow();
-        
-        
+
         return new Some<ITerm>(new ArithmeticOperationTerm(left, term.Operation, right));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(BasicTerm basicTerm)
     {
         ArgumentNullException.ThrowIfNull(basicTerm);
-        List<ITerm> terms = [];
+        List<ITerm> terms =[];
 
         for (var i = 0; i < basicTerm.Terms.Count; i++)
         {
@@ -109,17 +123,20 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
 
         return new Some<ITerm>(basicTerm);
     }
-    
+
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(StringTerm term)
     {
         return new Some<ITerm>(term);
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(NumberTerm term)
     {
         return new Some<ITerm>(term);
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(NegatedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -129,6 +146,7 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new NegatedTerm(newTerm));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ParenthesizedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -137,10 +155,11 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new ParenthesizedTerm(newTerm));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(RecursiveList list)
     {
         ArgumentNullException.ThrowIfNull(list);
-        List<ITerm> terms = [];
+        List<ITerm> terms =[];
 
         var head = list.Head.Accept(this).GetValueOrThrow();
         var tail = list.Tail.Accept(this).GetValueOrThrow();
@@ -148,6 +167,7 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new RecursiveList(head, tail));
     }
 
+    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ConventionalList list)
     {
         ArgumentNullException.ThrowIfNull(list);

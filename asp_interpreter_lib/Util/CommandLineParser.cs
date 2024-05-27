@@ -1,4 +1,12 @@
-﻿namespace Asp_interpreter_lib.Util
+﻿//-----------------------------------------------------------------------
+// <copyright file="CommandLineParser.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+namespace Asp_interpreter_lib.Util
 {
     public class CommandLineParser
     {
@@ -9,7 +17,7 @@
                 throw new ArgumentNullException(nameof(actions), "The given argument must not be null!");
         }
 
-        private Dictionary<string, Func<int, ProgramConfig, string[], ProgramConfig>> actions;
+        private readonly Dictionary<string, Func<int, ProgramConfig, string[], ProgramConfig>> actions;
 
         public ProgramConfig Parse(string[] args)
         {

@@ -1,20 +1,23 @@
-﻿using Asp_interpreter_lib.Util;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.Preprocessing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Asp_interpreter_lib.Preprocessing.DualRules;
+﻿//-----------------------------------------------------------------------
+// <copyright file="DualRuleWithoutNotInNameCompoundProgramTest.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_test.DualRules
 {
+    using Asp_interpreter_lib.Preprocessing;
+    using Asp_interpreter_lib.Preprocessing.DualRules;
+    using Asp_interpreter_lib.Util;
+    using Asp_interpreter_lib.Util.ErrorHandling;
+
     internal class DualRuleWithoutNameCompoundProgramTest
     {
-        private readonly PrefixOptions _prefixes = AspExtensions.CommonPrefixes;
+        private readonly PrefixOptions prefixes = AspExtensions.CommonPrefixes;
 
-        private readonly TestingLogger _logger = new TestingLogger(LogLevel.Error);
+        private readonly TestingLogger logger = new TestingLogger(LogLevel.Error);
 
         [Test]
         public void BirdsTest()
@@ -34,14 +37,14 @@ namespace Asp_interpreter_test.DualRules
                       ?- flies(sam).
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
             var duals = dualRuleConverter.GetDualRules(program.Statements);
 
             Assert.Multiple(() =>
             {
-                Assert.That(_logger.ErrorMessages.Count == 0);
+                Assert.That(this.logger.ErrorMessages.Count == 0);
                 Assert.That(duals.Count == 14);
                 Assert.That(duals[0].ToString(), Is.EqualTo("not penguin(V1) :- not penguin1(V1)."));
                 Assert.That(duals[1].ToString(), Is.EqualTo("not penguin1(V1) :- V1 \\= sam."));
@@ -87,16 +90,15 @@ namespace Asp_interpreter_test.DualRules
                       ?-flies(sam).
                       """;
 
-
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
             var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-            //The output of this test has is based 
-            //on the original s(CASP) implementation
+            // The output of this test has is based
+            // on the original s(CASP) implementation
             Assert.Multiple(() =>
             {
-                Assert.That(_logger.ErrorMessages.Count == 0);
+                Assert.That(this.logger.ErrorMessages.Count == 0);
                 Assert.That(duals.Count == 25);
                 Assert.That(duals[0].ToString(), Is.EqualTo("not penguin(V1) :- not penguin1(V1)."));
                 Assert.That(duals[1].ToString(), Is.EqualTo("not penguin1(V1) :- V1 \\= sam."));
@@ -136,15 +138,15 @@ namespace Asp_interpreter_test.DualRules
                       ?- p(X).member(1, [1, 2, 3]).
                       """;
 
-            var program = AspExtensions.GetProgram(code, _logger);
-            var dualRuleConverter = new DualRuleConverter(_prefixes, _logger, false);
+            var program = AspExtensions.GetProgram(code, this.logger);
+            var dualRuleConverter = new DualRuleConverter(this.prefixes, this.logger, false);
 
             var duals = dualRuleConverter.GetDualRules(program.Statements);
 
-            //Verified by s(CASP)
+            // Verified by s(CASP)
             Assert.Multiple(() =>
             {
-                Assert.That(_logger.ErrorMessages.Count == 0);
+                Assert.That(this.logger.ErrorMessages.Count == 0);
                 Assert.That(duals.Count == 7);
                 Assert.That(duals[0].ToString(), Is.EqualTo("not member(V1, V2) :- not member1(V1, V2), not member2(V1, V2)."));
                 Assert.That(duals[1].ToString(), Is.EqualTo("not member1(X, V1) :- forall(T, not fa_member1(X, V1, T))."));

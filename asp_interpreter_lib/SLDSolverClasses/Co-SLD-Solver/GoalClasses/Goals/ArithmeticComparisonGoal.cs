@@ -4,12 +4,12 @@
 
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.GoalClasses.Goals.Comparison;
 
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Goals;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState;
-using Asp_interpreter_lib.SLDSolverClasses.ArithmeticSolver;
 using Asp_interpreter_lib.Util.ErrorHandling;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 
 /// <summary>
 /// Represents an arithmetic comparison goal.

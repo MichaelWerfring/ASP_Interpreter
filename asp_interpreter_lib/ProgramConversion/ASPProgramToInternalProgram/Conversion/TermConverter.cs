@@ -166,7 +166,7 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
         var inner = term.Term.Accept(this);
         try
         {
-            return new Some<ISimpleTerm>(new Structure(this.functorTable.Parenthesis, [inner.GetValueOrThrow()]));
+            return new Some<ISimpleTerm>(new Structure(this.functorTable.Parenthesis,[inner.GetValueOrThrow()]));
         }
         catch
         {
@@ -219,13 +219,13 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
     {
         if (str.Equals(string.Empty))
         {
-            return new Structure(this.functorTable.Nil, []);
+            return new Structure(this.functorTable.Nil,[]);
         }
 
-        var head = new Structure(str.First().ToString(), []);
+        var head = new Structure(str.First().ToString(),[]);
         var tail = this.ConvertString(new string(str.Skip(1).ToArray()));
 
-        return new Structure(this.functorTable.List, [head, tail]);
+        return new Structure(this.functorTable.List,[head, tail]);
     }
 
     private Structure ConvertRecursiveList(RecursiveList term)
@@ -234,18 +234,18 @@ public class TermConverter : TypeBaseVisitor<ISimpleTerm>
 
         var rightMaybe = term.Tail.Accept(this);
 
-        return new Structure(this.functorTable.List, [leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
+        return new Structure(this.functorTable.List,[leftMaybe.GetValueOrThrow(), rightMaybe.GetValueOrThrow()]);
     }
 
     private Structure ConvertConventionalList(IEnumerable<ITerm> terms)
     {
         if (!terms.Any())
         {
-            return new Structure(this.functorTable.Nil, []);
+            return new Structure(this.functorTable.Nil,[]);
         }
 
         var headMaybe = terms.ElementAt(0).Accept(this);
 
-        return new Structure(this.functorTable.List, [headMaybe.GetValueOrThrow(), this.ConvertConventionalList(terms.Skip(1))]);
+        return new Structure(this.functorTable.List,[headMaybe.GetValueOrThrow(), this.ConvertConventionalList(terms.Skip(1))]);
     }
 }

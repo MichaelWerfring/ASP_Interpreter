@@ -1,18 +1,31 @@
-﻿using Asp_interpreter_lib.Types;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿//-----------------------------------------------------------------------
+// <copyright file="StatementVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Visitors
 {
+    using Asp_interpreter_lib.Types;
+    using Asp_interpreter_lib.Util.ErrorHandling;
+
     public class StatementVisitor : ASPParserBaseVisitor<IOption<Statement>>
     {
         private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StatementVisitor"/> class.
+        /// </summary>
+        /// <param name="logger"></param>
         public StatementVisitor(ILogger logger)
         {
             this.logger = logger ??
                 throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
         }
 
+        /// <inheritdoc/>
         public override IOption<Statement> VisitStatement(ASPParser.StatementContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -20,7 +33,7 @@ namespace Asp_interpreter_lib.Visitors
             var statement = new Statement();
 
             var head = context.literal()?.Accept(new LiteralVisitor(this.logger));
-            head?.IfHasValue((value) => statement.AddHead(value));
+            head?.IfHasValue(statement.AddHead);
 
             BinaryOperationVisitor binaryOperationVisitor = new(this.logger);
 
@@ -33,11 +46,10 @@ namespace Asp_interpreter_lib.Visitors
             }
 
             var goalVisitor = new GoalVisitor(this.logger);
-            List<Goal> body = [];
+            List<Goal> body =[];
 
             foreach (var goal in goals)
             {
-
                 var parsedGoal = goal.Accept(goalVisitor);
 
                 if (parsedGoal == null)
@@ -52,7 +64,7 @@ namespace Asp_interpreter_lib.Visitors
                     continue;
                 }
 
-                goal.Accept(binaryOperationVisitor)?.IfHasValue(v => body.Add(v));
+                goal.Accept(binaryOperationVisitor)?.IfHasValue(body.Add);
             }
 
             if (goals.Length != body.Count)

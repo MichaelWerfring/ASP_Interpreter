@@ -1,10 +1,17 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Asp_interpreter_lib.Visitors;
+//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
+
+using Asp_interpreter_exe;
 using Asp_interpreter_lib.Util;
 using Asp_interpreter_lib.Util.ErrorHandling;
-using System.Text.RegularExpressions;
-using Asp_interpreter_exe;
+using Asp_interpreter_lib.Visitors;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 internal class Program
 {
@@ -30,12 +37,12 @@ internal class Program
         var host = builder.Build();
         host.Services.GetRequiredService<Application>().Run();
     }
-    
+
     private static ProgramConfig GetConfig(string[] args)
     {
-        if(args.Length == 0)
+        if (args.Length == 0)
         {
-            return new ProgramConfig(" ", false, false, false, true,  LogLevel.None);
+            return new ProgramConfig(" ", false, false, false, true, LogLevel.None);
         }
 
         // Assume that 1 is a path
@@ -133,8 +140,6 @@ internal class Program
             conf.DisplayExplanation = true;
             return conf;
         };
-
-
 
         actions.Add("-p", getPath);
         actions.Add("--path", getPath);

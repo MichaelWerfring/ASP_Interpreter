@@ -4,8 +4,8 @@
 
 namespace Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances;
 
-using System.Diagnostics.CodeAnalysis;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// A class for comparing two variables. Faster than regular term comparsison.

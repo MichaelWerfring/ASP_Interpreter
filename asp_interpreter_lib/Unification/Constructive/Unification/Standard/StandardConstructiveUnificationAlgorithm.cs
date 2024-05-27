@@ -38,11 +38,9 @@ public class StandardConstructiveUnificationAlgorithm : IConstructiveUnification
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        var constructiveUnifier = new ConstructiveUnifier
-        (
+        var constructiveUnifier = new ConstructiveUnifier(
             this.doOccursCheck,
-            target
-        );
+            target);
 
         return constructiveUnifier.Unify();
     }

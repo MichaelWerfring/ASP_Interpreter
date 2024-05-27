@@ -5,8 +5,8 @@
 namespace Asp_interpreter_lib.Preprocessing.OLONDetection.CallGraph;
 
 using Asp_interpreter_lib.Types;
-using QuikGraph;
 using Asp_interpreter_lib.Types.TypeVisitors;
+using QuikGraph;
 
 /// <summary>
 /// A class that builds a callgraph from a list of statements.
@@ -66,7 +66,7 @@ public class CallGraphBuilder
 
         List<Statement> matchingStatements = this.GetMatchingStatements(literal, graph);
 
-        List<CallGraphEdge> edges = new List<CallGraphEdge>();
+        List<CallGraphEdge> edges = [];
 
         foreach (var currentStatement in matchingStatements)
         {

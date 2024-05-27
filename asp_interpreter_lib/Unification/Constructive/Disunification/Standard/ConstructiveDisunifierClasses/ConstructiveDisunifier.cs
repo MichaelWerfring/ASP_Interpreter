@@ -4,17 +4,17 @@
 
 namespace Asp_interpreter_lib.Unification.Constructive.Disunification.Standard.ConstructiveDisunifierClasses;
 
-using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
-using Asp_interpreter_lib.Util.ErrorHandling.Either;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
-using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
-using System.Collections.Immutable;
-using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
-using Asp_interpreter_lib.Util.ErrorHandling;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions.Instances.CaseDetermination.Cases;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Interface;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Variables;
+using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+using Asp_interpreter_lib.Unification.Constructive.Disunification.Exceptions;
 using Asp_interpreter_lib.Unification.Constructive.Target;
+using Asp_interpreter_lib.Util.ErrorHandling;
+using Asp_interpreter_lib.Util.ErrorHandling.Either;
+using System.Collections.Immutable;
 
 /// <summary>
 /// An instance-based disunification algorithm,
@@ -59,12 +59,12 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
         this.right = target.Right;
         this.prohibitedValues = target.Mapping;
 
-        this.disunifiers = [];
+        this.disunifiers =[];
 
         this.doesNotUnifyAnways = false;
         this.disunificationError = null;
 
-        this.disunifiers = [];
+        this.disunifiers =[];
     }
 
     /// <summary>

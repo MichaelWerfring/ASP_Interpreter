@@ -1,12 +1,24 @@
-﻿using Asp_interpreter_lib.Types;
-using Asp_interpreter_lib.Util.ErrorHandling;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ProgramVisitor.cs" company="FHWN">
+//     Copyright (c) FHWN. All rights reserved.
+// </copyright>
+// <author>Michael Werfring</author>
+// <author>Clemens Niklos</author>
+//-----------------------------------------------------------------------
 
 namespace Asp_interpreter_lib.Visitors
 {
+    using Asp_interpreter_lib.Types;
+    using Asp_interpreter_lib.Util.ErrorHandling;
+
     public class ProgramVisitor : ASPParserBaseVisitor<IOption<AspProgram>>
     {
         private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProgramVisitor"/> class.
+        /// </summary>
+        /// <param name="logger"></param>
         public ProgramVisitor(ILogger logger)
         {
             this.logger = logger ??
@@ -36,11 +48,11 @@ namespace Asp_interpreter_lib.Visitors
                 // Its still possible to have a query without any statements
                 // The error message is just for clarification
                 this.logger.LogInfo("Program has been specified without any statement.");
-                return new Some<AspProgram>(new AspProgram([], query, []));
+                return new Some<AspProgram>(new AspProgram([], query,[]));
             }
 
-            Dictionary<(string, int), Explanation> explanations = [];
-            List<Statement> statements = [];
+            Dictionary<(string, int), Explanation> explanations =[];
+            List<Statement> statements =[];
             var statementVisitor = new StatementVisitor(this.logger);
             var explanationVisitor = new ExplanationVisitor(
                 this.logger,
