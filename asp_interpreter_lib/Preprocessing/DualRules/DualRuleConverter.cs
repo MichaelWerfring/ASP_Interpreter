@@ -136,7 +136,7 @@ namespace Asp_interpreter_lib.Preprocessing.DualRules
         {
             ArgumentNullException.ThrowIfNull(rule);
 
-            HeadAtomEliminator rewriter = new(this.options, rule);
+            HeadAtomEliminator rewriter = new(this.options);
             var statement = rewriter.Rewrite(rule);
 
             this.logger.LogTrace("Rewrite head from: " + rule.ToString() + " to: " + statement.ToString());
