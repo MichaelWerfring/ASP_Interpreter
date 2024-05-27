@@ -151,7 +151,7 @@ public static class SimpleTermExtensions
             ||
             term.Children.Count != 1)
         {
-            return new Structure(functors.NegationAsFailure,[term]);
+            return new Structure(functors.NegationAsFailure, [term]);
         }
 
         var innerStructMaybe = TermFuncs.ReturnStructureOrNone(term.Children[0]);

@@ -103,7 +103,7 @@ public class DualClauseDatabase : IDatabase
         }
         else
         {
-            dict.Add(functorArityPair,[clause]);
+            dict.Add(functorArityPair, [clause]);
         }
     }
 

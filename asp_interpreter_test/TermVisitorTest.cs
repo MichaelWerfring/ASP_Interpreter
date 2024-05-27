@@ -97,7 +97,7 @@ public class TermVisitorTest
     }
 
     [Test]
-    public void ParseAnonymusVariableTerm()
+    public void ParseAnonymousVariableTerm()
     {
         string code = "a(_). a?";
         var program = AspExtensions.GetProgram(code, this.errorLogger);
@@ -108,25 +108,25 @@ public class TermVisitorTest
     }
 
     [Test]
-    public void ParseAnonymusVariableTermWithSeveralArguments()
+    public void ParseAnonymousVariableTermWithSeveralArguments()
     {
         string code = "a(b, _). a?";
         var program = AspExtensions.GetProgram(code, this.errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
 
-        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a",["b", "_"]));
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b", "_"]));
     }
 
     [Test]
-    public void ParseAnonymusVariableTermWithInnerTerms()
+    public void ParseAnonymousVariableTermWithInnerTerms()
     {
         string code = "a(b, c(d, _)). a?";
         var program = AspExtensions.GetProgram(code, this.errorLogger);
 
         var literal = program.Statements[0].Head.GetValueOrThrow();
 
-        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a",["b", "c(d, _)"]));
+        Assert.That(AspExtensions.CompareGoal(literal, false, false, "a", ["b", "c(d, _)"]));
     }
 
     [Test]

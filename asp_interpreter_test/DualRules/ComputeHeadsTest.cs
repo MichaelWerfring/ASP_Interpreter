@@ -101,7 +101,7 @@ namespace Asp_interpreter_test.DualRules
         }
 
         [Test]
-        public void ComputeHeadHandlesHandlesParenthesisedTerm()
+        public void ComputeHeadHandlesHandlesParenthesizedTerm()
         {
             string code = """
                       a(((4))).

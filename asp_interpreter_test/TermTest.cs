@@ -25,7 +25,7 @@ public class TermTest
     }
 
     [Test]
-    public void TermToNumberConverterFailsOnAnonymusVariableTerm()
+    public void TermToNumberConverterFailsOnAnonymousVariableTerm()
     {
         ITerm term = new AnonymousVariableTerm();
         var result = term.Accept(this.visitor);
