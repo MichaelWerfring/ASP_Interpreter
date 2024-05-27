@@ -10,7 +10,6 @@
     using Asp_interpreter_lib.Visitors;
     using System.Text;
 
-
     /// <summary>
     /// Collection of extensions needed for the ASP interpreter.
     /// </summary>
