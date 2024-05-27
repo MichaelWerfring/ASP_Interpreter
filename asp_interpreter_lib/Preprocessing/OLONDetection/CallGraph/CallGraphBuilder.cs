@@ -66,7 +66,7 @@ public class CallGraphBuilder
 
         List<Statement> matchingStatements = this.GetMatchingStatements(literal, graph);
 
-        List<CallGraphEdge> edges = new List<CallGraphEdge>();
+        List<CallGraphEdge> edges = [];
 
         foreach (var currentStatement in matchingStatements)
         {

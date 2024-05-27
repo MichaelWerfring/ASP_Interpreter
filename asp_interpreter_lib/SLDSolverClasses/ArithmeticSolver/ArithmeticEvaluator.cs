@@ -16,7 +16,7 @@ using System.Collections.Immutable;
 /// </summary>
 public class ArithmeticEvaluator : ISimpleTermVisitor<IOption<int>>
 {
-    private readonly IImmutableDictionary<string, Func<int, int, IOption<int>>> evaluationFunctions;
+    private readonly ImmutableDictionary<string, Func<int, int, IOption<int>>> evaluationFunctions;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ArithmeticEvaluator"/> class.

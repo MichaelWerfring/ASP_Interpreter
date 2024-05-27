@@ -46,7 +46,7 @@ public class PredicateGoalBuilder : IGoalBuilder
         ArgumentNullException.ThrowIfNull(checker);
         ArgumentNullException.ThrowIfNull(dbUnifier);
         ArgumentNullException.ThrowIfNull(solver);
-        ArgumentNullException.ThrowIfNull (updater);
+        ArgumentNullException.ThrowIfNull(updater);
         ArgumentNullException.ThrowIfNull(logger);
 
         this.checker = checker;

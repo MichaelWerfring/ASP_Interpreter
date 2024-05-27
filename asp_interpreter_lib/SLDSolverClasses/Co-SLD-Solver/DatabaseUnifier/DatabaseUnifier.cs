@@ -59,12 +59,10 @@ public class DatabaseUnifier
     /// <exception cref="ArgumentNullException">Thrown if..
     /// ..<paramref name="target"/> is null,
     /// <paramref name="currentMapping"/> is null.</exception>
-    public IEnumerable<DBUnificationResult> GetDatabaseUnificationResults
-    (
+    public IEnumerable<DBUnificationResult> GetDatabaseUnificationResults(
         Structure target,
         VariableMapping currentMapping,
-        int nextInternal
-    )
+        int nextInternal)
     {
         ArgumentNullException.ThrowIfNull(target, nameof(target));
         ArgumentNullException.ThrowIfNull(currentMapping, nameof(currentMapping));

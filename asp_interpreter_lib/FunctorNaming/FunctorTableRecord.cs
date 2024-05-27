@@ -5,7 +5,8 @@
 namespace Asp_interpreter_lib.FunctorNaming;
 
 /// <summary>
-/// A class that contains functor and identifier strings that various parts of the solver need to handle in a special way.
+/// A class that contains functor and identifier strings for structures
+/// that various parts of the solver need to handle in a special way.
 /// </summary>
 public record FunctorTableRecord
 {

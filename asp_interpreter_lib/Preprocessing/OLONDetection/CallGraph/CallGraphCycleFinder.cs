@@ -42,7 +42,7 @@ public class CallGraphCycleFinder(ILogger logger)
 
     private List<List<CallGraphEdge>> FindCyclesInvolvingVertex(Statement vertex, AdjacencyGraph<Statement, CallGraphEdge> graph)
     {
-        List<List<CallGraphEdge>> cycesList = new List<List<CallGraphEdge>>();
+        List<List<CallGraphEdge>> cycesList = [];
 
         this.FindCycle(vertex, new List<CallGraphEdge>(), graph, cycesList);
 

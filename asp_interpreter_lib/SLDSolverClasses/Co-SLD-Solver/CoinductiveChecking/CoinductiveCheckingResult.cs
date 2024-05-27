@@ -48,7 +48,24 @@ public class CoinductiveCheckingResult
     public SuccessType SuccessType { get; }
 }
 
+/// <summary>
+/// An enum for representing the type of success of a <see cref="CoinductiveCheckingResult"/>.
+/// </summary>
 public enum SuccessType
 {
-    DeterministicSuccess, NonDeterministicSuccess, NoMatch 
-};
+    /// <summary>
+    /// Represents deterministic success.
+    /// </summary>
+    DeterministicSuccess,
+
+    /// <summary>
+    /// Represents nondeterministic success.
+    /// </summary>
+    NonDeterministicSuccess,
+
+    /// <summary>
+    /// Represents that no match has been found while checking,
+    /// or that the target has been constrained during checking process.
+    /// </summary>
+    NoMatchOrConstrained,
+}

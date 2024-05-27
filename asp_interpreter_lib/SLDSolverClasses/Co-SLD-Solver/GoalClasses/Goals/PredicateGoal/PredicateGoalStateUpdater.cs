@@ -61,7 +61,7 @@ public class PredicateGoalStateUpdater
         ArgumentNullException.ThrowIfNull(constrainedTarget);
 
         // update chs by updating all the variables in it.
-        var newCHS = this.updater.UpdateCHS(inputSet, unifyingMapping);
+        var newCHS = this.updater.UpdateCHS(inputSet.Add(new CHSEntry(constrainedTarget, false)), unifyingMapping);
 
         // update callstack by pushing target onto stack and updating all the variables in it.
         var newCallstack = this.updater.UpdateCallstack(inputStack.Push(constrainedTarget), unifyingMapping);
@@ -122,7 +122,7 @@ public class PredicateGoalStateUpdater
 
         var entry = new CHSEntry(substitutedTarget, true);
 
-        var newCHS = subgoalSolution.ResultSet.Add(entry);
+        var newCHS = subgoalSolution.ResultSet.Update(substitutedTarget, true);
 
         return new GoalSolution(
             newCHS,

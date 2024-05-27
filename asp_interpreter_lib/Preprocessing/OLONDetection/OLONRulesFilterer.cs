@@ -18,9 +18,9 @@ public class OLONRulesFilterer(ILogger logger)
     private readonly ILogger logger = logger ??
         throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
 
-    private readonly CallGraphBuilder callgraphBuilder = new CallGraphBuilder();
+    private readonly CallGraphBuilder callgraphBuilder = new();
 
-    private readonly CallGraphCycleFinder cycleFinder = new CallGraphCycleFinder(logger);
+    private readonly CallGraphCycleFinder cycleFinder = new(logger);
 
     /// <summary>
     /// Filters olon rules based on a list of input rules.
@@ -33,7 +33,7 @@ public class OLONRulesFilterer(ILogger logger)
         ArgumentNullException.ThrowIfNull(rules, nameof(rules));
         this.logger.LogInfo("Filtering OLON rules...");
 
-        List<Statement> filteredStatements = new List<Statement>();
+        List<Statement> filteredStatements = [];
 
         // add all rules without a head.
         foreach (var rule in rules)

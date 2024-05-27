@@ -94,7 +94,7 @@ public class DualClauseDatabase : IDatabase
 
     private void AddToDict(
         IEnumerable<Structure> clause,
-        (string Functor, int Arity) functorArityPair, 
+        (string Functor, int Arity) functorArityPair,
         Dictionary<(string Functor, int Arity), List<IEnumerable<Structure>>> dict)
     {
         if (dict.TryGetValue(functorArityPair, out List<IEnumerable<Structure>>? list))

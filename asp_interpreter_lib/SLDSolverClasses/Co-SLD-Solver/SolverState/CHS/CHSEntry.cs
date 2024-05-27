@@ -7,7 +7,7 @@ namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.SolverState.CHS;
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 
 /// <summary>
-/// Represents an entry for a <see cref="CoinductiveHypothesisSet"/>. 
+/// Represents an entry for a <see cref="CoinductiveHypothesisSet"/>.
 /// Contains a term and a bool indicating whether the goal has already succeeded.
 /// </summary>
 public class CHSEntry
