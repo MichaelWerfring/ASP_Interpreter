@@ -28,7 +28,7 @@ namespace Asp_interpreter_lib.Visitors
         public override IOption<Query> VisitQuery(ASPParser.QueryContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
-            List<Goal> query =[];
+            List<Goal> query = new List<Goal>();
 
             for (int i = 0; i < context.goal().Length; i++)
             {

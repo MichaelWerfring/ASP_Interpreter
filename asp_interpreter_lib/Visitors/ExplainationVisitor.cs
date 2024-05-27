@@ -53,8 +53,8 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Asp_interpreter_l
             return new None<Explanation>();
         }
 
-        List<string> textParts =[];
-        HashSet<int> variablesAt =[];
+        List<string> textParts = new List<string>();
+        HashSet<int> variablesAt = new HashSet<int>();
 
         for (int i = 0; i < context.children.Count; i++)
         {

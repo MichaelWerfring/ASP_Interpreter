@@ -61,7 +61,7 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
     public override IOption<ITerm> Visit(Literal literal)
     {
         ArgumentNullException.ThrowIfNull(literal);
-        List<ITerm> terms =[];
+        List<ITerm> terms = new List<ITerm>();
         for (var i = 0; i < literal.Terms.Count; i++)
         {
             var term = literal.Terms[i];
@@ -112,7 +112,7 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
     public override IOption<ITerm> Visit(BasicTerm basicTerm)
     {
         ArgumentNullException.ThrowIfNull(basicTerm);
-        List<ITerm> terms =[];
+        List<ITerm> terms = new List<ITerm>();
 
         for (var i = 0; i < basicTerm.Terms.Count; i++)
         {
@@ -159,7 +159,7 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
     public override IOption<ITerm> Visit(RecursiveList list)
     {
         ArgumentNullException.ThrowIfNull(list);
-        List<ITerm> terms =[];
+        List<ITerm> terms = new List<ITerm>();
 
         var head = list.Head.Accept(this).GetValueOrThrow();
         var tail = list.Tail.Accept(this).GetValueOrThrow();

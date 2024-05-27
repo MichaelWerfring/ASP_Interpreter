@@ -18,7 +18,7 @@ public class LiteralCopyVisitor(TypeBaseVisitor<ITerm> termCopyVisitor) : TypeBa
         bool naf = literal.HasNafNegation;
         bool classical = literal.HasStrongNegation;
         string identifier = literal.Identifier.GetCopy();
-        List<ITerm> terms =[];
+        List<ITerm> terms = new List<ITerm>();
 
         foreach (var term in literal.Terms)
         {

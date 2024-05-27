@@ -11,6 +11,7 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
     using Asp_interpreter_lib.Preprocessing;
     using Asp_interpreter_lib.Preprocessing.DualRules;
     using Asp_interpreter_lib.Types;
+    using Asp_interpreter_lib.Types.Terms;
     using Asp_interpreter_lib.Types.TypeVisitors;
     using Asp_interpreter_lib.Types.TypeVisitors.Copy;
     using Asp_interpreter_lib.Util;
@@ -28,11 +29,6 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
 
         private readonly DualRuleConverter dualConverter;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NmrChecker"/> class.
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="logger"></param>
         public NmrChecker(PrefixOptions options, ILogger logger)
         {
             ArgumentNullException.ThrowIfNull(options);
@@ -48,10 +44,9 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
         {
             ArgumentNullException.ThrowIfNull(program);
 
-            List<Statement> statements =[];
+            List<Statement> statements = new List<Statement>();
 
-            // Dictionary<(string, int), List<Literal>> distinctRules = new Dictionary<(string, int), List<Literal>>();
-            HashSet<(bool, string, int)> literals =[];
+            HashSet<(bool, string, int)> literals = new HashSet<(bool, string, int)>();
 
             var literalConverter = new GoalToLiteralConverter();
 
@@ -113,27 +108,6 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             return statements;
         }
 
-        private List<Statement> GetDualsForCheck(List<Statement> statements)
-        {
-            ArgumentNullException.ThrowIfNull(statements);
-
-            List<Statement> duals =[];
-
-            var withoutAnonymous = statements.Select(this.dualConverter.Replacer.Replace);
-            var headComputed = withoutAnonymous.Select(this.dualConverter.ComputeHead).ToList();
-
-            foreach (var statement in statements)
-            {
-                var head = statement.Head.GetValueOrThrow("Constraint rules must be given a head!");
-                var kv = new KeyValuePair<(string, int, bool), List<Statement>>((head.Identifier, head.Terms.Count, head.HasStrongNegation),[statement]);
-                duals.AddRange(this.dualConverter.ToConjunction(kv));
-            }
-
-            duals.ForEach(d => this.logger.LogDebug(d.ToString()));
-
-            return duals;
-        }
-
         public List<Statement> GetNmrCheck(List<Statement> olonRules, bool notAsName = true)
         {
             ArgumentNullException.ThrowIfNull(olonRules);
@@ -143,8 +117,8 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             {
                 this.logger.LogDebug("Finished generation because no OLON rules found in program.");
                 var emptyCheck = new Statement();
-                emptyCheck.AddHead(new Literal("_nmr_check", false, false,[]));
-                return[emptyCheck];
+                emptyCheck.AddHead(new Literal("_nmr_check", false, false, new List<ITerm>()));
+                return [emptyCheck];
             }
 
             // 1) append negation of OLON Rule to its body (If not already present)
@@ -154,7 +128,7 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             var tempOlonRules =
                 preprocessedRules.Select(r => r.Accept(new StatementCopyVisitor()).GetValueOrThrow()).ToList();
 
-            List<Statement> duals =[];
+            List<Statement> duals = new List<Statement>();
 
             // 3) assign unique head (e.g. chk0)
             duals = this.GetDualsForCheck(olonRules.ToList());
@@ -168,58 +142,25 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             return duals;
         }
 
-        private void AddMissingPrefixes(List<Statement> duals, string prefix)
+        private List<Statement> GetDualsForCheck(List<Statement> statements)
         {
-            ArgumentNullException.ThrowIfNull(prefix);
-            ArgumentNullException.ThrowIfNull(duals);
+            ArgumentNullException.ThrowIfNull(statements);
 
-            foreach (var dual in duals)
+            List<Statement> duals = new List<Statement>();
+
+            var withoutAnonymous = statements.Select(this.dualConverter.Replacer.Replace);
+            var headComputed = withoutAnonymous.Select(this.dualConverter.ComputeHead).ToList();
+
+            foreach (var statement in statements)
             {
-                // At this point in the program no rule should be headless
-                var head = dual.Head.GetValueOrThrow();
-
-                if (head.Identifier == "not")
-                {
-                    if (head.Terms.Count != 1)
-                    {
-                        throw new InvalidOperationException("Expected exactly one term in the not literal");
-                    }
-
-                    var basicTerm = head.Terms[0].Accept(new TermToBasicTermConverter()).GetValueOrThrow();
-
-                    if (!basicTerm.Identifier.StartsWith(prefix))
-                    {
-                        basicTerm.Identifier = prefix + basicTerm.Identifier;
-                    }
-                }
-                else
-                {
-                    if (!head.Identifier.StartsWith(prefix))
-                    {
-                        head.Identifier = prefix + head.Identifier;
-                    }
-                }
-            }
-        }
-
-        private Statement GetCheckRule(IEnumerable<Statement> olonRules, bool notAsName = true)
-        {
-            ArgumentNullException.ThrowIfNull(olonRules);
-
-            Statement nmrCheck = new();
-            nmrCheck.AddHead(new Literal("_nmr_check", false, false,[]));
-
-            // add modified duals to the NMR check goal if it is not already in there
-            var nmrBody = new List<Goal>();
-            foreach (var rule in olonRules)
-            {
-                var head = rule.Head.GetValueOrThrow();
-                head.HasNafNegation = !notAsName;
-                nmrBody.Add(DualRuleConverter.WrapInNot(head));
+                var head = statement.Head.GetValueOrThrow("Constraint rules must be given a head!");
+                var kv = new KeyValuePair<(string, int, bool), List<Statement>>((head.Identifier, head.Terms.Count, head.HasStrongNegation), [statement]);
+                duals.AddRange(this.dualConverter.ToConjunction(kv));
             }
 
-            nmrCheck.AddBody(nmrBody);
-            return nmrCheck;
+            duals.ForEach(d => this.logger.LogDebug(d.ToString()));
+
+            return duals;
         }
 
         private List<Statement> PreprocessRules(List<Statement> olonRules)
@@ -238,7 +179,7 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
                 if (!rule.HasHead)
                 {
                     string name = "_" + this.options.CheckPrefix + (i + 1) + "_";
-                    rule.AddHead(new Literal(name, false, false,[]));
+                    rule.AddHead(new Literal(name, false, false, new List<ITerm>()));
                     continue;
                 }
 
@@ -288,6 +229,60 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
                 var forall = DualRuleConverter.NestForall(variablesInGoal, innerGoal);
                 statement.Body[i] = forall;
             }
+        }
+
+        private void AddMissingPrefixes(List<Statement> duals, string prefix)
+        {
+            ArgumentNullException.ThrowIfNull(prefix);
+            ArgumentNullException.ThrowIfNull(duals);
+
+            foreach (var dual in duals)
+            {
+                // At this point in the program no rule should be headless
+                var head = dual.Head.GetValueOrThrow();
+
+                if (head.Identifier == "not")
+                {
+                    if (head.Terms.Count != 1)
+                    {
+                        throw new InvalidOperationException("Expected exactly one term in the not literal");
+                    }
+
+                    var basicTerm = head.Terms[0].Accept(new TermToBasicTermConverter()).GetValueOrThrow();
+
+                    if (!basicTerm.Identifier.StartsWith(prefix))
+                    {
+                        basicTerm.Identifier = prefix + basicTerm.Identifier;
+                    }
+                }
+                else
+                {
+                    if (!head.Identifier.StartsWith(prefix))
+                    {
+                        head.Identifier = prefix + head.Identifier;
+                    }
+                }
+            }
+        }
+
+        private Statement GetCheckRule(IEnumerable<Statement> olonRules, bool notAsName = true)
+        {
+            ArgumentNullException.ThrowIfNull(olonRules);
+
+            Statement nmrCheck = new();
+            nmrCheck.AddHead(new Literal("_nmr_check", false, false, new List<ITerm>()));
+
+            // add modified duals to the NMR check goal if it is not already in there
+            var nmrBody = new List<Goal>();
+            foreach (var rule in olonRules)
+            {
+                var head = rule.Head.GetValueOrThrow();
+                head.HasNafNegation = !notAsName;
+                nmrBody.Add(DualRuleConverter.WrapInNot(head));
+            }
+
+            nmrCheck.AddBody(nmrBody);
+            return nmrCheck;
         }
     }
 }

@@ -114,7 +114,7 @@ public class DualClauseDatabase : IDatabase
         List<IEnumerable<Structure>>? matchingClauses;
         if (!dict.TryGetValue((term.Functor, term.Children.Count), out matchingClauses))
         {
-            return[];
+            return new List<IEnumerable<Structure>>();
         }
 
         return matchingClauses;

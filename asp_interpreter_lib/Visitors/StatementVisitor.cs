@@ -46,7 +46,7 @@ namespace Asp_interpreter_lib.Visitors
             }
 
             var goalVisitor = new GoalVisitor(this.logger);
-            List<Goal> body =[];
+            List<Goal> body = new List<Goal>();
 
             foreach (var goal in goals)
             {
