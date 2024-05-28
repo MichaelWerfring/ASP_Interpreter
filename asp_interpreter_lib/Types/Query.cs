@@ -6,39 +6,59 @@
 // <author>Clemens Niklos</author>
 //-----------------------------------------------------------------------
 
-namespace Asp_interpreter_lib.Types;
-using Asp_interpreter_lib.Types.TypeVisitors;
-using Asp_interpreter_lib.Util;
-using Asp_interpreter_lib.Util.ErrorHandling;
-
-public class Query
+namespace Asp_interpreter_lib.Types
 {
-    private List<Goal> goals;
+    using Asp_interpreter_lib.Types.TypeVisitors;
+    using Asp_interpreter_lib.Util;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Query"/> class.
+    /// Represents the query of a program.
     /// </summary>
-    /// <param name="goals"></param>
-    public Query(List<Goal> goals)
+    public class Query
     {
-        this.goals = goals;
-    }
+        private List<Goal> goals;
 
-    public List<Goal> Goals
-    {
-        get => this.goals;
-        private set => this.goals = value ?? throw new ArgumentNullException(nameof(this.Goals));
-    }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query"/> class.
+        /// </summary>
+        /// <param name="goals">The goals in the query.</param>
+        /// <exception cref="ArgumentNullException">If the given list of goals is null.</exception>
+        public Query(List<Goal> goals)
+        {
+            this.goals = goals ?? throw new ArgumentNullException(nameof(goals));
+        }
 
-    /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"?- {AspExtensions.ListToString(this.Goals)}.";
-    }
+        /// <summary>
+        /// Gets the goals in the query.
+        /// </summary>
+        public List<Goal> Goals
+        {
+            get => this.goals;
+            private set => this.goals = value ?? throw new ArgumentNullException(nameof(this.Goals));
+        }
 
-    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
-        return visitor.Visit(this);
+        /// <summary>
+        /// Returns the string representation of the type.
+        /// </summary>
+        /// <returns>The string representation of the type.</returns>
+        public override string ToString()
+        {
+            return $"?- {AspExtensions.ListToString(this.Goals)}.";
+        }
+
+        /// <summary>
+        /// Accepts a <see cref="TypeBaseVisitor{T}"/> and returns the result of the given operation.
+        /// </summary>
+        /// <typeparam name="T">The return type of the operation.</typeparam>
+        /// <param name="visitor">The visitor to accept.</param>
+        /// <returns>Either none if the visitor fails to execute the corresponding
+        /// method or the result wrapped into an instance of <see cref="Some{T}"/>class.</returns>
+        /// <exception cref="ArgumentNullException">If the visitor is null.</exception>
+        public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+        {
+            ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+            return visitor.Visit(this);
+        }
     }
 }

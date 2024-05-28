@@ -6,38 +6,78 @@
 // <author>Clemens Niklos</author>
 //-----------------------------------------------------------------------
 
-namespace Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Types.TypeVisitors;
-using Asp_interpreter_lib.Util.ErrorHandling;
-
-public class RecursiveList : ListTerm
+namespace Asp_interpreter_lib.Types.Terms
 {
-    private readonly ITerm head;
-    private readonly ITerm tail;
+    using Asp_interpreter_lib.Types.TypeVisitors;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
-    public RecursiveList(ITerm head, ITerm tail)
+    /// <summary>
+    /// Represents a recursive list.
+    /// </summary>
+    public class RecursiveList : ListTerm
     {
-        ArgumentNullException.ThrowIfNull(head);
-        ArgumentNullException.ThrowIfNull(tail);
+        private readonly ITerm head;
 
-        this.head = head;
-        this.tail = tail;
-    }
+        private readonly ITerm tail;
 
-    public ITerm Head => this.head;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RecursiveList"/> class.
+        /// </summary>
+        /// <param name="head">The first element of the given list.</param>
+        /// <param name="tail">A term representing all the other terms within the list.</param>
+        /// <exception cref="ArgumentNullException">If the head or tail is null.</exception>"
+        public RecursiveList(ITerm head, ITerm tail)
+        {
+            ArgumentNullException.ThrowIfNull(head);
+            ArgumentNullException.ThrowIfNull(tail);
 
-    public ITerm Tail => this.tail;
+            this.head = head;
+            this.tail = tail;
+        }
 
-    /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"[{this.head.ToString()}| {this.tail.ToString()}]";
-    }
+        /// <summary>
+        /// Gets the head of the list.
+        /// </summary>
+        public ITerm Head
+        {
+            get
+            {
+                return this.head;
+            }
+        }
 
-    /// <inheritdoc/>
-    public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor);
-        return visitor.Visit(this);
+        /// <summary>
+        /// Gets the tail of the list.
+        /// </summary>
+        public ITerm Tail
+        {
+            get
+            {
+                return this.tail;
+            }
+        }
+
+        /// <summary>
+        /// Returns the string representation of the type.
+        /// </summary>
+        /// <returns>The string representation of the type.</returns>
+        public override string ToString()
+        {
+            return $"[{this.head.ToString()}| {this.tail.ToString()}]";
+        }
+
+        /// <summary>
+        /// Accepts a <see cref="TypeBaseVisitor{T}"/> and returns the result of the given operation.
+        /// </summary>
+        /// <typeparam name="T">The return type of the operation.</typeparam>
+        /// <param name="visitor">The visitor to accept.</param>
+        /// <returns>Either none if the visitor fails to execute the corresponding
+        /// method or the result wrapped into an instance of <see cref="Some{T}"/>class.</returns>
+        /// <exception cref="ArgumentNullException">If the visitor is null.</exception>
+        public override IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+        {
+            ArgumentNullException.ThrowIfNull(visitor);
+            return visitor.Visit(this);
+        }
     }
 }

@@ -17,10 +17,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
 
     private int replacementCount;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AnonymousVariableReplacer"/> class.
-    /// </summary>
-    /// <param name="prefixOptions"></param>
     public AnonymousVariableReplacer(PrefixOptions prefixOptions)
     {
         ArgumentNullException.ThrowIfNull(prefixOptions);
@@ -36,7 +32,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return statement;
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(Statement statement)
     {
         ArgumentNullException.ThrowIfNull(statement);
@@ -57,7 +52,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new None<ITerm>();
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(Literal literal)
     {
         ArgumentNullException.ThrowIfNull(literal);
@@ -71,7 +65,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new None<ITerm>();
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(BinaryOperation binOp)
     {
         ArgumentNullException.ThrowIfNull(binOp);
@@ -82,7 +75,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new None<ITerm>();
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(AnonymousVariableTerm variable)
     {
         ArgumentNullException.ThrowIfNull(variable);
@@ -90,14 +82,12 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new VariableTerm(newName));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(VariableTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
         return new Some<ITerm>(term);
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ArithmeticOperationTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -108,7 +98,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new ArithmeticOperationTerm(left, term.Operation, right));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(BasicTerm basicTerm)
     {
         ArgumentNullException.ThrowIfNull(basicTerm);
@@ -124,19 +113,16 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(basicTerm);
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(StringTerm term)
     {
         return new Some<ITerm>(term);
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(NumberTerm term)
     {
         return new Some<ITerm>(term);
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(NegatedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -146,7 +132,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new NegatedTerm(newTerm));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ParenthesizedTerm term)
     {
         ArgumentNullException.ThrowIfNull(term);
@@ -155,7 +140,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new ParenthesizedTerm(newTerm));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(RecursiveList list)
     {
         ArgumentNullException.ThrowIfNull(list);
@@ -167,7 +151,6 @@ public class AnonymousVariableReplacer : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new RecursiveList(head, tail));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ConventionalList list)
     {
         ArgumentNullException.ThrowIfNull(list);

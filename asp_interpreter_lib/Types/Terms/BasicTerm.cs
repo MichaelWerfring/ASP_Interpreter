@@ -6,70 +6,96 @@
 // <author>Clemens Niklos</author>
 //-----------------------------------------------------------------------
 
-namespace Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Types.TypeVisitors;
-using Asp_interpreter_lib.Util;
-using Asp_interpreter_lib.Util.ErrorHandling;
-using System.Text;
-
-public class BasicTerm : ITerm
+namespace Asp_interpreter_lib.Types.Terms
 {
-    private string identifier;
-    private List<ITerm> terms;
+    using Asp_interpreter_lib.Types.TypeVisitors;
+    using Asp_interpreter_lib.Util;
+    using Asp_interpreter_lib.Util.ErrorHandling;
+    using System.Text;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BasicTerm"/> class.
+    /// Represents a basic term.
     /// </summary>
-    /// <param name="identifier"></param>
-    /// <param name="terms"></param>
-    public BasicTerm(string identifier, List<ITerm> terms)
+    public class BasicTerm : ITerm
     {
-        this.Identifier = identifier;
-        this.Terms = terms;
-    }
+        private string identifier;
 
-    public string Identifier
-    {
-        get => this.identifier;
-        set
+        private List<ITerm> terms;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BasicTerm"/> class.
+        /// </summary>
+        /// <param name="identifier">The terms identifier.</param>
+        /// <param name="terms">The inner terms of the given basic term.</param>
+        /// <exception cref="ArgumentException">If the given identifier is null or a whitespace.</exception>
+        /// <exception cref="ArgumentNullException">If the given terms are null.</exception>"
+        public BasicTerm(string identifier, List<ITerm> terms)
         {
-            if (string.IsNullOrWhiteSpace(value) || value == string.Empty)
+            ArgumentException.ThrowIfNullOrWhiteSpace(identifier, nameof(identifier));
+            ArgumentNullException.ThrowIfNull(terms, nameof(terms));
+
+            this.identifier = identifier;
+            this.terms = terms;
+        }
+
+        /// <summary>
+        /// Gets or sets the identifier of the term.
+        /// </summary>
+        public string Identifier
+        {
+            get => this.identifier;
+            set
             {
-                throw new ArgumentException(
-                    "The given Identifier must not be null, whitespace or empty!",
-                    nameof(this.Identifier));
+                if (string.IsNullOrWhiteSpace(value) || value == string.Empty)
+                {
+                    throw new ArgumentException(
+                        "The given Identifier must not be null, whitespace or empty!",
+                        nameof(this.Identifier));
+                }
+
+                this.identifier = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the inner terms of the given basic term.
+        /// </summary>
+        public List<ITerm> Terms
+        {
+            get => this.terms;
+        }
+
+        /// <summary>
+        /// Accepts a <see cref="TypeBaseVisitor{T}"/> and returns the result of the given operation.
+        /// </summary>
+        /// <typeparam name="T">The return type of the operation.</typeparam>
+        /// <param name="visitor">The visitor to accept.</param>
+        /// <returns>Either none if the visitor fails to execute the corresponding
+        /// method or the result wrapped into an instance of <see cref="Some{T}"/>class.</returns>
+        /// <exception cref="ArgumentNullException">If the visitor is null.</exception>
+        public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+        {
+            ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+            return visitor.Visit(this);
+        }
+
+        /// <summary>
+        /// Returns the string representation of the type.
+        /// </summary>
+        /// <returns>The string representation of the type.</returns>
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append(this.Identifier);
+
+            if (this.Terms.Count > 0)
+            {
+                builder.Append('(');
+                builder.Append(this.Terms.ListToString());
+                builder.Append(')');
             }
 
-            this.identifier = value;
+            return builder.ToString();
         }
-    }
-
-    public List<ITerm> Terms
-    {
-        get => this.terms;
-        set => this.terms = value ?? throw new ArgumentNullException(nameof(this.Terms));
-    }
-
-    /// <inheritdoc/>
-    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
-        return visitor.Visit(this);
-    }
-
-    /// <inheritdoc/>
-    public override string ToString()
-    {
-        var builder = new StringBuilder();
-        builder.Append(this.Identifier);
-
-        if (this.Terms.Count > 0)
-        {
-            builder.Append('(');
-            builder.Append(this.Terms.ListToString());
-            builder.Append(')');
-        }
-
-        return builder.ToString();
     }
 }

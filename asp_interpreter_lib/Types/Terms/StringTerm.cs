@@ -6,38 +6,58 @@
 // <author>Clemens Niklos</author>
 //-----------------------------------------------------------------------
 
-namespace Asp_interpreter_lib.Types.Terms;
-using Asp_interpreter_lib.Types.TypeVisitors;
-using Asp_interpreter_lib.Util.ErrorHandling;
-
-public class StringTerm : ITerm
+namespace Asp_interpreter_lib.Types.Terms
 {
-    private string value;
+    using Asp_interpreter_lib.Types.TypeVisitors;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StringTerm"/> class.
+    /// Represents a string.
     /// </summary>
-    /// <param name="value"></param>
-    public StringTerm(string value)
+    public class StringTerm : ITerm
     {
-        this.Value = value;
-    }
+        private string value;
 
-    // Allow empty strings and whitespaces
-    public string Value
-    {
-        get => this.value;
-        private set => this.value = value ?? throw new ArgumentNullException(nameof(this.Value), "Value cannot be null!");
-    }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringTerm"/> class.
+        /// </summary>
+        /// <param name="value">The strings value.</param>
+        /// <exception cref="ArgumentNullException">If the given value is null.</exception>
+        public StringTerm(string value)
+        {
+            this.value = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
-    public override string ToString()
-    {
-        return "\"" + this.Value + "\"";
-    }
+        /// <summary>
+        /// Gets the strings value.
+        /// </summary>
+        public string Value
+        {
+            get => this.value;
+            private set => this.value = value ?? throw new ArgumentNullException(nameof(this.Value), "Value cannot be null!");
+        }
 
-    public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
-    {
-        ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
-        return visitor.Visit(this);
+        /// <summary>
+        /// Returns the string representation of the type.
+        /// </summary>
+        /// <returns>The string representation of the type.</returns>
+        public override string ToString()
+        {
+            return "\"" + this.Value + "\"";
+        }
+
+        /// <summary>
+        /// Accepts a <see cref="TypeBaseVisitor{T}"/> and returns the result of the given operation.
+        /// </summary>
+        /// <typeparam name="T">The return type of the operation.</typeparam>
+        /// <param name="visitor">The visitor to accept.</param>
+        /// <returns>Either none if the visitor fails to execute the corresponding
+        /// method or the result wrapped into an instance of <see cref="Some{T}"/>class.</returns>
+        /// <exception cref="ArgumentNullException">If the visitor is null.</exception>
+        public IOption<T> Accept<T>(TypeBaseVisitor<T> visitor)
+        {
+            ArgumentNullException.ThrowIfNull(visitor, nameof(visitor));
+            return visitor.Visit(this);
+        }
     }
 }

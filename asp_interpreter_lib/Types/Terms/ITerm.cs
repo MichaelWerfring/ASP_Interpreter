@@ -9,7 +9,9 @@
 namespace Asp_interpreter_lib.Types.Terms;
 using Asp_interpreter_lib.Types.TypeVisitors;
 
+/// <summary>
+/// General interface for all terms.
+/// </summary>
 public interface ITerm : IVisitableType
 {
-    // public abstract override string ToString();
 }
