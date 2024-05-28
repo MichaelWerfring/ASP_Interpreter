@@ -19,6 +19,9 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
     using System.Data;
     using System.Linq;
 
+    /// <summary>
+    /// A class to provide functionality to generate the NMR check for a asp programs.
+    /// </summary>
     public class NmrChecker
     {
         private readonly PrefixOptions options;
@@ -29,6 +32,12 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
 
         private readonly DualRuleConverter dualConverter;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NmrChecker"/> class.
+        /// </summary>
+        /// <param name="options">The prefixes to be used.</param>
+        /// <param name="logger">The logger to display messages.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the given options or logger is null.</exception>
         public NmrChecker(PrefixOptions options, ILogger logger)
         {
             ArgumentNullException.ThrowIfNull(options);
@@ -40,6 +49,13 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             this.dualConverter = new DualRuleConverter(options, logger.GetDummy(), true);
         }
 
+        /// <summary>
+        /// Filters all literal from the given program and returns a list of constraints
+        /// for every literal that occurs with negation and without negation.
+        /// </summary>
+        /// <param name="program">The program to search.</param>
+        /// <returns>The rules containing the literals found twice.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the given program is null.</exception>
         public List<Statement> GetConstraintRules(AspProgram program)
         {
             ArgumentNullException.ThrowIfNull(program);
@@ -108,7 +124,13 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             return statements;
         }
 
-        public List<Statement> GetNmrCheck(List<Statement> olonRules, bool notAsName = true)
+        /// <summary>
+        /// Generates the NMR check for the given statements, assuming they are either olon rules or constraints.
+        /// </summary>
+        /// <param name="olonRules">The rules to retrieve the check for.</param>
+        /// <returns>The resulting nrm check rule and its sub check rules.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the given rules are null.</exception>
+        public List<Statement> GetNmrCheck(List<Statement> olonRules)
         {
             ArgumentNullException.ThrowIfNull(olonRules);
 
@@ -134,7 +156,7 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             duals = this.GetDualsForCheck(olonRules.ToList());
             this.AddMissingPrefixes(duals, "_");
 
-            Statement nmrCheck = this.GetCheckRule(tempOlonRules, notAsName);
+            Statement nmrCheck = this.GetCheckRule(tempOlonRules);
             this.AddForallToCheck(nmrCheck);
 
             duals.Insert(0, nmrCheck);
@@ -142,6 +164,12 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             return duals;
         }
 
+        /// <summary>
+        /// A simplified version of the dual rule generation that treats every rule separately.
+        /// </summary>
+        /// <param name="statements">The rules to get the duals for.</param>
+        /// <returns>The dual rules for the input rules.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the given rules are null.</exception>
         private List<Statement> GetDualsForCheck(List<Statement> statements)
         {
             ArgumentNullException.ThrowIfNull(statements);
@@ -163,6 +191,13 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             return duals;
         }
 
+        /// <summary>
+        /// Iterates through the rules and appends the negation of the head
+        /// to the body of the rule if its not present.
+        /// </summary>
+        /// <param name="olonRules">The rules to preprocess.</param>
+        /// <returns>The preprocessed rules.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the given rules are null.</exception>
         private List<Statement> PreprocessRules(List<Statement> olonRules)
         {
             ArgumentNullException.ThrowIfNull(olonRules);
@@ -202,6 +237,10 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             return olonRules;
         }
 
+        /// <summary>
+        /// Adds forall to the nmr check rule if applicable.
+        /// </summary>
+        /// <param name="statement">The check to add forall to.</param>
         private void AddForallToCheck(Statement statement)
         {
             ArgumentNullException.ThrowIfNull(statement);
@@ -231,6 +270,14 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             }
         }
 
+        /// <summary>
+        /// Adds the given prefix to all literals in the given list of duals.
+        /// </summary>
+        /// <param name="duals">The duals to add the prefix to.</param>
+        /// <param name="prefix">The prefix to add.</param>
+        /// <exception cref="InvalidOperationException">Is thrown if any head has not as an identifier
+        /// but does not contain exactly one inner literal.</exception>
+        /// <exception cref="ArgumentNullException">Is thrown if the given duals or prefix is null.</exception>"
         private void AddMissingPrefixes(List<Statement> duals, string prefix)
         {
             ArgumentNullException.ThrowIfNull(prefix);
@@ -265,7 +312,13 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             }
         }
 
-        private Statement GetCheckRule(IEnumerable<Statement> olonRules, bool notAsName = true)
+        /// <summary>
+        /// Generates a nmr check rule and adds the necessary rules from the input to its body.
+        /// </summary>
+        /// <param name="olonRules">The rules to add to the body.</param>
+        /// <returns>A single nmr check rule.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the given rules are null.</exception>
+        private Statement GetCheckRule(IEnumerable<Statement> olonRules)
         {
             ArgumentNullException.ThrowIfNull(olonRules);
 
@@ -277,7 +330,6 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
             foreach (var rule in olonRules)
             {
                 var head = rule.Head.GetValueOrThrow();
-                head.HasNafNegation = !notAsName;
                 nmrBody.Add(DualRuleConverter.WrapInNot(head));
             }
 

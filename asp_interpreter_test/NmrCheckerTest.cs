@@ -28,7 +28,7 @@ public class NmrCheckerTest
         var program = AspExtensions.GetProgram(code, this.logger);
         var checker = new NmrChecker(this.prefixes, this.logger);
 
-        var subCheckRules = checker.GetNmrCheck(program.Statements, false);
+        var subCheckRules = checker.GetNmrCheck(program.Statements);
 
         Assert.Multiple(() =>
         {
@@ -49,7 +49,7 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, this.logger);
         var checker = new NmrChecker(this.prefixes, this.logger);
-        var subCheckRules = checker.GetNmrCheck(program.Statements, false);
+        var subCheckRules = checker.GetNmrCheck(program.Statements);
 
         Assert.Multiple(() =>
         {
@@ -71,7 +71,7 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, this.logger);
         var checker = new NmrChecker(this.prefixes, this.logger);
-        var subCheckRules = checker.GetNmrCheck(program.Statements, false);
+        var subCheckRules = checker.GetNmrCheck(program.Statements);
 
         // verified with s(CASP)
         Assert.Multiple(() =>
@@ -97,7 +97,7 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, this.logger);
         var checker = new NmrChecker(this.prefixes, this.logger);
-        var subCheckRules = checker.GetNmrCheck(program.Statements, false);
+        var subCheckRules = checker.GetNmrCheck(program.Statements);
 
         // verifed with s(CASP)
         Assert.Multiple(() =>
@@ -122,7 +122,7 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, this.logger);
         var checker = new NmrChecker(this.prefixes, this.logger);
-        var subCheckRules = checker.GetNmrCheck(program.Statements, false);
+        var subCheckRules = checker.GetNmrCheck(program.Statements);
 
         // verified with s(CASP)
         Assert.Multiple(() =>
@@ -141,7 +141,7 @@ public class NmrCheckerTest
     public void AlsoAddsCheckForEmtpyStatements()
     {
         var checker = new NmrChecker(this.prefixes, this.logger);
-        var subCheckRules = checker.GetNmrCheck([], false);
+        var subCheckRules = checker.GetNmrCheck([]);
 
         // verified with s(CASP)
         Assert.Multiple(() =>
@@ -167,7 +167,7 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, this.logger);
         var checker = new NmrChecker(this.prefixes, this.logger);
-        var subCheckRules = checker.GetNmrCheck(program.Statements, false);
+        var subCheckRules = checker.GetNmrCheck(program.Statements);
 
         // verified with s(CASP)
         Assert.Multiple(() =>
@@ -189,7 +189,7 @@ public class NmrCheckerTest
                       """;
         var program = AspExtensions.GetProgram(code, this.logger);
         var checker = new NmrChecker(this.prefixes, this.logger);
-        var subCheckRules = checker.GetNmrCheck(program.Statements, false);
+        var subCheckRules = checker.GetNmrCheck(program.Statements);
 
         // verified with s(CASP)
         Assert.Multiple(() =>
