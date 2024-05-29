@@ -24,7 +24,6 @@ namespace Asp_interpreter_lib.Visitors
             this.goalVisitor = new GoalVisitor(logger);
         }
 
-        /// <inheritdoc/>
         public override IOption<Query> VisitQuery(ASPParser.QueryContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

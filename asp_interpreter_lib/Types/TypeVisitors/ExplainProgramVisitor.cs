@@ -23,7 +23,6 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        /// <inheritdoc/>
         public override IOption<string> Visit(Statement statement)
         {
             if (!statement.HasHead)
@@ -90,7 +89,6 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
             return new Some<string>(t);
         }
 
-        /// <inheritdoc/>
         public override IOption<string> Visit(Literal literal)
         {
             StringBuilder sb = new StringBuilder();
@@ -133,7 +131,6 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
             return new Some<string>(t);
         }
 
-        /// <inheritdoc/>
         public override IOption<string> Visit(BinaryOperation binaryOperation)
         {
             StringBuilder sb = new StringBuilder();

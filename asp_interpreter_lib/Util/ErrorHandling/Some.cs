@@ -18,19 +18,16 @@ public class Some<T> : IOption<T>
         this.value = value;
     }
 
-    /// <inheritdoc/>
     public bool HasValue
     {
         get => true;
     }
 
-    /// <inheritdoc/>
     public T GetValueOrThrow()
     {
         return this.value;
     }
 
-    /// <inheritdoc/>
     public T GetValueOrThrow(string message)
     {
         if (string.IsNullOrWhiteSpace(message))
@@ -41,7 +38,6 @@ public class Some<T> : IOption<T>
         return this.value;
     }
 
-    /// <inheritdoc/>
     public void IfHasValue(Action<T> action)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -49,13 +45,11 @@ public class Some<T> : IOption<T>
         action(this.value);
     }
 
-    /// <inheritdoc/>
     public void IfHasNoValue(Action hasNoValue)
     {
         ArgumentNullException.ThrowIfNull(hasNoValue);
     }
 
-    /// <inheritdoc/>
     public void IfHasValueElse(Action<T> hasValueAction, Action hasNoValueAction)
     {
         ArgumentNullException.ThrowIfNull(hasValueAction);

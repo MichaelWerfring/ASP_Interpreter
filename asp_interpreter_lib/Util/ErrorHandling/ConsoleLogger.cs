@@ -12,7 +12,6 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
 
     public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogger
     {
-        /// <inheritdoc/>
         public void LogTrace(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -33,7 +32,6 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
             Console.WriteLine(message);
         }
 
-        /// <inheritdoc/>
         public void LogDebug(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -54,7 +52,6 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
             Console.WriteLine(message);
         }
 
-        /// <inheritdoc/>
         public void LogInfo(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -75,7 +72,6 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
             Console.WriteLine(message);
         }
 
-        /// <inheritdoc/>
         public void LogError(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -96,7 +92,6 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
             Console.WriteLine(message);
         }
 
-        /// <inheritdoc/>
         public void LogError(string message, ParserRuleContext context)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
@@ -118,7 +113,6 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
             Console.WriteLine($"{message} at line {context.Start.Line} column {context.Start.Column}");
         }
 
-        /// <inheritdoc/>
         public ILogger GetDummy()
         {
             return new ConsoleLogger(LogLevel.None);

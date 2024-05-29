@@ -11,7 +11,6 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class GoalToBinaryOperationConverter : TypeBaseVisitor<BinaryOperation>
 {
-    /// <inheritdoc/>
     public override IOption<BinaryOperation> Visit(BinaryOperation binOp)
     {
         ArgumentNullException.ThrowIfNull(binOp);

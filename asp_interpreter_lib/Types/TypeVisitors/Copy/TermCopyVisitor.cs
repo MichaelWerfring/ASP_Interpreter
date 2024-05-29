@@ -13,25 +13,21 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class TermCopyVisitor : TypeBaseVisitor<ITerm>
 {
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(AnonymousVariableTerm term)
     {
         return new Some<ITerm>(new AnonymousVariableTerm());
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(VariableTerm term)
     {
         return new Some<ITerm>(new VariableTerm(term.Identifier.GetCopy()));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ArithmeticOperationTerm term)
     {
         return new Some<ITerm>(new ArithmeticOperationTerm(term.Left, term.Operation, term.Right));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(BasicTerm term)
     {
         List<ITerm> children =[];
@@ -45,19 +41,16 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new BasicTerm(term.Identifier.ToString(), children));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(StringTerm term)
     {
         return new Some<ITerm>(new StringTerm(term.Value.GetCopy()));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(NumberTerm term)
     {
         return new Some<ITerm>(new NumberTerm(term.Value));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(NegatedTerm term)
     {
         var innerTerm = term.Term.Accept(this);
@@ -65,7 +58,6 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
             innerTerm.GetValueOrThrow("The inner term cannot be copied!")));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ParenthesizedTerm term)
     {
         var innerTerm = term.Term.Accept(this);
@@ -73,7 +65,6 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
             innerTerm.GetValueOrThrow("The inner term cannot be copied!")));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(RecursiveList term)
     {
         ITerm head = term.Head.Accept(this).
@@ -85,7 +76,6 @@ public class TermCopyVisitor : TypeBaseVisitor<ITerm>
         return new Some<ITerm>(new RecursiveList(head, tail));
     }
 
-    /// <inheritdoc/>
     public override IOption<ITerm> Visit(ConventionalList term)
     {
         List<ITerm> children =[];

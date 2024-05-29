@@ -25,7 +25,6 @@ namespace Asp_interpreter_lib.Visitors
                 throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
         }
 
-        /// <inheritdoc/>
         public override IOption<Statement> VisitStatement(ASPParser.StatementContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

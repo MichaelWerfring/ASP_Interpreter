@@ -24,7 +24,6 @@ namespace Asp_interpreter_lib.Visitors
             this.termVisitor = new TermVisitor(logger);
         }
 
-        /// <inheritdoc/>
         public override IOption<List<ITerm>> VisitTerms(ASPParser.TermsContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

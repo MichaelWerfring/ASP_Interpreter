@@ -12,7 +12,6 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class TermToBasicTermConverter : TypeBaseVisitor<BasicTerm>
 {
-    /// <inheritdoc/>
     public override IOption<BasicTerm> Visit(BasicTerm term)
     {
         return new Some<BasicTerm>(term);

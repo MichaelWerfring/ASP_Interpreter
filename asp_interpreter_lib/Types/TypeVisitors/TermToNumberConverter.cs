@@ -12,25 +12,21 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class TermToNumberConverter : TypeBaseVisitor<int>
 {
-    /// <inheritdoc/>
     public override IOption<int> Visit(BasicTerm term)
     {
         return new None<int>();
     }
 
-    /// <inheritdoc/>
     public override IOption<int> Visit(AnonymousVariableTerm term)
     {
         return new None<int>();
     }
 
-    /// <inheritdoc/>
     public override IOption<int> Visit(VariableTerm term)
     {
         return new None<int>();
     }
 
-    /// <inheritdoc/>
     public override IOption<int> Visit(ArithmeticOperationTerm term)
     {
         var left = term.Left.Accept(this);
@@ -44,7 +40,6 @@ public class TermToNumberConverter : TypeBaseVisitor<int>
         return new Some<int>(term.Operation.Evaluate(left.GetValueOrThrow(), right.GetValueOrThrow()));
     }
 
-    /// <inheritdoc/>
     public override IOption<int> Visit(ParenthesizedTerm term)
     {
         var result = term.Term.Accept(this);
@@ -57,13 +52,11 @@ public class TermToNumberConverter : TypeBaseVisitor<int>
         return new None<int>();
     }
 
-    /// <inheritdoc/>
     public override IOption<int> Visit(StringTerm term)
     {
         return new None<int>();
     }
 
-    /// <inheritdoc/>
     public override IOption<int> Visit(NegatedTerm term)
     {
         var result = term.Term.Accept(this);
@@ -76,7 +69,6 @@ public class TermToNumberConverter : TypeBaseVisitor<int>
         return new None<int>();
     }
 
-    /// <inheritdoc/>
     public override IOption<int> Visit(NumberTerm term)
     {
         return new Some<int>(term.Value);

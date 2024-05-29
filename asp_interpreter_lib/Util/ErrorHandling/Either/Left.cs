@@ -19,16 +19,13 @@ public class Left<TLeft, TRight> : IEither<TLeft, TRight>
         this.value = value;
     }
 
-    /// <inheritdoc/>
     public bool IsRight => false;
 
-    /// <inheritdoc/>
     public TLeft GetLeftOrThrow()
     {
         return this.value;
     }
 
-    /// <inheritdoc/>
     public TRight GetRightOrThrow()
     {
         throw new InvalidOperationException();

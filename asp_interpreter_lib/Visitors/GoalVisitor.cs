@@ -21,7 +21,6 @@ namespace Asp_interpreter_lib.Visitors
 
         private readonly ILogger logger;
 
-        /// <inheritdoc/>
         public override IOption<Goal> VisitGoal(ASPParser.GoalContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -35,7 +34,6 @@ namespace Asp_interpreter_lib.Visitors
             return new None<Goal>();
         }
 
-        /// <inheritdoc/>
         public override IOption<Goal> VisitBinary_operation(ASPParser.Binary_operationContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -52,7 +50,6 @@ namespace Asp_interpreter_lib.Visitors
             return new Some<Goal>(result.GetValueOrThrow());
         }
 
-        /// <inheritdoc/>
         public override IOption<Goal> VisitLiteral(ASPParser.LiteralContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

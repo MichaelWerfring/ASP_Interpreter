@@ -15,16 +15,11 @@ public class GoalCopyVisitor : TypeBaseVisitor<Goal>
 {
     private readonly TermCopyVisitor termCopyVisitor;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GoalCopyVisitor"/> class.
-    /// </summary>
-    /// <param name="termCopyVisitor"></param>
     public GoalCopyVisitor(TermCopyVisitor termCopyVisitor)
     {
         this.termCopyVisitor = termCopyVisitor;
     }
 
-    /// <inheritdoc/>
     public override IOption<Goal> Visit(Forall goal)
     {
         var innerGoal = goal.Goal.Accept(this).GetValueOrThrow("The given goal cannot be copied!");
@@ -32,7 +27,6 @@ public class GoalCopyVisitor : TypeBaseVisitor<Goal>
         return new Some<Goal>(new Forall(variable, innerGoal));
     }
 
-    /// <inheritdoc/>
     public override IOption<Goal> Visit(Literal goal)
     {
         bool naf = goal.HasNafNegation;
@@ -49,7 +43,6 @@ public class GoalCopyVisitor : TypeBaseVisitor<Goal>
         return new Some<Goal>(new Literal(identifier, naf, classical, terms));
     }
 
-    /// <inheritdoc/>
     public override IOption<Goal> Visit(BinaryOperation binOp)
     {
         var leftCopy = binOp.Left.Accept(this.termCopyVisitor).GetValueOrThrow(

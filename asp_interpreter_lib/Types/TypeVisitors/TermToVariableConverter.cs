@@ -14,7 +14,6 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
 
     internal class TermToVariableConverter : TypeBaseVisitor<VariableTerm>
     {
-        /// <inheritdoc/>
         public override IOption<VariableTerm> Visit(VariableTerm term)
         {
             ArgumentNullException.ThrowIfNull(term);

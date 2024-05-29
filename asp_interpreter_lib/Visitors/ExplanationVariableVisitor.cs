@@ -25,7 +25,6 @@ namespace Asp_interpreter_lib.Visitors
             this.logger = logger;
         }
 
-        /// <inheritdoc/>
         public override string VisitExp_var(ASPParser.Exp_varContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

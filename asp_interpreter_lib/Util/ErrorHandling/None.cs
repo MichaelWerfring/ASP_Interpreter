@@ -10,16 +10,13 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
 {
     public class None<T> : IOption<T>
     {
-        /// <inheritdoc/>
         public bool HasValue { get => false; }
 
-        /// <inheritdoc/>
         public T GetValueOrThrow()
         {
             throw new InvalidOperationException();
         }
 
-        /// <inheritdoc/>
         public T GetValueOrThrow(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -30,20 +27,17 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
             throw new InvalidOperationException(message);
         }
 
-        /// <inheritdoc/>
         public void IfHasValue(Action<T> action)
         {
             ArgumentNullException.ThrowIfNull(action);
         }
 
-        /// <inheritdoc/>
         public void IfHasNoValue(Action action)
         {
             ArgumentNullException.ThrowIfNull(action);
             action();
         }
 
-        /// <inheritdoc/>
         public void IfHasValueElse(Action<T> hasValueAction, Action hasNoValueAction)
         {
             ArgumentNullException.ThrowIfNull(hasValueAction);

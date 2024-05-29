@@ -16,9 +16,6 @@ public class StatementCopyVisitor : TypeBaseVisitor<Statement>
 
     private readonly GoalCopyVisitor goalCopyVisitor;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="StatementCopyVisitor"/> class.
-    /// </summary>
     public StatementCopyVisitor()
     {
         var termCopyVisitor = new TermCopyVisitor();
@@ -26,7 +23,6 @@ public class StatementCopyVisitor : TypeBaseVisitor<Statement>
         this.goalCopyVisitor = new GoalCopyVisitor(termCopyVisitor);
     }
 
-    /// <inheritdoc/>
     public override IOption<Statement> Visit(Statement statement)
     {
         Statement copy = new();
