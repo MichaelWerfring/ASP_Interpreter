@@ -11,12 +11,21 @@ namespace Asp_interpreter_lib.Visitors
     using Asp_interpreter_lib.Types.Terms;
     using Asp_interpreter_lib.Util.ErrorHandling;
 
+    /// <summary>
+    /// Utility class for traversing the ANTLR parse tree and
+    /// creating the internal representation of <see cref="TermsVisitor"/> class.
+    /// </summary>
     public class TermsVisitor : ASPParserBaseVisitor<IOption<List<ITerm>>>
     {
         private readonly ILogger logger;
 
         private readonly TermVisitor termVisitor;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TermsVisitor"/> class.
+        /// </summary>
+        /// <param name="logger">Logger to display potential error messages.</param>
+        /// <exception cref="ArgumentNullException">Is thrown if the logger is null.</exception>
         public TermsVisitor(ILogger logger)
         {
             this.logger = logger ??
@@ -24,6 +33,12 @@ namespace Asp_interpreter_lib.Visitors
             this.termVisitor = new TermVisitor(logger);
         }
 
+        /// <summary>
+        /// Converts the given context to a list of <see cref="ITerm"/>.
+        /// </summary>
+        /// <param name="context">Current parser context.</param>
+        /// <returns>None if the context cannot be converted. Some if the conversion succeeds.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>
         public override IOption<List<ITerm>> VisitTerms(ASPParser.TermsContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

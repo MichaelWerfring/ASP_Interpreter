@@ -13,16 +13,17 @@ namespace Asp_interpreter_lib.Visitors
     using System;
 
     /// <summary>
-    /// Visits arithmetic operations.
+    /// Utility class for traversing the ANTLR parse tree and
+    /// creating the internal representation of <see cref="ArithmeticOperation"/> class.
     /// </summary>
     public class ArithmeticOperationVisitor : ASPParserBaseVisitor<IOption<ArithmeticOperation>>
     {
         /// <summary>
-        /// Visit a plus context.
+        /// Converts the given context to the corresponding <see cref="ArithmeticOperation"/>.
         /// </summary>
         /// <param name="context">Current parser context.</param>
-        /// <returns>The given operation.</returns>
-        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>"
+        /// <returns>None if the context cannot be converted. Some if the conversion succeeds.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>
         public override IOption<ArithmeticOperation> VisitPlusOperation(ASPParser.PlusOperationContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -30,11 +31,11 @@ namespace Asp_interpreter_lib.Visitors
         }
 
         /// <summary>
-        /// Visit a minus context.
+        /// Converts the given context to the corresponding <see cref="ArithmeticOperation"/>.
         /// </summary>
         /// <param name="context">Current parser context.</param>
-        /// <returns>The given operation.</returns>
-        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>"
+        /// <returns>None if the context cannot be converted. Some if the conversion succeeds.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>
         public override IOption<ArithmeticOperation> VisitMinusOperation(ASPParser.MinusOperationContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -42,11 +43,11 @@ namespace Asp_interpreter_lib.Visitors
         }
 
         /// <summary>
-        /// Visit a multiply context.
+        /// Converts the given context to the corresponding <see cref="ArithmeticOperation"/>.
         /// </summary>
         /// <param name="context">Current parser context.</param>
-        /// <returns>The given operation.</returns>
-        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>"
+        /// <returns>None if the context cannot be converted. Some if the conversion succeeds.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>
         public override IOption<ArithmeticOperation> VisitTimesOperation(ASPParser.TimesOperationContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -54,11 +55,11 @@ namespace Asp_interpreter_lib.Visitors
         }
 
         /// <summary>
-        /// Visit a divide context.
+        /// Converts the given context to the corresponding <see cref="ArithmeticOperation"/>.
         /// </summary>
         /// <param name="context">Current parser context.</param>
-        /// <returns>The given operation.</returns>
-        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>"
+        /// <returns>None if the context cannot be converted. Some if the conversion succeeds.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>
         public override IOption<ArithmeticOperation> VisitDivOperation(ASPParser.DivOperationContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -66,11 +67,11 @@ namespace Asp_interpreter_lib.Visitors
         }
 
         /// <summary>
-        /// Visit a power context.
+        /// Converts the given context to the corresponding <see cref="ArithmeticOperation"/>.
         /// </summary>
         /// <param name="context">Current parser context.</param>
-        /// <returns>The given operation.</returns>
-        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>"
+        /// <returns>None if the context cannot be converted. Some if the conversion succeeds.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>
         public override IOption<ArithmeticOperation> VisitPowerOperation(ASPParser.PowerOperationContext context)
         {
             ArgumentNullException.ThrowIfNull(context);

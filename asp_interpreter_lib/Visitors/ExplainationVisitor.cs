@@ -12,7 +12,11 @@ using Asp_interpreter_lib.Types;
 using Asp_interpreter_lib.Types.TypeVisitors;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
-public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Asp_interpreter_lib.Types.Explanation>>
+/// <summary>
+/// Utility class for traversing the ANTLR parse tree and
+/// creating the internal representation of <see cref="Explanation"/> class.
+/// </summary>
+public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Explanation>>
 {
     private readonly ILogger logger;
     private readonly ASPParserBaseVisitor<IOption<Literal>> literalVisitor;
@@ -22,11 +26,10 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Asp_interpreter_l
     /// <summary>
     /// Initializes a new instance of the <see cref="ExplanationVisitor"/> class.
     /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="literalVisitor"></param>
-    public ExplanationVisitor(
-        ILogger logger,
-                              ASPParserBaseVisitor<IOption<Literal>> literalVisitor)
+    /// <param name="logger">Logger to display potential error messages.</param>
+    /// <param name="literalVisitor">Visitor to retrieve literals.</param>
+    /// <exception cref="ArgumentNullException">Is thrown if the logger or the literal visitor are null.</exception>
+    public ExplanationVisitor(ILogger logger, ASPParserBaseVisitor<IOption<Literal>> literalVisitor)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.literalVisitor = literalVisitor ?? throw new ArgumentNullException(nameof(literalVisitor));
@@ -34,6 +37,12 @@ public class ExplanationVisitor : ASPParserBaseVisitor<IOption<Asp_interpreter_l
         this.textVisitor = new ExplanationTextVisitor(this.logger);
     }
 
+    /// <summary>
+    /// Converts the given context to a <see cref="Explanation"/>.
+    /// </summary>
+    /// <param name="context">Current parser context.</param>
+    /// <returns>None if the context cannot be converted. Some if the conversion succeeds.</returns>
+    /// <exception cref="ArgumentNullException">Is thrown if the context is null.</exception>
     public override IOption<Explanation> VisitExplanation(ASPParser.ExplanationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
