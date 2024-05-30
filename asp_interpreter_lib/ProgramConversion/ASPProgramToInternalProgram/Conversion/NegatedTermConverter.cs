@@ -61,7 +61,7 @@ public class NegatedTermConverter : TypeBaseVisitor<ISimpleTerm>
 
         var convertedStructure = this.converter.Convert(term);
 
-        return new Some<ISimpleTerm>(new Structure(this.functorTable.ClassicalNegation,[convertedStructure]));
+        return new Some<ISimpleTerm>(new Structure(this.functorTable.ClassicalNegation, [convertedStructure]));
     }
 
     /// <summary>

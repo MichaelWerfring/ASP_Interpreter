@@ -68,17 +68,17 @@ namespace Asp_interpreter_lib.Preprocessing.DualRules
 
             if (naf && actualLiteral.HasStrongNegation)
             {
-                return new Literal("not", false, false,[new NegatedTerm(new ParenthesizedTerm(new BasicTerm(actualLiteral.Identifier.ToString(), terms)))]);
+                return new Literal("not", false, false, [new NegatedTerm(new ParenthesizedTerm(new BasicTerm(actualLiteral.Identifier.ToString(), terms)))]);
             }
 
             if (!naf && actualLiteral.HasStrongNegation)
             {
-                return new Literal("-", false, false,[new BasicTerm(actualLiteral.Identifier.ToString(), terms)]);
+                return new Literal("-", false, false, [new BasicTerm(actualLiteral.Identifier.ToString(), terms)]);
             }
 
             if (naf && !actualLiteral.HasStrongNegation)
             {
-                return new Literal("not", false, false,[new BasicTerm(actualLiteral.Identifier.ToString(), terms)]);
+                return new Literal("not", false, false, [new BasicTerm(actualLiteral.Identifier.ToString(), terms)]);
             }
 
             return new Literal(

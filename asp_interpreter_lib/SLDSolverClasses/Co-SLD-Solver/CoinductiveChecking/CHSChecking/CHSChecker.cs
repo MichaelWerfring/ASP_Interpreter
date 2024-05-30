@@ -99,7 +99,7 @@ public class CHSChecker
 
         // construct disunification goals
         IEnumerable<Structure> disunificationGoals = termsUnifyingWithNegation.AsParallel()
-            .Select(term => new Structure(this.functorTable.Disunification,[termToCheck, term]));
+            .Select(term => new Structure(this.functorTable.Disunification, [termToCheck, term]));
 
         // from that, construct initial state for solver.
         var newSolverState = new CoSldSolverState(

@@ -59,7 +59,7 @@ public class CoinductiveSLDSolver
     {
         ArgumentNullException.ThrowIfNull(query, nameof(query));
 
-        var initialSolverState = new CoSldSolverState(query, new SolutionState([],[],[], 0));
+        var initialSolverState = new CoSldSolverState(query, new SolutionState([], [], [], 0));
 
         foreach (var querySolution in this.goalSolver.SolveGoals(initialSolverState))
         {

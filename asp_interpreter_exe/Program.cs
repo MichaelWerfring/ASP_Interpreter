@@ -13,8 +13,15 @@ using Asp_interpreter_lib.Visitors;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+/// <summary>
+/// Represents a program.
+/// </summary>
 internal class Program
 {
+    /// <summary>
+    /// Entry point of the program.
+    /// </summary>
+    /// <param name="args">Command line arguments.</param>
     private static void Main(string[] args)
     {
         var builder = Host.CreateApplicationBuilder(args);

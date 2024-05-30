@@ -172,7 +172,7 @@ namespace Asp_interpreter_lib.Util
             ArgumentException.ThrowIfNullOrEmpty(variableName);
             ArgumentOutOfRangeException.ThrowIfNegative(numberOfVariables);
 
-            List<ITerm> vars =[];
+            List<ITerm> vars = [];
 
             for (int i = 0; i < numberOfVariables; i++)
             {

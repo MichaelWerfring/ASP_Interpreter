@@ -23,7 +23,7 @@ public class CoinductiveHypothesisSet : IEnumerable<CHSEntry>
     /// </summary>
     public CoinductiveHypothesisSet()
     {
-        this.entries =[];
+        this.entries = [];
     }
 
     /// <summary>

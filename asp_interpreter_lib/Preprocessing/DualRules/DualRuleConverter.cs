@@ -529,7 +529,7 @@ namespace Asp_interpreter_lib.Preprocessing.DualRules
 
             if (rule.HasHead && !rule.HasBody)
             {
-                return [];
+                return new List<string>();
             }
 
             if (rule.HasHead && rule.HasBody)

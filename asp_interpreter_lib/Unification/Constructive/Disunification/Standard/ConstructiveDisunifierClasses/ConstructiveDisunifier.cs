@@ -59,12 +59,12 @@ public class ConstructiveDisunifier : IBinaryTermCaseVisitor
         this.right = target.Right;
         this.prohibitedValues = target.Mapping;
 
-        this.disunifiers =[];
+        this.disunifiers = [];
 
         this.doesNotUnifyAnways = false;
         this.disunificationError = null;
 
-        this.disunifiers =[];
+        this.disunifiers = [];
     }
 
     /// <summary>
