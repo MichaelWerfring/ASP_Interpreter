@@ -72,17 +72,13 @@ public class VisitorTest
 
         Assert.That(this.logger.Errors.Count == 0 && !program.Query.HasValue);
     }
-    
+
     [Test]
     public void HandlesProgramWithoutStatementsCorrectly()
     {
-        var code = """
-                   ?- a(X).
-                   """;
-
         Assert.That(logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesMinimalProgramCorrectly()
     {
@@ -90,10 +86,9 @@ public class VisitorTest
                    a.
                    ?- a.
                    """;
-        
         Assert.That(logger.Errors.Count == 0);
     }
-    
+
     [Test]
     public void HandlesClassicalNegationCorrectly()
     {

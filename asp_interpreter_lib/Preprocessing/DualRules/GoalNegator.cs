@@ -19,7 +19,7 @@ namespace Asp_interpreter_lib.Preprocessing.DualRules
     public class GoalNegator
     {
         /// <summary>
-        /// Negates a given goal by either negating the literal or by wrapping it in an 
+        /// Negates a given goal by either negating the literal or by wrapping it in an
         /// applicable combination of negation as failure and classical negation.
         /// </summary>
         /// <param name="goal">The goal to negated.</param>

@@ -154,9 +154,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="disunification">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(Disunification _)
+    public override IOption<List<VariableTerm>> Visit(Disunification disunification)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -164,9 +164,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="equality">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(Equality _)
+    public override IOption<List<VariableTerm>> Visit(Equality equality)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -174,9 +174,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="greaterOrEqualThan">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(GreaterOrEqualThan _)
+    public override IOption<List<VariableTerm>> Visit(GreaterOrEqualThan greaterOrEqualThan)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -184,9 +184,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="greaterThan">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(GreaterThan _)
+    public override IOption<List<VariableTerm>> Visit(GreaterThan greaterThan)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -194,9 +194,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="lessOrEqualThan">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(LessOrEqualThan _)
+    public override IOption<List<VariableTerm>> Visit(LessOrEqualThan lessOrEqualThan)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -204,9 +204,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="lessThan">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(LessThan _)
+    public override IOption<List<VariableTerm>> Visit(LessThan lessThan)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -214,9 +214,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="isOperator">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(Is _)
+    public override IOption<List<VariableTerm>> Visit(Is isOperator)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -224,9 +224,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given operation.</param>
+    /// <param name="term">The given operation.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(AnonymousVariableTerm _)
+    public override IOption<List<VariableTerm>> Visit(AnonymousVariableTerm term)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -282,9 +282,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given term.</param>
+    /// <param name="term">The given term.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(StringTerm _)
+    public override IOption<List<VariableTerm>> Visit(StringTerm term)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -292,9 +292,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given term.</param>
+    /// <param name="term">The given term.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(NumberTerm _)
+    public override IOption<List<VariableTerm>> Visit(NumberTerm term)
     {
         return new Some<List<VariableTerm>>([]);
     }
@@ -373,9 +373,9 @@ public class VariableFinder : TypeBaseVisitor<List<VariableTerm>>
     /// <summary>
     /// Returns an empty list because the given type cannot contain any variables.
     /// </summary>
-    /// <param name="_">The given term.</param>
+    /// <param name="goal">The given term.</param>
     /// <returns>An empty list.</returns>
-    public override IOption<List<VariableTerm>> Visit(Forall _)
+    public override IOption<List<VariableTerm>> Visit(Forall goal)
     {
         return new Some<List<VariableTerm>>([]);
     }

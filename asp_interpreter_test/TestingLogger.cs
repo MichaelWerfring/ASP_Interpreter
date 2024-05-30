@@ -24,7 +24,7 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public LogLevel LogLevel { get; } = logLevel;
 
-    public void LogError(string message, ParserRuleContext _)
+    public void LogError(string message, ParserRuleContext context)
     {
         if (this.LogLevel <= LogLevel.Error)
         {

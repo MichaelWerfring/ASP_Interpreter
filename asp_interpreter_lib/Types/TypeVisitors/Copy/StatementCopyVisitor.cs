@@ -6,46 +6,62 @@
 // <author>Clemens Niklos</author>
 //-----------------------------------------------------------------------
 
-namespace Asp_interpreter_lib.Types.TypeVisitors.Copy;
-using Asp_interpreter_lib.Util.ErrorHandling;
-
-public class StatementCopyVisitor : TypeBaseVisitor<Statement>
+namespace Asp_interpreter_lib.Types.TypeVisitors.Copy
 {
-    // private readonly BinaryOperationVisitor _binaryOperationVisitor;
-    private readonly LiteralCopyVisitor literalCopyVisitor;
+    using Asp_interpreter_lib.Util.ErrorHandling;
 
-    private readonly GoalCopyVisitor goalCopyVisitor;
-
-    public StatementCopyVisitor()
+    /// <summary>
+    /// Provides utility methods for copying statements.
+    /// </summary>
+    public class StatementCopyVisitor : TypeBaseVisitor<Statement>
     {
-        var termCopyVisitor = new TermCopyVisitor();
-        this.literalCopyVisitor = new LiteralCopyVisitor(termCopyVisitor);
-        this.goalCopyVisitor = new GoalCopyVisitor(termCopyVisitor);
-    }
+        private readonly LiteralCopyVisitor literalCopyVisitor;
 
-    public override IOption<Statement> Visit(Statement statement)
-    {
-        Statement copy = new();
+        private readonly GoalCopyVisitor goalCopyVisitor;
 
-        if (statement.HasHead)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StatementCopyVisitor"/> class.
+        /// </summary>
+        public StatementCopyVisitor()
         {
-            statement.Head.GetValueOrThrow().Accept(this.literalCopyVisitor).IfHasValue(
-                copy.AddHead);
+            var termCopyVisitor = new TermCopyVisitor();
+            this.literalCopyVisitor = new LiteralCopyVisitor(termCopyVisitor);
+            this.goalCopyVisitor = new GoalCopyVisitor(termCopyVisitor);
         }
 
-        List<Goal> body =[];
-        foreach (var goal in statement.Body)
+        /// <summary>
+        /// Copies a statement.
+        /// </summary>
+        /// <param name="statement">The statement to be copied.</param>
+        /// <returns>A copy of the statement.</returns>
+        /// <exception cref="InvalidOperationException">Is thrown if any goal of the statement cannot be copied.</exception>
+        /// <exception cref="ArgumentNullException">Is thrown if the given statement is null.</exception>
+        public override IOption<Statement> Visit(Statement statement)
         {
-            goal.Accept(this.goalCopyVisitor).IfHasValue(body.Add);
+            ArgumentNullException.ThrowIfNull(statement);
+
+            Statement copy = new();
+
+            if (statement.HasHead)
+            {
+                statement.Head.GetValueOrThrow().Accept(this.literalCopyVisitor).IfHasValue(
+                    copy.AddHead);
+            }
+
+            List<Goal> body = new List<Goal>();
+            foreach (var goal in statement.Body)
+            {
+                goal.Accept(this.goalCopyVisitor).IfHasValue(body.Add);
+            }
+
+            if (body.Count != statement.Body.Count)
+            {
+                throw new InvalidOperationException("The body of the statement could not be copied!");
+            }
+
+            copy.AddBody(body);
+
+            return new Some<Statement>(copy);
         }
-
-        if (body.Count != statement.Body.Count)
-        {
-            throw new InvalidOperationException("The body of the statement could not be copied!");
-        }
-
-        copy.AddBody(body);
-
-        return new Some<Statement>(copy);
     }
 }

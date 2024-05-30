@@ -19,9 +19,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates a disunification.
         /// </summary>
-        /// <param name="_">Any disunification.</param>
+        /// <param name="op">Any disunification.</param>
         /// <returns>An equality operation.</returns>
-        public override IOption<BinaryOperator> Visit(Disunification _)
+        public override IOption<BinaryOperator> Visit(Disunification op)
         {
             return new Some<BinaryOperator>(new Equality());
         }
@@ -29,9 +29,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates an equality operation.
         /// </summary>
-        /// <param name="_">Any equality.</param>
+        /// <param name="op">Any equality.</param>
         /// <returns>A disunification.</returns>
-        public override IOption<BinaryOperator> Visit(Equality _)
+        public override IOption<BinaryOperator> Visit(Equality op)
         {
             return new Some<BinaryOperator>(new Disunification());
         }
@@ -39,9 +39,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates a greater or equal than operation.
         /// </summary>
-        /// <param name="_">Any greater or equal than operation.</param>
+        /// <param name="op">Any greater or equal than operation.</param>
         /// <returns>A less than operation.</returns>
-        public override IOption<BinaryOperator> Visit(GreaterOrEqualThan _)
+        public override IOption<BinaryOperator> Visit(GreaterOrEqualThan op)
         {
             return new Some<BinaryOperator>(new LessThan());
         }
@@ -49,9 +49,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates a greater than operation.
         /// </summary>
-        /// <param name="_">Any greater than operation</param>
+        /// <param name="op">Any greater than operation</param>
         /// <returns>A less or equal operation.</returns>
-        public override IOption<BinaryOperator> Visit(GreaterThan _)
+        public override IOption<BinaryOperator> Visit(GreaterThan op)
         {
             return new Some<BinaryOperator>(new LessOrEqualThan());
         }
@@ -59,9 +59,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates a less or equal than operation.
         /// </summary>
-        /// <param name="_">Any less than less than equal than operation.</param>
+        /// <param name="op">Any less than less than equal than operation.</param>
         /// <returns>A greater than operation.</returns>
-        public override IOption<BinaryOperator> Visit(LessOrEqualThan _)
+        public override IOption<BinaryOperator> Visit(LessOrEqualThan op)
         {
             return new Some<BinaryOperator>(new GreaterThan());
         }
@@ -69,9 +69,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates a less than operation.
         /// </summary>
-        /// <param name="_">Any less than operation.</param>
+        /// <param name="op">Any less than operation.</param>
         /// <returns>A greater or equal than operation.</returns>
-        public override IOption<BinaryOperator> Visit(LessThan _)
+        public override IOption<BinaryOperator> Visit(LessThan op)
         {
             return new Some<BinaryOperator>(new GreaterOrEqualThan());
         }
@@ -79,9 +79,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates a logical and operation.
         /// </summary>
-        /// <param name="_">Any is operation.</param>
+        /// <param name="op">Any is operation.</param>
         /// <returns>An is not operation.</returns>
-        public override IOption<BinaryOperator> Visit(Is _)
+        public override IOption<BinaryOperator> Visit(Is op)
         {
             return new Some<BinaryOperator>(new IsNot());
         }
@@ -89,9 +89,9 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
         /// <summary>
         /// Negates a logical or operation.
         /// </summary>
-        /// <param name="_">Any is not operation.</param>
+        /// <param name="op">Any is not operation.</param>
         /// <returns>An is operation.</returns>
-        public override IOption<BinaryOperator> Visit(IsNot _)
+        public override IOption<BinaryOperator> Visit(IsNot op)
         {
             return new Some<BinaryOperator>(new Is());
         }
