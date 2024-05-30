@@ -6,33 +6,53 @@
 // <author>Clemens Niklos</author>
 //-----------------------------------------------------------------------
 
-namespace Asp_interpreter_lib.Util.ErrorHandling.Either;
-using System;
-
-public class Right<TLeft, TRight> : IEither<TLeft, TRight>
+namespace Asp_interpreter_lib.Util.ErrorHandling.Either
 {
-    private readonly TRight value;
+    using System;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Right{TLeft, TRight}"/> class.
+    /// Represents the successful state of an <see cref="IEither{TLeft, TRight}"/> instance.
     /// </summary>
-    /// <param name="value"></param>
-    public Right(TRight value)
+    /// <typeparam name="TLeft">The type of data to be stored when failing.</typeparam>
+    /// <typeparam name="TRight">The type of data to be stored when successful.</typeparam>
+    public class Right<TLeft, TRight> : IEither<TLeft, TRight>
     {
-        ArgumentNullException.ThrowIfNull(value, nameof(value));
+        private readonly TRight value;
 
-        this.value = value;
-    }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Right{TLeft, TRight}"/> class.
+        /// </summary>
+        /// <param name="value">Valid data.</param>
+        public Right(TRight value)
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
 
-    public bool IsRight => true;
+            this.value = value;
+        }
 
-    public TLeft GetLeftOrThrow()
-    {
-        throw new InvalidOperationException();
-    }
+        /// <summary>
+        /// Gets a value indicating whether the instance contains valid data.
+        /// </summary>
+        public bool IsRight => true;
 
-    public TRight GetRightOrThrow()
-    {
-        return this.value;
+        /// <summary>
+        /// Gets the left value or throws an exception if the instance is successful.
+        /// </summary>
+        /// <returns>Data representing an error state.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the instance contains valid data.</exception>
+        public TLeft GetLeftOrThrow()
+        {
+            throw new InvalidOperationException();
+        }
+
+        /// <summary>
+        /// Gets the right value or throws an exception if the instance is a failure.
+        /// </summary>
+        /// <returns>Valid data.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the instance contains error data.</exception>
+        public TRight GetRightOrThrow()
+        {
+            return this.value;
+        }
     }
 }
