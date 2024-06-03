@@ -10,7 +10,7 @@ namespace Asp_interpreter_test;
 using Antlr4.Runtime;
 using Asp_interpreter_lib.Util.ErrorHandling;
 
-public class TestingLogger(LogLevel logLevel) : ILogger
+public class TestingLogger(LogLevels logLevel) : ILogger
 {
     public List<string> ErrorMessages { get; } =[];
 
@@ -22,11 +22,11 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public List<string> Errors { get; } =[];
 
-    public LogLevel LogLevel { get; } = logLevel;
+    public LogLevels LogLevel { get; } = logLevel;
 
     public void LogError(string message, ParserRuleContext context)
     {
-        if (this.LogLevel <= LogLevel.Error)
+        if (this.LogLevel <= LogLevels.Error)
         {
             this.ErrorMessages.Add(message);
         }
@@ -34,7 +34,7 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public void LogTrace(string message)
     {
-        if (this.LogLevel <= LogLevel.Trace)
+        if (this.LogLevel <= LogLevels.Trace)
         {
             this.TraceMessages.Add(message);
         }
@@ -42,7 +42,7 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public void LogDebug(string message)
     {
-        if (this.LogLevel <= LogLevel.Debug)
+        if (this.LogLevel <= LogLevels.Debug)
         {
             this.DebugMessages.Add(message);
         }
@@ -50,7 +50,7 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public void LogInfo(string message)
     {
-        if (this.LogLevel <= LogLevel.Info)
+        if (this.LogLevel <= LogLevels.Info)
         {
             this.InfoMessages.Add(message);
         }
@@ -58,7 +58,7 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public void LogError(string message)
     {
-        if (this.LogLevel <= LogLevel.Error)
+        if (this.LogLevel <= LogLevels.Error)
         {
             this.ErrorMessages.Add(message);
         }
@@ -66,6 +66,6 @@ public class TestingLogger(LogLevel logLevel) : ILogger
 
     public ILogger GetDummy()
     {
-        return new TestingLogger(LogLevel.None);
+        return new TestingLogger(LogLevels.None);
     }
 }

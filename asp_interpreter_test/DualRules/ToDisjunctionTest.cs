@@ -18,7 +18,7 @@ namespace Asp_interpreter_test.DualRules
     {
         private readonly PrefixOptions prefixes = AspExtensions.CommonPrefixes;
 
-        private readonly ILogger logger = new TestingLogger(LogLevel.Error);
+        private readonly ILogger logger = new TestingLogger(LogLevels.Error);
 
         [Test]
         public void ToDisjunctionHandlesTwoGoals()

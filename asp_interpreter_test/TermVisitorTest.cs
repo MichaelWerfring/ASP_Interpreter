@@ -13,7 +13,7 @@ using Asp_interpreter_lib.Util.ErrorHandling;
 
 public class TermVisitorTest
 {
-    private readonly ILogger errorLogger = new ConsoleLogger(LogLevel.Error);
+    private readonly ILogger errorLogger = new ConsoleLogger(LogLevels.Error);
 
     [Test]
     public void ParseVariableTerm()

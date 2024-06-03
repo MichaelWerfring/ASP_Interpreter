@@ -49,23 +49,23 @@ internal class Program
     {
         if (args.Length == 0)
         {
-            return new ProgramConfig(" ", false, false, false, true, LogLevel.None);
+            return new ProgramConfig(" ", false, false, false, true, LogLevels.None);
         }
 
         // Assume that 1 is a path
         if (args.Length == 1)
         {
-            return new ProgramConfig(args[0], false, true, true, false, LogLevel.Debug);
+            return new ProgramConfig(args[0], false, true, true, false, LogLevels.Debug);
         }
 
-        var tempLogger = new ConsoleLogger(LogLevel.Info);
+        var tempLogger = new ConsoleLogger(LogLevels.Info);
         var parser = InitParser(tempLogger);
         var conf = parser.Parse(args);
 
         if (string.IsNullOrEmpty(conf.FilePath))
         {
             tempLogger.LogError("The path to the file was not provided correctly!");
-            return new ProgramConfig(" ", false, false, false, true, LogLevel.None);
+            return new ProgramConfig(" ", false, false, false, true, LogLevels.None);
         }
 
         return conf;
@@ -117,11 +117,11 @@ internal class Program
                 throw new InvalidOperationException("The parameter for the argument is not contained in the provided array!");
             }
 
-            if (!Enum.TryParse(args[i + 1], out LogLevel logLevel))
+            if (!Enum.TryParse(args[i + 1], out LogLevels logLevel))
             {
                 logger.LogInfo($"The specified log level {args[i + 1]} " +
                     $"was not valid therefore Error(3) has been set as a defaul value!");
-                logLevel = LogLevel.Error;
+                logLevel = LogLevels.Error;
             }
 
             conf.LogLevel = logLevel;

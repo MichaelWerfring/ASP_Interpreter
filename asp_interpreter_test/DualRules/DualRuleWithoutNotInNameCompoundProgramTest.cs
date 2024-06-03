@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="DualRuleWithoutNotInNameCompoundProgramTest.cs" company="FHWN">
-//     Copyright (c) FHWN. All rights reserved.
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <author>Michael Werfring</author>
 // <author>Clemens Niklos</author>
@@ -17,7 +17,7 @@ namespace Asp_interpreter_test.DualRules
     {
         private readonly PrefixOptions prefixes = AspExtensions.CommonPrefixes;
 
-        private readonly TestingLogger logger = new TestingLogger(LogLevel.Error);
+        private readonly TestingLogger logger = new TestingLogger(LogLevels.Error);
 
         [Test]
         public void BirdsTest()

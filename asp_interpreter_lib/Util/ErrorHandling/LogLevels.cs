@@ -11,7 +11,7 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
     /// <summary>
     /// Represents the different log levels.
     /// </summary>
-    public enum LogLevel
+    public enum LogLevels
     {
         /// <summary>
         /// Log level to display all the log messages.

@@ -35,7 +35,7 @@ namespace Asp_interpreter_lib.Types.TypeVisitors.Copy
         /// <param name="literal">The literal to be copied.</param>
         /// <returns>A copy of the literal.</returns>
         /// <exception cref="ArgumentNullException">Is thrown if the given literal is null.</exception>
-        /// <exception cref="InvalidOperationException">Is thrown if not all terms 
+        /// <exception cref="InvalidOperationException">Is thrown if not all terms
         /// in the literal can be copied.</exception>
         public override IOption<Literal> Visit(Literal literal)
         {

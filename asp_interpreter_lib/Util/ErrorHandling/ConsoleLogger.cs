@@ -10,13 +10,13 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
 {
     using Antlr4.Runtime;
 
-    public class ConsoleLogger(LogLevel logLevel, bool logTimestamp = false) : ILogger
+    public class ConsoleLogger(LogLevels logLevel, bool logTimestamp = false) : ILogger
     {
         public void LogTrace(string message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
 
-            if (logLevel > LogLevel.Trace)
+            if (logLevel > LogLevels.Trace)
             {
                 return;
             }
@@ -36,7 +36,7 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
 
-            if (logLevel > LogLevel.Debug)
+            if (logLevel > LogLevels.Debug)
             {
                 return;
             }
@@ -56,7 +56,7 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
 
-            if (logLevel > LogLevel.Info)
+            if (logLevel > LogLevels.Info)
             {
                 return;
             }
@@ -76,7 +76,7 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
 
-            if (logLevel > LogLevel.Error)
+            if (logLevel > LogLevels.Error)
             {
                 return;
             }
@@ -97,7 +97,7 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
             ArgumentNullException.ThrowIfNull(message, nameof(message));
             ArgumentNullException.ThrowIfNull(context);
 
-            if (logLevel > LogLevel.Error)
+            if (logLevel > LogLevels.Error)
             {
                 return;
             }
@@ -115,7 +115,7 @@ namespace Asp_interpreter_lib.Util.ErrorHandling
 
         public ILogger GetDummy()
         {
-            return new ConsoleLogger(LogLevel.None);
+            return new ConsoleLogger(LogLevels.None);
         }
 
         private static void LogTimestamp()

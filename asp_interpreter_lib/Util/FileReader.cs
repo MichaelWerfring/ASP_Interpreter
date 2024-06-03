@@ -19,7 +19,7 @@ namespace Asp_interpreter_lib.Util
         /// Reads the file at the given path.
         /// </summary>
         /// <param name="path">The path to read the file from.</param>
-        /// <returns>A <see cref="Left{TLeft, TRight}"/> with the given error message if loading fails and 
+        /// <returns>A <see cref="Left{TLeft, TRight}"/> with the given error message if loading fails and
         /// else an instance of <see cref="Right{TLeft, TRight}"/> with the files content.</returns>
         public static IEither<string, string> ReadFile(string path)
         {

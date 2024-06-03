@@ -11,20 +11,37 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
     using Asp_interpreter_lib.Util.ErrorHandling;
     using System.Text;
 
+    /// <summary>
+    /// Represents the visitor to explain a program.
+    /// </summary>
     public class ExplainProgramVisitor : TypeBaseVisitor<string>
     {
         private readonly AspProgram program;
 
         private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExplainProgramVisitor"/> class.
+        /// </summary>
+        /// <param name="program">The program to be explained.</param>
+        /// <param name="logger">The logger for potentional errors.</param>
+        /// <exception cref="ArgumentNullException">Is thrown if one of the parameters is null.</exception>
         public ExplainProgramVisitor(AspProgram program, ILogger logger)
         {
             this.program = program ?? throw new ArgumentNullException(nameof(program));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// Explains a statement by generating text.
+        /// </summary>
+        /// <param name="statement">The statement to be explained.</param>
+        /// <returns>The string representation of the statement is successful else none.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the statement is null.</exception>
         public override IOption<string> Visit(Statement statement)
         {
+            ArgumentNullException.ThrowIfNull(statement);
+
             if (!statement.HasHead)
             {
                 return new Some<string>(string.Empty);
@@ -89,6 +106,12 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
             return new Some<string>(t);
         }
 
+        /// <summary>
+        /// Explains the literal by generating text.
+        /// </summary>
+        /// <param name="literal">The literal to be explained.</param>
+        /// <returns>The string representation if successful else none.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the literal is null.</exception>
         public override IOption<string> Visit(Literal literal)
         {
             StringBuilder sb = new StringBuilder();
@@ -131,6 +154,12 @@ namespace Asp_interpreter_lib.Types.TypeVisitors
             return new Some<string>(t);
         }
 
+        /// <summary>
+        /// Explains the binary operation by generating text.
+        /// </summary>
+        /// <param name="binaryOperation">The operation to be explained.</param>
+        /// <returns>The string representation if successful else none.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the operation is null.</exception>
         public override IOption<string> Visit(BinaryOperation binaryOperation)
         {
             StringBuilder sb = new StringBuilder();

@@ -19,7 +19,7 @@ public class VisitorTest
 {
     private string graphCode;
 
-    private readonly TestingLogger logger = new(LogLevel.Error);
+    private readonly TestingLogger logger = new(LogLevels.Error);
 
     private readonly GoalToLiteralConverter goalToLiteralConverter = new();
 
@@ -52,7 +52,7 @@ public class VisitorTest
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new ASPParser(commonTokenStream);
         var context = parser.program();
-        var infoLogger = new TestingLogger(LogLevel.Info);
+        var infoLogger = new TestingLogger(LogLevels.Info);
         var visitor = new ProgramVisitor(infoLogger);
 
         _ = visitor.VisitProgram(context);

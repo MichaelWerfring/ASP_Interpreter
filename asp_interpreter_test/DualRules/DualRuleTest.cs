@@ -18,7 +18,7 @@ public class DualRuleTest
 {
     private readonly PrefixOptions prefixes = AspExtensions.CommonPrefixes;
 
-    private readonly ILogger logger = new TestingLogger(LogLevel.Error);
+    private readonly ILogger logger = new TestingLogger(LogLevels.Error);
 
     [Test]
     public void ForallSkipsEmptyHeads()

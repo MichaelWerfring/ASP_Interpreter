@@ -40,7 +40,7 @@ namespace Asp_interpreter_lib.Util
             bool runInteractive,
             bool logTimestamp,
             bool displayHelp,
-            LogLevel logLevel = LogLevel.Error)
+            LogLevels logLevel = LogLevels.Error)
         {
             if (string.IsNullOrEmpty(filePath))
             {
@@ -91,7 +91,7 @@ namespace Asp_interpreter_lib.Util
         /// <summary>
         /// Gets or sets the log level for the interpreter.
         /// </summary>
-        public LogLevel LogLevel { get; set; }
+        public LogLevels LogLevel { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the interpreter should be run in interactive mode.
