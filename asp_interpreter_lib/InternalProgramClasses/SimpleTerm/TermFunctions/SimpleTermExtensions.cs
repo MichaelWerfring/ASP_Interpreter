@@ -158,7 +158,7 @@ public static class SimpleTermExtensions
 
         if (!innerStructMaybe.HasValue)
         {
-            return new Structure(functors.NegationAsFailure,[term]);
+            return new Structure(functors.NegationAsFailure, [term]);
         }
 
         return innerStructMaybe.GetValueOrThrow();
