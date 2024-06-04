@@ -295,12 +295,15 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
                         throw new InvalidOperationException("Expected exactly one term in the not literal");
                     }
 
-                    var basicTerm = head.Terms[0].Accept(new TermToBasicTermConverter()).GetValueOrThrow();
-
-                    if (!basicTerm.Identifier.StartsWith(prefix))
-                    {
-                        basicTerm.Identifier = prefix + basicTerm.Identifier;
-                    }
+                    // normal literal
+                    head.Terms[0].Accept(new TermToBasicTermConverter()).IfHasValue(
+                        v =>
+                        {
+                            if (!v.Identifier.StartsWith(prefix))
+                            {
+                                v.Identifier = prefix + v.Identifier;
+                            }
+                        });
                 }
                 else
                 {
