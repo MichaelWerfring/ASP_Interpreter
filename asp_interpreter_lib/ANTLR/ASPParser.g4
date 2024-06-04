@@ -1,6 +1,10 @@
 parser grammar ASPParser;
 options { tokenVocab=ASPLexer; }
-program : statements query?;
+program : statements query? flag*;
+
+flag
+    : SHOW CURLY_OPEN literal (COMMA literal)* CURLY_CLOSE      #showFlag;
+
 query : QUERY_SYMBOL goal(COMMA goal)* DOT;
 
 statements : (explanation? statement)*;

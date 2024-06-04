@@ -19,6 +19,8 @@ namespace Asp_interpreter_lib.Types
     {
         private List<Statement> statements;
 
+        private List<Literal> literalsToShow;
+
         private IOption<Query> query;
 
         private Dictionary<(string Id, int Arity), Explanation> explanations;
@@ -30,11 +32,12 @@ namespace Asp_interpreter_lib.Types
         /// <param name="query">The query of the program.</param>
         /// <param name="explanations">The explanations of the program.</param>
         /// <exception cref="ArgumentNullException">If the statements, query or explanations are null.</exception>"
-        public AspProgram(List<Statement> statements, IOption<Query> query, Dictionary<(string Id, int Arity), Explanation> explanations)
+        public AspProgram(List<Statement> statements, IOption<Query> query, Dictionary<(string Id, int Arity), Explanation> explanations, List<Literal> literalsToShow)
         {
             this.statements = statements ?? throw new ArgumentNullException(nameof(statements));
             this.query = query ?? throw new ArgumentNullException(nameof(query));
             this.explanations = explanations ?? throw new ArgumentNullException(nameof(explanations));
+            this.literalsToShow = literalsToShow ?? throw new ArgumentNullException(nameof(literalsToShow));
         }
 
         /// <summary>
@@ -53,6 +56,17 @@ namespace Asp_interpreter_lib.Types
         {
             get => this.query;
             private set => this.query = value ?? throw new ArgumentNullException(nameof(this.Query));
+        }
+
+        /// <summary>
+        /// Gets the literals to be shown in output.
+        /// </summary>
+        public List<Literal> LiteralsToShow
+        {
+            get
+            {
+                return this.literalsToShow;
+            }
         }
 
         /// <summary>

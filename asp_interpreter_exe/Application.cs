@@ -213,7 +213,8 @@ namespace Asp_interpreter_exe
             return new Right<string, AspProgram>(new AspProgram(
                 [.. program.Statements, .. dual, .. subcheck],
                 program.Query,
-                program.Explanations));
+                program.Explanations,
+                program.LiteralsToShow));
         }
 
         private Query? ParseQuery(string query)

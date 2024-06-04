@@ -128,7 +128,7 @@ namespace Asp_interpreter_lib.Preprocessing.NMRCheck
         /// Generates the NMR check for the given statements, assuming they are either olon rules or constraints.
         /// </summary>
         /// <param name="olonRules">The rules to retrieve the check for.</param>
-        /// <returns>The resulting nrm check rule and its sub check rules.</returns>
+        /// <returns>The resulting nmr check rule and its sub check rules.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the given rules are null.</exception>
         public List<Statement> GetNmrCheck(List<Statement> olonRules)
         {

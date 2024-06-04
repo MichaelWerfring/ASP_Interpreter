@@ -1,6 +1,7 @@
 lexer grammar ASPLexer;
 //escaping the " and then match everything except " 
 STRING : '"' ~[\\"]+ '"';
+SHOW: '#show';
 EXP_OPEN : EXP -> pushMode(EXP_MODE);
 EXP: '::';
 NUMBER :  [0] | [1-9][0-9]*;

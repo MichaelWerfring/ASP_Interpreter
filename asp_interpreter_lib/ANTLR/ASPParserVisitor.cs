@@ -30,266 +30,239 @@ using IToken = Antlr4.Runtime.IToken;
 /// <typeparam name="Result">The return type of the visit operation.</typeparam>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.13.1")]
 [System.CLSCompliant(false)]
-public interface IASPParserVisitor<Result> : IParseTreeVisitor<Result>
-{
-    /// <summary>
+public interface IASPParserVisitor<Result> : IParseTreeVisitor<Result> {
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitProgram([NotNull] ASPParser.ProgramContext context);
-
-    /// <summary>
+	Result VisitProgram([NotNull] ASPParser.ProgramContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>showFlag</c>
+	/// labeled alternative in <see cref="ASPParser.flag"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitShowFlag([NotNull] ASPParser.ShowFlagContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.query"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitQuery([NotNull] ASPParser.QueryContext context);
-
-    /// <summary>
+	Result VisitQuery([NotNull] ASPParser.QueryContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.statements"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitStatements([NotNull] ASPParser.StatementsContext context);
-
-    /// <summary>
+	Result VisitStatements([NotNull] ASPParser.StatementsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitStatement([NotNull] ASPParser.StatementContext context);
-
-    /// <summary>
+	Result VisitStatement([NotNull] ASPParser.StatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.explanation"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitExplanation([NotNull] ASPParser.ExplanationContext context);
-
-    /// <summary>
+	Result VisitExplanation([NotNull] ASPParser.ExplanationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.exp_text"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitExp_text([NotNull] ASPParser.Exp_textContext context);
-
-    /// <summary>
+	Result VisitExp_text([NotNull] ASPParser.Exp_textContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.exp_var"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitExp_var([NotNull] ASPParser.Exp_varContext context);
-
-    /// <summary>
+	Result VisitExp_var([NotNull] ASPParser.Exp_varContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.goal"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitGoal([NotNull] ASPParser.GoalContext context);
-
-    /// <summary>
+	Result VisitGoal([NotNull] ASPParser.GoalContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.binary_operation"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitBinary_operation([NotNull] ASPParser.Binary_operationContext context);
-
-    /// <summary>
+	Result VisitBinary_operation([NotNull] ASPParser.Binary_operationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.literal"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitLiteral([NotNull] ASPParser.LiteralContext context);
-
-    /// <summary>
+	Result VisitLiteral([NotNull] ASPParser.LiteralContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>equalityOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitEqualityOperation([NotNull] ASPParser.EqualityOperationContext context);
-
-    /// <summary>
+	Result VisitEqualityOperation([NotNull] ASPParser.EqualityOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>disunificationOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context);
-
-    /// <summary>
+	Result VisitDisunificationOperation([NotNull] ASPParser.DisunificationOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>lessOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitLessOperation([NotNull] ASPParser.LessOperationContext context);
-
-    /// <summary>
+	Result VisitLessOperation([NotNull] ASPParser.LessOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitGreaterOperation([NotNull] ASPParser.GreaterOperationContext context);
-
-    /// <summary>
+	Result VisitGreaterOperation([NotNull] ASPParser.GreaterOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>lessOrEqOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitLessOrEqOperation([NotNull] ASPParser.LessOrEqOperationContext context);
-
-    /// <summary>
+	Result VisitLessOrEqOperation([NotNull] ASPParser.LessOrEqOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterOrEqOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitGreaterOrEqOperation([NotNull] ASPParser.GreaterOrEqOperationContext context);
-
-    /// <summary>
+	Result VisitGreaterOrEqOperation([NotNull] ASPParser.GreaterOrEqOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>isOperation</c>
 	/// labeled alternative in <see cref="ASPParser.binary_operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitIsOperation([NotNull] ASPParser.IsOperationContext context);
-
-    /// <summary>
+	Result VisitIsOperation([NotNull] ASPParser.IsOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ASPParser.terms"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitTerms([NotNull] ASPParser.TermsContext context);
-
-    /// <summary>
+	Result VisitTerms([NotNull] ASPParser.TermsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>negatedTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitNegatedTerm([NotNull] ASPParser.NegatedTermContext context);
-
-    /// <summary>
+	Result VisitNegatedTerm([NotNull] ASPParser.NegatedTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>stringTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitStringTerm([NotNull] ASPParser.StringTermContext context);
-
-    /// <summary>
+	Result VisitStringTerm([NotNull] ASPParser.StringTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>basicTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitBasicTerm([NotNull] ASPParser.BasicTermContext context);
-
-    /// <summary>
+	Result VisitBasicTerm([NotNull] ASPParser.BasicTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>arithmeticOperationTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitArithmeticOperationTerm([NotNull] ASPParser.ArithmeticOperationTermContext context);
-
-    /// <summary>
+	Result VisitArithmeticOperationTerm([NotNull] ASPParser.ArithmeticOperationTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>parenthesizedTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitParenthesizedTerm([NotNull] ASPParser.ParenthesizedTermContext context);
-
-    /// <summary>
+	Result VisitParenthesizedTerm([NotNull] ASPParser.ParenthesizedTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>anonymousVariableTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitAnonymousVariableTerm([NotNull] ASPParser.AnonymousVariableTermContext context);
-
-    /// <summary>
+	Result VisitAnonymousVariableTerm([NotNull] ASPParser.AnonymousVariableTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>numberTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitNumberTerm([NotNull] ASPParser.NumberTermContext context);
-
-    /// <summary>
+	Result VisitNumberTerm([NotNull] ASPParser.NumberTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>variableTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitVariableTerm([NotNull] ASPParser.VariableTermContext context);
-
-    /// <summary>
+	Result VisitVariableTerm([NotNull] ASPParser.VariableTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>listTerm</c>
 	/// labeled alternative in <see cref="ASPParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitListTerm([NotNull] ASPParser.ListTermContext context);
-
-    /// <summary>
+	Result VisitListTerm([NotNull] ASPParser.ListTermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>conventionalList</c>
 	/// labeled alternative in <see cref="ASPParser.list"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitConventionalList([NotNull] ASPParser.ConventionalListContext context);
-
-    /// <summary>
+	Result VisitConventionalList([NotNull] ASPParser.ConventionalListContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>recursiveList</c>
 	/// labeled alternative in <see cref="ASPParser.list"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitRecursiveList([NotNull] ASPParser.RecursiveListContext context);
-
-    /// <summary>
+	Result VisitRecursiveList([NotNull] ASPParser.RecursiveListContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>plusOperation</c>
 	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitPlusOperation([NotNull] ASPParser.PlusOperationContext context);
-
-    /// <summary>
+	Result VisitPlusOperation([NotNull] ASPParser.PlusOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>minusOperation</c>
 	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitMinusOperation([NotNull] ASPParser.MinusOperationContext context);
-
-    /// <summary>
+	Result VisitMinusOperation([NotNull] ASPParser.MinusOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>timesOperation</c>
 	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitTimesOperation([NotNull] ASPParser.TimesOperationContext context);
-
-    /// <summary>
+	Result VisitTimesOperation([NotNull] ASPParser.TimesOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>divOperation</c>
 	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitDivOperation([NotNull] ASPParser.DivOperationContext context);
-
-    /// <summary>
+	Result VisitDivOperation([NotNull] ASPParser.DivOperationContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>powerOperation</c>
 	/// labeled alternative in <see cref="ASPParser.arithop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-    Result VisitPowerOperation([NotNull] ASPParser.PowerOperationContext context);
+	Result VisitPowerOperation([NotNull] ASPParser.PowerOperationContext context);
 }

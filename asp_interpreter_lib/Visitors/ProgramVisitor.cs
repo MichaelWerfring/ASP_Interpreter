@@ -19,6 +19,8 @@ namespace Asp_interpreter_lib.Visitors
     {
         private readonly ILogger logger;
 
+        private readonly ShowFlagVisitor flagVisitor;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgramVisitor"/> class.
         /// </summary>
@@ -28,6 +30,7 @@ namespace Asp_interpreter_lib.Visitors
         {
             this.logger = logger ??
                 throw new ArgumentNullException(nameof(logger), "The given argument must not be null!");
+            this.flagVisitor = new ShowFlagVisitor(this.logger, new LiteralVisitor(this.logger));
         }
 
         /// <summary>
@@ -51,6 +54,17 @@ namespace Asp_interpreter_lib.Visitors
                 query = new None<Query>();
             }
 
+            // parse show flag
+            var literalsToShow = new List<Literal>();
+            foreach (var item in context.children)
+            {
+                var flag = item.Accept(this.flagVisitor);
+                if (flag != null && flag.HasValue)
+                {
+                    literalsToShow.AddRange(flag.GetValueOrThrow());
+                }
+            }
+
             // Parse the Statements
             var program = context.statements().children;
 
@@ -59,7 +73,7 @@ namespace Asp_interpreter_lib.Visitors
                 // Its still possible to have a query without any statements
                 // The error message is just for clarification
                 this.logger.LogInfo("Program has been specified without any statement.");
-                return new Some<AspProgram>(new AspProgram([], query, new Dictionary<(string Id, int Arity), Explanation>()));
+                return new Some<AspProgram>(new AspProgram([], query, new Dictionary<(string Id, int Arity), Explanation>(), literalsToShow));
             }
 
             Dictionary<(string, int), Explanation> explanations = new Dictionary<(string, int), Explanation>();
@@ -83,7 +97,7 @@ namespace Asp_interpreter_lib.Visitors
                     v => explanations.Add((v.Literal.Identifier, v.Literal.Terms.Count), v));
             }
 
-            return new Some<AspProgram>(new AspProgram(statements, query, explanations));
+            return new Some<AspProgram>(new AspProgram(statements, query, explanations, literalsToShow));
         }
     }
 }

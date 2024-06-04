@@ -144,7 +144,7 @@ namespace Asp_interpreter_lib.Util
 
             if (!program.Query.HasValue)
             {
-                return new AspProgram(statements, new None<Query>(), program.Explanations);
+                return new AspProgram(statements, new None<Query>(), program.Explanations, program.LiteralsToShow);
             }
 
             var queryCopy = new List<Goal>();
@@ -156,7 +156,7 @@ namespace Asp_interpreter_lib.Util
                 queryCopy.Add(goal.Accept(goalCopyVisitor).GetValueOrThrow());
             }
 
-            return new AspProgram(statements, new Some<Query>(new Query(queryCopy)), program.Explanations);
+            return new AspProgram(statements, new Some<Query>(new Query(queryCopy)), program.Explanations, program.LiteralsToShow);
         }
 
         /// <summary>
