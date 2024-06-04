@@ -18,11 +18,14 @@ namespace Asp_interpreter_exe
     using Asp_interpreter_lib.Preprocessing.NMRCheck;
     using Asp_interpreter_lib.Preprocessing.OLONDetection;
     using Asp_interpreter_lib.ProgramConversion.ASPProgramToInternalProgram.Conversion;
+    using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
     using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
     using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Binding;
+    using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
     using Asp_interpreter_lib.Types;
     using Asp_interpreter_lib.Types.TypeVisitors;
     using Asp_interpreter_lib.Unification.Co_SLD.Binding.VariableMappingClasses;
+    using Asp_interpreter_lib.Unification.Constructive.Unification.Standard;
     using Asp_interpreter_lib.Util;
     using Asp_interpreter_lib.Util.ErrorHandling;
     using Asp_interpreter_lib.Util.ErrorHandling.Either;
@@ -129,7 +132,7 @@ namespace Asp_interpreter_exe
 
                 // 2) solve existing program with new query
                 // 3) show answer
-                this.InteractiveSolve(program.Statements, query.Goals);
+                this.InteractiveSolve(program.Statements, program.LiteralsToShow, query.Goals);
             }
         }
 
@@ -238,15 +241,27 @@ namespace Asp_interpreter_exe
 
         private void SolveAutomatic(AspProgram program)
         {
-            var converter = new ProgramConverter(new FunctorTableRecord(), this.logger);
+            var functors = new FunctorTableRecord();
+
+            var converter = new ProgramConverter(functors, this.logger);
 
             var convertedStatements = program.Statements.Where(x => x.HasHead).Select(converter.ConvertStatement).ToList();
 
             var convertedQuery = converter.ConvertQuery(program.Query.GetValueOrThrow());
 
-            var database = new DualClauseDatabase(convertedStatements, new FunctorTableRecord());
+            var database = new DualClauseDatabase(convertedStatements, functors);
 
-            var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), this.logger);
+            var goalConverterForLiteralsToKeep = new GoalConverter(functors);
+            var predicatesToKeep = program.LiteralsToShow.Select(x => goalConverterForLiteralsToKeep.Convert(x).GetValueOrThrow()).ToList();
+
+            var postProcessor = new SolutionPostprocessor(
+                new VariableMappingPostprocessor(),
+                new CHSPostProcessor(
+                    functors,
+                    predicatesToKeep,
+                    new StandardConstructiveUnificationAlgorithm(false)));
+
+            var solver = new CoinductiveSLDSolver(database, functors, postProcessor, this.logger);
 
             var appendedQuery = convertedQuery.Append(new Structure("_nmr_check", new List<ISimpleTerm>()));
 
@@ -256,17 +271,29 @@ namespace Asp_interpreter_exe
             }
         }
 
-        private void InteractiveSolve(List<Statement> rules, List<Goal> query)
+        private void InteractiveSolve(List<Statement> rules, List<Literal> literalsToShow, List<Goal> query)
         {
-            var converter = new ProgramConverter(new FunctorTableRecord(), this.logger);
+            var functors = new FunctorTableRecord();
+
+            var converter = new ProgramConverter(functors, this.logger);
             var convertedRules = rules.Where(rule => rule.Head.HasValue).Select(converter.ConvertStatement);
 
-            var goalConverter = new GoalConverter(new FunctorTableRecord());
+            var goalConverter = new GoalConverter(functors);
             var convertedQuery = query.Select(x => goalConverter.Convert(x).GetValueOrThrow());
 
-            var database = new DualClauseDatabase(convertedRules, new FunctorTableRecord());
+            var database = new DualClauseDatabase(convertedRules, functors);
 
-            var solver = new CoinductiveSLDSolver(database, new FunctorTableRecord(), this.logger);
+            var goalConverterForLiteralsToKeep = new GoalConverter(functors);
+            var predicatesToKeep = literalsToShow.Select(x => goalConverterForLiteralsToKeep.Convert(x).GetValueOrThrow()).ToList();
+
+            var postProcessor = new SolutionPostprocessor(
+                new VariableMappingPostprocessor(),
+                new CHSPostProcessor(
+                functors,
+                predicatesToKeep,
+                new StandardConstructiveUnificationAlgorithm(false)));
+
+            var solver = new CoinductiveSLDSolver(database, functors, postProcessor, this.logger);
 
             foreach (var solution in solver.Solve(convertedQuery.Append(new Structure("_nmr_check", new List<ISimpleTerm>()))))
             {

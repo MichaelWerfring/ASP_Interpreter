@@ -1,4 +1,4 @@
-﻿member(H, [H | _]).
+member(H, [H | _]).
 member(H, [X | T]) :- H \= X, member(H, T).
 
 hanoi(1, Start, Goal, InputMoveNum, NextMoveNum) :- 
@@ -23,6 +23,5 @@ getOther(Start, Goal, Other) :-
 
 hanoi_main(TowerCount, StartTower, GoalTower) :- hanoi(TowerCount, StartTower, GoalTower, 1, _).
 
-?- hanoi_main(5, 1, 3).
 
-#show {move(_,_,_)}
+?- hanoi_main(5, 1, 3).

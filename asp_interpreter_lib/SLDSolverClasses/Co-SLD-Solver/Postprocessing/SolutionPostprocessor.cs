@@ -5,13 +5,14 @@
 namespace Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Postprocessing;
 
 using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.TermFunctions;
+using Asp_interpreter_lib.InternalProgramClasses.SimpleTerm.Terms.Structures;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.Solver;
 using Asp_interpreter_lib.SLDSolverClasses.Co_SLD_Solver.VariableMappingClasses.Postprocessing;
 
 /// <summary>
 /// A class for postprocessing a coinductive solution.
 /// </summary>
-internal class SolutionPostprocessor
+public class SolutionPostprocessor
 {
     private readonly VariableMappingPostprocessor mappingPostprocessor;
 

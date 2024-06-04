@@ -35,15 +35,16 @@ public class CoinductiveSLDSolver
     /// ..<paramref name="database"/> is null,
     /// ..<paramref name="functorTable"/> is null,
     /// ..<paramref name="logger"/> is null.</exception>
-    public CoinductiveSLDSolver(IDatabase database, FunctorTableRecord functorTable, ILogger logger)
+    public CoinductiveSLDSolver(IDatabase database, FunctorTableRecord functorTable, SolutionPostprocessor postprocessor, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(database, nameof(database));
         ArgumentNullException.ThrowIfNull(functorTable, nameof(functorTable));
+        ArgumentNullException.ThrowIfNull(postprocessor, nameof(postprocessor));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
         this.goalSolver = new GoalSolver(new CoSLDGoalMapper(functorTable, database, logger));
 
-        this.postprocessor = new SolutionPostprocessor(new VariableMappingPostprocessor(), new CHSPostProcessor(functorTable));
+        this.postprocessor = postprocessor;
 
         this.logger = logger;
     }

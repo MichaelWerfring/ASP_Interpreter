@@ -16,6 +16,4 @@ live(X, forest) :-
     live(X, Y),
     Y \= Z.
 
-
-
 ?- live(lion, X).
