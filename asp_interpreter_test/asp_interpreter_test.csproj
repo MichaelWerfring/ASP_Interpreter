@@ -22,8 +22,4 @@
     <ProjectReference Include="..\asp_interpreter_lib\Asp_interpreter_lib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="test\fullPrograms\" />
-  </ItemGroup>
-
 </Project>

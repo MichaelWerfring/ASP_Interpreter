@@ -83,6 +83,20 @@ public class CHSChecker
         Structure negatedTerm = termToCheck.NegateTerm(this.functorTable);
 
         // check for exact matches for negatedTerm of term
+
+        bool hasExactMatchForNegatedTerm;
+
+        try
+        {
+            hasExactMatchForNegatedTerm = this.HasExactMatch(negatedTerm, state.CHS, state.Mapping, false);
+        }
+        catch
+        {
+            this.logger.LogError("Error during chs checking: term in chs contained variable that mapped to another term. " +
+                "this is must likely due to a self-recursive structure.");
+            return new CHSDeterministicFailureResult();
+        }
+
         if (this.HasExactMatch(negatedTerm, state.CHS, state.Mapping, false))
         {
             return new CHSDeterministicFailureResult();
